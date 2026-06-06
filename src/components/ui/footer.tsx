@@ -85,11 +85,11 @@ export function Footer() {
           <div>
             <h4 className="font-bold text-white mb-6 text-lg">Industry</h4>
             <ul className="space-y-4 text-sm text-gray-300">
-              <li><Link href="/industries/coffee" className="hover:text-white transition-colors">Food Retail</Link></li>
-              <li><Link href="/industries/cocoa" className="hover:text-white transition-colors">CPG/FMCG</Link></li>
-              <li><Link href="/industries/seed-production" className="hover:text-white transition-colors">Seed Manufacturing</Link></li>
-              <li><Link href="/industries" className="hover:text-white transition-colors">Development Agencies</Link></li>
-              <li><Link href="/industries" className="hover:text-white transition-colors">Others</Link></li>
+              <li><Link href="/CropInsights/coffee" className="hover:text-white transition-colors">Food Retail</Link></li>
+              <li><Link href="/CropInsights/cocoa" className="hover:text-white transition-colors">CPG/FMCG</Link></li>
+              <li><Link href="/CropInsights/seed-production" className="hover:text-white transition-colors">Seed Manufacturing</Link></li>
+              <li><Link href="/CropInsights" className="hover:text-white transition-colors">Development Agencies</Link></li>
+              <li><Link href="/CropInsights" className="hover:text-white transition-colors">Others</Link></li>
             </ul>
           </div>
           <div>

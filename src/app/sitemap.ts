@@ -30,7 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/platform/traceability',
     '/intelligence/ai-engine',
     '/solutions/eudr-compliance',
-    '/industries/coffee',
+    '/CropInsights/coffee',
     '/compliance/csrd',
     '/customers/case-studies/cargill',
     '/resources/whitepapers',

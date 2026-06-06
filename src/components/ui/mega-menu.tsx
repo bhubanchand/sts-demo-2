@@ -60,18 +60,18 @@ const SOLUTIONS_LINKS = [
 ];
 
 const INDUSTRIES_LINKS = [
-  { name: "Coffee", href: "/industries/coffee", desc: "Trace every bean from farm to cup." },
-  { name: "Cocoa", href: "/industries/cocoa", desc: "Ensure ethical sourcing of cocoa supply chains." },
-  { name: "Cotton", href: "/industries/cotton", desc: "Sustainable cotton sourcing and tracking." },
-  { name: "Rice", href: "/industries/rice", desc: "Monitor rice cultivation with precision." },
-  { name: "Tea", href: "/industries/tea", desc: "Full visibility across tea supply networks." },
-  { name: "Spices", href: "/industries/spices", desc: "Authentic spice sourcing with traceability." },
-  { name: "Palm Oil", href: "/industries/palm-oil", desc: "Deforestation-free palm oil supply chains." },
-  { name: "Rubber", href: "/industries/rubber", desc: "Sustainable rubber procurement solutions." },
-  { name: "Sugarcane", href: "/industries/sugarcane", desc: "Monitor sugarcane from field to refinery." },
-  { name: "Fruits & Vegetables", href: "/industries/fruits-vegetables", desc: "Fresh produce traceability and quality." },
-  { name: "Grains", href: "/industries/grains", desc: "Grain sourcing with sustainability insights." },
-  { name: "Seed Production", href: "/industries/seed-production", desc: "Seed-to-harvest production management." },
+  { name: "Coffee", href: "/CropInsights/coffee", desc: "Trace every bean from farm to cup." },
+  { name: "Cocoa", href: "/CropInsights/cocoa", desc: "Ensure ethical sourcing of cocoa supply chains." },
+  { name: "Cotton", href: "/CropInsights/cotton", desc: "Sustainable cotton sourcing and tracking." },
+  { name: "Rice", href: "/CropInsights/rice", desc: "Monitor rice cultivation with precision." },
+  { name: "Tea", href: "/CropInsights/tea", desc: "Full visibility across tea supply networks." },
+  { name: "Spices", href: "/CropInsights/spices", desc: "Authentic spice sourcing with traceability." },
+  { name: "Palm Oil", href: "/CropInsights/palm-oil", desc: "Deforestation-free palm oil supply chains." },
+  { name: "Rubber", href: "/CropInsights/rubber", desc: "Sustainable rubber procurement solutions." },
+  { name: "Sugarcane", href: "/CropInsights/sugarcane", desc: "Monitor sugarcane from field to refinery." },
+  { name: "Fruits & Vegetables", href: "/CropInsights/fruits-vegetables", desc: "Fresh produce traceability and quality." },
+  { name: "Grains", href: "/CropInsights/grains", desc: "Grain sourcing with sustainability insights." },
+  { name: "Seed Production", href: "/CropInsights/seed-production", desc: "Seed-to-harvest production management." },
 ];
 
 const COMPLIANCE_LINKS = [
@@ -164,7 +164,7 @@ export function MegaMenu() {
     { id: "platform", label: "Platform", items: PLATFORM_LINKS, promo: { title: "Traceability Cloud", desc: "See the unified platform in action.", image: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/platform" } },
     { id: "intelligence", label: "Intelligence", items: INTELLIGENCE_LINKS, promo: { title: "AI Deforestation Models", desc: "How we predict forest loss.", image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/intelligence/ai-engine" } },
     { id: "solutions", label: "Solutions", items: SOLUTIONS_LINKS, promo: { title: "EUDR Deadline 2025", desc: "Is your supply chain ready?", image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/solutions/eudr-compliance" } },
-    { id: "industries", label: "Crop Insights", items: INDUSTRIES_LINKS, promo: { title: "Coffee & Cocoa", desc: "Mapping the world's most complex supply chains.", image: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/industries/coffee" } },
+    { id: "industries", label: "Crop Insights", items: INDUSTRIES_LINKS, promo: { title: "Coffee & Cocoa", desc: "Mapping the world's most complex supply chains.", image: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/CropInsights/coffee" } },
     { id: "compliance", label: "Compliance", items: COMPLIANCE_LINKS, promo: { title: "State of Compliance Report", desc: "Download the 2026 guidelines.", image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/resources/reports" } },
     { id: "resources", label: "Resources", items: RESOURCES_LINKS, promo: { title: "Latest Insights", desc: "Read our newest case studies.", image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/resources/blog" } },
     { id: "company", label: "Company", items: COMPANY_LINKS, promo: { title: "Join Our Team", desc: "Help us transform agriculture.", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/careers" } },
