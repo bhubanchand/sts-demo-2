@@ -137,10 +137,10 @@ export default function Home() {
         {/* Dark overlay for readability */}
         <div className="absolute inset-0 bg-black/60 z-10 pointer-events-none"></div>
         
-        {/* Left and Right navigation arrows */}
+        {/* Left and Right navigation arrows - Desktop Only */}
         <button
           onClick={handlePrevSlide}
-          className="absolute left-4 md:left-8 top-[46%] -translate-y-1/2 z-30 w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group"
+          className="hidden md:flex absolute left-4 md:left-8 top-[46%] -translate-y-1/2 z-30 w-12 h-12 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group cursor-pointer"
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
@@ -148,26 +148,47 @@ export default function Home() {
         
         <button
           onClick={handleNextSlide}
-          className="absolute right-4 md:right-8 top-[46%] -translate-y-1/2 z-30 w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group"
+          className="hidden md:flex absolute right-4 md:right-8 top-[46%] -translate-y-1/2 z-30 w-12 h-12 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group cursor-pointer"
           aria-label="Next slide"
         >
           <ChevronRight className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
         </button>
 
-        {/* Pagination Dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
-          {HERO_SLIDES.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handleDotClick(index)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                activeSlideIndex === index
-                  ? "w-8 bg-[#53D769]"
-                  : "w-2 bg-white/30 hover:bg-white/50"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+        {/* Pagination Controls - Inline arrows on Mobile, Dots only on Desktop */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-30">
+          {/* Mobile Prev Button */}
+          <button
+            onClick={handlePrevSlide}
+            className="md:hidden w-8 h-8 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 active:scale-95 backdrop-blur-md transition-all cursor-pointer"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-4 h-4 text-white" />
+          </button>
+
+          {/* Dots */}
+          <div className="flex items-center gap-2">
+            {HERO_SLIDES.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleDotClick(index)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  activeSlideIndex === index
+                    ? "w-8 bg-[#53D769]"
+                    : "w-2 bg-white/30 hover:bg-white/50"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Mobile Next Button */}
+          <button
+            onClick={handleNextSlide}
+            className="md:hidden w-8 h-8 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 active:scale-95 backdrop-blur-md transition-all cursor-pointer"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-4 h-4 text-white" />
+          </button>
         </div>
 
         {/* Slide Content with AnimatePresence for smooth cross-fades */}

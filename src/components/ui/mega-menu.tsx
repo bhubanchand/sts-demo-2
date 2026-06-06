@@ -239,19 +239,19 @@ export function MegaMenu() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed top-20 left-0 right-0 bottom-0 bg-white z-40 overflow-y-auto px-6 pt-6 pb-24 lg:hidden flex flex-col border-t border-gray-100"
+            className="fixed top-20 left-0 right-0 bottom-0 bg-white z-40 overflow-y-auto px-5 pt-4 pb-20 lg:hidden flex flex-col border-t border-gray-100"
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2.5">
               {menuItems.map((item) => {
                 const isExpanded = expandedCategory === item.id;
                 return (
-                  <div key={item.id} className="border-b border-gray-100 pb-4">
+                  <div key={item.id} className="border-b border-gray-100 pb-2.5">
                     <button
                       onClick={() => setExpandedCategory(isExpanded ? null : item.id)}
-                      className="w-full flex items-center justify-between py-2 text-lg font-semibold text-gray-900 focus:outline-none cursor-pointer"
+                      className="w-full flex items-center justify-between py-1.5 text-xs font-extrabold text-[#0B3D2E] tracking-wider uppercase focus:outline-none cursor-pointer"
                     >
                       <span>{item.label}</span>
-                      <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${isExpanded ? "rotate-180 text-[#1F7A53]" : ""}`} />
+                      <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isExpanded ? "rotate-180 text-[#1F7A53]" : ""}`} />
                     </button>
                     
                     <AnimatePresence>
@@ -261,25 +261,25 @@ export function MegaMenu() {
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.2 }}
-                          className="overflow-hidden mt-3 pl-2"
+                          className="overflow-hidden mt-2 pl-1"
                         >
-                          <div className="grid grid-cols-1 gap-3">
+                          <div className="grid grid-cols-1 gap-2">
                             {item.items.map((link: any, index: number) => (
                               <Link
                                 key={index}
                                 href={link.href}
                                 onClick={() => setIsMobileOpen(false)}
-                                className="group flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors"
+                                className="group flex items-center gap-2.5 py-1 px-2 rounded-lg hover:bg-gray-50 transition-colors"
                               >
                                 {link.icon ? (
-                                  <div className="w-8 h-8 rounded-lg bg-[#53D769]/10 flex items-center justify-center flex-shrink-0">
-                                    <link.icon className="w-4 h-4 text-[#1F7A53]" />
+                                  <div className="w-7 h-7 rounded-md bg-[#53D769]/10 flex items-center justify-center flex-shrink-0">
+                                    <link.icon className="w-3.5 h-3.5 text-[#1F7A53]" />
                                   </div>
                                 ) : (
-                                  <div className="w-1.5 h-1.5 rounded-full bg-[#1F7A53] ml-3 mr-1" />
+                                  <div className="w-1 h-1 rounded-full bg-[#1F7A53] ml-2" />
                                 )}
                                 <div>
-                                  <div className="text-sm font-semibold text-gray-800 group-hover:text-[#1F7A53] transition-colors">
+                                  <div className="text-xs font-semibold text-gray-700 group-hover:text-[#1F7A53] transition-colors">
                                     {link.name}
                                   </div>
                                 </div>
@@ -294,16 +294,16 @@ export function MegaMenu() {
               })}
             </div>
 
-            <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col gap-4">
+            <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col gap-3">
               <Link
                 href="/contact-sales"
                 onClick={() => setIsMobileOpen(false)}
-                className="w-full py-3.5 text-center text-gray-700 hover:text-[#0B3D2E] font-medium border border-gray-200 rounded-full transition-colors"
+                className="w-full py-2.5 text-center text-gray-700 hover:text-[#0B3D2E] text-xs font-bold border border-gray-200 rounded-full transition-colors"
               >
                 Contact Sales
               </Link>
               <Link href="/request-demo" onClick={() => setIsMobileOpen(false)}>
-                <button className="w-full py-4 text-center font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-full transition-colors shadow-lg cursor-pointer">
+                <button className="w-full py-3 text-center text-xs font-extrabold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-full transition-colors shadow-md cursor-pointer">
                   Request Demo
                 </button>
               </Link>
