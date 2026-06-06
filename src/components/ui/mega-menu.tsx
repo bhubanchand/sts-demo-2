@@ -3,8 +3,23 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Settings, Database, Server, Smartphone, BookOpen, Video, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X } from "lucide-react";
+import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Settings, Database, Server, Smartphone, BookOpen, Video, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight } from "lucide-react";
 import { Button } from "./button";
+
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? "100%" : "-100%",
+    opacity: 0
+  }),
+  center: {
+    x: 0,
+    opacity: 1
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? "-100%" : "100%",
+    opacity: 0
+  })
+};
 
 const PLATFORM_LINKS = [
   { name: "Traceability", href: "/platform/traceability", icon: Map },
@@ -83,13 +98,18 @@ const COMPANY_LINKS = [
 export function MegaMenu() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [currentLevel, setCurrentLevel] = useState<"root" | "submenu">("root");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [direction, setDirection] = useState<number>(1);
   let timeoutId: NodeJS.Timeout;
 
   useEffect(() => {
     if (isMobileOpen) {
       document.body.style.overflow = "hidden";
       setActiveMenu(null);
+      setCurrentLevel("root");
+      setActiveCategory(null);
+      setDirection(1);
     } else {
       document.body.style.overflow = "";
     }
@@ -107,6 +127,20 @@ export function MegaMenu() {
     timeoutId = setTimeout(() => {
       setActiveMenu(null);
     }, 200);
+  };
+
+  const goToSubmenu = (categoryId: string) => {
+    setDirection(1);
+    setActiveCategory(categoryId);
+    setCurrentLevel("submenu");
+  };
+
+  const goToRoot = () => {
+    setDirection(-1);
+    setCurrentLevel("root");
+    setTimeout(() => {
+      setActiveCategory(null);
+    }, 150);
   };
 
   const menuItems = [
@@ -199,7 +233,7 @@ export function MegaMenu() {
                              <div>
                                <div className="font-semibold text-gray-900 group-hover:text-[#1F7A53] transition-colors">
                                  {link.name}
-                               </div>
+                                </div>
                                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{link.desc || `Explore ${link.name.toLowerCase()} solutions`}</p>
                              </div>
                            </Link>
@@ -235,78 +269,152 @@ export function MegaMenu() {
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed top-20 left-0 right-0 bottom-0 bg-white z-40 overflow-y-auto px-5 pt-4 pb-20 lg:hidden flex flex-col border-t border-gray-100"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 bg-white z-50 flex flex-col lg:hidden"
           >
-            <div className="flex flex-col gap-2.5">
-              {menuItems.map((item) => {
-                const isExpanded = expandedCategory === item.id;
-                return (
-                  <div key={item.id} className="border-b border-gray-100 pb-2.5">
-                    <button
-                      onClick={() => setExpandedCategory(isExpanded ? null : item.id)}
-                      className="w-full flex items-center justify-between py-1.5 text-xs font-extrabold text-[#0B3D2E] tracking-wider uppercase focus:outline-none cursor-pointer"
-                    >
-                      <span>{item.label}</span>
-                      <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isExpanded ? "rotate-180 text-[#1F7A53]" : ""}`} />
-                    </button>
-                    
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="overflow-hidden mt-2 pl-1"
+            {/* Header bar */}
+            <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 flex-shrink-0">
+              <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileOpen(false)}>
+                <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-10 object-contain" />
+              </Link>
+              <button
+                onClick={() => setIsMobileOpen(false)}
+                className="p-2 rounded-full text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
+                aria-label="Close menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Immersive sliding panel viewport */}
+            <div className="flex-1 relative overflow-hidden bg-gray-50/30">
+              <AnimatePresence initial={false} custom={direction} mode="wait">
+                {currentLevel === "root" ? (
+                  <motion.div
+                    key="root-menu"
+                    custom={direction}
+                    variants={slideVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    className="absolute inset-0 px-6 py-8 flex flex-col justify-between overflow-y-auto"
+                  >
+                    <div className="flex flex-col gap-2">
+                      {menuItems.map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() => goToSubmenu(item.id)}
+                          className="w-full flex items-center justify-between py-4 px-3 text-lg font-bold text-gray-800 border-b border-gray-100 hover:text-[#1F7A53] hover:bg-white hover:shadow-sm rounded-xl transition-all cursor-pointer group text-left"
                         >
-                          <div className="grid grid-cols-1 gap-2">
-                            {item.items.map((link: any, index: number) => (
+                          <span className="tracking-wide">{item.label}</span>
+                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#1F7A53] group-hover:translate-x-1 transition-all" />
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col gap-4">
+                      <Link
+                        href="/contact-sales"
+                        onClick={() => setIsMobileOpen(false)}
+                        className="w-full py-3.5 text-center text-gray-700 hover:text-[#0B3D2E] font-semibold border border-gray-200 rounded-full transition-colors bg-white hover:bg-gray-50 shadow-sm"
+                      >
+                        Contact Sales
+                      </Link>
+                      <Link href="/request-demo" onClick={() => setIsMobileOpen(false)}>
+                        <button className="w-full py-4 text-center font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-full transition-colors shadow-lg cursor-pointer">
+                          Request Demo
+                        </button>
+                      </Link>
+                    </div>
+                  </motion.div>
+                ) : (
+                  (() => {
+                    const activeCategoryData = menuItems.find(item => item.id === activeCategory);
+                    if (!activeCategoryData) return null;
+
+                    return (
+                      <motion.div
+                        key="submenu-panel"
+                        custom={direction}
+                        variants={slideVariants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="absolute inset-0 px-6 py-8 flex flex-col justify-between overflow-y-auto"
+                      >
+                        <div className="flex flex-col flex-1">
+                          {/* Back Button */}
+                          <button
+                            onClick={goToRoot}
+                            className="w-fit flex items-center gap-2 text-xs font-bold text-[#1F7A53] uppercase tracking-wider mb-6 cursor-pointer hover:opacity-80 transition-opacity bg-white px-3 py-1.5 rounded-full border border-gray-100 shadow-sm"
+                          >
+                            <ArrowLeft className="w-3.5 h-3.5" />
+                            <span>Back to Menu</span>
+                          </button>
+
+                          <h3 className="text-2xl font-black text-[#0B3D2E] mb-6 tracking-tight">
+                            {activeCategoryData.label}
+                          </h3>
+
+                          {/* Scrollable sub-links grid */}
+                          <div className="flex flex-col gap-3 max-h-[380px] overflow-y-auto pr-1 pb-4 scrollbar-thin">
+                            {activeCategoryData.items.map((link: any, index: number) => (
                               <Link
                                 key={index}
                                 href={link.href}
                                 onClick={() => setIsMobileOpen(false)}
-                                className="group flex items-center gap-2.5 py-1 px-2 rounded-lg hover:bg-gray-50 transition-colors"
+                                className="group flex items-start gap-4 p-3 rounded-2xl bg-white border border-gray-50 shadow-sm hover:border-[#53D769]/30 hover:bg-gray-50/20 transition-all"
                               >
                                 {link.icon ? (
-                                  <div className="w-7 h-7 rounded-md bg-[#53D769]/10 flex items-center justify-center flex-shrink-0">
-                                    <link.icon className="w-3.5 h-3.5 text-[#1F7A53]" />
+                                  <div className="w-10 h-10 rounded-xl bg-[#53D769]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#53D769]/20 transition-colors">
+                                    <link.icon className="w-5 h-5 text-[#1F7A53]" />
                                   </div>
                                 ) : (
-                                  <div className="w-1 h-1 rounded-full bg-[#1F7A53] ml-2" />
+                                  <div className="w-10 h-10 rounded-xl bg-[#1F7A53]/5 flex items-center justify-center flex-shrink-0 text-[#1F7A53] font-black text-sm">
+                                    {link.name.substring(0, 2)}
+                                  </div>
                                 )}
-                                <div>
-                                  <div className="text-xs font-semibold text-gray-700 group-hover:text-[#1F7A53] transition-colors">
+                                <div className="flex-1">
+                                  <div className="font-bold text-gray-900 group-hover:text-[#1F7A53] transition-colors text-sm">
                                     {link.name}
                                   </div>
+                                  <p className="text-xs text-gray-500 mt-1 line-clamp-1">
+                                    {link.desc || `Explore ${link.name.toLowerCase()} solutions`}
+                                  </p>
                                 </div>
                               </Link>
                             ))}
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                );
-              })}
-            </div>
+                        </div>
 
-            <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col gap-3">
-              <Link
-                href="/contact-sales"
-                onClick={() => setIsMobileOpen(false)}
-                className="w-full py-2.5 text-center text-gray-700 hover:text-[#0B3D2E] text-xs font-bold border border-gray-200 rounded-full transition-colors"
-              >
-                Contact Sales
-              </Link>
-              <Link href="/request-demo" onClick={() => setIsMobileOpen(false)}>
-                <button className="w-full py-3 text-center text-xs font-extrabold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-full transition-colors shadow-md cursor-pointer">
-                  Request Demo
-                </button>
-              </Link>
+                        {/* promo card */}
+                        {activeCategoryData.promo && (
+                          <div className="pt-4 border-t border-gray-100 mt-6 shrink-0">
+                            <Link
+                              href={activeCategoryData.promo.link}
+                              onClick={() => setIsMobileOpen(false)}
+                              className="group block relative rounded-2xl overflow-hidden h-28 border border-gray-100 shadow-md"
+                            >
+                              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors z-10"></div>
+                              <img src={activeCategoryData.promo.image} alt={activeCategoryData.promo.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                              <div className="absolute inset-0 z-20 p-4 flex flex-col justify-end">
+                                <span className="text-[8px] font-bold text-[#53D769] uppercase tracking-widest mb-0.5">Featured</span>
+                                <h4 className="text-white font-bold text-sm mb-0.5">{activeCategoryData.promo.title}</h4>
+                                <p className="text-gray-200 text-[10px] line-clamp-1">{activeCategoryData.promo.desc}</p>
+                              </div>
+                            </Link>
+                          </div>
+                        )}
+                      </motion.div>
+                    );
+                  })()
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         )}
