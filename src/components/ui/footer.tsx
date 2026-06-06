@@ -1,40 +1,8 @@
-"use client";
-
-import React, { useState } from "react";
 import Link from "next/link";
 import { Leaf } from "lucide-react";
 import { Button } from "./button";
 
 export function Footer() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setStatus("submitting");
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          message: "User subscribed to newsletter from footer.",
-          type: "newsletter"
-        })
-      });
-      if (response.ok) {
-        setStatus("success");
-        setEmail("");
-      } else {
-        setStatus("error");
-      }
-    } catch (err) {
-      console.error("Newsletter signup mail notify failed:", err);
-      setStatus("error");
-    }
-  };
-
   return (
     <footer className="relative bg-[#0B3D2E] text-white overflow-hidden mt-32">
       {/* Cinematic Top Background */}
@@ -76,26 +44,16 @@ export function Footer() {
            <div className="flex items-center gap-4">
               <h3 className="text-3xl font-bold">Join Our <span className="text-[#53D769]">Newsletter</span></h3>
            </div>
-            {status === "success" ? (
-               <div className="text-sm text-[#53D769] font-mono">
-                 ✓ Thank you for subscribing!
-               </div>
-            ) : (
-               <form onSubmit={handleSubscribe} className="flex w-full md:w-auto gap-4">
-                  <input 
-                    required
-                    type="email" 
-                    placeholder="Email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={status === "submitting"}
-                    className="w-full md:w-80 bg-white rounded-full px-6 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#53D769]"
-                  />
-                  <Button type="submit" disabled={status === "submitting"} className="rounded-full bg-[#0ea5e9] text-white hover:bg-blue-400 border-none px-8 font-bold">
-                     {status === "submitting" ? "Joining..." : "Join Now"}
-                  </Button>
-               </form>
-            )}
+           <form className="flex w-full md:w-auto gap-4">
+              <input 
+                type="email" 
+                placeholder="Email" 
+                className="w-full md:w-80 bg-white rounded-full px-6 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#53D769]"
+              />
+              <Button className="rounded-full bg-[#0ea5e9] text-white hover:bg-blue-400 border-none px-8 font-bold">
+                 Join Now
+              </Button>
+           </form>
         </div>
 
         {/* Links Grid */}
