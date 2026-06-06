@@ -6,7 +6,7 @@ import Link from "next/link";
 import { 
   Coffee, Sprout, Map, Activity, ShieldCheck, User, Layers, 
   Warehouse, Globe, Award, FileText, ChevronDown, ChevronRight, Check, HelpCircle,
-  TrendingUp, Play, ArrowRight, X, Phone, Mail, Clock
+  TrendingUp, Play, ArrowRight, X, Phone, Mail, Clock, CheckCircle2, ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -129,6 +129,45 @@ export default function CoffeeSolutionsPage() {
   const [dashboardFilter, setDashboardFilter] = useState<"global" | "latam" | "africa">("global");
   const [demoOpen, setDemoOpen] = useState(false);
 
+  // Modal Submission states
+  const [modalEmail, setModalEmail] = useState("");
+  const [modalOrigin, setModalOrigin] = useState("Central/South America");
+  const [modalStatus, setModalStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [modalPreviewUrl, setModalPreviewUrl] = useState<string | null>(null);
+
+  const handleModalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!modalEmail) return;
+    setModalStatus("submitting");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: modalEmail,
+          company: "N/A (Coffee Page Modal)",
+          sourcingInterest: `Coffee Sourcing - ${modalOrigin}`,
+          message: "Demo requested via Coffee Solutions page popup modal.",
+          type: "demo"
+        })
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setModalStatus("success");
+        if (data.previewUrl) {
+          setModalPreviewUrl(data.previewUrl);
+        }
+        setModalEmail("");
+      } else {
+        setModalStatus("error");
+      }
+    } catch (err) {
+      console.error(err);
+      setModalStatus("error");
+    }
+  };
+
   // Simulated Dashboard Data based on filter
   const getDashboardData = () => {
     switch (dashboardFilter) {
@@ -191,7 +230,7 @@ export default function CoffeeSolutionsPage() {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             className="text-sm sm:text-base text-gray-200 max-w-3xl mx-auto leading-relaxed space-y-4"
           >
             <p>
@@ -210,7 +249,10 @@ export default function CoffeeSolutionsPage() {
           >
             <Button 
               size="lg" 
-              onClick={() => setDemoOpen(true)}
+              onClick={() => {
+                setModalStatus("idle");
+                setDemoOpen(true);
+              }}
               className="h-14 px-8 text-base font-semibold font-mono rounded-full bg-[#53D769] hover:bg-emerald-500 text-slate-950 transition-all shadow-lg hover:shadow-emerald-400/20 border-none w-full sm:w-auto"
             >
               Request Demo
@@ -643,7 +685,10 @@ export default function CoffeeSolutionsPage() {
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Button 
               size="lg" 
-              onClick={() => setDemoOpen(true)}
+              onClick={() => {
+                setModalStatus("idle");
+                setDemoOpen(true);
+              }}
               className="h-14 px-8 text-base font-semibold font-mono rounded-full bg-[#53D769] hover:bg-emerald-500 text-slate-950 transition-all shadow-lg hover:shadow-emerald-400/20 border-none w-full sm:w-auto"
             >
               Request A Demo
@@ -651,7 +696,10 @@ export default function CoffeeSolutionsPage() {
             <Button 
               size="lg" 
               variant="outline" 
-              onClick={() => setDemoOpen(true)}
+              onClick={() => {
+                setModalStatus("idle");
+                setDemoOpen(true);
+              }}
               className="h-14 px-8 text-base font-semibold font-mono rounded-full border-white/20 hover:bg-white/10 text-white transition-all bg-transparent w-full sm:w-auto"
             >
               Contact Our Team
@@ -691,43 +739,92 @@ export default function CoffeeSolutionsPage() {
                 <p className="text-xs text-slate-500">Connect with a coffee sourcing and compliance expert.</p>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="text-[10px] font-mono text-gray-500 uppercase block mb-1">Company Contact Email</label>
-                  <input type="email" placeholder="you@company.com" className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#53D769]" />
-                </div>
-                <div>
-                  <label className="text-[10px] font-mono text-gray-500 uppercase block mb-1">Sourcing Interest / Origin</label>
-                  <select className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none">
-                    <option>Central/South America</option>
-                    <option>East Africa</option>
-                    <option>Southeast Asia</option>
-                    <option>General Sourcing / Importation</option>
-                  </select>
-                </div>
-                
-                <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100/50 space-y-2 text-slate-600 font-mono text-[10px] leading-relaxed">
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-3.5 h-3.5 text-[#1F7A53]" />
-                    <span>Global Line: +1 (800) 555-TRACE</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-3.5 h-3.5 text-[#1F7A53]" />
-                    <span>sourcing@sourcetrace.com</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5 text-[#1F7A53]" />
-                    <span>Response under 24 hours guaranteed</span>
-                  </div>
-                </div>
+              <AnimatePresence mode="wait">
+                {modalStatus === "success" ? (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="text-center py-6 space-y-4 font-mono text-xs"
+                  >
+                    <CheckCircle2 className="w-12 h-12 text-[#53D769] mx-auto animate-bounce" />
+                    <h4 className="text-lg font-bold text-[#0B3D2E]">Inquiry Submitted Successfully</h4>
+                    <p className="text-slate-500 leading-relaxed">
+                      We have sent your coffee sourcing request directly to our inbox at <span className="font-bold text-[#1F7A53]">bhuban@chand.co.in</span>.
+                    </p>
+                    {modalPreviewUrl && (
+                      <div className="bg-slate-50 border border-slate-200 p-3 rounded-lg text-left mt-2">
+                        <span className="text-[#1F7A53] font-bold block mb-1">Email Sandbox Sandbox Link:</span>
+                        <a href={modalPreviewUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[#1F7A53] hover:underline font-bold">
+                          View Mail Copy <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    )}
+                    <Button 
+                      onClick={() => setDemoOpen(false)}
+                      className="bg-[#53D769] hover:bg-emerald-500 text-slate-950 font-bold rounded-xl px-6 h-10 border-none mt-2"
+                    >
+                      Close Modal
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.form 
+                    onSubmit={handleModalSubmit}
+                    className="space-y-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <div>
+                      <label className="text-[10px] font-mono text-gray-500 uppercase block mb-1">Company Contact Email</label>
+                      <input 
+                        required
+                        type="email" 
+                        value={modalEmail}
+                        onChange={(e) => setModalEmail(e.target.value)}
+                        placeholder="you@company.com" 
+                        className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#53D769] focus:bg-white transition-all" 
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-mono text-gray-500 uppercase block mb-1">Sourcing Interest / Origin</label>
+                      <select 
+                        value={modalOrigin}
+                        onChange={(e) => setModalOrigin(e.target.value)}
+                        className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#53D769] focus:bg-white transition-all"
+                      >
+                        <option>Central/South America</option>
+                        <option>East Africa</option>
+                        <option>Southeast Asia</option>
+                        <option>General Sourcing / Importation</option>
+                      </select>
+                    </div>
+                    
+                    <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100/50 space-y-2 text-slate-600 font-mono text-[10px] leading-relaxed">
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-3.5 h-3.5 text-[#1F7A53]" />
+                        <span>Global Line: +1 (800) 555-TRACE</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-3.5 h-3.5 text-[#1F7A53]" />
+                        <span>sourcing@sourcetrace.com</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-3.5 h-3.5 text-[#1F7A53]" />
+                        <span>Response under 24 hours guaranteed</span>
+                      </div>
+                    </div>
 
-                <Button 
-                  onClick={() => setDemoOpen(false)}
-                  className="w-full h-12 bg-[#53D769] hover:bg-emerald-500 text-slate-950 font-bold font-mono rounded-xl border-none"
-                >
-                  Submit Inquiry
-                </Button>
-              </div>
+                    <Button 
+                      type="submit"
+                      disabled={modalStatus === "submitting"}
+                      className="w-full h-12 bg-[#53D769] hover:bg-emerald-500 text-slate-950 font-bold font-mono rounded-xl border-none"
+                    >
+                      {modalStatus === "submitting" ? "Transmitting..." : "Submit Inquiry"}
+                    </Button>
+                  </motion.form>
+                )}
+              </AnimatePresence>
             </motion.div>
           </div>
         )}

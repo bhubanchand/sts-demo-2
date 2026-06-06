@@ -1660,12 +1660,25 @@ export function CompliancePageLayout({ data }: Props) {
           return (
             <div className="w-full p-1 text-left">
               {ctaStatus === "idle" && (
-                <form onSubmit={(e) => {
+                <form onSubmit={async (e) => {
                   e.preventDefault();
                   setCtaStatus("submitting");
-                  setTimeout(() => {
-                    setCtaStatus("success");
-                  }, 1800);
+                  try {
+                    await fetch("/api/contact", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        name: ctaName,
+                        email: ctaEmail,
+                        company: ctaCompany,
+                        message: `Compliance Scrollytelling Inquiry: ${interactiveTitle || "General compliance request"}`,
+                        type: "compliance"
+                      })
+                    });
+                  } catch (err) {
+                    console.error("Compliance form mail notify failed:", err);
+                  }
+                  setCtaStatus("success");
                 }} className="space-y-2">
                   <div className="grid grid-cols-2 gap-2">
                     <div>
