@@ -1,65 +1,212 @@
-import { TestimonialsCarousel } from "@/components/ui/testimonials-carousel";
-import { IntegrationsGrid } from "@/components/ui/integrations-grid";
-import { StatsBanner } from "@/components/ui/stats-banner";
-import { AnimatedText } from "@/components/ui/animated-text";
-import { Button } from "@/components/ui/button";
-import { CTASection } from "@/components/ui/cta-section";
-import { TrustBadges } from "@/components/ui/trust-badges";
-import { Droplets, Leaf, ShieldAlert } from "lucide-react";
+import { CropPageLayout, CropData } from "@/components/crop-page-layout";
 
-export default function CottonIndustryPage() {
-  return (
-    <main className="min-h-screen bg-white">
-      <section 
-        className="pt-40 pb-32 px-4 sm:px-8 relative z-10"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(11, 61, 46, 0.8), rgba(11, 61, 46, 0.95)), url("https://images.unsplash.com/photo-1589146014299-b13155169a6a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
-      >
-        <div className="max-w-[1400px] mx-auto text-center">
-          <span className="text-[#53D769] font-bold tracking-widest uppercase mb-4 block">Industries</span>
-          <AnimatedText 
-            el="h1" 
-            text="Ethical Cotton Procurement." 
-            className="text-5xl sm:text-7xl font-extrabold mb-8 text-white leading-tight" 
-          />
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10">
-            From seed to shirt. Track water consumption, verify organic certifications, and ensure your cotton supply chain is free from forced labor.
-          </p>
-          <Button size="lg" className="h-14 px-8 text-lg rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white border-none">
-            Explore Cotton Solutions
-          </Button>
-        </div>
-      </section>
+const pageData: CropData = {
+  cropKey: "cotton",
+  title: "The Authentication Challenge",
+  logline: "The  Seed-to-Bale  Cotton  Road.",
+  description: "The page opens on a sunny cotton field under a clear blue sky. Soft animations of cotton fibers drift across the screen.",
+  colors: {
+    primary: "#F4F1EA",
+    accent: "#1A365D",
+    accentHex: "#1A365D",
+    bgHex: "#F4F1EA",
+    textHex: "#6E5041"
+  },
+  scenes: [
+  {
+    "title": "The Authentication Challenge",
+    "description": "The camera focuses on a cotton boll. Text describes how traditional, complex supply chains often mix organic and GMO cotton, reducing trust for ethical brands.",
+    "visualType": "calculator",
+    "interactiveTitle": "Non-GMO Seed Validation Slider",
+    "parameters": []
+  },
+  {
+    "title": "The Chetna Organic Network",
+    "description": "The user is introduced to the Chetna Organic system. The screen shows how smallholders are profiled, using a digital Internal Control System to verify organic practices.",
+    "visualType": "map",
+    "interactiveTitle": "Chetna Organic plot mapping",
+    "parameters": []
+  },
+  {
+    "title": "The Ginning Milestone",
+    "description": "As the user scrolls, they track seed cotton into the ginning mill. The system shows how automated scales record weights, print unique QR codes, and issue digital farmer payments.",
+    "visualType": "scale",
+    "interactiveTitle": "Ginning scale weight capture",
+    "parameters": []
+  },
+  {
+    "title": "The Verified Bale",
+    "description": "The final section displays an interactive shipping portal where brands can scan any bale's QR code to trace its journey back to the specific farm. 7 Dynamic Interactive Animations",
+    "visualType": "lineage",
+    "interactiveTitle": "Bale QR Code Origin Tracer",
+    "parameters": []
+  }
+],
+  stats: [
+  {
+    "label": "Organic Growers",
+    "value": "8,500+"
+  },
+  {
+    "label": "Cotton Bales Traced",
+    "value": "42,000+"
+  },
+  {
+    "label": "Non-GMO Seed Purity",
+    "value": "99.9% Verified"
+  }
+],
+  imagePath: "/images/crops/cotton_boll.png",
+  diagram: `--- Page 12 ---
+ 
+ +------------------+      (GIS  Mapping)      +------------------+      (QR  Code  Batch)      
++------------------+
+ 
+|
+ 
+Organic
+ 
+Seed
+     
+|
+ 
+-------------------->
+ 
+|
+ 
+Sowing
+ 
+&
+ 
+Growth
+  
+|
+ 
+---------------------->
+ 
+|
+ 
+Ginning
+ 
+Mill
+     
+|
+ 
+|
+ 
+(Non-GMO
+ 
+Ledger)
+ 
+|
+                       
+|
+ 
+(Advisory
+ 
+Alerts)|
+                         
+|
+ 
+(Bale
+ 
+Packaging)
+ 
+|
+ 
++------------------+
+                       
++------------------+
+                         
++------------------+
+ 
+                                                                                                 
+|
+ 
++------------------+
+     
+(API
+ 
+Sync)
+        
++------------------+
+     
+(Bale
+ 
+Number
+ 
+Scan)
+   
+|
+ 
+(Logistics
+ 
+Track)
+ 
+|
+ 
+Fashion
+ 
+Brand
+    
+|
+ 
+<--------------------
+ 
+|
+ 
+Spinning
+ 
+Unit
+    
+|
+ 
+<--------------------------+
+ 
+|
+ 
+(Hanger
+ 
+Label)
+   
+|
+                       
+|
+ 
+(Yarn
+ 
+Processing)|
+ 
++------------------+
+                       
++------------------+
+ 
+ 
+Cotton  Value  Chain  Traceability  Checkpoints  
+ Supply  Chain  Node  
+Monitored  Data  Asset  
+Hardware  /  Platform  Interface  
+Compliance  Standard  
+Sowing  Field  Non-GMO  seed  verification  
+Farmer  Enrollment  Profile  
+ 8  
+NOP  /  NPOP  Organic  Cert  
+ 11  
+Cooperative  Gate  Cotton  weight  &  moisture  grade  
+Smart  digital  scale  integration  
+ 16  
+Chetna  Organic  Internal  Control  
+ 16  
+Ginning  Facility  Bale  weight  &  gin  operator  
+QR/Barcode  Label  Printer  
+ 7  
+Global  Organic  Textile  (GOTS)  
+Spinning  Factory  Bale  intake  serial  codes  
+Handheld  scanner  +  DG  Adapter  
+ 4  
+Brand  origin  verification`
+};
 
-      <section className="py-24 max-w-[1400px] mx-auto px-4 sm:px-8">
-         <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-blue-50 rounded-3xl p-10 border border-blue-100">
-               <div className="w-16 h-16 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center mb-8"><Droplets className="w-8 h-8"/></div>
-               <h3 className="font-bold text-gray-900 text-2xl mb-4">Water Usage Tracking</h3>
-               <p className="text-gray-600">Cotton is notoriously water-intensive. Digitize irrigation data and track water usage efficiency at the farm level to meet sustainability targets.</p>
-            </div>
-            <div className="bg-green-50 rounded-3xl p-10 border border-green-100">
-               <div className="w-16 h-16 bg-green-100 text-green-700 rounded-2xl flex items-center justify-center mb-8"><Leaf className="w-8 h-8"/></div>
-               <h3 className="font-bold text-gray-900 text-2xl mb-4">Organic Verification</h3>
-               <p className="text-gray-600">Track organic seed distribution and monitor pesticide use via digital field surveys to maintain the integrity of organic cotton claims.</p>
-            </div>
-            <div className="bg-red-50 rounded-3xl p-10 border border-red-100">
-               <div className="w-16 h-16 bg-red-100 text-red-700 rounded-2xl flex items-center justify-center mb-8"><ShieldAlert className="w-8 h-8"/></div>
-               <h3 className="font-bold text-gray-900 text-2xl mb-4">Forced Labor Mitigation</h3>
-               <p className="text-gray-600">Comply with global import bans by proving origin. Map the exact gins, spinners, and farms to guarantee an ethical chain of custody.</p>
-            </div>
-         </div>
-      </section>
-
-      <StatsBanner />
-      <IntegrationsGrid />
-      <TestimonialsCarousel />
-      <TrustBadges />
-      <CTASection />
-    </main>
-  );
+export default function CottonSolutionsPage() {
+  return <CropPageLayout data={pageData} />;
 }

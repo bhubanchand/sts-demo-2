@@ -1,70 +1,213 @@
-import { TestimonialsCarousel } from "@/components/ui/testimonials-carousel";
-import { IntegrationsGrid } from "@/components/ui/integrations-grid";
-import { StatsBanner } from "@/components/ui/stats-banner";
-import { AnimatedText } from "@/components/ui/animated-text";
-import { Button } from "@/components/ui/button";
-import { CTASection } from "@/components/ui/cta-section";
-import { TrustBadges } from "@/components/ui/trust-badges";
-import { Coffee, MapPin, HandHeart, ShieldCheck } from "lucide-react";
+import { CropPageLayout, CropData } from "@/components/crop-page-layout";
 
-export default function CoffeeIndustryPage() {
-  return (
-    <main className="min-h-screen bg-white">
-      <section 
-        className="pt-40 pb-32 px-4 sm:px-8 relative z-10"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(11, 61, 46, 0.8), rgba(11, 61, 46, 0.95)), url("https://images.unsplash.com/photo-1524350876685-274059332603?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
-      >
-        <div className="max-w-[1400px] mx-auto text-center">
-          <span className="text-[#53D769] font-bold tracking-widest uppercase mb-4 block">Industries</span>
-          <AnimatedText 
-            el="h1" 
-            text="The Future of Coffee." 
-            className="text-5xl sm:text-7xl font-extrabold mb-8 text-white leading-tight" 
-          />
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10">
-            From the high-altitude farms of Colombia to the roasteries of Europe. Trace every bean, ensure EUDR compliance, and verify living wages for the farmers who make your morning cup possible.
-          </p>
-          <Button size="lg" className="h-14 px-8 text-lg rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white border-none">
-            Explore Coffee Solutions
-          </Button>
-        </div>
-      </section>
+const pageData: CropData = {
+  cropKey: "coffee",
+  title: "The Quality Gap",
+  logline: "Provenance  in  Every  Cup:  Tracking  Coffee  to  the  Micro-Plot.",
+  description: "The screen opens on a high-altitude volcanic coffee estate at sunrise. Soft mountain mist drifts across the green leaves and red coffee cherries.",
+  colors: {
+    primary: "#160C0A",
+    accent: "#C5A059",
+    accentHex: "#C5A059",
+    bgHex: "#160C0A",
+    textHex: "#123524"
+  },
+  scenes: [
+  {
+    "title": "The Quality Gap",
+    "description": "The camera zooms in on a picker's hands selecting ripe cherries. Text describes the challenge of bulk blending, which hides premium micro-lots and keeps smallholder incomes low.",
+    "visualType": "map",
+    "interactiveTitle": "Sourcing Data Gaps Check",
+    "parameters": [
+      {
+        "name": "Consolidated Lots",
+        "value": "34"
+      },
+      {
+        "name": "Avg Farm Size",
+        "value": "1.4 ha"
+      }
+    ]
+  },
+  {
+    "title": "Digital Intake",
+    "description": "The picker places a basket on a digital scale linked via Bluetooth to the DG Remote app, immediately saving the weight, farmer ID, and location.",
+    "visualType": "scale",
+    "interactiveTitle": "Intake Bluetooth Scale",
+    "parameters": []
+  },
+  {
+    "title": "The Washing Mill Ledger",
+    "description": "The screen transitions to a detailed wet-mill tracking interface. Users see parameters like fermentation hours and drying patio temperatures recorded on a secure ledger.",
+    "visualType": "ledger",
+    "interactiveTitle": "Washing Mill Ledger",
+    "parameters": [
+      {
+        "name": "Water pH",
+        "value": "6.8"
+      },
+      {
+        "name": "Fermentation Time",
+        "value": "24 hrs"
+      },
+      {
+        "name": "Moisture %",
+        "value": "11.8%"
+      }
+    ]
+  },
+  {
+    "title": "The Cup Profile",
+    "description": "The final section displays an interactive specialty cupping card, linking sensory scores with the grower's profile and initiating an direct payment. 8 Dynamic Interactive Animations",
+    "visualType": "calculator",
+    "interactiveTitle": "Sensory Cupping Radar Chart",
+    "parameters": []
+  }
+],
+  stats: [
+  {
+    "label": "Growers Sourced",
+    "value": "12,480+"
+  },
+  {
+    "label": "Direct Payouts Made",
+    "value": "$1.4M+"
+  },
+  {
+    "label": "EUDR Compliant Lots",
+    "value": "100% Verified"
+  }
+],
+  imagePath: "/images/crops/coffee_farm.png",
+  diagram: `+------------------+      (Bluetooth  Sync)       +-------------------+      (Batch  QR  Print)      
++------------------+
+ 
+|
+ 
+Bluetooth
+ 
+Scale
+  
+|
+ 
+------------------------>
+ 
+|
+  
+DATAGREEN
+ 
+Mobile
+ 
+|
+ 
+----------------------->
+ 
+|
+  
+Wet
+ 
+Mill
+ 
+Silo
+   
+|
+ 
+|
+ 
+(Raw
+ 
+Weight,
+ 
+kg)
+ 
+|
+                           
+|
+  
+(Farmer
+ 
+Profile)
+ 
+|
+                          
+|
+  
+(Lot
+ 
+Assignment)|
+ 
++------------------+
+                           
++-------------------+
+                          
++------------------+
+ 
+                                                                                                       
+|
+ 
++------------------+
+     
+(Secure
+ 
+API
+ 
+Link)
+     
++-------------------+
+     
+(Purity
+ 
+Scan
+ 
+Log)
+    
+|
+ 
+(Logistics
+ 
+Track)
+ 
+|
+ 
+Global
+ 
+Distributor
+ 
+<------------------------
+ 
+|
+  
+Dry
+ 
+Mill
+ 
+Portal
+  
+|
+ 
+<------------------------+
+ 
+|
+ 
+(Traceback
+ 
+Scan)
+ 
+|
+                           
+|
+  
+(Cupping
+ 
+Grade)
+  
+|
+ 
++------------------+
+                           
++-------------------+`
+};
 
-      <section className="py-24 max-w-[1400px] mx-auto px-4 sm:px-8">
-         <div className="text-center mb-16 max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold text-[#0B3D2E] mb-6">Solving the Coffee Supply Chain</h2>
-            <p className="text-lg text-gray-600">The coffee industry is highly fragmented, relying on millions of smallholder farmers. We bring structure, visibility, and fairness to this complex network.</p>
-         </div>
-         <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-amber-50 rounded-3xl p-10 border border-amber-100">
-               <div className="w-16 h-16 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center mb-8"><MapPin className="w-8 h-8"/></div>
-               <h3 className="font-bold text-gray-900 text-2xl mb-4">EUDR Geolocation</h3>
-               <p className="text-gray-600">Coffee is a heavily regulated commodity under the new EU Deforestation Regulation. We automate the collection of farm polygons and verify deforestation-free status.</p>
-            </div>
-            <div className="bg-[#0B3D2E] text-white rounded-3xl p-10 shadow-xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-[#1F7A53] rounded-full blur-3xl opacity-50"></div>
-               <div className="w-16 h-16 bg-white/10 text-[#53D769] rounded-2xl flex items-center justify-center mb-8 relative z-10"><HandHeart className="w-8 h-8"/></div>
-               <h3 className="font-bold text-2xl mb-4 relative z-10">Living Income Gaps</h3>
-               <p className="text-gray-300 relative z-10">Calculate exact living income benchmarks and facilitate direct digital premium payments to coffee farmers to ensure ethical sourcing.</p>
-            </div>
-            <div className="bg-emerald-50 rounded-3xl p-10 border border-emerald-100">
-               <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mb-8"><ShieldCheck className="w-8 h-8"/></div>
-               <h3 className="font-bold text-gray-900 text-2xl mb-4">Certification Sync</h3>
-               <p className="text-gray-600">Manage Fairtrade, Rainforest Alliance, and Organic certifications simultaneously through our unified digital audit platform.</p>
-            </div>
-         </div>
-      </section>
-
-      <StatsBanner />
-      <IntegrationsGrid />
-      <TestimonialsCarousel />
-      <TrustBadges />
-      <CTASection />
-    </main>
-  );
+export default function CoffeeSolutionsPage() {
+  return <CropPageLayout data={pageData} />;
 }
