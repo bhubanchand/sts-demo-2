@@ -4,7 +4,7 @@ import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
 import { CTASection } from "@/components/ui/cta-section";
 import { TrustBadges } from "@/components/ui/trust-badges";
-import { ShieldCheck, MapPin, ScanFace, Globe, ArrowRight, Activity, Leaf, MousePointerClick } from "lucide-react";
+import { ShieldCheck, MapPin, ScanFace, Globe, ArrowRight, Activity, Leaf, MousePointerClick, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
@@ -53,50 +53,159 @@ const CHALLENGE_IMAGES = {
   climate: "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
 };
 
+const HERO_SLIDES = [
+  {
+    heading: "Digital Agriculture for Smarter Farming",
+    subheading: "Empower farmers, field teams, and agribusinesses with real-time visibility across crop production, field operations, and farmer engagement.",
+    cta: "Explore Digital Agriculture",
+    link: "/solutions/digital-agriculture"
+  },
+  {
+    heading: "Complete Farm-to-Market Traceability",
+    subheading: "Track every step of the agricultural journey with transparent, verifiable data that builds trust, supports compliance, and strengthens supply chains.",
+    cta: "Explore Traceability",
+    link: "/solutions/supply-chain-traceability"
+  },
+  {
+    heading: "Driving Sustainable Agriculture at Scale",
+    subheading: "Measure environmental impact, support regenerative practices, and achieve sustainability goals through data-driven agricultural intelligence.",
+    cta: "Explore Sustainability",
+    link: "/solutions/sustainable-sourcing"
+  },
+  {
+    heading: "Stronger Connections with Every Farmer",
+    subheading: "Digitize farmer onboarding, communication, training, and support programs while improving productivity and field-level outcomes.",
+    cta: "Explore Farmer Engagement",
+    link: "/solutions/farmer-livelihoods"
+  },
+  {
+    heading: "Resilient Agricultural Supply Chains",
+    subheading: "Monitor sourcing activities, procurement operations, and production risks with actionable insights across the value chain.",
+    cta: "Explore Supply Chain Solutions",
+    link: "/solutions/responsible-sourcing"
+  },
+  {
+    heading: "Turn Agricultural Data into Decisions",
+    subheading: "Leverage analytics, field intelligence, and AI-powered insights to improve productivity, manage risks, and optimize agricultural operations.",
+    cta: "Explore Analytics",
+    link: "/solutions/impact-measurement"
+  }
+];
+
 export default function Home() {
   const [activeChallengeBlock, setActiveChallengeBlock] = useState("regulatory");
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [userInteracted, setUserInteracted] = useState(false);
+
+  useEffect(() => {
+    if (userInteracted) return;
+    const interval = setInterval(() => {
+      setActiveSlideIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [userInteracted]);
+
+  const handlePrevSlide = () => {
+    setUserInteracted(true);
+    setActiveSlideIndex((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  };
+
+  const handleNextSlide = () => {
+    setUserInteracted(true);
+    setActiveSlideIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+  };
+
+  const handleDotClick = (index: number) => {
+    setUserInteracted(true);
+    setActiveSlideIndex(index);
+  };
   
   return (
     <main className="min-h-screen bg-white selection:bg-[#53D769] selection:text-[#0B3D2E]">
       {/* 1. Hero Section - Massive Impact */}
-      <section className="relative min-h-[90vh] flex flex-col justify-center pt-32 pb-32 px-4 sm:px-8 overflow-hidden bg-[#0B3D2E] snap-start">
-        <div className="absolute top-0 right-0 w-[800px] h-full bg-[#1F7A53] blur-[120px] rounded-full opacity-30 mix-blend-screen pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#53D769] blur-[150px] rounded-full opacity-20 pointer-events-none"></div>
-        <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'radial-gradient(circle at center, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+      <section className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-[#0B3D2E] snap-start">
+        {/* Continuous looping background video */}
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
+          src="/assets/hero-background.mp4"
+        />
         
-        <div className="max-w-[1400px] mx-auto text-center relative z-10 w-full mt-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white text-sm font-medium mb-8 backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-[#53D769] animate-pulse"></span>
-            EUDR Compliance Deadlines Approaching. Are you ready?
-          </div>
-          
-          <AnimatedText 
-            el="h1" 
-            text="The Operating System for" 
-            className="text-5xl sm:text-7xl lg:text-8xl font-black text-white leading-tight tracking-tighter" 
-          />
-          <AnimatedText 
-            el="h1" 
-            text="Global Agriculture." 
-            className="text-5xl sm:text-7xl lg:text-8xl font-black text-[#53D769] leading-tight mb-8 tracking-tighter" 
-          />
-          
-          <p className="text-xl sm:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-12 font-light">
-            Digitize the first mile of your supply chain. Ensure regulatory compliance, verify sustainability claims, and improve farmer livelihoods through unshakeable, node-level traceability.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Link href="/request-demo">
-               <Button size="lg" className="h-16 px-10 text-xl rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white border-none font-bold shadow-[0_0_40px_rgba(83,215,105,0.4)] hover:shadow-[0_0_60px_rgba(83,215,105,0.6)] transition-all transform hover:-translate-y-1">
-                 Request a Demo
-               </Button>
-            </Link>
-            <Link href="/platform">
-               <Button size="lg" variant="outline" className="h-16 px-10 text-xl rounded-full border-white/20 text-white hover:bg-white/10 font-bold flex items-center gap-2 transition-all hover:gap-4">
-                 Explore Platform <ArrowRight className="w-5 h-5" />
-               </Button>
-            </Link>
-          </div>
+        {/* Dark overlay for readability */}
+        <div className="absolute inset-0 bg-black/60 z-10 pointer-events-none"></div>
+        
+        {/* Left and Right navigation arrows */}
+        <button
+          onClick={handlePrevSlide}
+          className="absolute left-4 md:left-8 top-[46%] -translate-y-1/2 z-30 w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
+        </button>
+        
+        <button
+          onClick={handleNextSlide}
+          className="absolute right-4 md:right-8 top-[46%] -translate-y-1/2 z-30 w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
+        </button>
+
+        {/* Pagination Dots */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
+          {HERO_SLIDES.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handleDotClick(index)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                activeSlideIndex === index
+                  ? "w-8 bg-[#53D769]"
+                  : "w-2 bg-white/30 hover:bg-white/50"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Slide Content with AnimatePresence for smooth cross-fades */}
+        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center justify-center text-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeSlideIndex}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className="flex flex-col items-center justify-center max-w-4xl"
+            >
+
+              
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tighter mb-6">
+                {HERO_SLIDES[activeSlideIndex].heading}
+              </h1>
+              
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-200/90 max-w-3xl mx-auto leading-relaxed mb-10 font-light">
+                {HERO_SLIDES[activeSlideIndex].subheading}
+              </p>
+              
+              <div className="flex justify-center">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Link 
+                    href={HERO_SLIDES[activeSlideIndex].link}
+                    className="inline-flex items-center justify-center h-16 px-10 text-xl rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white hover:text-[#0B3D2E] border-none font-bold shadow-[0_0_40px_rgba(83,215,105,0.4)] hover:shadow-[0_0_60px_rgba(83,215,105,0.6)] transition-all transform hover:-translate-y-1 cursor-pointer"
+                  >
+                    {HERO_SLIDES[activeSlideIndex].cta}
+                  </Link>
+                </motion.div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </section>
 

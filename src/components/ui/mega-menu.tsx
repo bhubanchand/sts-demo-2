@@ -67,6 +67,19 @@ const COMPLIANCE_LINKS = [
   { name: "Sustainability Reporting", href: "/compliance/sustainability-reporting" },
 ];
 
+const RESOURCES_LINKS = [
+  { name: "Blog", href: "/resources/blog", icon: BookOpen, desc: "Insights on AI and agriculture trends, innovation, and technology." },
+  { name: "Case Studies", href: "/case-studies", icon: Briefcase, desc: "Success stories of AI transforming global agriculture with SourceTrace." },
+  { name: "White Papers", href: "/resources/whitepapers", icon: FileText, desc: "Research on AI-driven agriculture & sustainable food system solutions." },
+  { name: "Newsroom", href: "/resources/newsroom", icon: Activity, desc: "Latest news and updates on SourceTrace's agri-tech innovations." },
+];
+
+const COMPANY_LINKS = [
+  { name: "About SourceTrace", href: "/about", icon: Target, desc: "AI-driven platform transforming agriculture with data, insights, and sustainability." },
+  { name: "Careers", href: "/careers", icon: GraduationCap, desc: "Explore opportunities to drive digital farming and sustainable agriculture solutions." },
+  { name: "Connect With Us", href: "/contact", icon: Users, desc: "Connect with SourceTrace to explore global partnerships, support, and inquiries." },
+];
+
 export function MegaMenu() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   let timeoutId: NodeJS.Timeout;
@@ -86,8 +99,10 @@ export function MegaMenu() {
     { id: "platform", label: "Platform", items: PLATFORM_LINKS, promo: { title: "Traceability Cloud", desc: "See the unified platform in action.", image: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/platform" } },
     { id: "intelligence", label: "Intelligence", items: INTELLIGENCE_LINKS, promo: { title: "AI Deforestation Models", desc: "How we predict forest loss.", image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/intelligence/ai-engine" } },
     { id: "solutions", label: "Solutions", items: SOLUTIONS_LINKS, promo: { title: "EUDR Deadline 2025", desc: "Is your supply chain ready?", image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/solutions/eudr-compliance" } },
-    { id: "industries", label: "Industries", items: INDUSTRIES_LINKS, promo: { title: "Coffee & Cocoa", desc: "Mapping the world's most complex supply chains.", image: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/industries/coffee" } },
+    { id: "industries", label: "Crop Insights", items: INDUSTRIES_LINKS, promo: { title: "Coffee & Cocoa", desc: "Mapping the world's most complex supply chains.", image: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/industries/coffee" } },
     { id: "compliance", label: "Compliance", items: COMPLIANCE_LINKS, promo: { title: "State of Compliance Report", desc: "Download the 2026 guidelines.", image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/resources/reports" } },
+    { id: "resources", label: "Resources", items: RESOURCES_LINKS, promo: { title: "Latest Insights", desc: "Read our newest case studies.", image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/resources/blog" } },
+    { id: "company", label: "Company", items: COMPANY_LINKS, promo: { title: "Join Our Team", desc: "Help us transform agriculture.", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/careers" } },
   ];
 
   return (
@@ -160,7 +175,7 @@ export function MegaMenu() {
                                <div className="font-semibold text-gray-900 group-hover:text-[#1F7A53] transition-colors">
                                  {link.name}
                                </div>
-                               <p className="text-sm text-gray-500 mt-1 line-clamp-1">Explore {link.name.toLowerCase()} solutions</p>
+                               <p className="text-sm text-gray-500 mt-1 line-clamp-2">{link.desc || `Explore ${link.name.toLowerCase()} solutions`}</p>
                              </div>
                            </Link>
                          ))}
