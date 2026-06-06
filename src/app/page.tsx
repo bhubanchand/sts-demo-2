@@ -36,7 +36,7 @@ function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, setA
   }, [isInView, id, setActiveBlock]);
 
   return (
-    <div ref={ref} className={`bg-white rounded-[40px] p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 border border-gray-100 relative overflow-hidden group ${isInView ? 'scale-105 shadow-[0_20px_40px_rgb(0,0,0,0.1)]' : 'opacity-60 scale-95'}`}>
+    <div ref={ref} className={`bg-white rounded-[40px] p-6 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 border border-gray-100 relative overflow-hidden group ${isInView ? 'scale-105 shadow-[0_20px_40px_rgb(0,0,0,0.1)]' : 'opacity-60 scale-95'}`}>
       <div className={`w-16 h-16 ${bgClass} ${colorClass} rounded-2xl flex items-center justify-center mb-8 relative z-10`}>
          <Icon className="w-8 h-8"/>
       </div>
@@ -218,7 +218,7 @@ export default function Home() {
 
       {/* 3. The Global Challenge (Dynamic Scroll-Linked Image) */}
       <section className="py-40 bg-white relative">
-         <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
+         <div className="max-w-[1400px] mx-auto px-6 sm:px-8">
             <div className="flex flex-col lg:flex-row gap-20">
                {/* Scrollable Text Blocks */}
                <div className="lg:w-1/2 flex flex-col gap-32 relative z-10 py-32">
@@ -305,7 +305,7 @@ export default function Home() {
 
       {/* 5. The Solution: Massive Interactive 3D Bento Box */}
       <section className="min-h-screen flex flex-col justify-center py-32 bg-gray-50 border-t border-gray-100 snap-center">
-         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 w-full">
+         <div className="max-w-[1400px] mx-auto px-6 sm:px-8 w-full">
             <div className="text-center max-w-4xl mx-auto mb-20">
                <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">The Platform</span>
                <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">One platform. End-to-end visibility.</h2>
@@ -372,7 +372,7 @@ export default function Home() {
 
       {/* 6. Global Presence - Genuine Interactive Map */}
       <section className="min-h-screen flex flex-col justify-center py-32 bg-white overflow-hidden border-t border-gray-100 snap-center">
-         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 text-center w-full">
+         <div className="max-w-[1400px] mx-auto px-6 sm:px-8 text-center w-full">
             <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Global Impact</span>
             <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Powering supply chains worldwide</h2>
             

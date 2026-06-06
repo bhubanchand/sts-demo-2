@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Settings, Database, Server, Smartphone, BookOpen, Video, FileText, Briefcase, GraduationCap, ArrowRight } from "lucide-react";
+import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Settings, Database, Server, Smartphone, BookOpen, Video, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X } from "lucide-react";
 import { Button } from "./button";
 
 const PLATFORM_LINKS = [
@@ -82,7 +82,20 @@ const COMPANY_LINKS = [
 
 export function MegaMenu() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   let timeoutId: NodeJS.Timeout;
+
+  useEffect(() => {
+    if (isMobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileOpen]);
 
   const handleMouseEnter = (menu: string) => {
     clearTimeout(timeoutId);
@@ -107,10 +120,10 @@ export function MegaMenu() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100 shadow-sm" onMouseLeave={handleMouseLeave}>
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
+      <div className="max-w-[1400px] mx-auto px-6 sm:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2" onClick={() => setActiveMenu(null)}>
+            <Link href="/" className="flex items-center gap-2" onClick={() => { setActiveMenu(null); setIsMobileOpen(false); }}>
               <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-10 object-contain" />
             </Link>
           </div>
@@ -135,6 +148,17 @@ export function MegaMenu() {
             <Link href="/request-demo">
               <Button size="sm" className="h-10 px-6 rounded-full font-semibold bg-[#0B3D2E] text-white hover:bg-[#1F7A53]">Request Demo</Button>
             </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="flex lg:hidden items-center">
+            <button
+              onClick={() => setIsMobileOpen(!isMobileOpen)}
+              className="p-2 rounded-full text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
+              aria-label="Toggle menu"
+            >
+              {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
       </div>
@@ -201,6 +225,87 @@ export function MegaMenu() {
                   </React.Fragment>
                 )
               ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Drawer */}
+      <AnimatePresence>
+        {isMobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="fixed top-20 left-0 right-0 bottom-0 bg-white z-40 overflow-y-auto px-6 py-8 lg:hidden flex flex-col justify-between border-t border-gray-100"
+          >
+            <div className="flex flex-col gap-4">
+              {menuItems.map((item) => {
+                const isExpanded = expandedCategory === item.id;
+                return (
+                  <div key={item.id} className="border-b border-gray-100 pb-4">
+                    <button
+                      onClick={() => setExpandedCategory(isExpanded ? null : item.id)}
+                      className="w-full flex items-center justify-between py-2 text-lg font-semibold text-gray-900 focus:outline-none cursor-pointer"
+                    >
+                      <span>{item.label}</span>
+                      <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${isExpanded ? "rotate-180 text-[#1F7A53]" : ""}`} />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden mt-3 pl-2"
+                        >
+                          <div className="grid grid-cols-1 gap-3">
+                            {item.items.map((link: any, index: number) => (
+                              <Link
+                                key={index}
+                                href={link.href}
+                                onClick={() => setIsMobileOpen(false)}
+                                className="group flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors"
+                              >
+                                {link.icon ? (
+                                  <div className="w-8 h-8 rounded-lg bg-[#53D769]/10 flex items-center justify-center flex-shrink-0">
+                                    <link.icon className="w-4 h-4 text-[#1F7A53]" />
+                                  </div>
+                                ) : (
+                                  <div className="w-1.5 h-1.5 rounded-full bg-[#1F7A53] ml-3 mr-1" />
+                                )}
+                                <div>
+                                  <div className="text-sm font-semibold text-gray-800 group-hover:text-[#1F7A53] transition-colors">
+                                    {link.name}
+                                  </div>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col gap-4">
+              <Link
+                href="/contact-sales"
+                onClick={() => setIsMobileOpen(false)}
+                className="w-full py-3.5 text-center text-gray-700 hover:text-[#0B3D2E] font-medium border border-gray-200 rounded-full transition-colors"
+              >
+                Contact Sales
+              </Link>
+              <Link href="/request-demo" onClick={() => setIsMobileOpen(false)}>
+                <button className="w-full py-4 text-center font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-full transition-colors shadow-lg cursor-pointer">
+                  Request Demo
+                </button>
+              </Link>
             </div>
           </motion.div>
         )}

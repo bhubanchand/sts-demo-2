@@ -20,7 +20,7 @@ export function Footer() {
 
 
 
-      <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-8 pt-32 pb-12">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-8 pt-32 pb-12">
         
         {/* Top Hero-ish Section */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-32">
