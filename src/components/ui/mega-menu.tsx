@@ -171,6 +171,7 @@ export function MegaMenu() {
   ];
 
   return (
+    <>
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100 shadow-sm" onMouseLeave={handleMouseLeave}>
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8">
         <div className="flex items-center justify-between h-20">
@@ -282,20 +283,26 @@ export function MegaMenu() {
           </motion.div>
         )}
       </AnimatePresence>
+    </nav>
 
-      {/* ═══════════════════════════════════════════════════════════
-          MOBILE FULL-SCREEN NAVIGATION
-          Enterprise-grade multi-level sliding overlay
-         ═══════════════════════════════════════════════════════════ */}
-      <AnimatePresence>
-        {isMobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 flex flex-col lg:hidden"
-            style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F8FAF9 100%)" }}
+    {/* ═══════════════════════════════════════════════════════════
+        MOBILE FULL-SCREEN NAVIGATION
+        Rendered OUTSIDE the <nav> to escape its stacking context.
+        z-[9999] guarantees it sits above ALL page content.
+       ═══════════════════════════════════════════════════════════ */}
+    <AnimatePresence>
+      {isMobileOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 flex flex-col lg:hidden"
+          style={{
+            zIndex: 9999,
+            background: "linear-gradient(180deg, #FFFFFF 0%, #F8FAF9 100%)",
+            isolation: "isolate",
+          }}
           >
             {/* ─── Fixed Header ─── */}
             <div className="h-[72px] flex items-center justify-between px-5 border-b border-gray-100/80 flex-shrink-0 bg-white/90 backdrop-blur-md">
@@ -502,6 +509,6 @@ export function MegaMenu() {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   );
 }
