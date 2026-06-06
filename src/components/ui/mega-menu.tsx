@@ -140,7 +140,9 @@ export function MegaMenu() {
                   <React.Fragment key={menu.id}>
                     {/* Left: Links Grid */}
                     <div className="flex-1">
-                       <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-8">{menu.label} Overview</h3>
+                       <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-8">
+                         {menu.id === 'industries' ? 'Crop Insights' : `${menu.label} Overview`}
+                       </h3>
                        <div className={`grid gap-x-8 gap-y-6 ${(menu.items[0] as any)?.icon ? 'grid-cols-2' : 'grid-cols-3'}`}>
                          {menu.items.map((link: any, index: number) => (
                            <Link
