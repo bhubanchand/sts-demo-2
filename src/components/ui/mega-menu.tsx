@@ -89,6 +89,7 @@ export function MegaMenu() {
   useEffect(() => {
     if (isMobileOpen) {
       document.body.style.overflow = "hidden";
+      setActiveMenu(null);
     } else {
       document.body.style.overflow = "";
     }
@@ -170,7 +171,7 @@ export function MegaMenu() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-0 right-0 bg-white border-b border-gray-100 shadow-2xl overflow-hidden"
+            className="absolute top-full left-0 right-0 bg-white border-b border-gray-100 shadow-2xl overflow-hidden hidden lg:block"
             onMouseEnter={() => handleMouseEnter(activeMenu)}
           >
             <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-10 flex gap-12">
@@ -238,7 +239,7 @@ export function MegaMenu() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed top-20 left-0 right-0 bottom-0 bg-white z-40 overflow-y-auto px-6 py-8 lg:hidden flex flex-col justify-between border-t border-gray-100"
+            className="fixed top-20 left-0 right-0 bottom-0 bg-white z-40 overflow-y-auto px-6 pt-6 pb-24 lg:hidden flex flex-col border-t border-gray-100"
           >
             <div className="flex flex-col gap-4">
               {menuItems.map((item) => {
@@ -293,7 +294,7 @@ export function MegaMenu() {
               })}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col gap-4">
+            <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col gap-4">
               <Link
                 href="/contact-sales"
                 onClick={() => setIsMobileOpen(false)}
