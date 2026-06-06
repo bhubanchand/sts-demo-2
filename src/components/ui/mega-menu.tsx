@@ -1,85 +1,87 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Settings, Database, Server, Smartphone, BookOpen, Video, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight } from "lucide-react";
+import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight, Zap, BarChart3, Globe, Lock, Sprout } from "lucide-react";
 import { Button } from "./button";
 
+/* ─── Slide variants with spring-like ease ─── */
 const slideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? "100%" : "-100%",
-    opacity: 0
+    opacity: 0,
   }),
   center: {
     x: 0,
-    opacity: 1
+    opacity: 1,
   },
   exit: (direction: number) => ({
-    x: direction < 0 ? "-100%" : "100%",
-    opacity: 0
-  })
+    x: direction < 0 ? "100%" : "-100%",
+    opacity: 0,
+  }),
 };
 
+/* ─── Navigation Data ─── */
 const PLATFORM_LINKS = [
-  { name: "Traceability", href: "/platform/traceability", icon: Map },
-  { name: "Farmer Engagement", href: "/platform/farmer-engagement", icon: Users },
-  { name: "Sustainability Intelligence", href: "/platform/sustainability-intelligence", icon: Leaf },
-  { name: "Supply Chain Visibility", href: "/platform/supply-chain-visibility", icon: Target },
-  { name: "ESG Compliance", href: "/platform/esg-compliance", icon: Shield },
-  { name: "Field Data Collection", href: "/platform/field-data-collection", icon: Database },
-  { name: "Risk Monitoring", href: "/platform/risk-monitoring", icon: Activity },
-  { name: "Reporting & Analytics", href: "/platform/reporting-analytics", icon: FileText },
-  { name: "Integrations", href: "/platform/integrations", icon: Server },
-  { name: "Mobile App", href: "/platform/mobile-app", icon: Smartphone },
+  { name: "Traceability", href: "/platform/traceability", icon: Map, desc: "End-to-end supply chain traceability from farm to fork." },
+  { name: "Farmer Engagement", href: "/platform/farmer-engagement", icon: Users, desc: "Digital tools connecting with smallholder farmers worldwide." },
+  { name: "Sustainability Intelligence", href: "/platform/sustainability-intelligence", icon: Leaf, desc: "AI-powered insights for sustainable agriculture practices." },
+  { name: "Supply Chain Visibility", href: "/platform/supply-chain-visibility", icon: Target, desc: "Real-time visibility across complex supply networks." },
+  { name: "ESG Compliance", href: "/platform/esg-compliance", icon: Shield, desc: "Automated ESG compliance monitoring and reporting." },
+  { name: "Field Data Collection", href: "/platform/field-data-collection", icon: Database, desc: "Mobile-first data capture from the field." },
+  { name: "Risk Monitoring", href: "/platform/risk-monitoring", icon: Activity, desc: "Proactive supply chain risk detection and alerts." },
+  { name: "Reporting & Analytics", href: "/platform/reporting-analytics", icon: FileText, desc: "Customizable dashboards and compliance reports." },
+  { name: "Integrations", href: "/platform/integrations", icon: Server, desc: "Connect with ERPs, CRMs, and existing systems." },
+  { name: "Mobile App", href: "/platform/mobile-app", icon: Smartphone, desc: "Field operations accessible from any device." },
 ];
 
 const INTELLIGENCE_LINKS = [
-  { name: "AI Engine", href: "/intelligence/ai-engine" },
-  { name: "Predictive Insights", href: "/intelligence/predictive-insights" },
-  { name: "Geospatial Intelligence", href: "/intelligence/geospatial-intelligence" },
-  { name: "Climate Risk", href: "/intelligence/climate-risk" },
-  { name: "Deforestation Monitoring", href: "/intelligence/deforestation-monitoring" },
-  { name: "Carbon Monitoring", href: "/intelligence/carbon-monitoring" },
-  { name: "Regenerative Agriculture", href: "/intelligence/regenerative-agriculture" },
-  { name: "Traceability Graph", href: "/intelligence/traceability-graph" },
+  { name: "AI Engine", href: "/intelligence/ai-engine", desc: "Core machine learning models powering our predictions." },
+  { name: "Predictive Insights", href: "/intelligence/predictive-insights", desc: "Forecast yields, risks, and market trends." },
+  { name: "Geospatial Intelligence", href: "/intelligence/geospatial-intelligence", desc: "Satellite imagery analysis for farm monitoring." },
+  { name: "Climate Risk", href: "/intelligence/climate-risk", desc: "Assess climate vulnerability across sourcing regions." },
+  { name: "Deforestation Monitoring", href: "/intelligence/deforestation-monitoring", desc: "Real-time forest change detection with AI." },
+  { name: "Carbon Monitoring", href: "/intelligence/carbon-monitoring", desc: "Track and verify carbon sequestration at farm level." },
+  { name: "Regenerative Agriculture", href: "/intelligence/regenerative-agriculture", desc: "Measure impact of regenerative farming practices." },
+  { name: "Traceability Graph", href: "/intelligence/traceability-graph", desc: "Knowledge graph linking every node in the chain." },
 ];
 
 const SOLUTIONS_LINKS = [
-  { name: "Sustainable Sourcing", href: "/solutions/sustainable-sourcing" },
-  { name: "EUDR Compliance", href: "/solutions/eudr-compliance" },
-  { name: "ESG Reporting", href: "/solutions/esg-reporting" },
-  { name: "Supply Chain Traceability", href: "/solutions/supply-chain-traceability" },
-  { name: "Farmer Livelihoods", href: "/solutions/farmer-livelihoods" },
-  { name: "Smallholder Management", href: "/solutions/smallholder-management" },
-  { name: "Responsible Sourcing", href: "/solutions/responsible-sourcing" },
-  { name: "Impact Measurement", href: "/solutions/impact-measurement" },
-  { name: "Certification Management", href: "/solutions/certification-management" },
+  { name: "Sustainable Sourcing", href: "/solutions/sustainable-sourcing", desc: "Source responsibly with full origin transparency." },
+  { name: "EUDR Compliance", href: "/solutions/eudr-compliance", desc: "Meet EU Deforestation Regulation requirements." },
+  { name: "ESG Reporting", href: "/solutions/esg-reporting", desc: "Generate audit-ready ESG reports effortlessly." },
+  { name: "Supply Chain Traceability", href: "/solutions/supply-chain-traceability", desc: "Track products from origin to destination." },
+  { name: "Farmer Livelihoods", href: "/solutions/farmer-livelihoods", desc: "Improve farmer income and living standards." },
+  { name: "Smallholder Management", href: "/solutions/smallholder-management", desc: "Manage and support smallholder farmer networks." },
+  { name: "Responsible Sourcing", href: "/solutions/responsible-sourcing", desc: "Ethical procurement with verified provenance." },
+  { name: "Impact Measurement", href: "/solutions/impact-measurement", desc: "Quantify social and environmental outcomes." },
+  { name: "Certification Management", href: "/solutions/certification-management", desc: "Streamline certification workflows and audits." },
 ];
 
 const INDUSTRIES_LINKS = [
-  { name: "Coffee", href: "/industries/coffee" },
-  { name: "Cocoa", href: "/industries/cocoa" },
-  { name: "Cotton", href: "/industries/cotton" },
-  { name: "Rice", href: "/industries/rice" },
-  { name: "Tea", href: "/industries/tea" },
-  { name: "Spices", href: "/industries/spices" },
-  { name: "Palm Oil", href: "/industries/palm-oil" },
-  { name: "Rubber", href: "/industries/rubber" },
-  { name: "Sugarcane", href: "/industries/sugarcane" },
-  { name: "Fruits & Vegetables", href: "/industries/fruits-vegetables" },
-  { name: "Grains", href: "/industries/grains" },
-  { name: "Seed Production", href: "/industries/seed-production" },
+  { name: "Coffee", href: "/industries/coffee", desc: "Trace every bean from farm to cup." },
+  { name: "Cocoa", href: "/industries/cocoa", desc: "Ensure ethical sourcing of cocoa supply chains." },
+  { name: "Cotton", href: "/industries/cotton", desc: "Sustainable cotton sourcing and tracking." },
+  { name: "Rice", href: "/industries/rice", desc: "Monitor rice cultivation with precision." },
+  { name: "Tea", href: "/industries/tea", desc: "Full visibility across tea supply networks." },
+  { name: "Spices", href: "/industries/spices", desc: "Authentic spice sourcing with traceability." },
+  { name: "Palm Oil", href: "/industries/palm-oil", desc: "Deforestation-free palm oil supply chains." },
+  { name: "Rubber", href: "/industries/rubber", desc: "Sustainable rubber procurement solutions." },
+  { name: "Sugarcane", href: "/industries/sugarcane", desc: "Monitor sugarcane from field to refinery." },
+  { name: "Fruits & Vegetables", href: "/industries/fruits-vegetables", desc: "Fresh produce traceability and quality." },
+  { name: "Grains", href: "/industries/grains", desc: "Grain sourcing with sustainability insights." },
+  { name: "Seed Production", href: "/industries/seed-production", desc: "Seed-to-harvest production management." },
 ];
 
 const COMPLIANCE_LINKS = [
-  { name: "EUDR", href: "/compliance/eudr" },
-  { name: "CSRD", href: "/compliance/csrd" },
-  { name: "ESRS", href: "/compliance/esrs" },
-  { name: "CBAM", href: "/compliance/cbam" },
-  { name: "Forest Risk", href: "/compliance/forest-risk" },
-  { name: "Scope 3 Emissions", href: "/compliance/scope-3-emissions" },
-  { name: "Sustainability Reporting", href: "/compliance/sustainability-reporting" },
+  { name: "EUDR", href: "/compliance/eudr", desc: "EU Deforestation Regulation readiness." },
+  { name: "CSRD", href: "/compliance/csrd", desc: "Corporate Sustainability Reporting Directive." },
+  { name: "ESRS", href: "/compliance/esrs", desc: "European Sustainability Reporting Standards." },
+  { name: "CBAM", href: "/compliance/cbam", desc: "Carbon Border Adjustment Mechanism compliance." },
+  { name: "Forest Risk", href: "/compliance/forest-risk", desc: "Forest risk commodity due diligence." },
+  { name: "Scope 3 Emissions", href: "/compliance/scope-3-emissions", desc: "Value chain emissions tracking and reporting." },
+  { name: "Sustainability Reporting", href: "/compliance/sustainability-reporting", desc: "Comprehensive sustainability disclosure." },
 ];
 
 const RESOURCES_LINKS = [
@@ -94,6 +96,17 @@ const COMPANY_LINKS = [
   { name: "Careers", href: "/careers", icon: GraduationCap, desc: "Explore opportunities to drive digital farming and sustainable agriculture solutions." },
   { name: "Connect With Us", href: "/contact", icon: Users, desc: "Connect with SourceTrace to explore global partnerships, support, and inquiries." },
 ];
+
+/* ─── Mobile category icons and accent colors ─── */
+const MOBILE_CATEGORY_META: Record<string, { icon: React.ComponentType<any>; color: string; gradient: string }> = {
+  platform:    { icon: Server,    color: "#1F7A53", gradient: "from-emerald-500/10 to-teal-500/10" },
+  intelligence:{ icon: Zap,       color: "#6366F1", gradient: "from-indigo-500/10 to-violet-500/10" },
+  solutions:   { icon: Target,    color: "#0891B2", gradient: "from-cyan-500/10 to-sky-500/10" },
+  industries:  { icon: Sprout,    color: "#059669", gradient: "from-green-500/10 to-emerald-500/10" },
+  compliance:  { icon: Lock,      color: "#DC2626", gradient: "from-red-500/10 to-rose-500/10" },
+  resources:   { icon: BookOpen,  color: "#D97706", gradient: "from-amber-500/10 to-yellow-500/10" },
+  company:     { icon: Globe,     color: "#7C3AED", gradient: "from-violet-500/10 to-purple-500/10" },
+};
 
 export function MegaMenu() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -129,19 +142,23 @@ export function MegaMenu() {
     }, 200);
   };
 
-  const goToSubmenu = (categoryId: string) => {
+  const goToSubmenu = useCallback((categoryId: string) => {
     setDirection(1);
     setActiveCategory(categoryId);
     setCurrentLevel("submenu");
-  };
+  }, []);
 
-  const goToRoot = () => {
+  const goToRoot = useCallback(() => {
     setDirection(-1);
     setCurrentLevel("root");
     setTimeout(() => {
       setActiveCategory(null);
-    }, 150);
-  };
+    }, 200);
+  }, []);
+
+  const closeMobile = useCallback(() => {
+    setIsMobileOpen(false);
+  }, []);
 
   const menuItems = [
     { id: "platform", label: "Platform", items: PLATFORM_LINKS, promo: { title: "Traceability Cloud", desc: "See the unified platform in action.", image: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", link: "/platform" } },
@@ -198,6 +215,7 @@ export function MegaMenu() {
         </div>
       </div>
 
+      {/* ─── Desktop Dropdown ─── */}
       <AnimatePresence>
         {activeMenu && (
           <motion.div
@@ -265,151 +283,216 @@ export function MegaMenu() {
         )}
       </AnimatePresence>
 
-      {/* Mobile Drawer */}
+      {/* ═══════════════════════════════════════════════════════════
+          MOBILE FULL-SCREEN NAVIGATION
+          Enterprise-grade multi-level sliding overlay
+         ═══════════════════════════════════════════════════════════ */}
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 bg-white z-50 flex flex-col lg:hidden"
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex flex-col lg:hidden"
+            style={{ background: "linear-gradient(180deg, #FFFFFF 0%, #F8FAF9 100%)" }}
           >
-            {/* Header bar */}
-            <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100 flex-shrink-0">
-              <Link href="/" className="flex items-center gap-2" onClick={() => setIsMobileOpen(false)}>
-                <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-10 object-contain" />
+            {/* ─── Fixed Header ─── */}
+            <div className="h-[72px] flex items-center justify-between px-5 border-b border-gray-100/80 flex-shrink-0 bg-white/90 backdrop-blur-md">
+              <Link href="/" className="flex items-center gap-2" onClick={closeMobile}>
+                <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-9 object-contain" />
               </Link>
               <button
-                onClick={() => setIsMobileOpen(false)}
-                className="p-2 rounded-full text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
+                onClick={closeMobile}
+                className="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:text-[#0B3D2E] hover:bg-gray-100 transition-all focus:outline-none cursor-pointer active:scale-95"
                 aria-label="Close menu"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Immersive sliding panel viewport */}
-            <div className="flex-1 relative overflow-hidden bg-gray-50/30">
+            {/* ─── Sliding Panel Viewport ─── */}
+            <div className="flex-1 relative overflow-hidden">
               <AnimatePresence initial={false} custom={direction} mode="wait">
+
+                {/* ════════ LEVEL 1: Root Categories ════════ */}
                 {currentLevel === "root" ? (
                   <motion.div
-                    key="root-menu"
+                    key="mobile-root"
                     custom={direction}
                     variants={slideVariants}
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="absolute inset-0 px-6 py-8 flex flex-col justify-between overflow-y-auto"
+                    transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+                    className="absolute inset-0 flex flex-col"
                   >
-                    <div className="flex flex-col gap-2">
-                      {menuItems.map((item) => (
-                        <button
-                          key={item.id}
-                          onClick={() => goToSubmenu(item.id)}
-                          className="w-full flex items-center justify-between py-4 px-3 text-lg font-bold text-gray-800 border-b border-gray-100 hover:text-[#1F7A53] hover:bg-white hover:shadow-sm rounded-xl transition-all cursor-pointer group text-left"
-                        >
-                          <span className="tracking-wide">{item.label}</span>
-                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#1F7A53] group-hover:translate-x-1 transition-all" />
-                        </button>
-                      ))}
+                    {/* Scrollable category list */}
+                    <div className="flex-1 overflow-y-auto overscroll-contain px-5 pt-6 pb-4">
+                      <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.15em] mb-4 px-1">
+                        Navigation
+                      </p>
+                      <div className="flex flex-col gap-1.5">
+                        {menuItems.map((item) => {
+                          const meta = MOBILE_CATEGORY_META[item.id];
+                          const CategoryIcon = meta?.icon || ChevronRight;
+                          return (
+                            <button
+                              key={item.id}
+                              onClick={() => goToSubmenu(item.id)}
+                              className="w-full flex items-center gap-4 py-3.5 px-4 rounded-2xl text-left transition-all cursor-pointer group active:scale-[0.98] hover:bg-white hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+                            >
+                              {/* Category icon */}
+                              <div
+                                className={`w-11 h-11 rounded-xl bg-gradient-to-br ${meta?.gradient || "from-gray-100 to-gray-50"} flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105`}
+                              >
+                                <CategoryIcon className="w-5 h-5" style={{ color: meta?.color || "#374151" }} />
+                              </div>
+                              {/* Label + count */}
+                              <div className="flex-1 min-w-0">
+                                <span className="text-[15px] font-semibold text-gray-900 group-hover:text-[#0B3D2E] transition-colors block">
+                                  {item.label}
+                                </span>
+                                <span className="text-[11px] text-gray-400 font-medium">
+                                  {item.items.length} {item.items.length === 1 ? "page" : "pages"}
+                                </span>
+                              </div>
+                              {/* Arrow */}
+                              <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#1F7A53] group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
 
-                    <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col gap-4">
-                      <Link
-                        href="/contact-sales"
-                        onClick={() => setIsMobileOpen(false)}
-                        className="w-full py-3.5 text-center text-gray-700 hover:text-[#0B3D2E] font-semibold border border-gray-200 rounded-full transition-colors bg-white hover:bg-gray-50 shadow-sm"
-                      >
-                        Contact Sales
-                      </Link>
-                      <Link href="/request-demo" onClick={() => setIsMobileOpen(false)}>
-                        <button className="w-full py-4 text-center font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-full transition-colors shadow-lg cursor-pointer">
+                    {/* Fixed bottom CTA area */}
+                    <div className="flex-shrink-0 px-5 py-5 border-t border-gray-100/80 bg-white/80 backdrop-blur-sm">
+                      <div className="flex gap-3">
+                        <Link
+                          href="/contact-sales"
+                          onClick={closeMobile}
+                          className="flex-1 py-3 text-center text-[13px] text-gray-700 font-semibold border border-gray-200 rounded-xl transition-colors bg-white hover:bg-gray-50 active:scale-[0.98]"
+                        >
+                          Contact Sales
+                        </Link>
+                        <Link
+                          href="/request-demo"
+                          onClick={closeMobile}
+                          className="flex-1 py-3 text-center text-[13px] font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-xl transition-colors shadow-lg shadow-[#0B3D2E]/20 active:scale-[0.98]"
+                        >
                           Request Demo
-                        </button>
-                      </Link>
+                        </Link>
+                      </div>
                     </div>
                   </motion.div>
                 ) : (
+                  /* ════════ LEVEL 2: Submenu Panel ════════ */
                   (() => {
-                    const activeCategoryData = menuItems.find(item => item.id === activeCategory);
-                    if (!activeCategoryData) return null;
+                    const activeCat = menuItems.find(item => item.id === activeCategory);
+                    if (!activeCat) return null;
+                    const meta = MOBILE_CATEGORY_META[activeCat.id];
+                    const CategoryIcon = meta?.icon || ChevronRight;
 
                     return (
                       <motion.div
-                        key="submenu-panel"
+                        key={`submenu-${activeCat.id}`}
                         custom={direction}
                         variants={slideVariants}
                         initial="enter"
                         animate="center"
                         exit="exit"
-                        transition={{ duration: 0.25, ease: "easeInOut" }}
-                        className="absolute inset-0 px-6 py-8 flex flex-col justify-between overflow-y-auto"
+                        transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+                        className="absolute inset-0 flex flex-col"
                       >
-                        <div className="flex flex-col flex-1">
-                          {/* Back Button */}
+                        {/* Sticky submenu header with back button */}
+                        <div className="flex-shrink-0 px-5 pt-5 pb-4 border-b border-gray-100/80 bg-white/90 backdrop-blur-md">
                           <button
                             onClick={goToRoot}
-                            className="w-fit flex items-center gap-2 text-xs font-bold text-[#1F7A53] uppercase tracking-wider mb-6 cursor-pointer hover:opacity-80 transition-opacity bg-white px-3 py-1.5 rounded-full border border-gray-100 shadow-sm"
+                            className="flex items-center gap-1.5 text-[12px] font-semibold text-[#1F7A53] mb-3 cursor-pointer hover:opacity-80 transition-opacity active:scale-[0.97]"
                           >
                             <ArrowLeft className="w-3.5 h-3.5" />
-                            <span>Back to Menu</span>
+                            <span>All categories</span>
                           </button>
-
-                          <h3 className="text-2xl font-black text-[#0B3D2E] mb-6 tracking-tight">
-                            {activeCategoryData.label}
-                          </h3>
-
-                          {/* Scrollable sub-links grid */}
-                          <div className="flex flex-col gap-3 max-h-[380px] overflow-y-auto pr-1 pb-4 scrollbar-thin">
-                            {activeCategoryData.items.map((link: any, index: number) => (
-                              <Link
-                                key={index}
-                                href={link.href}
-                                onClick={() => setIsMobileOpen(false)}
-                                className="group flex items-start gap-4 p-3 rounded-2xl bg-white border border-gray-50 shadow-sm hover:border-[#53D769]/30 hover:bg-gray-50/20 transition-all"
-                              >
-                                {link.icon ? (
-                                  <div className="w-10 h-10 rounded-xl bg-[#53D769]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#53D769]/20 transition-colors">
-                                    <link.icon className="w-5 h-5 text-[#1F7A53]" />
-                                  </div>
-                                ) : (
-                                  <div className="w-10 h-10 rounded-xl bg-[#1F7A53]/5 flex items-center justify-center flex-shrink-0 text-[#1F7A53] font-black text-sm">
-                                    {link.name.substring(0, 2)}
-                                  </div>
-                                )}
-                                <div className="flex-1">
-                                  <div className="font-bold text-gray-900 group-hover:text-[#1F7A53] transition-colors text-sm">
-                                    {link.name}
-                                  </div>
-                                  <p className="text-xs text-gray-500 mt-1 line-clamp-1">
-                                    {link.desc || `Explore ${link.name.toLowerCase()} solutions`}
-                                  </p>
-                                </div>
-                              </Link>
-                            ))}
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-10 h-10 rounded-xl bg-gradient-to-br ${meta?.gradient || "from-gray-100 to-gray-50"} flex items-center justify-center flex-shrink-0`}
+                            >
+                              <CategoryIcon className="w-5 h-5" style={{ color: meta?.color || "#374151" }} />
+                            </div>
+                            <div>
+                              <h3 className="text-xl font-bold text-[#0B3D2E] leading-tight">
+                                {activeCat.label}
+                              </h3>
+                              <p className="text-[11px] text-gray-400 font-medium mt-0.5">
+                                {activeCat.items.length} {activeCat.items.length === 1 ? "page" : "pages"} available
+                              </p>
+                            </div>
                           </div>
                         </div>
 
-                        {/* promo card */}
-                        {activeCategoryData.promo && (
-                          <div className="pt-4 border-t border-gray-100 mt-6 shrink-0">
-                            <Link
-                              href={activeCategoryData.promo.link}
-                              onClick={() => setIsMobileOpen(false)}
-                              className="group block relative rounded-2xl overflow-hidden h-28 border border-gray-100 shadow-md"
-                            >
-                              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors z-10"></div>
-                              <img src={activeCategoryData.promo.image} alt={activeCategoryData.promo.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                              <div className="absolute inset-0 z-20 p-4 flex flex-col justify-end">
-                                <span className="text-[8px] font-bold text-[#53D769] uppercase tracking-widest mb-0.5">Featured</span>
-                                <h4 className="text-white font-bold text-sm mb-0.5">{activeCategoryData.promo.title}</h4>
-                                <p className="text-gray-200 text-[10px] line-clamp-1">{activeCategoryData.promo.desc}</p>
-                              </div>
-                            </Link>
+                        {/* Full-height scrollable sub-links */}
+                        <div className="flex-1 overflow-y-auto overscroll-contain px-5 pt-4 pb-6">
+                          <div className="flex flex-col gap-2">
+                            {activeCat.items.map((link: any, index: number) => (
+                              <Link
+                                key={index}
+                                href={link.href}
+                                onClick={closeMobile}
+                                className="group flex items-start gap-3.5 p-3 rounded-2xl bg-white border border-gray-100/80 hover:border-gray-200 hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-all active:scale-[0.98]"
+                              >
+                                {link.icon ? (
+                                  <div className="w-9 h-9 rounded-lg bg-[#53D769]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#53D769]/20 transition-colors">
+                                    <link.icon className="w-[18px] h-[18px] text-[#1F7A53]" />
+                                  </div>
+                                ) : (
+                                  <div
+                                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 font-bold text-xs"
+                                    style={{
+                                      backgroundColor: `${meta?.color || "#1F7A53"}10`,
+                                      color: meta?.color || "#1F7A53"
+                                    }}
+                                  >
+                                    {link.name.substring(0, 2).toUpperCase()}
+                                  </div>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <div className="font-semibold text-gray-900 group-hover:text-[#1F7A53] transition-colors text-[14px] leading-tight">
+                                    {link.name}
+                                  </div>
+                                  <p className="text-[12px] text-gray-400 mt-1 line-clamp-2 leading-relaxed">
+                                    {link.desc || `Explore ${link.name.toLowerCase()} solutions`}
+                                  </p>
+                                </div>
+                                <ArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#1F7A53] mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-all" />
+                              </Link>
+                            ))}
                           </div>
-                        )}
+
+                          {/* Compact featured promo */}
+                          {activeCat.promo && (
+                            <div className="mt-5">
+                              <Link
+                                href={activeCat.promo.link}
+                                onClick={closeMobile}
+                                className="group flex items-center gap-4 p-3 rounded-2xl overflow-hidden border border-gray-100 bg-gradient-to-r from-[#0B3D2E] to-[#1F7A53] transition-all active:scale-[0.98]"
+                              >
+                                <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 border-white/20">
+                                  <img
+                                    src={activeCat.promo.image}
+                                    alt={activeCat.promo.title}
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                  />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <span className="text-[9px] font-bold text-[#53D769] uppercase tracking-[0.12em]">Featured</span>
+                                  <h4 className="text-white font-bold text-[13px] leading-tight mt-0.5">{activeCat.promo.title}</h4>
+                                  <p className="text-white/60 text-[11px] mt-0.5 line-clamp-1">{activeCat.promo.desc}</p>
+                                </div>
+                                <ArrowRight className="w-4 h-4 text-white/50 group-hover:text-white group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                              </Link>
+                            </div>
+                          )}
+                        </div>
                       </motion.div>
                     );
                   })()
