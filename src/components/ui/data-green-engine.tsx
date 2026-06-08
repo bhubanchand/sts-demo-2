@@ -643,16 +643,16 @@ export function DataGreenEngine() {
             className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[28px] border-t border-emerald-100 shadow-[0_-12px_36px_rgba(0,0,0,0.12)] z-50 transition-all duration-300 ease-out transform block md:hidden max-h-[65vh] overflow-hidden"
           >
             {/* 1. Visual Banner Image (Top) */}
-            <div className="relative w-full h-[130px] bg-gradient-to-br from-emerald-50/80 to-emerald-100/30 flex items-center justify-center overflow-hidden border-b border-emerald-50">
+            <div className="relative w-full h-[130px] overflow-hidden border-b border-emerald-50">
               <img
                 src={currentSlice.bgImage}
                 alt=""
-                className="h-[85%] object-contain opacity-90 p-2"
+                className="w-full h-full object-cover"
               />
               {/* Floating Close Button */}
               <button
                 onClick={() => setSelectedSliceIndex(null)}
-                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 border border-emerald-800/10 flex items-center justify-center text-gray-400 hover:text-gray-600 shadow-sm shrink-0 active:scale-95 transition-all"
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 border border-emerald-800/10 flex items-center justify-center text-gray-400 hover:text-gray-600 shadow-sm shrink-0 active:scale-95 transition-all z-20"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -900,27 +900,27 @@ export function DataGreenEngine() {
                     ))}
                   </div>
                 </div>
+
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  <button className="bg-[#004D26] hover:bg-[#00381b] active:scale-[0.99] text-white font-extrabold text-xs py-2.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-all uppercase tracking-wider shadow-sm">
+                    Learn More <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              {/* Right Column: Visual Banner and CTA */}
-              <div className="w-full md:w-[240px] bg-gradient-to-br from-emerald-50/80 to-emerald-100/30 border-t md:border-t-0 md:border-l border-emerald-100 p-5 flex flex-col justify-between items-center relative overflow-hidden">
-                {/* Background Illustration */}
-                <div className="flex-1 w-full flex items-center justify-center mb-4 max-h-[100px]">
-                  <img
-                    src={currentSlice.bgImage}
-                    alt=""
-                    className="h-full object-contain opacity-90"
-                  />
-                </div>
-                {/* Close Button floating top-right */}
+              {/* Right Column: Visual Full-Bleed Illustration */}
+              <div className="hidden md:block w-[240px] relative overflow-hidden border-l border-emerald-100">
+                <img
+                  src={currentSlice.bgImage}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+                {/* Floating Close Button */}
                 <button
                   onClick={() => setSelectedSliceIndex(null)}
-                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 border border-emerald-800/10 flex items-center justify-center text-gray-400 hover:text-gray-600 shadow-sm shrink-0 active:scale-95 transition-all"
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 border border-emerald-800/10 flex items-center justify-center text-gray-400 hover:text-gray-600 shadow-sm shrink-0 active:scale-95 transition-all z-20"
                 >
                   <X className="w-4 h-4" />
-                </button>
-                <button className="w-full bg-[#004D26] hover:bg-[#00381b] text-white font-extrabold text-[10px] py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all uppercase tracking-wider shadow-sm mt-auto">
-                  Learn More <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
