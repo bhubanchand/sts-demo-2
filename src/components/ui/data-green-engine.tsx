@@ -375,6 +375,25 @@ export function DataGreenEngine() {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const currentSlice = selectedSliceIndex === 999 
+    ? {
+        id: "hub",
+        name: "Data Green Core OS",
+        metric: "Central OS Router",
+        shortDescription: "The central data router and coordination layer of SourceTrace, unifying all nodes into a single responsive agricultural operating system.",
+        capabilities: [
+          "Unified Data Schema Routing",
+          "Real-time Telemetry Processing",
+          "Cross-Module Flow Tracing"
+        ],
+        icon: ShieldCheck,
+        bgImage: "/images/ecosystem/traceability_bg.png"
+      }
+    : selectedSliceIndex !== null && selectedSliceIndex >= 0 && selectedSliceIndex < SLICES.length ? {
+        ...SLICES[selectedSliceIndex],
+        bgImage: BACKGROUND_IMAGES[SLICES[selectedSliceIndex].id]
+      } : null;
+
   // Auto-center the desktop horizontal scroll on mount (legacy backup behavior)
   useEffect(() => {
     if (containerRef.current) {
@@ -526,11 +545,14 @@ export function DataGreenEngine() {
               style={{ overflow: "visible" }}
               className="pointer-events-auto"
             >
-              <div className="w-[116px] h-[116px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center animate-pulse-slow shadow-[0_8px_32px_rgba(16,185,129,0.18)]">
+              <button
+                onClick={() => setSelectedSliceIndex(selectedSliceIndex === 999 ? null : 999)}
+                className="w-[116px] h-[116px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center animate-pulse-slow shadow-[0_8px_32px_rgba(16,185,129,0.18)] transition-transform active:scale-95"
+              >
                 <ShieldCheck className="w-8 h-8 text-[#10b981] mb-0.5 animate-pulse" />
                 <span className="text-[10.5px] font-black tracking-widest text-[#004D26] uppercase">DATA GREEN</span>
                 <span className="text-[8.5px] font-black text-[#10b981] tracking-widest uppercase mt-0.5">CORE OS</span>
-              </div>
+              </button>
             </foreignObject>
 
             {/* ── Surrounding Mobile Nodes (Symmetrical satellites orbiting center) ── */}
@@ -607,8 +629,8 @@ export function DataGreenEngine() {
         </p>
       </div>
 
-      {/* ── MOBILE SLIDING BOTTOM SHEET (Goal 2 Refinements) ── */}
-      {selectedSliceIndex !== null && (
+      {/* ── MOBILE SLIDING BOTTOM SHEET ── */}
+      {selectedSliceIndex !== null && currentSlice && (
         <>
           {/* Backdrop overlay */}
           <div
@@ -618,143 +640,59 @@ export function DataGreenEngine() {
 
           {/* Sheet Panel */}
           <div
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[30px] border-t border-emerald-100 shadow-[0_-15px_40px_rgba(0,0,0,0.12)] z-50 px-6 pt-5 pb-8 transition-all duration-300 ease-out transform block md:hidden max-h-[85vh] overflow-y-auto scrollbar-none relative overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[28px] border-t border-emerald-100 shadow-[0_-12px_36px_rgba(0,0,0,0.12)] z-50 transition-all duration-300 ease-out transform block md:hidden max-h-[65vh] overflow-hidden"
           >
-            {/* Goal 1: Generated Contextual Background Illustration (Subtle 6% Opacity filling background) */}
-            <div className="absolute inset-0 z-0 opacity-[0.06] pointer-events-none flex items-center justify-center p-4">
+            {/* 1. Visual Banner Image (Top) */}
+            <div className="relative w-full h-[130px] bg-gradient-to-br from-emerald-50/80 to-emerald-100/30 flex items-center justify-center overflow-hidden border-b border-emerald-50">
               <img
-                src={BACKGROUND_IMAGES[SLICES[selectedSliceIndex].id]}
+                src={currentSlice.bgImage}
                 alt=""
-                className="w-full h-full object-contain"
+                className="h-[85%] object-contain opacity-90 p-2"
               />
+              {/* Floating Close Button */}
+              <button
+                onClick={() => setSelectedSliceIndex(null)}
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 border border-emerald-800/10 flex items-center justify-center text-gray-400 hover:text-gray-600 shadow-sm shrink-0 active:scale-95 transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="relative z-10">
-              {/* Grab Handle */}
-              <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-5" />
-
-              {/* Module Identity Header */}
-              <div className="flex items-start justify-between w-full mb-4 border-b border-gray-100 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#004D26] text-white flex items-center justify-center shrink-0">
-                    {React.createElement(SLICES[selectedSliceIndex].icon, { className: "w-5 h-5" })}
-                  </div>
-                  <div>
-                    <h3 className="text-base font-black tracking-wider text-[#004D26] uppercase leading-tight">
-                      {SLICES[selectedSliceIndex].name}
-                    </h3>
-                    <span className="inline-block bg-emerald-50 text-[#10b981] text-[9.5px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider mt-1">
-                      {SLICES[selectedSliceIndex].metric}
-                    </span>
-                  </div>
+            {/* 2. Content Area */}
+            <div className="px-5 pt-4 pb-6">
+              {/* Header Info */}
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-[#004D26] text-white flex items-center justify-center shrink-0 shadow-sm">
+                  {React.createElement(currentSlice.icon, { className: "w-5 h-5" })}
                 </div>
-                <button
-                  onClick={() => setSelectedSliceIndex(null)}
-                  className="w-8 h-8 rounded-full bg-white/80 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 shrink-0"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div>
+                  <h3 className="text-base font-black tracking-wider text-[#004D26] uppercase leading-tight">
+                    {currentSlice.name}
+                  </h3>
+                  <span className="inline-block bg-emerald-50 text-[#10b981] text-[9.5px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider mt-1">
+                    {currentSlice.metric}
+                  </span>
+                </div>
               </div>
 
-              {/* Short Description (Exactly one sentence logline) */}
-              <p className="text-xs text-gray-600 font-semibold leading-relaxed mb-5 border-b border-gray-50 pb-4 px-1">
-                {SLICES[selectedSliceIndex].shortDescription}
+              {/* Brief Description */}
+              <p className="text-xs text-gray-600 font-semibold leading-relaxed mb-4">
+                {currentSlice.shortDescription}
               </p>
 
-              {/* Capabilities Checklist */}
-              <div className="mb-5 px-1">
-                <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2.5">Platform Capabilities</h4>
-                <div className="flex flex-col gap-2">
-                  {SLICES[selectedSliceIndex].capabilities.map((cap, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-xs font-bold text-gray-700 uppercase">
-                      <Check className="w-4 h-4 text-[#10b981] shrink-0 stroke-[3]" />
-                      <span>{cap}</span>
-                    </div>
-                  ))}
-                </div>
+              {/* Capabilities Points */}
+              <div className="mb-5 flex flex-col gap-2 bg-gray-50/50 rounded-xl p-3 border border-gray-100">
+                {currentSlice.capabilities.map((cap, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-[11px] font-bold text-gray-700 uppercase">
+                    <Check className="w-4 h-4 text-[#10b981] shrink-0 stroke-[3]" />
+                    <span className="truncate">{cap}</span>
+                  </div>
+                ))}
               </div>
 
-              {/* How It Works (Horizontal Process Flow) */}
-              <div className="mb-5 px-1">
-                <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">How It Works</h4>
-                <div className="flex flex-wrap items-center gap-1.5 bg-gray-50/50 border border-gray-100 rounded-xl p-3">
-                  {SLICES[selectedSliceIndex].pipeline.map((step, idx) => (
-                    <React.Fragment key={idx}>
-                      {idx > 0 && <ArrowRight className="w-3 h-3 text-[#10b981] shrink-0" />}
-                      <span className="text-[9.5px] font-black text-[#004D26] uppercase tracking-wider">{step}</span>
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
-
-              {/* Inputs/Processing/Outputs Timeline (Cohesive Vertical Flow) */}
-              <div className="mb-6 px-1">
-                <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Operating System Pipeline</h4>
-                <div className="flex flex-col gap-3 relative pl-4 border-l-2 border-emerald-100/60 ml-2">
-                  
-                  {/* Inputs (Blue Accent) */}
-                  <div className="relative">
-                    <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-blue-500 border-2 border-white" />
-                    <span className="text-[8.5px] font-black uppercase text-blue-600 block mb-1">Inputs</span>
-                    <div className="flex flex-wrap gap-x-3 gap-y-1">
-                      {SLICES[selectedSliceIndex].inputs.map((item, idx) => (
-                        <span key={idx} className="text-[9.5px] font-bold text-gray-600 uppercase">{item}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Processing (Orange Accent) */}
-                  <div className="relative">
-                    <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-amber-500 border-2 border-white" />
-                    <span className="text-[8.5px] font-black uppercase text-amber-600 block mb-1">Processing</span>
-                    <div className="flex flex-wrap gap-x-3 gap-y-1">
-                      {SLICES[selectedSliceIndex].processing.map((item, idx) => (
-                        <span key={idx} className="text-[9.5px] font-bold text-gray-600 uppercase">{item}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Outputs (Green Accent) */}
-                  <div className="relative">
-                    <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-[#10b981] border-2 border-white" />
-                    <span className="text-[8.5px] font-black uppercase text-emerald-600 block mb-1">Outputs</span>
-                    <div className="flex flex-wrap gap-x-3 gap-y-1">
-                      {SLICES[selectedSliceIndex].outputs.map((item, idx) => (
-                        <span key={idx} className="text-[9.5px] font-bold text-gray-600 uppercase">{item}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Used By (Purple Accent) */}
-                  <div className="relative">
-                    <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-purple-500 border-2 border-white" />
-                    <span className="text-[8.5px] font-black uppercase text-purple-600 block mb-1">Used By</span>
-                    <div className="flex flex-wrap gap-x-3 gap-y-1">
-                      {SLICES[selectedSliceIndex].usedBy.map((item, idx) => (
-                        <span key={idx} className="text-[9.5px] font-bold text-gray-600 uppercase">{item}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              {/* Impact Metric Grid (3 Columns) */}
-              <div className="mb-6 border-t border-gray-100 pt-5 px-1">
-                <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3.5">Ecosystem Impact</h4>
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  {SLICES[selectedSliceIndex].impact.map((metric, idx) => (
-                    <div key={idx} className="bg-gray-50/50 rounded-2xl p-3 border border-gray-100 flex flex-col justify-center min-h-[72px]">
-                      <span className="text-base font-black text-[#004D26] leading-none mb-1.5 block">{metric.value}</span>
-                      <span className="text-[8px] font-bold text-gray-500 uppercase tracking-wider leading-tight block">{metric.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* CTA */}
-              <button className="w-full bg-[#004D26] hover:bg-[#00381b] active:scale-[0.99] text-white font-extrabold text-xs py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all uppercase tracking-wider">
-                Learn More <ChevronRight className="w-4 h-4" />
+              {/* CTA Button */}
+              <button className="w-full bg-[#004D26] hover:bg-[#00381b] active:scale-[0.99] text-white font-extrabold text-xs py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all uppercase tracking-wider shadow-sm">
+                Learn More <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
@@ -849,11 +787,14 @@ export function DataGreenEngine() {
               style={{ overflow: "visible" }}
               className="pointer-events-auto"
             >
-              <div className="w-[112px] h-[112px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center animate-pulse-slow shadow-[0_8px_32px_rgba(16,185,129,0.18)]">
+              <button
+                onClick={() => setSelectedSliceIndex(selectedSliceIndex === 999 ? null : 999)}
+                className="w-[112px] h-[112px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center animate-pulse-slow shadow-[0_8px_32px_rgba(16,185,129,0.18)] transition-transform active:scale-95"
+              >
                 <ShieldCheck className="w-7 h-7 text-[#10b981] mb-1" />
                 <span className="text-xs font-black tracking-widest text-[#004D26] uppercase">DATA GREEN</span>
                 <span className="text-[9px] font-black text-[#10b981] tracking-widest uppercase mt-0.5">CORE OS</span>
-              </div>
+              </button>
             </foreignObject>
 
             {/* ── Symmetrical Tablet Nodes ── */}
@@ -926,105 +867,63 @@ export function DataGreenEngine() {
 
         {/* Tablet Floating details card (appears at bottom of tablet view) */}
         <div className="mt-6 min-h-[120px] transition-all duration-300">
-          {selectedSliceIndex !== null ? (
-            <div className="bg-white border border-emerald-800/10 rounded-3xl p-6 shadow-sm transition-all duration-300 relative overflow-hidden">
-              {/* Contextual Background Illustration (Goal 1 - Subtle 5% Opacity) */}
-              <div className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none flex items-center justify-center">
-                <img
-                  src={BACKGROUND_IMAGES[SLICES[selectedSliceIndex].id]}
-                  alt="Background illustration"
-                  className="w-[75%] h-[75%] object-contain"
-                />
-              </div>
-
-              <div className="relative z-10">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-4 mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#004D26] text-white flex items-center justify-center shrink-0">
-                      {React.createElement(SLICES[selectedSliceIndex].icon, { className: "w-5 h-5" })}
+          {selectedSliceIndex !== null && currentSlice ? (
+            <div className="bg-white border border-emerald-800/10 rounded-3xl shadow-sm transition-all duration-300 relative overflow-hidden flex flex-col md:flex-row min-h-[220px]">
+              
+              {/* Left Column: Content */}
+              <div className="flex-1 p-6 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-3 pb-3 border-b border-gray-100">
+                    <div className="w-9 h-9 rounded-xl bg-[#004D26] text-white flex items-center justify-center shrink-0 shadow-sm">
+                      {React.createElement(currentSlice.icon, { className: "w-5 h-5" })}
                     </div>
                     <div>
-                      <h3 className="text-lg font-black text-[#004D26] uppercase tracking-wider leading-none">
-                        {SLICES[selectedSliceIndex].name}
+                      <h3 className="text-base font-black tracking-wider text-[#004D26] uppercase leading-tight">
+                        {currentSlice.name}
                       </h3>
-                      <p className="text-[11px] font-semibold text-gray-500 mt-1 uppercase tracking-wide">
-                        Stage workflow: <span className="text-[#10b981] font-black">{SLICES[selectedSliceIndex].workflow}</span>
-                      </p>
+                      <span className="inline-block bg-emerald-50 text-[#10b981] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider mt-1">
+                        {currentSlice.metric}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="bg-emerald-50 text-[#10b981] text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
-                      {SLICES[selectedSliceIndex].metric}
-                    </span>
-                    <button
-                      onClick={() => setSelectedSliceIndex(null)}
-                      className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-3 gap-6">
-                  <div className="col-span-2">
-                    <p className="text-xs text-gray-600 font-semibold leading-relaxed mb-4">
-                      {SLICES[selectedSliceIndex].shortDescription}
-                    </p>
-                    
-                    {/* Capabilities List */}
-                    <div className="flex flex-wrap gap-x-6 gap-y-2.5">
-                      {SLICES[selectedSliceIndex].capabilities.map((cap, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-xs font-bold text-gray-700 uppercase">
-                          <Check className="w-4 h-4 text-[#10b981] stroke-[3]" />
-                          <span>{cap}</span>
-                        </div>
-                      ))}
-                    </div>
+                  <p className="text-xs text-gray-600 font-semibold leading-relaxed mb-4">
+                    {currentSlice.shortDescription}
+                  </p>
 
-                    {/* How It Works (Horizontal Flowchart) */}
-                    <div className="flex flex-wrap items-center gap-1 bg-gray-50/50 border border-gray-100 rounded-xl p-2.5 mt-4 max-w-lg">
-                      {SLICES[selectedSliceIndex].pipeline.map((step, idx) => (
-                        <React.Fragment key={idx}>
-                          {idx > 0 && <ArrowRight className="w-3 h-3 text-[#10b981] shrink-0" />}
-                          <span className="text-[8.5px] font-black text-[#004D26] uppercase tracking-wider">{step}</span>
-                        </React.Fragment>
-                      ))}
-                    </div>
-
-                    {/* Inputs/Outputs Timeline (Cohesive Vertical Flow) */}
-                    <div className="flex flex-col gap-2 relative pl-4 border-l-2 border-emerald-100/60 ml-2 mt-4">
-                      <div className="flex flex-wrap gap-x-3 items-center">
-                        <span className="text-[8.5px] font-black uppercase text-blue-600">Inputs:</span>
-                        {SLICES[selectedSliceIndex].inputs.map((item, idx) => (
-                          <span key={idx} className="text-[9.5px] font-bold text-gray-500 uppercase">{item}</span>
-                        ))}
+                  <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3">
+                    {currentSlice.capabilities.map((cap, idx) => (
+                      <div key={idx} className="flex items-center gap-1.5 text-[10px] font-bold text-gray-700 uppercase">
+                        <Check className="w-3.5 h-3.5 text-[#10b981] shrink-0 stroke-[3]" />
+                        <span>{cap}</span>
                       </div>
-                      <div className="flex flex-wrap gap-x-3 items-center">
-                        <span className="text-[8.5px] font-black uppercase text-emerald-600">Outputs:</span>
-                        {SLICES[selectedSliceIndex].outputs.map((item, idx) => (
-                          <span key={idx} className="text-[9.5px] font-bold text-gray-500 uppercase">{item}</span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right side connectivity blocks with Color Accents */}
-                  <div className="border-l border-gray-100 pl-6 flex flex-col justify-between gap-3">
-                    {/* Impact Metric Grid (3 Columns) */}
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                      {SLICES[selectedSliceIndex].impact.map((metric, idx) => (
-                        <div key={idx} className="bg-gray-50/50 rounded-xl p-2 border border-gray-100 flex flex-col justify-center min-h-[56px]">
-                          <span className="text-xs font-black text-[#004D26] leading-none mb-1 block">{metric.value}</span>
-                          <span className="text-[7px] font-bold text-gray-500 uppercase tracking-wider block">{metric.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <button className="w-full bg-[#004D26] hover:bg-[#00381b] text-white font-extrabold text-[10px] py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-all uppercase tracking-wider">
-                      Learn More <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
+                    ))}
                   </div>
                 </div>
               </div>
+
+              {/* Right Column: Visual Banner and CTA */}
+              <div className="w-full md:w-[240px] bg-gradient-to-br from-emerald-50/80 to-emerald-100/30 border-t md:border-t-0 md:border-l border-emerald-100 p-5 flex flex-col justify-between items-center relative overflow-hidden">
+                {/* Background Illustration */}
+                <div className="flex-1 w-full flex items-center justify-center mb-4 max-h-[100px]">
+                  <img
+                    src={currentSlice.bgImage}
+                    alt=""
+                    className="h-full object-contain opacity-90"
+                  />
+                </div>
+                {/* Close Button floating top-right */}
+                <button
+                  onClick={() => setSelectedSliceIndex(null)}
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 border border-emerald-800/10 flex items-center justify-center text-gray-400 hover:text-gray-600 shadow-sm shrink-0 active:scale-95 transition-all"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                <button className="w-full bg-[#004D26] hover:bg-[#00381b] text-white font-extrabold text-[10px] py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all uppercase tracking-wider shadow-sm mt-auto">
+                  Learn More <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
             </div>
           ) : (
             <div className="bg-emerald-50/20 border border-emerald-800/5 rounded-3xl p-6 text-center text-gray-500 font-semibold text-xs py-8">
