@@ -2,7 +2,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   Search, Wallet, Store, Smartphone, BrainCircuit, Leaf,
-  Map, Satellite, Activity, Check, ShieldCheck, X, ArrowRight, ChevronRight
+  Map, Satellite, Activity, Check, ShieldCheck, X, ArrowRight,
+  ChevronRight, Coins, Barcode, Clock, TrendingUp, Download, Settings, User, QrCode, BarChart3
 } from "lucide-react";
 
 /* ── DATA DEFINITIONS & TYPES ────────────────────────────── */
@@ -72,7 +73,8 @@ const SLICES: Slice[] = [
     capabilities: [
       "First-Mile Reception Gate",
       "QR & RFID Bag Tracking",
-      "Blockchain Ledger Integrity"
+      "Blockchain Ledger Integrity",
+      "Transaction Compliance Certs"
     ],
     receives: [
       "Farmer ID & Sowing Records",
@@ -82,7 +84,7 @@ const SLICES: Slice[] = [
     processes: [
       "Intake Scale Logs",
       "Bag Weight Verification",
-      "Digital Ledger Signatures"
+      "Digital Ledger Signature"
     ],
     produces: [
       "Batch Receipts (QR Codes)",
@@ -91,7 +93,8 @@ const SLICES: Slice[] = [
     ],
     feeds: [
       "AI Insights & Predictions",
-      "Agri Marketplace & Sourcing"
+      "Agri Marketplace & Sourcing",
+      "Finance & Credit Ledger"
     ]
   },
   {
@@ -271,26 +274,23 @@ const SLICES: Slice[] = [
 
 const HUB_DESKTOP = { x: 720, y: 350 };
 
-// Symmetrical coordinate parameters
-const MOBILE_CENTER = { x: 195, y: 210 };
-const MOBILE_RADIUS = 125;
-
+// Symmetrical Elliptical Coordinates
+const MOBILE_CENTER = { x: 195, y: 215 };
 const TABLET_CENTER = { x: 360, y: 220 };
-const TABLET_RADIUS = 150;
 
 const NODE_CATEGORIES = ["Onboarding", "Logistics", "GIS Maps", "AI Models", "Agri Trade", "Micro Credit", "ESG Offsets"];
 
-const PATHWAY_STORY = [
-  { upstream: "Extension Setup", current: "Farmer Portal", downstream: "Traceability & GIS" },
-  { upstream: "Farmer Portal", current: "Traceability", downstream: "AI & Marketplace" },
-  { upstream: "Farmer Portal", current: "GIS Mapping", downstream: "AI & Carbon" },
-  { upstream: "GIS & Traceability", current: "AI Predictions", downstream: "Marketplace & Finance" },
-  { upstream: "AI & Traceability", current: "Marketplace", downstream: "Finance Ledger" },
-  { upstream: "Marketplace & AI", current: "Finance & Wallet", downstream: "Farmer & Carbon" },
-  { upstream: "GIS & Finance", current: "Carbon / ESG", downstream: "Finance Registry" }
-];
+const SLICE_IMAGES: Record<string, string> = {
+  farmer: "/images/crops/coffee_farm.png",
+  traceability: "/images/crops/apple_conveyor.png",
+  gis: "/images/crops/palm_grid.png",
+  ai: "/images/crops/seedling_lab.png",
+  marketplace: "/images/crops/grain_silos.png",
+  finance: "/images/crops/sugarcane_harvest.png",
+  carbon: "/images/crops/rice_terraces.png"
+};
 
-// Helper to render subtle inline SVG contextual background illustrations (5-8% opacity)
+// Helper to render subtle inline SVG contextual backgrounds
 function renderContextualBg(id: string) {
   switch (id) {
     case "farmer":
@@ -378,15 +378,10 @@ function renderContextualBg(id: string) {
 }
 
 export function DataGreenEngine() {
-  // Desktop Interaction State
   const [hoveredSlice, setHoveredSlice] = useState<number | null>(null);
-
-  // Mobile / Tablet Interaction State
   const [selectedSliceIndex, setSelectedSliceIndex] = useState<number | null>(null);
-
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-center the desktop horizontal scroll on mount (legacy behavior backup)
   useEffect(() => {
     if (containerRef.current) {
       const el = containerRef.current;
@@ -395,7 +390,6 @@ export function DataGreenEngine() {
     }
   }, []);
 
-  // Pathway Glow Logic for Desktop
   const isPathActiveDesktop = (pathId: string) => {
     if (hoveredSlice === null) return false;
     const activeWorkflow = SLICES[hoveredSlice].id;
@@ -423,180 +417,247 @@ export function DataGreenEngine() {
     return (hoveredSlice !== null && SLICES[hoveredSlice].id === id) ? "#10b981" : "rgba(0, 77, 38, 0.15)";
   };
 
-  // Helper for mobile/tablet to check active paths chronologically (lights up links from 0 to selectedIndex)
   const isPathActiveMobile = (toIndex: number) => {
     if (selectedSliceIndex === null) return false;
     return selectedSliceIndex >= toIndex;
   };
 
   return (
-    <div className="relative w-full pt-10 pb-20 px-4 md:px-6 flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#f9faf9] to-[#eef5ef] text-gray-900 select-none overflow-hidden">
+    <div className="relative w-full pt-10 pb-20 px-4 md:px-6 flex flex-col items-center justify-center min-h-screen bg-[#fcfdfc] text-gray-900 select-none overflow-hidden">
       
       {/* ── SECTION HEADER ── */}
-      <div className="text-center mb-8 max-w-3xl z-10">
-        <span className="font-extrabold tracking-widest uppercase mb-2 block text-[#004D26] text-xs md:text-sm">Data Green Operating System</span>
+      <div className="text-center mb-6 max-w-3xl z-10">
+        <span className="font-extrabold tracking-widest uppercase mb-2 block text-[#004D26] text-[10px] md:text-[11px]">Data Green Operating System</span>
         <h2 className="text-3xl md:text-5xl font-black leading-tight mb-3 text-[#004D26]">
           Connected Agriculture Ecosystem Map
         </h2>
-        <p className="text-xs md:text-base leading-relaxed text-gray-600 px-4 md:px-0">
-          Trace how SourceTrace coordinates the agricultural value chain. Tap or hover nodes to trace the active data journey.
+        <p className="text-xs md:text-base leading-relaxed text-gray-500 px-4 md:px-0">
+          A visual schematic of how SourceTrace coordinates the agricultural value chain. Tap any module to explore connections and view data flow.
         </p>
       </div>
 
       {/* ── 1. MOBILE INTERACTIVE NAVIGATOR (under 768px) ── */}
       <div className="block md:hidden w-full max-w-[390px] mx-auto relative z-20">
-        <div className="w-full aspect-[390/440] relative bg-white/40 border border-emerald-800/5 rounded-3xl shadow-sm p-4 overflow-hidden">
+        
+        {/* Map Card */}
+        <div className="w-full bg-white border border-gray-100 rounded-[32px] shadow-[0_12px_36px_rgba(0,0,0,0.02)] p-5 overflow-hidden flex flex-col items-center">
           
-          {/* Mobile SVG Canvas (draws connecting lines and data flows) */}
-          <svg viewBox="0 0 390 440" className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: "visible" }}>
-            <defs>
-              <style>{`
-                @keyframes flow-active-mob {
-                  to { stroke-dashoffset: -20; }
-                }
-                .flow-path-active-mob {
-                  stroke-dasharray: 6 6;
-                  animation: flow-active-mob 1.5s linear infinite;
-                }
-                @keyframes pulse-slow {
-                  0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 8px 32px rgba(16,185,129,0.15); }
-                  50% { transform: translate(-50%, -50%) scale(1.04); box-shadow: 0 12px 40px rgba(16,185,129,0.3); }
-                }
-                .animate-pulse-slow {
-                  animation: pulse-slow 4s infinite ease-in-out;
-                }
-              `}</style>
-            </defs>
+          <div className="w-full aspect-[350/370] relative overflow-hidden">
+            {/* Mobile SVG Canvas (connecting lines and data flows) */}
+            <svg viewBox="0 0 390 370" className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: "visible" }}>
+              <defs>
+                <style>{`
+                  @keyframes flow-active-mob {
+                    to { stroke-dashoffset: -20; }
+                  }
+                  .flow-path-active-mob {
+                    stroke-dasharray: 6 6;
+                    animation: flow-active-mob 1.5s linear infinite;
+                  }
+                  @keyframes pulse-slow {
+                    0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 8px 32px rgba(16,185,129,0.15); }
+                    50% { transform: translate(-50%, -50%) scale(1.04); box-shadow: 0 12px 40px rgba(16,185,129,0.3); }
+                  }
+                  .animate-pulse-slow {
+                    animation: pulse-slow 4s infinite ease-in-out;
+                  }
+                `}</style>
+              </defs>
 
-            {/* Connecting Pathways between nodes (clockwise circular flow) */}
-            {/* Farmer (107, 298) -> Traceability (70, 210) */}
-            <line x1="107" y1="298" x2="70" y2="210" stroke={isPathActiveMobile(1) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(1) ? "3" : "1.2"} />
-            {isPathActiveMobile(1) && <line x1="107" y1="298" x2="70" y2="210" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
+              {/* Connecting Pathways between nodes in a precise ellipse */}
+              {/* Farmer (135, 305) -> Traceability (75, 215) */}
+              <line x1="135" y1="305" x2="75" y2="215" stroke={isPathActiveMobile(1) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(1) ? "3" : "1.2"} />
+              {isPathActiveMobile(1) && <line x1="135" y1="305" x2="75" y2="215" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
 
-            {/* Traceability (70, 210) -> GIS (107, 122) */}
-            <line x1="70" y1="210" x2="107" y2="122" stroke={isPathActiveMobile(2) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(2) ? "3" : "1.2"} />
-            {isPathActiveMobile(2) && <line x1="70" y1="210" x2="107" y2="122" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
+              {/* Traceability (75, 215) -> GIS (105, 130) */}
+              <line x1="75" y1="215" x2="105" y2="130" stroke={isPathActiveMobile(2) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(2) ? "3" : "1.2"} />
+              {isPathActiveMobile(2) && <line x1="75" y1="215" x2="105" y2="130" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
 
-            {/* GIS (107, 122) -> AI (195, 85) */}
-            <line x1="107" y1="122" x2="195" y2="85" stroke={isPathActiveMobile(3) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(3) ? "3" : "1.2"} />
-            {isPathActiveMobile(3) && <line x1="107" y1="122" x2="195" y2="85" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
+              {/* GIS (105, 130) -> AI (195, 75) */}
+              <line x1="105" y1="130" x2="195" y2="75" stroke={isPathActiveMobile(3) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(3) ? "3" : "1.2"} />
+              {isPathActiveMobile(3) && <line x1="105" y1="130" x2="195" y2="75" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
 
-            {/* AI (195, 85) -> Marketplace (283, 122) */}
-            <line x1="195" y1="85" x2="283" y2="122" stroke={isPathActiveMobile(4) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(4) ? "3" : "1.2"} />
-            {isPathActiveMobile(4) && <line x1="195" y1="85" x2="283" y2="122" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
+              {/* AI (195, 75) -> Marketplace (285, 130) */}
+              <line x1="195" y1="75" x2="285" y2="130" stroke={isPathActiveMobile(4) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(4) ? "3" : "1.2"} />
+              {isPathActiveMobile(4) && <line x1="195" y1="75" x2="285" y2="130" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
 
-            {/* Marketplace (283, 122) -> Finance (320, 210) */}
-            <line x1="283" y1="122" x2="320" y2="210" stroke={isPathActiveMobile(5) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(5) ? "3" : "1.2"} />
-            {isPathActiveMobile(5) && <line x1="283" y1="122" x2="320" y2="210" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
+              {/* Marketplace (285, 130) -> Finance (315, 215) */}
+              <line x1="285" y1="130" x2="315" y2="215" stroke={isPathActiveMobile(5) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(5) ? "3" : "1.2"} />
+              {isPathActiveMobile(5) && <line x1="285" y1="130" x2="315" y2="215" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
 
-            {/* Finance (320, 210) -> Carbon (283, 298) */}
-            <line x1="320" y1="210" x2="283" y2="298" stroke={isPathActiveMobile(6) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(6) ? "3" : "1.2"} />
-            {isPathActiveMobile(6) && <line x1="320" y1="210" x2="283" y2="298" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
+              {/* Finance (315, 215) -> Carbon (255, 305) */}
+              <line x1="315" y1="215" x2="255" y2="305" stroke={isPathActiveMobile(6) ? "#10b981" : "rgba(0, 77, 38, 0.08)"} strokeWidth={isPathActiveMobile(6) ? "3" : "1.2"} />
+              {isPathActiveMobile(6) && <line x1="315" y1="215" x2="255" y2="305" stroke="#10b981" strokeWidth="3" className="flow-path-active-mob" />}
 
-            {/* Return Loop: Carbon (283, 298) -> Farmer (107, 298) */}
-            <path d="M 283 298 C 240 335 150 335 107 298" fill="none" stroke={selectedSliceIndex !== null ? "#10b981" : "rgba(0, 77, 38, 0.04)"} strokeWidth={selectedSliceIndex !== null ? "2.5" : "1.2"} strokeDasharray="4 4" className={selectedSliceIndex !== null ? "flow-path-active-mob" : ""} />
+              {/* Return Loop: Carbon (255, 305) -> Farmer (135, 305) */}
+              <path d="M 255 305 C 220 335 170 335 135 305" fill="none" stroke={selectedSliceIndex !== null ? "#10b981" : "rgba(0, 77, 38, 0.04)"} strokeWidth={selectedSliceIndex !== null ? "2.5" : "1.2"} strokeDasharray="4 4" className={selectedSliceIndex !== null ? "flow-path-active-mob" : ""} />
 
-            {/* Concentric subtle green orbits behind hub */}
-            <circle cx="195" cy="210" r="82" fill="none" stroke="rgba(16, 185, 129, 0.05)" strokeWidth="1" />
-            <circle cx="195" cy="210" r="70" fill="none" stroke="rgba(16, 185, 129, 0.12)" strokeWidth="1" strokeDasharray="5 7" className="animate-spin" style={{ animationDuration: "16s", transformOrigin: "195px 210px" }} />
-            <circle cx="195" cy="210" r="58" fill="none" stroke="rgba(16, 185, 129, 0.08)" strokeWidth="1" />
+              {/* Orbiting concentric rings */}
+              <circle cx="195" cy="215" r="82" fill="none" stroke="rgba(16, 185, 129, 0.05)" strokeWidth="1" />
+              <circle cx="195" cy="215" r="70" fill="none" stroke="rgba(16, 185, 129, 0.12)" strokeWidth="1" strokeDasharray="5 7" className="animate-spin" style={{ animationDuration: "16s", transformOrigin: "195px 215px" }} />
+              <circle cx="195" cy="215" r="58" fill="none" stroke="rgba(16, 185, 129, 0.08)" strokeWidth="1" />
 
-            {/* Radial Dashboard links from center (195, 210) to active selected node */}
-            {SLICES.map((s, i) => {
-              const active = selectedSliceIndex === i;
-              const coords = [
-                { x: 107, y: 298 }, // Farmer
-                { x: 70, y: 210 },  // Traceability
-                { x: 107, y: 122 }, // GIS
-                { x: 195, y: 85 },  // AI
-                { x: 283, y: 122 }, // Marketplace
-                { x: 320, y: 210 }, // Finance
-                { x: 283, y: 298 }  // Carbon
-              ][i];
+              {/* Radial hub indicators */}
+              {SLICES.map((s, i) => {
+                const active = selectedSliceIndex === i;
+                const coords = [
+                  { x: 135, y: 305 }, // Farmer
+                  { x: 75, y: 215 },  // Traceability
+                  { x: 105, y: 130 }, // GIS
+                  { x: 195, y: 75 },  // AI
+                  { x: 285, y: 130 }, // Marketplace
+                  { x: 315, y: 215 }, // Finance
+                  { x: 255, y: 305 }  // Carbon
+                ][i];
+
+                return (
+                  <line
+                    key={`radial-mob-${s.id}`}
+                    x1="195"
+                    y1="215"
+                    x2={coords.x}
+                    y2={coords.y}
+                    stroke={active ? "#10b981" : "rgba(16, 185, 129, 0.04)"}
+                    strokeWidth={active ? "2" : "1"}
+                    strokeDasharray="3 3"
+                  />
+                );
+              })}
+            </svg>
+
+            {/* ── Dominant Data Green Hub (Breathing OS node) ── */}
+            <div
+              style={{ left: "195px", top: "215px" }}
+              className="absolute w-[108px] h-[108px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center z-10 animate-pulse-slow"
+            >
+              <ShieldCheck className="w-7 h-7 text-[#10b981] mb-0.5 animate-pulse" />
+              <span className="text-[10px] font-black tracking-widest text-[#004D26] uppercase">DATA GREEN</span>
+              <span className="text-[8px] font-black text-[#10b981] tracking-widest uppercase">CORE OS</span>
+            </div>
+
+            {/* ── Surrounding Mobile Nodes ── */}
+            {[
+              { x: 135, y: 305, labelPos: "below" }, // Farmer
+              { x: 75, y: 215, labelPos: "below" },  // Traceability
+              { x: 105, y: 130, labelPos: "below" }, // GIS
+              { x: 195, y: 75, labelPos: "above" },  // AI
+              { x: 285, y: 130, labelPos: "below" }, // Marketplace
+              { x: 315, y: 215, labelPos: "below" }, // Finance
+              { x: 255, y: 305, labelPos: "below" }  // Carbon
+            ].map((coords, i) => {
+              const s = SLICES[i];
+              const isSel = selectedSliceIndex === i;
+              const dim = selectedSliceIndex !== null && !isSel;
+              const NodeIcon = s.icon;
 
               return (
-                <line
-                  key={`radial-mob-${s.id}`}
-                  x1="195"
-                  y1="210"
-                  x2={coords.x}
-                  y2={coords.y}
-                  stroke={active ? "#10b981" : "rgba(16, 185, 129, 0.04)"}
-                  strokeWidth={active ? "2" : "1"}
-                  strokeDasharray="3 3"
-                />
+                <div
+                  key={`mob-node-${s.id}`}
+                  style={{ left: `${coords.x}px`, top: `${coords.y}px` }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-20"
+                >
+                  <button
+                    onClick={() => setSelectedSliceIndex(selectedSliceIndex === i ? null : i)}
+                    className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 border shadow-sm bg-white ${
+                      isSel
+                        ? "border-[#10b981] text-[#10b981] scale-110 shadow-[0_0_15px_rgba(16,185,129,0.35)]"
+                        : "border-emerald-800/10 text-[#004D26] hover:bg-emerald-50/50"
+                    } ${dim ? "opacity-35" : "opacity-100"}`}
+                  >
+                    <NodeIcon className="w-5.5 h-5.5 shrink-0" />
+                  </button>
+
+                  <span
+                    className={`absolute w-[100px] text-center flex flex-col items-center leading-none transition-all duration-300 pointer-events-none ${
+                      coords.labelPos === "above" ? "bottom-16" : "top-16"
+                    } ${dim ? "opacity-35" : "opacity-100"}`}
+                  >
+                    <span className={`text-[8px] font-black uppercase tracking-wider ${isSel ? "text-[#10b981]" : "text-[#004D26]"}`}>
+                      {s.id === "farmer" ? "Farmer Portal" : s.id === "traceability" ? "Traceability" : s.id === "gis" ? "GIS Mapping" : s.id === "ai" ? "AI Insights" : s.id === "marketplace" ? "Marketplace" : s.id === "finance" ? "Finance & Credit" : "Carbon MRV"}
+                    </span>
+                    <span className="text-[6.5px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
+                      {NODE_CATEGORIES[i]}
+                    </span>
+                  </span>
+                </div>
               );
             })}
-          </svg>
-
-          {/* ── Dominant Data Green Central Hub (Absolute HTML with breathing pulse) ── */}
-          <div
-            style={{ left: "195px", top: "210px" }}
-            className="absolute w-[104px] h-[104px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center z-10 animate-pulse-slow"
-          >
-            <ShieldCheck className="w-6 h-6 text-[#10b981] mb-0.5" />
-            <span className="text-[9.5px] font-black tracking-widest text-[#004D26] uppercase">DATA GREEN</span>
-            <span className="text-[7.5px] font-black text-[#10b981] tracking-widest uppercase">CORE OS</span>
           </div>
 
-          {/* ── Surrounding Mobile Nodes (Absolute HTML) ── */}
-          {[
-            { x: 107, y: 298, labelPos: "below" }, // Farmer
-            { x: 70, y: 210, labelPos: "below" },  // Traceability
-            { x: 107, y: 122, labelPos: "below" }, // GIS
-            { x: 195, y: 85, labelPos: "above" },  // AI
-            { x: 283, y: 122, labelPos: "below" }, // Marketplace
-            { x: 320, y: 210, labelPos: "below" }, // Finance
-            { x: 283, y: 298, labelPos: "below" }  // Carbon
-          ].map((coords, i) => {
-            const s = SLICES[i];
-            const isSel = selectedSliceIndex === i;
-            const dim = selectedSliceIndex !== null && !isSel;
-            const NodeIcon = s.icon;
-
-            return (
-              <div
-                key={`mob-node-${s.id}`}
-                style={{ left: `${coords.x}px`, top: `${coords.y}px` }}
-                className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-20"
-              >
-                {/* Visual circle target */}
-                <button
-                  onClick={() => setSelectedSliceIndex(selectedSliceIndex === i ? null : i)}
-                  className={`w-13 h-13 rounded-full flex items-center justify-center transition-all duration-300 border shadow-sm ${
-                    isSel
-                      ? "bg-[#10b981] border-[#10b981] text-white scale-110 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
-                      : "bg-white border-emerald-800/15 text-[#004D26] hover:bg-emerald-50/50"
-                  } ${dim ? "opacity-35" : "opacity-100"}`}
-                >
-                  <NodeIcon className="w-5 h-5 shrink-0" />
-                </button>
-
-                {/* Text Label above or below (High scan hierarchy) */}
-                <span
-                  className={`absolute w-24 text-center flex flex-col items-center leading-none transition-all duration-300 pointer-events-none ${
-                    coords.labelPos === "above" ? "bottom-15" : "top-15"
-                  } ${dim ? "opacity-35" : "opacity-100"}`}
-                >
-                  <span className={`text-[9.5px] font-black uppercase tracking-wider ${isSel ? "text-[#10b981]" : "text-[#004D26]"}`}>
-                    {s.id === "farmer" ? "Farmer Portal" : s.id === "traceability" ? "Traceability" : s.id === "gis" ? "GIS Mapping" : s.id === "ai" ? "AI Predictions" : s.id === "marketplace" ? "Marketplace" : s.id === "finance" ? "Finance Ledger" : "Carbon & ESG"}
-                  </span>
-                  <span className="text-[7.5px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
-                    {NODE_CATEGORIES[i]}
-                  </span>
-                </span>
+          {/* ── "How It Works" Flow Stepper (Mockup Element) ── */}
+          <div className="mt-6 border-t border-gray-100 pt-4 w-full">
+            <span className="text-[9px] font-black uppercase text-gray-400 tracking-widest text-center block mb-3.5">How It Works</span>
+            <div className="flex items-center justify-between w-full max-w-sm mx-auto px-1">
+              
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="w-9 h-9 rounded-full bg-[#f4fbf7] border border-[#e2f5eb] flex items-center justify-center text-[#004D26] shadow-sm">
+                  <User className="w-4.5 h-4.5" />
+                </div>
+                <span className="text-[7.5px] font-black uppercase text-gray-500">Farmer</span>
               </div>
-            );
-          })}
+              
+              <ChevronRight className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+              
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="w-9 h-9 rounded-full bg-[#f4fbf7] border border-[#e2f5eb] flex items-center justify-center text-[#004D26] shadow-sm">
+                  <QrCode className="w-4.5 h-4.5" />
+                </div>
+                <span className="text-[7.5px] font-black uppercase text-gray-500">Trace</span>
+              </div>
+              
+              <ChevronRight className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+              
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="w-9 h-9 rounded-full bg-[#f4fbf7] border border-[#e2f5eb] flex items-center justify-center text-[#004D26] shadow-sm">
+                  <Map className="w-4.5 h-4.5" />
+                </div>
+                <span className="text-[7.5px] font-black uppercase text-gray-500">Monitor</span>
+              </div>
+              
+              <ChevronRight className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+              
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="w-9 h-9 rounded-full bg-[#f4fbf7] border border-[#e2f5eb] flex items-center justify-center text-[#004D26] shadow-sm">
+                  <BrainCircuit className="w-4.5 h-4.5" />
+                </div>
+                <span className="text-[7.5px] font-black uppercase text-gray-500">Insights</span>
+              </div>
+              
+              <ChevronRight className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+              
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="w-9 h-9 rounded-full bg-[#f4fbf7] border border-[#e2f5eb] flex items-center justify-center text-[#004D26] shadow-sm">
+                  <Coins className="w-4.5 h-4.5" />
+                </div>
+                <span className="text-[7.5px] font-black uppercase text-gray-500">Value</span>
+              </div>
+
+            </div>
+          </div>
+
         </div>
 
-        {/* Action helper text */}
-        <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-4">
-          {selectedSliceIndex === null ? "Tap any module to view details and data connections" : "Tap backdrop or close bottom sheet to reset"}
+        {/* ── Shield OS Info Card (Mockup Element) ── */}
+        <div className="w-full bg-[#f4fbf7]/60 border border-[#e2f5eb] rounded-2xl p-4 flex items-start gap-3 mt-4">
+          <div className="w-8 h-8 rounded-full bg-emerald-50 text-[#10b981] flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-xs font-black text-[#004D26] uppercase tracking-wider mb-0.5">SourceTrace Data Green OS</h4>
+            <p className="text-[10px] font-semibold text-gray-500 leading-relaxed">
+              Ensuring compliance, direct payout verification, and end-to-end supply chain transparency through a unified agricultural operating system.
+            </p>
+          </div>
+        </div>
+
+        {/* Swipe instructions helper below graph */}
+        <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-5 flex items-center justify-center gap-1.5">
+          <Activity className="w-3.5 h-3.5 text-gray-400" />
+          Tap any module to view details
         </p>
       </div>
 
-      {/* ── MOBILE SLIDING BOTTOM SHEET ── */}
+      {/* ── MOBILE SLIDING BOTTOM SHEET (Right Mockup) ── */}
       {selectedSliceIndex !== null && (
         <>
           {/* Backdrop overlay */}
@@ -607,34 +668,39 @@ export function DataGreenEngine() {
 
           {/* Sheet Panel */}
           <div
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[30px] border-t border-emerald-100 shadow-[0_-12px_40px_rgba(0,0,0,0.1)] z-50 px-6 pt-5 pb-8 transition-all duration-300 ease-out transform block md:hidden max-h-[85vh] overflow-y-auto scrollbar-none"
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[32px] border-t border-emerald-100 shadow-[0_-12px_40px_rgba(0,0,0,0.08)] z-50 px-6 pt-5 pb-6 transition-all duration-300 ease-out transform block md:hidden max-h-[90vh] overflow-y-auto scrollbar-none"
           >
-            {/* Grab Handle */}
-            <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4" />
+            {/* Drag Handle */}
+            <div className="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
 
-            {/* Visual Header with Contextual Background Illustration */}
-            <div className="relative w-full rounded-2xl overflow-hidden bg-emerald-50/10 border border-emerald-100/30 p-4 mb-4">
-              <div className="absolute inset-0 z-0 opacity-[0.06] text-[#004D26] pointer-events-none">
-                {renderContextualBg(SLICES[selectedSliceIndex].id)}
+            {/* Visual Header with Contextual Blurred Background */}
+            <div className="relative w-full rounded-2xl overflow-hidden mb-4 border border-emerald-800/5 bg-[#f4fbf7]/20">
+              <div className="absolute inset-0 z-0">
+                <img
+                  src={SLICE_IMAGES[SLICES[selectedSliceIndex].id]}
+                  alt=""
+                  className="w-full h-full object-cover opacity-12 filter blur-[0.5px]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-white" />
               </div>
               
-              <div className="relative z-10 flex items-start justify-between w-full">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#004D26] text-white flex items-center justify-center shrink-0">
-                    {React.createElement(SLICES[selectedSliceIndex].icon, { className: "w-5 h-5" })}
+              <div className="relative z-10 p-5 flex items-start justify-between w-full">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-xl bg-[#004D26] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    {React.createElement(SLICES[selectedSliceIndex].icon, { className: "w-5.5 h-5.5" })}
                   </div>
                   <div>
                     <h3 className="text-base font-black tracking-wider text-[#004D26] uppercase leading-tight">
                       {SLICES[selectedSliceIndex].name}
                     </h3>
-                    <span className="inline-block bg-emerald-50 text-[#10b981] text-[9.5px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider mt-1">
+                    <span className="inline-block bg-emerald-50 text-[#10b981] text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider mt-1.5">
                       {SLICES[selectedSliceIndex].metric}
                     </span>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedSliceIndex(null)}
-                  className="w-8 h-8 rounded-full bg-white/80 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 shrink-0"
+                  className="w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 shrink-0 shadow-sm"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -642,112 +708,142 @@ export function DataGreenEngine() {
             </div>
 
             {/* Description */}
-            <p className="text-xs text-gray-600 font-semibold leading-relaxed mb-5 border-b border-gray-50 pb-4 px-1">
+            <p className="text-xs text-gray-600 font-semibold leading-relaxed mb-5 px-1">
               {SLICES[selectedSliceIndex].description}
             </p>
 
-            {/* Capabilities Checklist */}
+            {/* Key Capabilities Checklist */}
             <div className="mb-5 px-1">
-              <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2.5">Platform Capabilities</h4>
-              <div className="flex flex-col gap-2">
+              <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Key Capabilities</h4>
+              <div className="flex flex-col gap-2.5">
                 {SLICES[selectedSliceIndex].capabilities.map((cap, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-xs font-bold text-gray-700 uppercase">
-                    <Check className="w-4 h-4 text-[#10b981] shrink-0 stroke-[3]" />
+                  <div key={idx} className="flex items-center gap-2.5 text-xs font-bold text-gray-700 uppercase">
+                    <div className="w-5 h-5 rounded-full border border-emerald-100 bg-emerald-50/50 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-[#10b981] shrink-0 stroke-[3.5]" />
+                    </div>
                     <span>{cap}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Structured Inputs/Outputs Workflow with Color Accents */}
+            {/* Structured Inputs/Outputs Workflow */}
             <div className="mb-5 px-1">
-              <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Ecosystem Input/Output Matrix</h4>
-              <div className="grid grid-cols-2 gap-3">
+              <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Ecosystem Connectivity</h4>
+              <div className="grid grid-cols-2 gap-3.5">
                 
                 {/* Receives (Blue Accent) */}
-                <div className="bg-blue-50/5 border border-blue-100/50 rounded-xl p-3">
-                  <span className="text-[8.5px] font-black uppercase text-blue-600 tracking-wider block mb-1.5">Receives (Inputs)</span>
-                  <div className="flex flex-col gap-1">
-                    {SLICES[selectedSliceIndex].receives.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 text-[9px] font-bold text-gray-700 uppercase">
-                        <span className="w-1 h-1 rounded-full bg-blue-500 shrink-0" />
-                        <span className="truncate">{item}</span>
-                      </div>
-                    ))}
+                <div className="bg-white border border-gray-100 rounded-xl p-3.5 flex flex-col justify-between shadow-[0_2px_10px_rgba(0,0,0,0.01)]">
+                  <div>
+                    <span className="text-[8.5px] font-black uppercase text-blue-500 tracking-wider block mb-2">Receives (Inputs)</span>
+                    <div className="flex flex-col gap-1.5">
+                      {SLICES[selectedSliceIndex].receives.map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-1 text-[9.5px] font-bold text-gray-600 uppercase leading-snug">
+                          <span className="text-blue-500 shrink-0">•</span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="w-6 h-6 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center self-end mt-2">
+                    <Download className="w-3 h-3" />
                   </div>
                 </div>
 
                 {/* Processes (Orange Accent) */}
-                <div className="bg-amber-50/5 border border-amber-100/50 rounded-xl p-3">
-                  <span className="text-[8.5px] font-black uppercase text-amber-600 tracking-wider block mb-1.5">Processes</span>
-                  <div className="flex flex-col gap-1">
-                    {SLICES[selectedSliceIndex].processes.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 text-[9px] font-bold text-gray-700 uppercase">
-                        <span className="w-1 h-1 rounded-full bg-amber-500 shrink-0" />
-                        <span className="truncate">{item}</span>
-                      </div>
-                    ))}
+                <div className="bg-white border border-gray-100 rounded-xl p-3.5 flex flex-col justify-between shadow-[0_2px_10px_rgba(0,0,0,0.01)]">
+                  <div>
+                    <span className="text-[8.5px] font-black uppercase text-amber-600 tracking-wider block mb-2">Processes</span>
+                    <div className="flex flex-col gap-1.5">
+                      {SLICES[selectedSliceIndex].processes.map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-1 text-[9.5px] font-bold text-gray-600 uppercase leading-snug">
+                          <span className="text-amber-500 shrink-0">•</span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="w-6 h-6 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center self-end mt-2">
+                    <Settings className="w-3.5 h-3.5" />
                   </div>
                 </div>
 
                 {/* Produces (Green Accent) */}
-                <div className="bg-emerald-50/5 border border-emerald-100/50 rounded-xl p-3">
-                  <span className="text-[8.5px] font-black uppercase text-emerald-600 tracking-wider block mb-1.5">Produces (Outputs)</span>
-                  <div className="flex flex-col gap-1">
-                    {SLICES[selectedSliceIndex].produces.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 text-[9px] font-bold text-gray-700 uppercase">
-                        <span className="w-1 h-1 rounded-full bg-emerald-500 shrink-0" />
-                        <span className="truncate">{item}</span>
-                      </div>
-                    ))}
+                <div className="bg-white border border-gray-100 rounded-xl p-3.5 flex flex-col justify-between shadow-[0_2px_10px_rgba(0,0,0,0.01)]">
+                  <div>
+                    <span className="text-[8.5px] font-black uppercase text-emerald-600 tracking-wider block mb-2">Produces (Outputs)</span>
+                    <div className="flex flex-col gap-1.5">
+                      {SLICES[selectedSliceIndex].produces.map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-1 text-[9.5px] font-bold text-gray-600 uppercase leading-snug">
+                          <span className="text-emerald-500 shrink-0">•</span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center self-end mt-2">
+                    <Check className="w-3.5 h-3.5" />
                   </div>
                 </div>
 
                 {/* Feeds (Purple Accent) */}
-                <div className="bg-purple-50/5 border border-purple-100/50 rounded-xl p-3">
-                  <span className="text-[8.5px] font-black uppercase text-purple-600 tracking-wider block mb-1.5">Feeds (Downstream)</span>
-                  <div className="flex flex-col gap-1">
-                    {SLICES[selectedSliceIndex].feeds.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5 text-[9px] font-bold text-gray-700 uppercase">
-                        <span className="w-1 h-1 rounded-full bg-purple-500 shrink-0" />
-                        <span className="truncate">{item}</span>
-                      </div>
-                    ))}
+                <div className="bg-white border border-gray-100 rounded-xl p-3.5 flex flex-col justify-between shadow-[0_2px_10px_rgba(0,0,0,0.01)]">
+                  <div>
+                    <span className="text-[8.5px] font-black uppercase text-purple-600 tracking-wider block mb-2">Feeds (Downstream)</span>
+                    <div className="flex flex-col gap-1.5">
+                      {SLICES[selectedSliceIndex].feeds.map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-1 text-[9.5px] font-bold text-gray-600 uppercase leading-snug">
+                          <span className="text-purple-500 shrink-0">•</span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="w-6 h-6 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center self-end mt-2">
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
 
               </div>
             </div>
 
-            {/* Interactive Storytelling Pathway Widget */}
-            <div className="bg-emerald-50/10 border border-emerald-800/10 rounded-2xl p-4 mb-4">
-              <span className="text-[9.5px] font-black uppercase text-[#004D26] tracking-wider block mb-3">Ecosystem Data Flow Routing</span>
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex flex-col items-center gap-1 w-[30%]">
-                  <span className="text-[7.5px] font-black uppercase text-gray-400">Source</span>
-                  <div className="w-full text-center py-2 px-1 rounded-lg bg-gray-50 border border-gray-100 text-[8.5px] font-bold text-gray-600 truncate uppercase">
-                    {PATHWAY_STORY[selectedSliceIndex].upstream}
+            {/* Impact Section */}
+            <div className="mt-5 border-t border-gray-100 pt-4 px-1">
+              <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-3">Impact</h4>
+              <div className="grid grid-cols-4 gap-2 text-center">
+                <div className="flex flex-col items-center">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-50/50 border border-emerald-100/30 text-[#10b981] flex items-center justify-center mb-1">
+                    <ShieldCheck className="w-5 h-5" />
                   </div>
+                  <span className="text-[10px] font-black text-gray-900 leading-tight block">100%</span>
+                  <span className="text-[7.5px] font-bold text-gray-500 uppercase leading-none mt-0.5">Data Integrity</span>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-[#10b981] animate-pulse shrink-0" />
-                <div className="flex flex-col items-center gap-1 w-[36%]">
-                  <span className="text-[7.5px] font-black uppercase text-[#10b981]">Active Stage</span>
-                  <div className="w-full text-center py-2 px-1 rounded-lg bg-emerald-50 border border-[#10b981]/30 text-[8.5px] font-black text-[#004D26] truncate uppercase shadow-sm">
-                    {PATHWAY_STORY[selectedSliceIndex].current}
+                <div className="flex flex-col items-center">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-50/50 border border-emerald-100/30 text-[#10b981] flex items-center justify-center mb-1">
+                    <Barcode className="w-5 h-5" />
                   </div>
+                  <span className="text-[10px] font-black text-gray-900 leading-tight block">Real-time</span>
+                  <span className="text-[7.5px] font-bold text-gray-500 uppercase leading-none mt-0.5">Traceability</span>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-[#10b981] animate-pulse shrink-0" />
-                <div className="flex flex-col items-center gap-1 w-[30%]">
-                  <span className="text-[7.5px] font-black uppercase text-gray-400">Destination</span>
-                  <div className="w-full text-center py-2 px-1 rounded-lg bg-gray-50 border border-gray-100 text-[8.5px] font-bold text-gray-600 truncate uppercase">
-                    {PATHWAY_STORY[selectedSliceIndex].downstream}
+                <div className="flex flex-col items-center">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-50/50 border border-emerald-100/30 text-[#10b981] flex items-center justify-center mb-1">
+                    <Clock className="w-5 h-5" />
                   </div>
+                  <span className="text-[10px] font-black text-gray-900 leading-tight block">Reduced</span>
+                  <span className="text-[7.5px] font-bold text-gray-500 uppercase leading-none mt-0.5">Disputes</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-50/50 border border-emerald-100/30 text-[#10b981] flex items-center justify-center mb-1">
+                    <TrendingUp className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-black text-gray-900 leading-tight block">Higher</span>
+                  <span className="text-[7.5px] font-bold text-gray-500 uppercase leading-none mt-0.5">Trust & Value</span>
                 </div>
               </div>
             </div>
 
-            {/* CTA */}
-            <button className="w-full bg-[#004D26] hover:bg-[#00381b] active:scale-[0.99] text-white font-extrabold text-xs py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all uppercase tracking-wider">
+            {/* CTA Button */}
+            <button className="w-full bg-[#004D26] hover:bg-[#00381b] active:scale-[0.99] text-white font-extrabold text-xs py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 mt-5 transition-all uppercase tracking-wider">
               Learn More <ChevronRight className="w-4 h-4" />
             </button>
 
@@ -835,7 +931,7 @@ export function DataGreenEngine() {
             })}
           </svg>
 
-          {/* ── Data Green Centerpiece (Tablet with breathing pulse) ── */}
+          {/* ── Data Green Centerpiece (Tablet) ── */}
           <div
             style={{ left: "360px", top: "220px" }}
             className="absolute w-[112px] h-[112px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center z-10 animate-pulse-slow"
@@ -845,7 +941,7 @@ export function DataGreenEngine() {
             <span className="text-[9px] font-black text-[#10b981] tracking-widest uppercase">CORE OS</span>
           </div>
 
-          {/* ── Symmetrical Tablet Nodes (Absolute HTML) ── */}
+          {/* ── Symmetrical Tablet Nodes ── */}
           {[
             { x: 254, y: 326, labelPos: "below" }, // Farmer
             { x: 210, y: 220, labelPos: "below" }, // Traceability
@@ -893,13 +989,17 @@ export function DataGreenEngine() {
           })}
         </div>
 
-        {/* Tablet Floating details card (appears at bottom of tablet view) */}
+        {/* Tablet Floating details card */}
         <div className="mt-6 min-h-[120px] transition-all duration-300">
           {selectedSliceIndex !== null ? (
             <div className="bg-white border border-emerald-800/10 rounded-3xl p-6 shadow-sm transition-all duration-300 relative overflow-hidden">
-              {/* Background contextual drawing */}
-              <div className="absolute inset-0 z-0 opacity-[0.06] text-[#004D26] pointer-events-none">
-                {renderContextualBg(SLICES[selectedSliceIndex].id)}
+              <div className="absolute inset-0 z-0">
+                <img
+                  src={SLICE_IMAGES[SLICES[selectedSliceIndex].id]}
+                  alt=""
+                  className="w-full h-full object-cover opacity-[0.06] filter blur-[0.5px]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white" />
               </div>
 
               <div className="relative z-10">
@@ -939,38 +1039,13 @@ export function DataGreenEngine() {
                     {/* Capabilities List */}
                     <div className="flex flex-wrap gap-x-6 gap-y-2.5">
                       {SLICES[selectedSliceIndex].capabilities.map((cap, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-xs font-bold text-gray-700 uppercase">
-                          <Check className="w-4 h-4 text-[#10b981] stroke-[3]" />
+                        <div key={idx} className="flex items-center gap-2.5 text-xs font-bold text-gray-700 uppercase">
+                          <div className="w-5 h-5 rounded-full border border-emerald-100 bg-emerald-50/50 flex items-center justify-center shrink-0">
+                            <Check className="w-3 h-3 text-[#10b981] stroke-[3.5]" />
+                          </div>
                           <span>{cap}</span>
                         </div>
                       ))}
-                    </div>
-
-                    {/* Interactive Conveyor Storytelling Widget */}
-                    <div className="bg-emerald-50/10 border border-emerald-800/10 rounded-2xl p-3.5 mt-4 max-w-lg">
-                      <span className="text-[8.5px] font-black uppercase text-[#004D26] tracking-wider block mb-2">Ecosystem Data Flow Routing</span>
-                      <div className="flex items-center justify-between gap-1.5">
-                        <div className="flex flex-col items-center gap-0.5 w-[30%]">
-                          <span className="text-[7px] font-black uppercase text-gray-400">Source</span>
-                          <div className="w-full text-center py-1.5 px-1 rounded-lg bg-gray-50 border border-gray-100 text-[8px] font-bold text-gray-600 truncate uppercase">
-                            {PATHWAY_STORY[selectedSliceIndex].upstream}
-                          </div>
-                        </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-[#10b981] animate-pulse shrink-0" />
-                        <div className="flex flex-col items-center gap-0.5 w-[36%]">
-                          <span className="text-[7px] font-black uppercase text-[#10b981]">Active Stage</span>
-                          <div className="w-full text-center py-1.5 px-1 rounded-lg bg-emerald-50 border border-[#10b981]/30 text-[8px] font-black text-[#004D26] truncate uppercase shadow-sm">
-                            {PATHWAY_STORY[selectedSliceIndex].current}
-                          </div>
-                        </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-[#10b981] animate-pulse shrink-0" />
-                        <div className="flex flex-col items-center gap-0.5 w-[30%]">
-                          <span className="text-[7px] font-black uppercase text-gray-400">Destination</span>
-                          <div className="w-full text-center py-1.5 px-1 rounded-lg bg-gray-50 border border-gray-100 text-[8px] font-bold text-gray-600 truncate uppercase">
-                            {PATHWAY_STORY[selectedSliceIndex].downstream}
-                          </div>
-                        </div>
-                      </div>
                     </div>
                   </div>
 
@@ -986,6 +1061,7 @@ export function DataGreenEngine() {
                         <span className="text-[8.5px] font-bold text-gray-600 uppercase block truncate">{SLICES[selectedSliceIndex].feeds[0]}</span>
                       </div>
                     </div>
+                    
                     <button className="w-full bg-[#004D26] hover:bg-[#00381b] text-white font-extrabold text-[10px] py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-all uppercase tracking-wider">
                       Learn More <ChevronRight className="w-3.5 h-3.5" />
                     </button>
@@ -1329,7 +1405,7 @@ export function DataGreenEngine() {
                         : "border-emerald-800/8 shadow-[0_4px_20px_rgba(0,77,38,0.02)]"
                     } ${dim ? "opacity-35" : "opacity-100"}`}
                   >
-                    {/* Contextual Background Illustration (Subtle 6% Opacity) */}
+                    {/* Contextual Background Illustration */}
                     <div className="absolute inset-0 z-0 opacity-[0.06] text-[#004D26] pointer-events-none">
                       {renderContextualBg(s.id)}
                     </div>
