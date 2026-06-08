@@ -436,7 +436,7 @@ export function DataGreenEngine() {
       <div className="block md:hidden w-full max-w-[390px] mx-auto relative z-20">
         <div className="w-full aspect-[390/400] relative bg-white/40 border border-emerald-800/5 rounded-3xl shadow-sm p-4 overflow-hidden">
           
-          {/* Mobile SVG Canvas (draws connecting lines and data flows) */}
+          {/* Mobile SVG Canvas (draws connecting lines, centerpiece hub, and satellite nodes) */}
           <svg viewBox="0 0 390 400" className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: "visible" }}>
             <defs>
               <style>{`
@@ -448,8 +448,8 @@ export function DataGreenEngine() {
                   animation: flow-active-mob 1.5s linear infinite;
                 }
                 @keyframes pulse-slow {
-                  0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 8px 32px rgba(16,185,129,0.15); }
-                  50% { transform: translate(-50%, -50%) scale(1.04); box-shadow: 0 12px 40px rgba(16,185,129,0.3); }
+                  0%, 100% { transform: scale(1); box-shadow: 0 8px 32px rgba(16,185,129,0.15); }
+                  50% { transform: scale(1.04); box-shadow: 0 12px 40px rgba(16,185,129,0.3); }
                 }
                 .animate-pulse-slow {
                   animation: pulse-slow 4s infinite ease-in-out;
@@ -516,67 +516,89 @@ export function DataGreenEngine() {
                 />
               );
             })}
-          </svg>
 
-          {/* ── Dominant Data Green Central Hub (40% Larger Centerpiece) ── */}
-          <div
-            style={{ left: "195px", top: "190px" }}
-            className="absolute w-[116px] h-[116px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center z-10 animate-pulse-slow shadow-[0_8px_32px_rgba(16,185,129,0.18)]"
-          >
-            <ShieldCheck className="w-8 h-8 text-[#10b981] mb-0.5 animate-pulse" />
-            <span className="text-[10.5px] font-black tracking-widest text-[#004D26] uppercase">DATA GREEN</span>
-            <span className="text-[8.5px] font-black text-[#10b981] tracking-widest uppercase mt-0.5">CORE OS</span>
-          </div>
-
-          {/* ── Surrounding Mobile Nodes (Symmetrical satellites orbiting center) ── */}
-          {[
-            { x: 100, y: 285, labelPos: "below" }, // Farmer
-            { x: 60, y: 190, labelPos: "below" },  // Traceability
-            { x: 100, y: 95, labelPos: "below" },  // GIS
-            { x: 195, y: 55, labelPos: "above" },  // AI
-            { x: 290, y: 95, labelPos: "below" },  // Marketplace
-            { x: 330, y: 190, labelPos: "below" }, // Finance
-            { x: 290, y: 285, labelPos: "below" }  // Carbon
-          ].map((coords, i) => {
-            const s = SLICES[i];
-            const isSel = selectedSliceIndex === i;
-            const dim = selectedSliceIndex !== null && !isSel;
-            const NodeIcon = s.icon;
-
-            return (
-              <div
-                key={`mob-node-${s.id}`}
-                style={{ left: `${coords.x}px`, top: `${coords.y}px` }}
-                className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-20"
-              >
-                {/* Visual circle target (Enlarged to w-14 h-14 with w-[26px] icons) */}
-                <button
-                  onClick={() => setSelectedSliceIndex(selectedSliceIndex === i ? null : i)}
-                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 border shadow-sm ${
-                    isSel
-                      ? "bg-[#10b981] border-[#10b981] text-white scale-110 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
-                      : "bg-white border-emerald-800/15 text-[#004D26] hover:bg-emerald-50/50"
-                  } ${dim ? "opacity-35" : "opacity-100"}`}
-                >
-                  <NodeIcon className="w-[26px] h-[26px] shrink-0" />
-                </button>
-
-                {/* Text Label above or below (Increased label and spacing) */}
-                <span
-                  className={`absolute w-24 text-center flex flex-col items-center leading-none transition-all duration-300 pointer-events-none ${
-                    coords.labelPos === "above" ? "bottom-16" : "top-16"
-                  } ${dim ? "opacity-35" : "opacity-100"}`}
-                >
-                  <span className={`text-[10px] font-black uppercase tracking-wider ${isSel ? "text-[#10b981]" : "text-[#004D26]"}`}>
-                    {s.id === "farmer" ? "Farmer Portal" : s.id === "traceability" ? "Traceability" : s.id === "gis" ? "GIS Mapping" : s.id === "ai" ? "AI Predictions" : s.id === "marketplace" ? "Marketplace" : s.id === "finance" ? "Finance Ledger" : "Carbon & ESG"}
-                  </span>
-                  <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
-                    {NODE_CATEGORIES[i]}
-                  </span>
-                </span>
+            {/* ── Dominant Data Green Central Hub (40% Larger Centerpiece) ── */}
+            <foreignObject
+              x="137" // 195 - 58
+              y="132" // 190 - 58
+              width="116"
+              height="116"
+              style={{ overflow: "visible" }}
+              className="pointer-events-auto"
+            >
+              <div className="w-[116px] h-[116px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center animate-pulse-slow shadow-[0_8px_32px_rgba(16,185,129,0.18)]">
+                <ShieldCheck className="w-8 h-8 text-[#10b981] mb-0.5 animate-pulse" />
+                <span className="text-[10.5px] font-black tracking-widest text-[#004D26] uppercase">DATA GREEN</span>
+                <span className="text-[8.5px] font-black text-[#10b981] tracking-widest uppercase mt-0.5">CORE OS</span>
               </div>
-            );
-          })}
+            </foreignObject>
+
+            {/* ── Surrounding Mobile Nodes (Symmetrical satellites orbiting center) ── */}
+            {[
+              { x: 100, y: 285, labelPos: "below" }, // Farmer
+              { x: 60, y: 190, labelPos: "below" },  // Traceability
+              { x: 100, y: 95, labelPos: "below" },  // GIS
+              { x: 195, y: 55, labelPos: "above" },  // AI
+              { x: 290, y: 95, labelPos: "below" },  // Marketplace
+              { x: 330, y: 190, labelPos: "below" }, // Finance
+              { x: 290, y: 285, labelPos: "below" }  // Carbon
+            ].map((coords, i) => {
+              const s = SLICES[i];
+              const isSel = selectedSliceIndex === i;
+              const dim = selectedSliceIndex !== null && !isSel;
+              const NodeIcon = s.icon;
+
+              return (
+                <g key={`mob-node-group-${s.id}`}>
+                  {/* Button Wrapper */}
+                  <foreignObject
+                    x={coords.x - 28}
+                    y={coords.y - 28}
+                    width="56"
+                    height="56"
+                    style={{ overflow: "visible" }}
+                    className="pointer-events-auto"
+                  >
+                    <button
+                      onClick={() => setSelectedSliceIndex(selectedSliceIndex === i ? null : i)}
+                      className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 border shadow-sm ${
+                        isSel
+                          ? "bg-[#10b981] border-[#10b981] text-white scale-110 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
+                          : "bg-white border-emerald-800/15 text-[#004D26] hover:bg-emerald-50/50"
+                      } ${dim ? "opacity-35" : "opacity-100"}`}
+                    >
+                      <NodeIcon className="w-[26px] h-[26px] shrink-0" />
+                    </button>
+                  </foreignObject>
+
+                  {/* SVG Text Label */}
+                  <text
+                    x={coords.x}
+                    y={coords.labelPos === "above" ? coords.y - 36 : coords.y + 44}
+                    textAnchor="middle"
+                    className={`transition-all duration-300 pointer-events-none ${dim ? "opacity-35" : "opacity-100"}`}
+                  >
+                    <tspan
+                      x={coords.x}
+                      dy="0"
+                      className={`text-[10px] font-black uppercase tracking-wider ${isSel ? "fill-[#10b981]" : "fill-[#004D26]"}`}
+                      style={{ fontFamily: "inherit" }}
+                    >
+                      {s.id === "farmer" ? "Farmer Portal" : s.id === "traceability" ? "Traceability" : s.id === "gis" ? "GIS Mapping" : s.id === "ai" ? "AI Predictions" : s.id === "marketplace" ? "Marketplace" : s.id === "finance" ? "Finance Ledger" : "Carbon & ESG"}
+                    </tspan>
+                    <tspan
+                      x={coords.x}
+                      dy="11"
+                      className="text-[8px] font-bold fill-gray-400 uppercase tracking-widest"
+                      style={{ fontFamily: "inherit" }}
+                    >
+                      {NODE_CATEGORIES[i]}
+                    </tspan>
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
         </div>
 
         {/* Action helper text */}
@@ -818,64 +840,88 @@ export function DataGreenEngine() {
                 />
               );
             })}
-          </svg>
-
-          {/* ── Data Green Centerpiece (Tablet) ── */}
-          <div
-            style={{ left: "360px", top: "220px" }}
-            className="absolute w-[112px] h-[112px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center z-10 animate-pulse-slow animate-pulse"
-          >
-            <ShieldCheck className="w-7 h-7 text-[#10b981] mb-1" />
-            <span className="text-xs font-black tracking-widest text-[#004D26] uppercase">DATA GREEN</span>
-            <span className="text-[9px] font-black text-[#10b981] tracking-widest uppercase">CORE OS</span>
-          </div>
-
-          {/* ── Symmetrical Tablet Nodes (Absolute HTML) ── */}
-          {[
-            { x: 254, y: 326, labelPos: "below" }, // Farmer
-            { x: 210, y: 220, labelPos: "below" }, // Traceability
-            { x: 254, y: 114, labelPos: "below" }, // GIS
-            { x: 360, y: 70, labelPos: "above" },  // AI
-            { x: 466, y: 114, labelPos: "below" }, // Marketplace
-            { x: 510, y: 220, labelPos: "below" }, // Finance
-            { x: 466, y: 326, labelPos: "below" }  // Carbon
-          ].map((coords, i) => {
-            const s = SLICES[i];
-            const isSel = selectedSliceIndex === i;
-            const dim = selectedSliceIndex !== null && !isSel;
-            const NodeIcon = s.icon;
-
-            return (
-              <div
-                key={`tab-node-${s.id}`}
-                style={{ left: `${coords.x}px`, top: `${coords.y}px` }}
-                className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-20"
-              >
-                <button
-                  onClick={() => setSelectedSliceIndex(selectedSliceIndex === i ? null : i)}
-                  className={`w-15 h-15 rounded-full flex items-center justify-center transition-all duration-300 border shadow-sm ${
-                    isSel
-                      ? "bg-[#10b981] border-[#10b981] text-white scale-110 shadow-[0_0_18px_rgba(16,185,129,0.45)]"
-                      : "bg-white border-emerald-800/15 text-[#004D26] hover:bg-emerald-50/50"
-                  } ${dim ? "opacity-35" : "opacity-100"}`}
-                >
-                  <NodeIcon className="w-6 h-6 shrink-0" />
-                </button>
-                <span
-                  className={`absolute w-28 text-center flex flex-col items-center leading-none transition-all duration-300 pointer-events-none ${
-                    coords.labelPos === "above" ? "bottom-17" : "top-17"
-                  } ${dim ? "opacity-35" : "opacity-100"}`}
-                >
-                  <span className={`text-[10px] font-black uppercase tracking-wider ${isSel ? "text-[#10b981]" : "text-[#004D26]"}`}>
-                    {s.id === "farmer" ? "Farmer Portal" : s.id === "traceability" ? "Traceability" : s.id === "gis" ? "GIS Mapping" : s.id === "ai" ? "AI Predictions" : s.id === "marketplace" ? "Marketplace" : s.id === "finance" ? "Finance Ledger" : "Carbon & ESG"}
-                  </span>
-                  <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
-                    {NODE_CATEGORIES[i]}
-                  </span>
-                </span>
+            {/* ── Data Green Centerpiece (Tablet) ── */}
+            <foreignObject
+              x="304" // 360 - 56
+              y="164" // 220 - 56
+              width="112"
+              height="112"
+              style={{ overflow: "visible" }}
+              className="pointer-events-auto"
+            >
+              <div className="w-[112px] h-[112px] rounded-full bg-white border-4 border-[#10b981] flex flex-col items-center justify-center animate-pulse-slow shadow-[0_8px_32px_rgba(16,185,129,0.18)]">
+                <ShieldCheck className="w-7 h-7 text-[#10b981] mb-1" />
+                <span className="text-xs font-black tracking-widest text-[#004D26] uppercase">DATA GREEN</span>
+                <span className="text-[9px] font-black text-[#10b981] tracking-widest uppercase mt-0.5">CORE OS</span>
               </div>
-            );
-          })}
+            </foreignObject>
+
+            {/* ── Symmetrical Tablet Nodes ── */}
+            {[
+              { x: 254, y: 326, labelPos: "below" }, // Farmer
+              { x: 210, y: 220, labelPos: "below" }, // Traceability
+              { x: 254, y: 114, labelPos: "below" }, // GIS
+              { x: 360, y: 70, labelPos: "above" },  // AI
+              { x: 466, y: 114, labelPos: "below" }, // Marketplace
+              { x: 510, y: 220, labelPos: "below" }, // Finance
+              { x: 466, y: 326, labelPos: "below" }  // Carbon
+            ].map((coords, i) => {
+              const s = SLICES[i];
+              const isSel = selectedSliceIndex === i;
+              const dim = selectedSliceIndex !== null && !isSel;
+              const NodeIcon = s.icon;
+
+              return (
+                <g key={`tab-node-group-${s.id}`}>
+                  {/* Button Wrapper */}
+                  <foreignObject
+                    x={coords.x - 30}
+                    y={coords.y - 30}
+                    width="60"
+                    height="60"
+                    style={{ overflow: "visible" }}
+                    className="pointer-events-auto"
+                  >
+                    <button
+                      onClick={() => setSelectedSliceIndex(selectedSliceIndex === i ? null : i)}
+                      className={`w-15 h-15 rounded-full flex items-center justify-center transition-all duration-300 border shadow-sm ${
+                        isSel
+                          ? "bg-[#10b981] border-[#10b981] text-white scale-110 shadow-[0_0_18px_rgba(16,185,129,0.45)]"
+                          : "bg-white border-emerald-800/15 text-[#004D26] hover:bg-emerald-50/50"
+                      } ${dim ? "opacity-35" : "opacity-100"}`}
+                    >
+                      <NodeIcon className="w-6 h-6 shrink-0" />
+                    </button>
+                  </foreignObject>
+
+                  {/* SVG Text Label */}
+                  <text
+                    x={coords.x}
+                    y={coords.labelPos === "above" ? coords.y - 38 : coords.y + 46}
+                    textAnchor="middle"
+                    className={`transition-all duration-300 pointer-events-none ${dim ? "opacity-35" : "opacity-100"}`}
+                  >
+                    <tspan
+                      x={coords.x}
+                      dy="0"
+                      className={`text-[10px] font-black uppercase tracking-wider ${isSel ? "fill-[#10b981]" : "fill-[#004D26]"}`}
+                      style={{ fontFamily: "inherit" }}
+                    >
+                      {s.id === "farmer" ? "Farmer Portal" : s.id === "traceability" ? "Traceability" : s.id === "gis" ? "GIS Mapping" : s.id === "ai" ? "AI Predictions" : s.id === "marketplace" ? "Marketplace" : s.id === "finance" ? "Finance Ledger" : "Carbon & ESG"}
+                    </tspan>
+                    <tspan
+                      x={coords.x}
+                      dy="11"
+                      className="text-[8px] font-bold fill-gray-400 uppercase tracking-widest"
+                      style={{ fontFamily: "inherit" }}
+                    >
+                      {NODE_CATEGORIES[i]}
+                    </tspan>
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
         </div>
 
         {/* Tablet Floating details card (appears at bottom of tablet view) */}
