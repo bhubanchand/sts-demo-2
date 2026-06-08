@@ -363,6 +363,16 @@ const BACKGROUND_IMAGES: Record<string, string> = {
   carbon: "/images/ecosystem/carbon_mrv_bg.png"
 };
 
+const MOBILE_POPUP_IMAGES: Record<string, string> = {
+  farmer: "/images/ecosystem/user_farmer_3d.jpg",
+  traceability: "/images/ecosystem/user_traceability_3d.jpg",
+  gis: "/images/ecosystem/user_gis_3d.jpg",
+  ai: "/images/ecosystem/user_gis_3d.jpg",
+  marketplace: "/images/ecosystem/user_traceability_3d.jpg",
+  finance: "/images/ecosystem/user_farmer_3d.jpg",
+  carbon: "/images/ecosystem/user_gis_3d.jpg"
+};
+
 const HUB_DESKTOP = { x: 720, y: 350 };
 const NODE_CATEGORIES = ["Onboarding", "Logistics", "GIS Maps", "AI Models", "Agri Trade", "Micro Credit", "ESG Offsets"];
 
@@ -387,11 +397,11 @@ export function DataGreenEngine() {
           "Cross-Module Flow Tracing"
         ],
         icon: ShieldCheck,
-        bgImage: "/images/ecosystem/traceability_bg.png"
+        bgImage: "/images/ecosystem/user_farmer_3d.jpg"
       }
     : selectedSliceIndex !== null && selectedSliceIndex >= 0 && selectedSliceIndex < SLICES.length ? {
         ...SLICES[selectedSliceIndex],
-        bgImage: BACKGROUND_IMAGES[SLICES[selectedSliceIndex].id]
+        bgImage: MOBILE_POPUP_IMAGES[SLICES[selectedSliceIndex].id]
       } : null;
 
   // Auto-center the desktop horizontal scroll on mount (legacy backup behavior)
