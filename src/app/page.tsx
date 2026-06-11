@@ -393,11 +393,13 @@ export default function Home() {
          </div>
       </section>
 
-      {/* 6. Global Presence - Genuine Interactive Map */}
+       {/* 6. Global Presence - Genuine Interactive Map */}
        <section className="flex flex-col justify-center py-16 bg-white overflow-hidden border-t border-gray-100">
-         <div className="max-w-[1400px] mx-auto px-6 sm:px-8 text-center w-full">
-            <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Global Impact</span>
-            <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Powering supply chains worldwide</h2>
+         <div className="max-w-[1400px] mx-auto text-center w-full">
+            <div className="px-6 sm:px-8 mb-6">
+               <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Global Impact</span>
+               <h2 className="text-4xl sm:text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Powering supply chains worldwide</h2>
+            </div>
             
             <InteractiveMap />
          </div>

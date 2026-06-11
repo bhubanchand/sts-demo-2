@@ -100,10 +100,10 @@ export function InteractiveMap() {
   }, []);
 
   return (
-    <div className="w-full max-w-6xl mx-auto mt-6 flex flex-col items-center">
+    <div className="w-full max-w-6xl mx-auto flex flex-col items-center mt-2 md:mt-10">
       
       {/* Map box */}
-      <div className="relative w-full h-[240px] sm:h-[360px] md:h-[550px] bg-white rounded-3xl md:border md:border-gray-100 md:shadow-sm overflow-hidden flex items-center justify-center">
+      <div className="relative w-full h-[220px] sm:h-[360px] md:h-[550px] bg-white rounded-none md:rounded-[40px] md:border md:border-gray-100 md:shadow-sm overflow-hidden flex items-center justify-center">
         
         {/* Tooltip Overlay */}
         <AnimatePresence>
@@ -148,7 +148,7 @@ export function InteractiveMap() {
         <ComposableMap 
           projection="geoMercator" 
           projectionConfig={{ 
-            scale: isMobile ? 70 : 120,
+            scale: isMobile ? 65 : 120,
             center: isMobile ? [0, 15] : [0, 0]
           }}
           className="w-full h-full"
@@ -207,38 +207,6 @@ export function InteractiveMap() {
             }
           </Geographies>
         </ComposableMap>
-      </div>
-
-      {/* Mobile Regional Lists grouped exactly matching the screenshot */}
-      <div className="md:hidden w-full px-4 text-left mt-8 space-y-6">
-        {REGIONS_DATA.map((region) => (
-          <div key={region.title} className="space-y-1.5">
-            <h3 className="text-[#1F7A53] text-[15px] font-bold tracking-tight">
-              {region.title}
-            </h3>
-            <div className="text-[14px] text-gray-800 font-medium leading-relaxed">
-              {region.list.map((country, idx) => {
-                const mapName = getMapCountryName(country);
-                const isSelected = hoveredCountry === mapName;
-                return (
-                  <React.Fragment key={country}>
-                    <span 
-                      className={`cursor-pointer hover:text-[#53D769] transition-colors ${isSelected ? 'text-[#1F7A53] font-black underline decoration-2 decoration-[#53D769]' : ''}`}
-                      onClick={() => {
-                        setHoveredCountry(hoveredCountry === mapName ? null : mapName);
-                      }}
-                    >
-                      {country}
-                    </span>
-                    {idx < region.list.length - 1 && (
-                      <span className="text-gray-300 mx-2 font-normal">|</span>
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );
