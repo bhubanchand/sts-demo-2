@@ -57,21 +57,9 @@ const SLIDES = [
 
 export function ExpandingSlideshow() {
   const [activeSlide, setActiveSlide] = useState(SLIDES[0].id);
-  const [isMobile, setIsMobile] = useState(false);
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   return (
-    <div className={`flex flex-col md:flex-row gap-4 w-full max-w-[1400px] mx-auto px-4 sm:px-8 py-16 snap-center ${
-      isMobile ? "h-auto" : "h-[600px]"
-    }`}>
+    <div className="flex flex-col md:flex-row gap-4 w-full h-[1050px] md:h-[600px] max-w-[1400px] mx-auto px-4 sm:px-8 py-16 snap-center">
       {SLIDES.map((slide) => {
         const isActive = activeSlide === slide.id;
 
@@ -79,20 +67,18 @@ export function ExpandingSlideshow() {
           <motion.div
             key={slide.id}
             onHoverStart={() => {
-              if (!isMobile) setActiveSlide(slide.id);
+              if (typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches) {
+                setActiveSlide(slide.id);
+              }
             }}
             onClick={() => setActiveSlide(slide.id)}
             layout
             initial={false}
-            animate={
-              isMobile
-                ? { height: isActive ? 340 : 76 }
-                : { flex: isActive ? 5 : 1 }
-            }
+            animate={{
+              flex: isActive ? 5 : 1,
+            }}
             transition={{ type: "spring", stiffness: 220, damping: 24 }}
-            className={`relative rounded-[2rem] overflow-hidden cursor-pointer group bg-gray-900 ${
-              isMobile ? "w-full" : "min-w-[80px]"
-            }`}
+            className="relative rounded-[2rem] overflow-hidden cursor-pointer group bg-gray-900 w-full md:w-auto min-h-[76px] md:min-h-0 min-w-0 md:min-w-[80px]"
           >
             {/* Background Image */}
             <motion.div 
