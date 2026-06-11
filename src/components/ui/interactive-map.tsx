@@ -8,18 +8,81 @@ import { MapPin } from "lucide-react";
 // TopoJSON data for the world map
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-// SourceTrace Operating Countries & their coordinates for markers
-const OPERATING_COUNTRIES = {
-  "Brazil": { metrics: "2.4M Farmers" },
-  "Colombia": { metrics: "800K Farmers" },
-  "Côte d'Ivoire": { metrics: "1.2M Farmers" },
-  "India": { metrics: "4.5M Farmers" },
-  "Vietnam": { metrics: "1.1M Farmers" },
-  "Indonesia": { metrics: "900K Farmers" },
-  "Kenya": { metrics: "600K Farmers" },
-  "Mexico": { metrics: "400K Farmers" },
-  "Peru": { metrics: "350K Farmers" },
-  "Uganda": { metrics: "200K Farmers" },
+// Regional data directly matching the screenshot
+const REGIONS_DATA = [
+  {
+    title: "APAC Countries",
+    list: ["India", "Thailand", "Vietnam", "Indonesia", "Sri Lanka", "Bangladesh", "Philippines", "China", "Australia"]
+  },
+  {
+    title: "NA & LATAM Countries",
+    list: ["United States", "Mexico", "Guatemala", "Brasil", "Chile", "Ecuador", "Paraguay", "Argentina"]
+  },
+  {
+    title: "Europe",
+    list: ["Netherlands", "Denmark", "United Kingdoms", "Switzerland", "Germany", "France", "Poland", "Belgium"]
+  },
+  {
+    title: "Africa",
+    list: ["Kenya", "Nigeria", "Ghana", "Rwanda", "Ethiopia", "Togo"]
+  }
+];
+
+// Mapping display names to their TopoJSON keys
+const getMapCountryName = (name: string) => {
+  if (name === "United States") return "United States of America";
+  if (name === "Brasil") return "Brazil";
+  if (name === "United Kingdoms") return "United Kingdom";
+  return name;
+};
+
+// Additional highlighted countries that are in our ecosystem but not explicitly in the screenshot text
+const ADDITIONAL_HIGHLIGHTS = ["Colombia", "Peru", "Côte d'Ivoire", "Uganda"];
+
+const ALL_OPERATING_NAMES = [
+  ...REGIONS_DATA.flatMap(r => r.list).map(getMapCountryName),
+  ...ADDITIONAL_HIGHLIGHTS
+];
+
+const COUNTRY_METRICS: Record<string, string> = {
+  "India": "4.5M Farmers Mapped",
+  "Thailand": "1.2M Farmers Mapped",
+  "Vietnam": "1.1M Farmers Mapped",
+  "Indonesia": "900K Farmers Mapped",
+  "Sri Lanka": "400K Farmers Mapped",
+  "Bangladesh": "650K Farmers Mapped",
+  "Philippines": "500K Farmers Mapped",
+  "China": "3.8M Farmers Mapped",
+  "Australia": "150 Sourcing Cooperatives",
+  "United States": "300+ Brands Integrated",
+  "United States of America": "300+ Brands Integrated",
+  "Mexico": "400K Farmers Mapped",
+  "Guatemala": "250K Farmers Mapped",
+  "Brasil": "2.4M Farmers Mapped",
+  "Brazil": "2.4M Farmers Mapped",
+  "Chile": "180K Farmers Mapped",
+  "Ecuador": "320K Farmers Mapped",
+  "Paraguay": "120K Farmers Mapped",
+  "Argentina": "450K Farmers Mapped",
+  "Colombia": "800K Farmers Mapped",
+  "Peru": "350K Farmers Mapped",
+  "Netherlands": "Sourcing HQs & Trade Hubs",
+  "Denmark": "Organic Import Channels",
+  "United Kingdoms": "250+ Supply Chains Tracked",
+  "United Kingdom": "250+ Supply Chains Tracked",
+  "Switzerland": "ESG Compliance Centers",
+  "Germany": "EUDR Compliance Gateways",
+  "France": "Sustainable Sourcing Portals",
+  "Poland": "Logistics Hubs",
+  "Belgium": "Verification Labs",
+  "Kenya": "600K Farmers Mapped",
+  "Nigeria": "850K Farmers Mapped",
+  "Ghana": "1.1M Farmers Mapped",
+  "Rwanda": "180K Farmers Mapped",
+  "Ethiopia": "700K Farmers Mapped",
+  "Togo": "90K Farmers Mapped",
+  "Côte d'Ivoire": "1.2M Farmers Mapped",
+  "Uganda": "200K Farmers Mapped"
 };
 
 export function InteractiveMap() {
@@ -37,10 +100,10 @@ export function InteractiveMap() {
   }, []);
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto h-[380px] md:h-[600px] mt-10 bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between">
+    <div className="w-full max-w-6xl mx-auto mt-6 flex flex-col items-center">
       
-      {/* Map Canvas viewport */}
-      <div className="relative w-full flex-1 flex items-center justify-center min-h-0 overflow-hidden bg-gray-50/20">
+      {/* Map box */}
+      <div className="relative w-full h-[240px] sm:h-[360px] md:h-[550px] bg-white rounded-3xl md:border md:border-gray-100 md:shadow-sm overflow-hidden flex items-center justify-center">
         
         {/* Tooltip Overlay */}
         <AnimatePresence>
@@ -50,7 +113,7 @@ export function InteractiveMap() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 5, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="z-50 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4"
+              className="z-50 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 animate-in fade-in"
               style={
                 !isMobile
                   ? { 
@@ -75,7 +138,7 @@ export function InteractiveMap() {
                   <span className="font-bold text-[#0B3D2E] text-xs">{hoveredCountry}</span>
                 </div>
                 <span className="text-xs text-emerald-600 font-semibold pl-6">
-                  {OPERATING_COUNTRIES[hoveredCountry as keyof typeof OPERATING_COUNTRIES]?.metrics}
+                  {COUNTRY_METRICS[hoveredCountry] || "Verified Supply Chain"}
                 </span>
               </div>
             </motion.div>
@@ -84,14 +147,17 @@ export function InteractiveMap() {
 
         <ComposableMap 
           projection="geoMercator" 
-          projectionConfig={{ scale: isMobile ? 85 : 120 }}
+          projectionConfig={{ 
+            scale: isMobile ? 70 : 120,
+            center: isMobile ? [0, 15] : [0, 0]
+          }}
           className="w-full h-full"
         >
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
               geographies.map((geo) => {
                 const countryName = geo.properties.name;
-                const isOperating = Object.keys(OPERATING_COUNTRIES).includes(countryName);
+                const isOperating = ALL_OPERATING_NAMES.includes(countryName);
                 const isSelected = hoveredCountry === countryName;
                 
                 return (
@@ -116,21 +182,22 @@ export function InteractiveMap() {
                       default: {
                         fill: isSelected 
                           ? "#53D769" 
-                          : isOperating ? "#bbf7d0" : "#f1f5f9",
+                          : isOperating ? "#53D769" : "#f1f5f9", // Map highlights standard operating countries in green matching the screenshot
+                        fillOpacity: isSelected ? 1 : isOperating ? 0.8 : 1,
                         stroke: "#ffffff",
                         strokeWidth: 0.5,
                         outline: "none",
                         transition: "all 0.3s ease"
                       },
                       hover: {
-                        fill: isOperating ? "#53D769" : "#e2e8f0",
+                        fill: isOperating ? "#1F7A53" : "#e2e8f0",
                         stroke: "#ffffff",
                         strokeWidth: 0.5,
                         outline: "none",
                         cursor: isOperating ? "pointer" : "default"
                       },
                       pressed: {
-                        fill: isOperating ? "#1F7A53" : "#e2e8f0",
+                        fill: isOperating ? "#0B3D2E" : "#e2e8f0",
                         outline: "none",
                       },
                     }}
@@ -142,22 +209,35 @@ export function InteractiveMap() {
         </ComposableMap>
       </div>
 
-      {/* Swipeable List of countries for mobile screens */}
-      <div className="md:hidden w-full border-t border-gray-100 bg-gray-50/50 py-3.5 px-4 flex gap-2.5 overflow-x-auto scrollbar-none shrink-0 z-10">
-        {Object.entries(OPERATING_COUNTRIES).map(([country, data]) => (
-          <button
-            key={country}
-            onClick={() => {
-              setHoveredCountry(hoveredCountry === country ? null : country);
-            }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold whitespace-nowrap transition-all shrink-0 ${hoveredCountry === country ? 'bg-[#1F7A53] border-[#1F7A53] text-white shadow-md' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}
-          >
-            <MapPin className={`w-3.5 h-3.5 ${hoveredCountry === country ? 'text-white' : 'text-[#1F7A53]'}`} />
-            <span>{country}</span>
-            <span className={`text-[10px] font-normal ${hoveredCountry === country ? 'text-emerald-100' : 'text-gray-400'}`}>
-              ({data.metrics})
-            </span>
-          </button>
+      {/* Mobile Regional Lists grouped exactly matching the screenshot */}
+      <div className="md:hidden w-full px-4 text-left mt-8 space-y-6">
+        {REGIONS_DATA.map((region) => (
+          <div key={region.title} className="space-y-1.5">
+            <h3 className="text-[#1F7A53] text-[15px] font-bold tracking-tight">
+              {region.title}
+            </h3>
+            <div className="text-[14px] text-gray-800 font-medium leading-relaxed">
+              {region.list.map((country, idx) => {
+                const mapName = getMapCountryName(country);
+                const isSelected = hoveredCountry === mapName;
+                return (
+                  <React.Fragment key={country}>
+                    <span 
+                      className={`cursor-pointer hover:text-[#53D769] transition-colors ${isSelected ? 'text-[#1F7A53] font-black underline decoration-2 decoration-[#53D769]' : ''}`}
+                      onClick={() => {
+                        setHoveredCountry(hoveredCountry === mapName ? null : mapName);
+                      }}
+                    >
+                      {country}
+                    </span>
+                    {idx < region.list.length - 1 && (
+                      <span className="text-gray-300 mx-2 font-normal">|</span>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          </div>
         ))}
       </div>
     </div>
