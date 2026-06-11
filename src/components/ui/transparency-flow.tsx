@@ -192,64 +192,132 @@ export function TransparencyFlow() {
 
          {/* Stack Container */}
          <div className="relative h-[340px] w-full max-w-[340px] mx-auto">
-            {/* Card 3 (Background 2) - visual stack deck representation */}
-            {activeStage + 2 < STAGES.length && (
-               <div 
-                  className="absolute inset-x-6 bottom-0 h-[280px] bg-white rounded-3xl border border-gray-100 shadow-sm opacity-20 scale-90 translate-y-[-24px] pointer-events-none z-0 transition-all duration-300"
-               />
-            )}
+            {STAGES.map((stage, idx) => {
+               const diff = idx - activeStage;
+               const isSwipeActive = idx === activeStage;
 
-            {/* Card 2 (Background 1) - visual stack deck representation */}
-            {activeStage + 1 < STAGES.length && (
-               <div 
-                  className="absolute inset-x-3 bottom-0 h-[280px] bg-white rounded-3xl border border-gray-150 shadow-md opacity-60 scale-95 translate-y-[-12px] pointer-events-none z-10 transition-all duration-300"
-               />
-            )}
+               // Calculate visual styling based on position in stack
+               let x = 0;
+               let y = 0;
+               let scale = 1;
+               let zIndex = 30;
+               let opacity = 1;
+               let rotate = 0;
 
-            {/* Active Card (Foreground) */}
-            <AnimatePresence mode="wait">
-               <motion.div
-                  key={activeStage}
-                  initial={{ opacity: 0, x: 50, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: -50, scale: 0.95 }}
-                  transition={{ duration: 0.35, ease: "easeInOut" }}
-                  className="absolute inset-x-0 bottom-0 h-[280px] bg-white rounded-3xl border border-gray-200 shadow-xl p-6 z-20 flex flex-col justify-between"
-               >
-                  <div>
-                     <div className="flex justify-between items-start mb-4">
-                        <span className={`w-8 h-8 rounded-xl flex items-center justify-center ${STAGES[activeStage].color} ${STAGES[activeStage].textColor}`}>
-                           {(() => {
-                              const Icon = STAGES[activeStage].icon;
-                              return <Icon className="w-4 h-4" />;
-                           })()}
-                        </span>
-                        <span className="text-[9px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-black tracking-widest uppercase">LEDGER SYNC</span>
+               if (diff < 0) {
+                  // Swiped off to the left
+                  x = -350;
+                  y = 0;
+                  scale = 0.95;
+                  zIndex = 10;
+                  opacity = 0;
+                  rotate = -12;
+               } else if (diff === 0) {
+                  // Active card
+                  x = 0;
+                  y = 0;
+                  scale = 1;
+                  zIndex = 30;
+                  opacity = 1;
+                  rotate = 0;
+               } else if (diff === 1) {
+                  // Card right behind
+                  x = 0;
+                  y = -12;
+                  scale = 0.95;
+                  zIndex = 20;
+                  opacity = 0.7;
+                  rotate = 0;
+               } else if (diff === 2) {
+                  // Second card behind
+                  x = 0;
+                  y = -24;
+                  scale = 0.90;
+                  zIndex = 10;
+                  opacity = 0.4;
+                  rotate = 0;
+               } else {
+                  // Rest of the stack
+                  x = 0;
+                  y = -36;
+                  scale = 0.85;
+                  zIndex = 0;
+                  opacity = 0;
+                  rotate = 0;
+               }
+
+               const Icon = stage.icon;
+
+               return (
+                  <motion.div
+                     key={stage.id}
+                     drag={isSwipeActive ? "x" : false}
+                     dragConstraints={{ left: 0, right: 0 }}
+                     dragElastic={0.6}
+                     onDragEnd={(event, info) => {
+                        if (info.offset.x < -80 && activeStage < STAGES.length - 1) {
+                           setActiveStage(activeStage + 1);
+                        } else if (info.offset.x > 80 && activeStage > 0) {
+                           setActiveStage(activeStage - 1);
+                        }
+                     }}
+                     animate={{
+                        x,
+                        y,
+                        scale,
+                        opacity,
+                        rotate,
+                     }}
+                     transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 25,
+                     }}
+                     style={{
+                        zIndex,
+                        touchAction: "pan-y",
+                     }}
+                     className={`absolute inset-x-0 bottom-0 h-[280px] bg-white rounded-3xl border border-gray-200 shadow-xl p-6 flex flex-col justify-between select-none ${
+                        isSwipeActive ? "cursor-grab active:cursor-grabbing" : "pointer-events-none"
+                     }`}
+                  >
+                     <div>
+                        <div className="flex justify-between items-start mb-4">
+                           <span className={`w-8 h-8 rounded-xl flex items-center justify-center ${stage.color} ${stage.textColor}`}>
+                              <Icon className="w-4 h-4" />
+                           </span>
+                           <span className="text-[9px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-black tracking-widest uppercase">
+                              LEDGER SYNC
+                           </span>
+                        </div>
+
+                        <ul className="space-y-3 mb-4">
+                           {stage.metrics.map((metric, i) => (
+                              <li key={i} className="flex items-center gap-2.5 text-sm text-gray-650 font-medium">
+                                 <ShieldCheck className="w-4 h-4 text-[#53D769] shrink-0" />
+                                 {metric}
+                              </li>
+                           ))}
+                        </ul>
                      </div>
 
-                     <ul className="space-y-3 mb-4">
-                        {STAGES[activeStage].metrics.map((metric, i) => (
-                           <li key={i} className="flex items-center gap-2.5 text-sm text-gray-650 font-medium">
-                              <ShieldCheck className="w-4 h-4 text-[#53D769] shrink-0" />
-                              {metric}
-                           </li>
-                        ))}
-                     </ul>
-                  </div>
-
-                  <div className="pt-3 border-t border-gray-100 space-y-2">
-                     {STAGES[activeStage].data.map((data, i) => (
-                        <div key={i} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg text-xs">
-                           <div className="flex items-center gap-2 text-gray-550">
-                              <data.icon className="w-3.5 h-3.5 text-gray-400" />
-                              {data.label}
-                           </div>
-                           <span className="font-bold text-[#0B3D2E]">{data.value}</span>
-                        </div>
-                     ))}
-                  </div>
-               </motion.div>
-            </AnimatePresence>
+                     <div className="pt-3 border-t border-gray-100 space-y-2">
+                        {stage.data.map((data, i) => {
+                           const DataIcon = data.icon;
+                           return (
+                              <div key={i} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg text-xs">
+                                 <div className="flex items-center gap-2 text-gray-550">
+                                    <DataIcon className="w-3.5 h-3.5 text-gray-400" />
+                                    {data.label}
+                                 </div>
+                                 <span className="font-bold text-[#0B3D2E]">{data.value}</span>
+                              </div>
+                           );
+                        })}
+                     </div>
+                  </motion.div>
+               );
+            })}
          </div>
 
          {/* Navigation buttons */}
