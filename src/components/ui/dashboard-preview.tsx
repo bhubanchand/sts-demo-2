@@ -344,35 +344,35 @@ export function DashboardPreview() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="space-y-4"
+      className="space-y-3"
     >
-      {/* KPI cards in vertical stack */}
-      <div className="space-y-3">
-        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-          <div className="text-gray-500 text-xs font-medium mb-0.5">Total Farmers Mapped</div>
-          <div className="text-2xl font-black text-gray-900 mb-1">1,245,890</div>
-          <div className="flex items-center gap-1 text-emerald-600 text-[10px] font-bold bg-emerald-50 w-fit px-1.5 py-0.5 rounded">
-            <TrendingUp className="w-3 h-3" /> +12% this month
+      {/* KPI cards in horizontal grid */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-white border border-gray-100 rounded-2xl p-2.5 shadow-sm flex flex-col justify-between h-[82px] min-w-0">
+          <div className="text-gray-400 text-[9px] font-bold uppercase tracking-wider truncate">Farmers</div>
+          <div className="text-sm font-black text-gray-900 leading-none my-1">1.24M</div>
+          <div className="flex items-center gap-0.5 text-emerald-600 text-[8px] font-bold bg-emerald-50 w-fit px-1 py-0.5 rounded truncate">
+            <TrendingUp className="w-2.5 h-2.5" /> +12%
           </div>
         </div>
-        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-          <div className="text-gray-500 text-xs font-medium mb-0.5">EUDR Compliance Rate</div>
-          <div className="text-2xl font-black text-gray-900 mb-1">98.4%</div>
-          <div className="flex items-center gap-1 text-emerald-600 text-[10px] font-bold bg-emerald-50 w-fit px-1.5 py-0.5 rounded">
-            <ShieldCheck className="w-3 h-3" /> 450 plots cleared
+        <div className="bg-white border border-gray-100 rounded-2xl p-2.5 shadow-sm flex flex-col justify-between h-[82px] min-w-0">
+          <div className="text-gray-400 text-[9px] font-bold uppercase tracking-wider truncate">EUDR Comp.</div>
+          <div className="text-sm font-black text-gray-900 leading-none my-1">98.4%</div>
+          <div className="flex items-center gap-0.5 text-emerald-600 text-[8px] font-bold bg-emerald-50 w-fit px-1 py-0.5 rounded truncate">
+            <ShieldCheck className="w-2.5 h-2.5" /> Cleared
           </div>
         </div>
-        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-          <div className="text-gray-500 text-xs font-medium mb-0.5">Carbon Sequestered</div>
-          <div className="text-2xl font-black text-gray-900 mb-1">2.4M Tons</div>
-          <div className="flex items-center gap-1 text-emerald-600 text-[10px] font-bold bg-emerald-50 w-fit px-1.5 py-0.5 rounded">
-            <Leaf className="w-3 h-3" /> Above SBTi
+        <div className="bg-white border border-gray-100 rounded-2xl p-2.5 shadow-sm flex flex-col justify-between h-[82px] min-w-0">
+          <div className="text-gray-400 text-[9px] font-bold uppercase tracking-wider truncate">Carbon</div>
+          <div className="text-sm font-black text-gray-900 leading-none my-1">2.4M T</div>
+          <div className="flex items-center gap-0.5 text-emerald-600 text-[8px] font-bold bg-emerald-50 w-fit px-1 py-0.5 rounded truncate">
+            <Leaf className="w-2.5 h-2.5" /> SBTi
           </div>
         </div>
       </div>
 
       {/* Compact Map Area */}
-      <div className="bg-gray-100 rounded-2xl border border-gray-200 overflow-hidden relative h-40">
+      <div className="bg-gray-100 rounded-2xl border border-gray-200 overflow-hidden relative h-28">
         <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Map View" className="w-full h-full object-cover opacity-80" />
         <div className="absolute inset-0 bg-[#0B3D2E]/20"></div>
         
@@ -384,25 +384,25 @@ export function DashboardPreview() {
           <div className="w-3 h-3 bg-amber-400 rounded-full border border-white shadow-md animate-pulse"></div>
         </div>
         
-        <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-md px-2 py-1 rounded shadow text-[10px] font-bold text-gray-900 flex items-center gap-1">
-          <MapPin className="w-3 h-3 text-[#1F7A53]" /> Live Polygons
+        <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded shadow text-[9px] font-bold text-gray-900 flex items-center gap-1">
+          <MapPin className="w-2.5 h-2.5 text-[#1F7A53]" /> Live Polygons
         </div>
       </div>
 
       {/* Alerts Area */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-        <div className="text-gray-900 font-bold text-xs mb-3 flex justify-between items-center">
-          Recent Alerts <span className="text-[#1F7A53] text-[10px] font-bold cursor-pointer">View All</span>
+      <div className="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm">
+        <div className="text-gray-900 font-bold text-[10px] mb-2 flex justify-between items-center">
+          Recent Alerts <span className="text-[#1F7A53] text-[9px] font-bold cursor-pointer">View All</span>
         </div>
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {filteredAlerts.slice(0, 2).map(alert => (
-            <div key={alert.id} className="flex gap-2.5 items-start border-b border-gray-50 pb-2.5 last:border-0 last:pb-0">
+            <div key={alert.id} className="flex gap-2 items-start border-b border-gray-50 pb-2 last:border-0 last:pb-0">
               <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${alert.type === 'warning' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
                 <alert.icon className="w-3.5 h-3.5" />
               </div>
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-gray-900 truncate">{alert.title}</p>
-                <p className="text-[10px] text-gray-500 truncate mt-0.5">{alert.desc}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-bold text-gray-900 truncate leading-tight">{alert.title}</p>
+                <p className="text-[9px] text-gray-500 truncate mt-0.5">{alert.desc}</p>
               </div>
             </div>
           ))}
@@ -417,7 +417,7 @@ export function DashboardPreview() {
       initial={{ opacity: 0, x: 10 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -10 }}
-      className="space-y-4"
+      className="space-y-3"
     >
       <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
         <div className="flex justify-between items-center mb-3">
@@ -426,7 +426,7 @@ export function DashboardPreview() {
         </div>
 
         {/* Vertical Timeline Graph */}
-        <div className="relative pl-6 py-2 space-y-4">
+        <div className="relative py-1 space-y-3">
           <div className="absolute left-[11px] top-4 bottom-4 w-[2px] bg-emerald-100"></div>
           <div className="absolute left-[11px] top-4 h-1/2 w-[2px] bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
 
@@ -436,13 +436,13 @@ export function DashboardPreview() {
             { step: "Processing (Mill B)", desc: "Oct 24, 09:41", status: "current", icon: Activity },
             { step: "Export (Port of Abidjan)", desc: "Pending", status: "pending", icon: Globe2 },
           ].map((node, i) => (
-            <div key={i} className="relative flex items-start gap-3">
-              <div className={`absolute -left-[20px] w-6 h-6 rounded-full flex items-center justify-center shadow-sm border border-white z-10 ${node.status === 'completed' ? 'bg-emerald-500 text-white' : node.status === 'current' ? 'bg-white border-emerald-500 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
+            <div key={i} className="flex items-center gap-3 relative">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center shadow-sm border border-white z-10 shrink-0 ${node.status === 'completed' ? 'bg-emerald-500 text-white' : node.status === 'current' ? 'bg-white border-emerald-500 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
                 <node.icon className="w-3 h-3" />
               </div>
-              <div>
-                <p className={`font-bold text-xs ${node.status === 'pending' ? 'text-gray-400' : 'text-gray-900'}`}>{node.step}</p>
-                <p className="text-[10px] text-gray-500 mt-0.5">{node.desc}</p>
+              <div className="min-w-0 flex-1">
+                <p className={`font-bold text-xs ${node.status === 'pending' ? 'text-gray-400' : 'text-gray-900'} truncate`}>{node.step}</p>
+                <p className="text-[9px] text-gray-500 mt-0.5">{node.desc}</p>
               </div>
             </div>
           ))}
