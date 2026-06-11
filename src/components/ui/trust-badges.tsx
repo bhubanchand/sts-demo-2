@@ -26,7 +26,7 @@ export function TrustBadges() {
         <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-[#0B3D2E] to-transparent z-10 pointer-events-none"></div>
         <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-[#0B3D2E] to-transparent z-10 pointer-events-none"></div>
 
-        <div className="flex w-max animate-marquee py-1">
+        <div className="flex w-max animate-marquee py-1" style={{ animationDuration: "120s" }}>
           {/* Track 1 */}
           <div className="flex gap-16 sm:gap-28 whitespace-nowrap shrink-0 pr-16 sm:pr-28">
             {repeatedBadges.map((badge, idx) => (
