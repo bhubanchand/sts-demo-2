@@ -232,7 +232,7 @@ export default function CoffeeSolutionsPage() {
       </section>
 
       {/* ─── SECTION 2: THE CHALLENGE ─── */}
-      <section className="py-24 bg-white border-b border-emerald-100/50">
+      <section className="py-16 bg-white border-b border-emerald-100/50">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-6">
@@ -278,7 +278,7 @@ export default function CoffeeSolutionsPage() {
       </section>
 
       {/* ─── SECTION 3: HOW SOURCETRACE WORKS ─── */}
-      <section id="works-section" className="py-24 bg-gradient-to-b from-[#FBFDFB] to-[#F4FBF7]">
+      <section id="works-section" className="py-16 bg-gradient-to-b from-[#FBFDFB] to-[#F4FBF7]">
         <div className="max-w-[1200px] mx-auto px-6 text-center space-y-12">
           <div className="space-y-3">
             <span className="text-xs font-bold font-mono text-[#1F7A53] uppercase tracking-widest block">
@@ -347,7 +347,7 @@ export default function CoffeeSolutionsPage() {
       </section>
 
       {/* ─── SECTION 4: KEY CAPABILITIES ─── */}
-      <section className="py-24 bg-white">
+      <section className="py-16 bg-white">
         <div className="max-w-[1200px] mx-auto px-6 text-center space-y-12">
           <div className="space-y-3">
             <span className="text-xs font-bold font-mono text-[#1F7A53] uppercase tracking-widest block">
@@ -385,7 +385,7 @@ export default function CoffeeSolutionsPage() {
       </section>
 
       {/* ─── SECTION 5: VALUE CHAIN VISIBILITY ─── */}
-      <section className="py-24 bg-gradient-to-b from-[#F4FBF7] to-[#EBF7F0] border-t border-b border-emerald-100">
+      <section className="py-16 bg-gradient-to-b from-[#F4FBF7] to-[#EBF7F0] border-t border-b border-emerald-100">
         <div className="max-w-[1200px] mx-auto px-6 text-center space-y-12">
           <div className="space-y-3">
             <span className="text-xs font-bold font-mono text-[#1F7A53] uppercase tracking-widest block">
@@ -444,7 +444,7 @@ export default function CoffeeSolutionsPage() {
       </section>
 
       {/* ─── SECTION 6: BUSINESS IMPACT ─── */}
-      <section className="py-24 bg-white">
+      <section className="py-16 bg-white">
         <div className="max-w-[1200px] mx-auto px-6 text-center space-y-12">
           <div className="space-y-3">
             <span className="text-xs font-bold font-mono text-[#1F7A53] uppercase tracking-widest block">
@@ -480,7 +480,7 @@ export default function CoffeeSolutionsPage() {
       </section>
 
       {/* ─── SECTION 7: INSIGHTS DASHBOARD ─── */}
-      <section className="py-24 bg-gradient-to-b from-[#FBFDFB] to-[#F4FBF7] border-t border-b border-emerald-100/30">
+      <section className="py-16 bg-gradient-to-b from-[#FBFDFB] to-[#F4FBF7] border-t border-b border-emerald-100/30">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             
@@ -572,7 +572,7 @@ export default function CoffeeSolutionsPage() {
       </section>
 
       {/* ─── SECTION 8: FAQ ─── */}
-      <section className="py-24 bg-white">
+      <section className="py-16 bg-white">
         <div className="max-w-[800px] mx-auto px-6 space-y-12">
           <div className="text-center space-y-3">
             <span className="text-xs font-bold font-mono text-[#1F7A53] uppercase tracking-widest block">
@@ -623,7 +623,7 @@ export default function CoffeeSolutionsPage() {
       </section>
 
       {/* ─── FINAL CTA SECTION ─── */}
-      <section className="py-24 relative overflow-hidden bg-[#0B3D2E] text-white">
+      <section className="py-16 relative overflow-hidden bg-[#0B3D2E] text-white">
         <div className="absolute inset-0 bg-gradient-to-t from-[#072B1F] via-transparent to-transparent pointer-events-none"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
 

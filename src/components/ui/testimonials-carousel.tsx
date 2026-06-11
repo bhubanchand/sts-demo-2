@@ -2,7 +2,7 @@ import { Star, Quote } from "lucide-react";
 
 export function TestimonialsCarousel() {
   return (
-    <section className="bg-white py-24 border-t border-gray-100 overflow-hidden">
+    <section className="bg-white py-16 border-t border-gray-100 overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16 text-center">
          <h2 className="text-4xl font-bold text-[#0B3D2E] mb-6">Trusted by the Fortune 500</h2>
          <p className="text-xl text-gray-600 max-w-2xl mx-auto">See how the world's leading enterprises use SourceTrace to secure their supply chains and prove their impact.</p>

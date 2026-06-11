@@ -9,7 +9,7 @@ export default function SmallholderManagementPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* Hero */}
-      <section className="pt-32 pb-24 max-w-[1400px] mx-auto px-4 sm:px-8">
+      <section className="pt-32 pb-16 max-w-[1400px] mx-auto px-4 sm:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-16">
            <div className="lg:w-1/2">
              <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Smallholder Management</span>
@@ -53,7 +53,7 @@ export default function SmallholderManagementPage() {
       </section>
 
       {/* Features block */}
-      <section className="bg-gray-50 py-24 border-y border-gray-100">
+      <section className="bg-gray-50 py-16 border-y border-gray-100">
          <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
             <h2 className="text-4xl font-bold text-center text-[#0B3D2E] mb-16">Built for the Deepest Rural Realities</h2>
             <div className="grid md:grid-cols-3 gap-8">

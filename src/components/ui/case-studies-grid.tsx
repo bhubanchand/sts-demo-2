@@ -49,11 +49,11 @@ export function CaseStudiesGrid() {
   const isInView = useInView(containerRef, { once: true, margin: "-10%" });
 
   return (
-    <section className="py-32 bg-white relative overflow-hidden" ref={containerRef}>
+    <section className="py-16 bg-white relative overflow-hidden" ref={containerRef}>
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#53D769] blur-[150px] rounded-full opacity-10 pointer-events-none"></div>
       
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Proven Impact</span>
           <h2 className="text-5xl md:text-6xl font-black text-[#0B3D2E] leading-tight mb-6 tracking-tighter">
             Real stories. Real results.

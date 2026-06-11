@@ -12,7 +12,7 @@ export default function PredictiveInsightsPage() {
     <main className="min-h-screen bg-white">
       {/* Premium Hero with Background Image Overlay */}
       <section 
-        className="pt-40 pb-32 px-4 sm:px-8 relative z-10"
+        className="pt-40 pb-16 px-4 sm:px-8 relative z-10"
         style={{
           backgroundImage: 'linear-gradient(rgba(11, 61, 46, 0.85), rgba(11, 61, 46, 0.98)), url("https://images.unsplash.com/photo-1543286386-713bdd548da4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
           backgroundSize: 'cover',
@@ -37,7 +37,7 @@ export default function PredictiveInsightsPage() {
       </section>
 
       {/* Storytelling Content */}
-      <section className="py-24 max-w-[1400px] mx-auto px-4 sm:px-8">
+      <section className="py-16 max-w-[1400px] mx-auto px-4 sm:px-8">
          <div className="text-center mb-16 max-w-3xl mx-auto">
             <h2 className="text-4xl font-bold text-[#0B3D2E] mb-6">From Hindsight to Foresight</h2>
             <p className="text-lg text-gray-600">Move beyond static reports looking at what happened yesterday. Our platform analyzes weather patterns, historical yields, and real-time farmer inputs to model what will happen tomorrow.</p>

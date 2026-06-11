@@ -7,9 +7,9 @@ import { Network, Database, Link as LinkIcon, Search } from "lucide-react";
 
 export default function SupplyChainTraceabilityPage() {
   return (
-    <main className="min-h-screen pt-32 pb-24 bg-[#0B3D2E] text-white">
+    <main className="min-h-screen pt-32 pb-16 bg-[#0B3D2E] text-white">
       {/* Dark Theme Hero */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-20 relative z-10">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16 relative z-10">
         <div className="max-w-4xl text-center mx-auto">
           <span className="text-[#53D769] font-bold tracking-widest uppercase mb-4 block">Supply Chain Traceability</span>
           <AnimatedText 
@@ -27,13 +27,13 @@ export default function SupplyChainTraceabilityPage() {
       </section>
 
       {/* Hero Asset Full Width */}
-      <section className="w-full h-[600px] relative overflow-hidden mb-24 border-y border-white/10">
+      <section className="w-full h-[600px] relative overflow-hidden mb-16 border-y border-white/10">
          <img src="/assets/traceability-diagram.png" alt="Traceability Graph" className="w-full h-full object-cover mix-blend-screen opacity-60" />
          <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D2E] via-transparent to-[#0B3D2E]"></div>
       </section>
 
       {/* Tiered Deep Dive Accordion (Visualized as Grids here) */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-24">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16">
          <div className="grid md:grid-cols-2 gap-16">
             <div>
                <h2 className="text-4xl font-bold mb-8">Illuminating Every Tier</h2>

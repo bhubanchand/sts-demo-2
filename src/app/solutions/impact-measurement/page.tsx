@@ -7,7 +7,7 @@ import { LineChart, Leaf, Droplets, Target } from "lucide-react";
 
 export default function ImpactMeasurementPage() {
   return (
-    <main className="min-h-screen bg-white pb-24">
+    <main className="min-h-screen bg-white pb-16">
       {/* Hero */}
       <section className="pt-32 pb-20 max-w-[1400px] mx-auto px-4 sm:px-8 text-center">
         <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Impact Measurement</span>
@@ -22,7 +22,7 @@ export default function ImpactMeasurementPage() {
       </section>
 
       {/* KPI Bento Grid */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-24">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16">
          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             
             {/* Top Row: Large Chart */}
@@ -68,7 +68,7 @@ export default function ImpactMeasurementPage() {
       </section>
 
       {/* Baseline VS Endline Section */}
-      <section className="bg-gray-50 py-24 border-y border-gray-100">
+      <section className="bg-gray-50 py-16 border-y border-gray-100">
          <div className="max-w-[1000px] mx-auto px-4 sm:px-8 text-center">
             <div className="w-16 h-16 bg-gray-900 text-white rounded-2xl flex items-center justify-center mx-auto mb-8">
                <Target className="w-8 h-8" />

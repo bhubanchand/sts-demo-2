@@ -7,9 +7,9 @@ import { Map, TreePine, Leaf, ShieldCheck, ArrowRight } from "lucide-react";
 
 export default function SustainableSourcingPage() {
   return (
-    <main className="min-h-screen pt-32 pb-24 bg-white">
+    <main className="min-h-screen pt-32 pb-16 bg-white">
       {/* Hero Section */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-24">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16">
         <div className="max-w-4xl mx-auto text-center">
           <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Sustainable Sourcing</span>
           <AnimatedText 
@@ -29,7 +29,7 @@ export default function SustainableSourcingPage() {
 
       {/* Split Screen Sticky Scroll */}
       <section className="bg-gray-50 border-y border-gray-100">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-24 flex flex-col lg:flex-row gap-16 relative">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 flex flex-col lg:flex-row gap-16 relative">
           {/* Left: Sticky Content */}
           <div className="lg:w-1/2 lg:sticky lg:top-32 self-start space-y-8">
             <h2 className="text-4xl font-bold text-[#0B3D2E]">The Anatomy of an Ethical Supply Chain</h2>
@@ -75,7 +75,7 @@ export default function SustainableSourcingPage() {
       </section>
       
       {/* CTA Section */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 py-24 text-center">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 py-16 text-center">
          <h2 className="text-4xl font-bold text-[#0B3D2E] mb-6">Ready to transform your sourcing?</h2>
          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">Join leading enterprises in building transparent, ethical, and sustainable global supply chains.</p>
          <Button size="lg" className="h-14 px-8 text-lg rounded-full inline-flex items-center gap-2">

@@ -9,7 +9,7 @@ export default function FarmerLivelihoodsPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* Emotionally Driven Hero */}
-      <section className="pt-32 pb-24 max-w-[1400px] mx-auto px-4 sm:px-8 text-center">
+      <section className="pt-32 pb-16 max-w-[1400px] mx-auto px-4 sm:px-8 text-center">
         <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Farmer Livelihoods</span>
         <AnimatedText 
           el="h1" 
@@ -23,7 +23,7 @@ export default function FarmerLivelihoodsPage() {
       </section>
 
       {/* Impact Counters & Large Imagery */}
-      <section className="bg-gray-50 border-y border-gray-100 py-24 mb-24 relative overflow-hidden">
+      <section className="bg-gray-50 border-y border-gray-100 py-16 mb-16 relative overflow-hidden">
          <div className="absolute top-0 right-0 w-[50vw] h-full bg-[#0B3D2E] -skew-x-12 translate-x-32 hidden lg:block"></div>
          <div className="max-w-[1400px] mx-auto px-4 sm:px-8 relative z-10 flex flex-col lg:flex-row items-center gap-16">
             <div className="lg:w-1/2">

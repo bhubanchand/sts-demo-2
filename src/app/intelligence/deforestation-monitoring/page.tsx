@@ -11,7 +11,7 @@ export default function DeforestationMonitoringPage() {
   return (
     <main className="min-h-screen bg-white">
       <section 
-        className="pt-40 pb-32 px-4 sm:px-8 relative z-10"
+        className="pt-40 pb-16 px-4 sm:px-8 relative z-10"
         style={{
           backgroundImage: 'linear-gradient(rgba(11, 61, 46, 0.8), rgba(11, 61, 46, 0.95)), url("https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
           backgroundSize: 'cover',
@@ -35,7 +35,7 @@ export default function DeforestationMonitoringPage() {
         </div>
       </section>
 
-      <section className="py-24 max-w-[1400px] mx-auto px-4 sm:px-8">
+      <section className="py-16 max-w-[1400px] mx-auto px-4 sm:px-8">
          <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="bg-gray-50 border border-gray-100 rounded-3xl p-8 h-[600px] flex items-center justify-center relative overflow-hidden">
                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at center, #1F7A53 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>

@@ -7,9 +7,9 @@ import { Clock, ShieldCheck, MapPin, Database, AlertCircle } from "lucide-react"
 
 export default function EUDRCompliancePage() {
   return (
-    <main className="min-h-screen pt-32 pb-24 bg-white">
+    <main className="min-h-screen pt-32 pb-16 bg-white">
       {/* Urgency Hero */}
-      <section className="bg-[#0B3D2E] text-white py-20 px-4 sm:px-8 mx-4 sm:mx-8 rounded-[40px] mb-24 relative overflow-hidden">
+      <section className="bg-[#0B3D2E] text-white py-16 px-4 sm:px-8 mx-4 sm:mx-8 rounded-[40px] mb-16 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-red-500 rounded-full blur-[120px] opacity-20 pointer-events-none"></div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-200 rounded-full text-sm font-bold tracking-widest uppercase mb-8 border border-red-500/30">
@@ -30,7 +30,7 @@ export default function EUDRCompliancePage() {
       </section>
 
       {/* Compliance Timeline Steps */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-24">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16">
         <h2 className="text-4xl font-bold text-[#0B3D2E] text-center mb-16">The Path to EUDR Compliance</h2>
         <div className="grid md:grid-cols-4 gap-8">
            {[
@@ -55,7 +55,7 @@ export default function EUDRCompliancePage() {
       </section>
 
       {/* Deforestation Risk Matrix */}
-      <section className="bg-gray-50 border-y border-gray-100 py-24">
+      <section className="bg-gray-50 border-y border-gray-100 py-16">
         <div className="max-w-[1000px] mx-auto px-4 sm:px-8">
            <h2 className="text-3xl font-bold text-[#0B3D2E] mb-8 text-center">Deforestation Risk Matrix</h2>
            <div className="bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-sm">

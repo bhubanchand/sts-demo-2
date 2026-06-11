@@ -2340,7 +2340,7 @@ export function CompliancePageLayout({ data }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 text-gray-900 selection:bg-[#53D769] selection:text-[#0B3D2E] pb-24" ref={containerRef}>
+    <div className="min-h-screen bg-gray-50/50 text-gray-900 selection:bg-[#53D769] selection:text-[#0B3D2E] pb-16" ref={containerRef}>
       {/* 1. Cinematic Light Hero Section */}
       <section className="relative min-h-[70vh] flex flex-col justify-center pt-36 pb-20 px-6 sm:px-8 border-b border-gray-100 overflow-hidden bg-gradient-to-b from-[#E2EFE9]/40 via-white to-gray-50/50">
         {/* Glow Effects */}
@@ -2378,7 +2378,7 @@ export function CompliancePageLayout({ data }: Props) {
       </section>
 
       {/* 2. Scrollytelling Storyboard Body */}
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-8 py-24">
+      <div className="max-w-[1400px] mx-auto px-6 sm:px-8 py-16">
         <div className="flex flex-col lg:flex-row gap-16 relative">
           
           {/* Left Column: Storyboard Narrative */}

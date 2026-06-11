@@ -7,9 +7,9 @@ import { BarChart3, Download, Share2, CheckCircle2 } from "lucide-react";
 
 export default function ESGReportingPage() {
   return (
-    <main className="min-h-screen pt-32 pb-24 bg-white">
+    <main className="min-h-screen pt-32 pb-16 bg-white">
       {/* Hero */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-20">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16">
         <div className="max-w-4xl mx-auto text-center">
           <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">ESG Reporting</span>
           <AnimatedText 
@@ -24,7 +24,7 @@ export default function ESGReportingPage() {
       </section>
 
       {/* Dashboard Visualization Feature */}
-      <section className="bg-gray-50 border-y border-gray-100 py-24 mb-24">
+      <section className="bg-gray-50 border-y border-gray-100 py-16 mb-16">
          <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
             <div className="bg-white rounded-[40px] p-4 sm:p-8 shadow-xl border border-gray-200">
                <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">

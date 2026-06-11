@@ -1688,11 +1688,11 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
       </section>
 
       {/* Scrollytelling Story/Act Section */}
-      <section id="scrolly-story-section" ref={containerRef} className="relative max-w-[1400px] mx-auto px-4 sm:px-8 py-24">
+      <section id="scrolly-story-section" ref={containerRef} className="relative max-w-[1400px] mx-auto px-4 sm:px-8 py-16">
         <div className="grid lg:grid-cols-12 gap-12 items-start relative">
           
           {/* Left Hand: Scrolly Acts */}
-          <div className="lg:col-span-6 space-y-32 py-12 lg:py-24">
+          <div className="lg:col-span-6 space-y-32 py-12 lg:py-16">
             {data.scenes.map((scene, idx) => {
               const isActive = activeScene === idx;
               return (
@@ -1759,7 +1759,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
 
       {/* Dynamic ASCII Diagram Panel */}
       {data.diagram && (
-        <section className="py-20 border-t border-b border-emerald-100 bg-white">
+        <section className="py-16 border-t border-b border-emerald-100 bg-white">
           <div className="max-w-[1200px] mx-auto px-4 text-center space-y-8">
             <div className="space-y-3">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold font-mono text-[#1F7A53] uppercase tracking-widest">
@@ -1781,7 +1781,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
       )}
 
       {/* CTA Footer Block */}
-      <section className="py-24 relative overflow-hidden bg-gradient-to-b from-white to-[#EAF7F0]">
+      <section className="py-16 relative overflow-hidden bg-gradient-to-b from-white to-[#EAF7F0]">
         <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-emerald-500/5 blur-3xl pointer-events-none"></div>
         <div className="max-w-[1000px] mx-auto px-4 text-center space-y-10 relative z-10">
           <div className="space-y-4">

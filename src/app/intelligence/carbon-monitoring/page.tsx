@@ -11,7 +11,7 @@ export default function CarbonMonitoringPage() {
   return (
     <main className="min-h-screen bg-white">
       <section 
-        className="pt-40 pb-32 px-4 sm:px-8 relative z-10"
+        className="pt-40 pb-16 px-4 sm:px-8 relative z-10"
         style={{
           backgroundImage: 'linear-gradient(rgba(11, 61, 46, 0.85), rgba(11, 61, 46, 0.98)), url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
           backgroundSize: 'cover',
@@ -35,7 +35,7 @@ export default function CarbonMonitoringPage() {
         </div>
       </section>
 
-      <section className="py-24 max-w-[1400px] mx-auto px-4 sm:px-8">
+      <section className="py-16 max-w-[1400px] mx-auto px-4 sm:px-8">
          <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-[#0B3D2E] text-white border border-transparent rounded-3xl p-10 shadow-xl relative overflow-hidden">
                <div className="w-16 h-16 bg-white/10 text-white rounded-2xl flex items-center justify-center mb-8 relative z-10"><Factory className="w-8 h-8"/></div>

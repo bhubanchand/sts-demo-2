@@ -3,7 +3,7 @@ import { Button } from "./button";
 
 export function IntegrationsGrid() {
   return (
-    <section className="bg-gray-50 py-24 border-t border-gray-100">
+    <section className="bg-gray-50 py-16 border-t border-gray-100">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
          <div className="flex flex-col lg:flex-row gap-16 items-center">
             <div className="lg:w-1/2">

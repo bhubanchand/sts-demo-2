@@ -7,7 +7,7 @@ import { CheckCircle2, AlertTriangle, ShieldAlert, FileSignature } from "lucide-
 
 export default function ResponsibleSourcingPage() {
   return (
-    <main className="min-h-screen pt-32 pb-24 bg-gray-50">
+    <main className="min-h-screen pt-32 pb-16 bg-gray-50">
       {/* Header */}
       <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16 text-center">
         <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Responsible Sourcing</span>
@@ -22,7 +22,7 @@ export default function ResponsibleSourcingPage() {
       </section>
 
       {/* Scorecard Grids (Bento Style) */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-24">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16">
          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Col 1 */}
             <div className="md:col-span-2 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col justify-between">

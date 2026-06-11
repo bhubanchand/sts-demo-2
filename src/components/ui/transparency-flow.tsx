@@ -56,32 +56,42 @@ const STAGES = [
 ];
 
 // Fallback icon for Users to avoid missing imports
-function Users(props: any) { return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> }
+function Users(props: any) { 
+  return (
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+  ); 
+}
 
 export function TransparencyFlow() {
   const [activeStage, setActiveStage] = useState(0);
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto py-24 px-4 sm:px-8 snap-center">
-      <div className="text-center mb-20">
+    <div className="w-full max-w-[1400px] mx-auto py-16 px-4 sm:px-8 snap-center">
+      <div className="text-center mb-16">
          <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">End-to-End Visibility</span>
-         <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">From Farm to Retail. Verified.</h2>
-         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Hover over each node in the supply chain to see the exact data SourceTrace captures immutably.
+         <h2 className="text-4xl sm:text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">From Farm to Retail. Verified.</h2>
+         <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            Hover or tap each node in the supply chain to see the exact data SourceTrace captures immutably.
          </p>
       </div>
 
-      <div className="relative">
+      {/* 💻 DESKTOP LAYOUT (Horizontal pipeline grid on hover) */}
+      <div className="hidden md:block relative">
          {/* Connecting Line */}
-         <div className="absolute top-12 left-0 w-full h-1 bg-gray-200 hidden md:block"></div>
+         <div className="absolute top-12 left-0 w-full h-1 bg-gray-200"></div>
          <motion.div 
-            className="absolute top-12 left-0 h-1 bg-[#53D769] hidden md:block"
+            className="absolute top-12 left-0 h-1 bg-[#53D769]"
             initial={{ width: "0%" }}
             animate={{ width: `${(activeStage / (STAGES.length - 1)) * 100}%` }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
          ></motion.div>
 
-         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+         <div className="grid grid-cols-4 gap-8 mt-4">
             {STAGES.map((stage, idx) => (
                <div 
                   key={stage.id} 
@@ -117,7 +127,7 @@ export function TransparencyFlow() {
                            {stage.data.map((data, i) => (
                               <div key={i} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg text-xs">
                                  <div className="flex items-center gap-2 text-gray-500">
-                                    <data.icon className="w-3 h-3" />
+                                    <data.icon className="w-3.5 h-3.5" />
                                     {data.label}
                                  </div>
                                  <span className="font-bold text-[#0B3D2E]">{data.value}</span>
@@ -128,6 +138,134 @@ export function TransparencyFlow() {
                   </div>
                </div>
             ))}
+         </div>
+      </div>
+
+      {/* 📱 MOBILE LAYOUT (Premium 3D Card Stack with Timeline Controls) */}
+      <div className="block md:hidden mt-8">
+         {/* Horizontal Progress Timeline */}
+         <div className="flex justify-between items-center px-6 mb-8 relative">
+            {/* Connecting background line */}
+            <div className="absolute top-1/2 left-6 right-6 h-0.5 bg-gray-200 -translate-y-1/2 z-0"></div>
+            {/* Active progress color line */}
+            <motion.div 
+               className="absolute top-1/2 left-6 h-0.5 bg-[#53D769] -translate-y-1/2 z-0"
+               initial={false}
+               animate={{ width: `${(activeStage / (STAGES.length - 1)) * 89}%` }}
+               transition={{ duration: 0.3 }}
+            ></motion.div>
+
+            {STAGES.map((stage, idx) => {
+               const Icon = stage.icon;
+               const isActive = activeStage === idx;
+               const isCompleted = idx < activeStage;
+               return (
+                  <button
+                     key={stage.id}
+                     onClick={() => setActiveStage(idx)}
+                     className={`w-12 h-12 rounded-2xl flex items-center justify-center relative z-10 transition-all duration-300 ${
+                        isActive 
+                           ? "bg-[#0B3D2E] text-white scale-110 shadow-lg border border-[#53D769]" 
+                           : isCompleted 
+                              ? "bg-[#53D769] text-[#0B3D2E]" 
+                              : "bg-white text-gray-400 border border-gray-200"
+                     }`}
+                  >
+                     <Icon className="w-5 h-5" />
+                     {isActive && (
+                        <span className="absolute -inset-1 rounded-2xl border border-[#53D769]/50 animate-ping opacity-70"></span>
+                     )}
+                  </button>
+               );
+            })}
+         </div>
+
+         {/* Current Stage Label */}
+         <div className="text-center mb-6">
+            <span className="text-[10px] font-mono font-black text-[#1F7A53] uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded-full">
+               Stage {activeStage + 1} of 4
+            </span>
+            <h3 className="text-2xl font-bold text-[#0B3D2E] mt-1">{STAGES[activeStage].title}</h3>
+         </div>
+
+         {/* Stack Container */}
+         <div className="relative h-[340px] w-full max-w-[340px] mx-auto">
+            {/* Card 3 (Background 2) - visual stack deck representation */}
+            {activeStage + 2 < STAGES.length && (
+               <div 
+                  className="absolute inset-x-6 bottom-0 h-[280px] bg-white rounded-3xl border border-gray-100 shadow-sm opacity-20 scale-90 translate-y-[-24px] pointer-events-none z-0 transition-all duration-300"
+               />
+            )}
+
+            {/* Card 2 (Background 1) - visual stack deck representation */}
+            {activeStage + 1 < STAGES.length && (
+               <div 
+                  className="absolute inset-x-3 bottom-0 h-[280px] bg-white rounded-3xl border border-gray-150 shadow-md opacity-60 scale-95 translate-y-[-12px] pointer-events-none z-10 transition-all duration-300"
+               />
+            )}
+
+            {/* Active Card (Foreground) */}
+            <AnimatePresence mode="wait">
+               <motion.div
+                  key={activeStage}
+                  initial={{ opacity: 0, x: 50, scale: 0.95 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -50, scale: 0.95 }}
+                  transition={{ duration: 0.35, ease: "easeInOut" }}
+                  className="absolute inset-x-0 bottom-0 h-[280px] bg-white rounded-3xl border border-gray-200 shadow-xl p-6 z-20 flex flex-col justify-between"
+               >
+                  <div>
+                     <div className="flex justify-between items-start mb-4">
+                        <span className={`w-8 h-8 rounded-xl flex items-center justify-center ${STAGES[activeStage].color} ${STAGES[activeStage].textColor}`}>
+                           {(() => {
+                              const Icon = STAGES[activeStage].icon;
+                              return <Icon className="w-4 h-4" />;
+                           })()}
+                        </span>
+                        <span className="text-[9px] font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-black tracking-widest uppercase">LEDGER SYNC</span>
+                     </div>
+
+                     <ul className="space-y-3 mb-4">
+                        {STAGES[activeStage].metrics.map((metric, i) => (
+                           <li key={i} className="flex items-center gap-2.5 text-sm text-gray-650 font-medium">
+                              <ShieldCheck className="w-4 h-4 text-[#53D769] shrink-0" />
+                              {metric}
+                           </li>
+                        ))}
+                     </ul>
+                  </div>
+
+                  <div className="pt-3 border-t border-gray-100 space-y-2">
+                     {STAGES[activeStage].data.map((data, i) => (
+                        <div key={i} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg text-xs">
+                           <div className="flex items-center gap-2 text-gray-550">
+                              <data.icon className="w-3.5 h-3.5 text-gray-400" />
+                              {data.label}
+                           </div>
+                           <span className="font-bold text-[#0B3D2E]">{data.value}</span>
+                        </div>
+                     ))}
+                  </div>
+               </motion.div>
+            </AnimatePresence>
+         </div>
+
+         {/* Navigation buttons */}
+         <div className="flex justify-center gap-4 mt-6">
+            <button
+               onClick={() => setActiveStage(prev => Math.max(0, prev - 1))}
+               disabled={activeStage === 0}
+               className="px-5 py-2.5 rounded-full border border-gray-200 text-xs font-extrabold text-[#0B3D2E] bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition-all shadow-sm active:scale-95 cursor-pointer"
+            >
+               Prev Stage
+            </button>
+            <button
+               onClick={() => setActiveStage(prev => Math.min(STAGES.length - 1, prev + 1))}
+               disabled={activeStage === STAGES.length - 1}
+               className="px-5 py-2.5 rounded-full bg-[#0B3D2E] text-white text-xs font-extrabold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#1F7A53] transition-all shadow-sm active:scale-95 cursor-pointer"
+            >
+               Next Stage
+            </button>
          </div>
       </div>
     </div>

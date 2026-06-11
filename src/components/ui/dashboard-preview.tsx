@@ -338,7 +338,7 @@ export function DashboardPreview() {
   );
 
   return (
-    <section className="py-32 bg-gray-50 border-y border-gray-100 relative overflow-hidden" ref={containerRef}>
+    <section className="py-16 bg-gray-50 border-y border-gray-100 relative overflow-hidden" ref={containerRef}>
       {/* Background elements */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#53D769] blur-[200px] rounded-full opacity-10 pointer-events-none"></div>
 

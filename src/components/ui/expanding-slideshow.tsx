@@ -59,7 +59,7 @@ export function ExpandingSlideshow() {
   const [activeSlide, setActiveSlide] = useState(SLIDES[0].id);
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 w-full h-[800px] md:h-[600px] max-w-[1400px] mx-auto px-4 sm:px-8 py-20">
+    <div className="flex flex-col md:flex-row gap-4 w-full h-[800px] md:h-[600px] max-w-[1400px] mx-auto px-4 sm:px-8 py-16">
       {SLIDES.map((slide) => {
         const isActive = activeSlide === slide.id;
 

@@ -12,7 +12,7 @@ export default function ClimateRiskPage() {
     <main className="min-h-screen bg-white">
       {/* Premium Hero with Background Image Overlay */}
       <section 
-        className="pt-40 pb-32 px-4 sm:px-8 relative z-10"
+        className="pt-40 pb-16 px-4 sm:px-8 relative z-10"
         style={{
           backgroundImage: 'linear-gradient(rgba(11, 61, 46, 0.8), rgba(11, 61, 46, 0.95)), url("https://images.unsplash.com/photo-1545239351-ef35f43d514b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
           backgroundSize: 'cover',
@@ -37,7 +37,7 @@ export default function ClimateRiskPage() {
       </section>
 
       {/* Storytelling Content */}
-      <section className="py-24 max-w-[1400px] mx-auto px-4 sm:px-8">
+      <section className="py-16 max-w-[1400px] mx-auto px-4 sm:px-8">
          <div className="text-center mb-16 max-w-3xl mx-auto">
             <h2 className="text-4xl font-bold text-[#0B3D2E] mb-6">Quantifying Climate Vulnerability</h2>
             <p className="text-lg text-gray-600">Our platform layers meteorological data over your specific supplier network to generate actionable risk scores for every plot of land in your supply chain.</p>

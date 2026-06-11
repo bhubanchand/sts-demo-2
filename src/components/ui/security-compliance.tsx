@@ -32,7 +32,7 @@ export function SecurityCompliance() {
   ];
 
   return (
-    <section className="py-32 bg-[#051C15] relative overflow-hidden" ref={containerRef}>
+    <section className="py-16 bg-[#051C15] relative overflow-hidden" ref={containerRef}>
       {/* Background glowing effects */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#1F7A53] blur-[200px] rounded-full opacity-20 pointer-events-none"></div>
       <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at center, #53D769 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>

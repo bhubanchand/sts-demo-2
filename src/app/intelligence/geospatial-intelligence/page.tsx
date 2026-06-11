@@ -12,7 +12,7 @@ export default function GeospatialIntelligencePage() {
     <main className="min-h-screen bg-white">
       {/* Premium Hero with Background Image Overlay */}
       <section 
-        className="pt-40 pb-32 px-4 sm:px-8 relative z-10"
+        className="pt-40 pb-16 px-4 sm:px-8 relative z-10"
         style={{
           backgroundImage: 'linear-gradient(rgba(11, 61, 46, 0.7), rgba(11, 61, 46, 0.95)), url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
           backgroundSize: 'cover',
@@ -37,7 +37,7 @@ export default function GeospatialIntelligencePage() {
       </section>
 
       {/* Bento Grid Storytelling */}
-      <section className="py-24 max-w-[1400px] mx-auto px-4 sm:px-8">
+      <section className="py-16 max-w-[1400px] mx-auto px-4 sm:px-8">
          <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-gray-50 rounded-3xl p-12 border border-gray-100 flex flex-col justify-center">
                <div className="w-16 h-16 bg-[#1F7A53]/10 text-[#1F7A53] rounded-2xl flex items-center justify-center mb-8"><Navigation className="w-8 h-8"/></div>

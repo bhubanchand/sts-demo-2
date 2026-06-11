@@ -29,7 +29,7 @@ function Counter({ from, to, suffix, decimals = 0 }: { from: number, to: number,
 
 export function StatsBanner() {
   return (
-    <div className="bg-[#0B3D2E] text-white py-24 relative overflow-hidden snap-center">
+    <div className="bg-[#0B3D2E] text-white py-16 relative overflow-hidden snap-center">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10 mix-blend-overlay"></div>
       
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 relative z-10">

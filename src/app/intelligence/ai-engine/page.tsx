@@ -12,7 +12,7 @@ export default function AIEnginePage() {
     <main className="min-h-screen bg-white">
       {/* Premium Hero with Background Image Overlay */}
       <section 
-        className="pt-40 pb-32 px-4 sm:px-8 relative z-10"
+        className="pt-40 pb-16 px-4 sm:px-8 relative z-10"
         style={{
           backgroundImage: 'linear-gradient(rgba(11, 61, 46, 0.8), rgba(11, 61, 46, 0.95)), url("https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
           backgroundSize: 'cover',
@@ -37,7 +37,7 @@ export default function AIEnginePage() {
       </section>
 
       {/* Storytelling Grid */}
-      <section className="py-24 max-w-[1400px] mx-auto px-4 sm:px-8">
+      <section className="py-16 max-w-[1400px] mx-auto px-4 sm:px-8">
          <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
                <h2 className="text-4xl font-bold text-[#0B3D2E]">Turning Noise into Signal</h2>

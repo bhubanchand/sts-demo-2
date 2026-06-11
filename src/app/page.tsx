@@ -192,7 +192,7 @@ export default function Home() {
         </div>
 
         {/* Slide Content with AnimatePresence for smooth cross-fades */}
-        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center justify-center text-center pb-28 sm:pb-32">
+        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center justify-center text-center pb-28 sm:pb-16">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSlideIndex}
@@ -235,17 +235,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. Expanding Slideshow (New feature highlights) */}
-      <section className="bg-gray-50 border-y border-gray-100 min-h-screen flex flex-col justify-center snap-center">
+      <section className="bg-gray-50 border-y border-gray-100 flex flex-col justify-center snap-center">
          <ExpandingSlideshow />
       </section>
 
       {/* 3. The Global Challenge (Dynamic Scroll-Linked Image) */}
-      <section className="py-40 bg-white relative">
+      <section className="py-16 bg-white relative">
          <div className="max-w-[1400px] mx-auto px-6 sm:px-8">
             <div className="flex flex-col lg:flex-row gap-20">
                {/* Scrollable Text Blocks */}
-               <div className="lg:w-1/2 flex flex-col gap-32 relative z-10 py-32">
+               <div className="lg:w-1/2 flex flex-col gap-20 relative z-10 py-16">
                   <div className="mb-10">
                      <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">The Challenge</span>
                      <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Supply chains are broken at the source.</h2>
@@ -328,9 +327,9 @@ export default function Home() {
       </section>
 
       {/* 5. The Solution: Massive Interactive 3D Bento Box */}
-      <section className="min-h-screen flex flex-col justify-center py-32 bg-gray-50 border-t border-gray-100 snap-center">
+       <section className="flex flex-col justify-center py-16 bg-gray-50 border-t border-gray-100">
          <div className="max-w-[1400px] mx-auto px-6 sm:px-8 w-full">
-            <div className="text-center max-w-4xl mx-auto mb-20">
+            <div className="text-center max-w-4xl mx-auto mb-16">
                <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">The Platform</span>
                <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">One platform. End-to-end visibility.</h2>
                <p className="text-xl text-gray-600">We replace fragmented spreadsheets and siloed apps with a single, unified data architecture that connects farmers to the enterprise.</p>
@@ -395,7 +394,7 @@ export default function Home() {
       </section>
 
       {/* 6. Global Presence - Genuine Interactive Map */}
-      <section className="min-h-screen flex flex-col justify-center py-32 bg-white overflow-hidden border-t border-gray-100 snap-center">
+       <section className="flex flex-col justify-center py-16 bg-white overflow-hidden border-t border-gray-100">
          <div className="max-w-[1400px] mx-auto px-6 sm:px-8 text-center w-full">
             <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Global Impact</span>
             <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Powering supply chains worldwide</h2>

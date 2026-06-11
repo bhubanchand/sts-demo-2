@@ -11,7 +11,7 @@ export default function RegenerativeAgriculturePage() {
   return (
     <main className="min-h-screen bg-white">
       <section 
-        className="pt-40 pb-32 px-4 sm:px-8 relative z-10"
+        className="pt-40 pb-16 px-4 sm:px-8 relative z-10"
         style={{
           backgroundImage: 'linear-gradient(rgba(11, 61, 46, 0.7), rgba(11, 61, 46, 0.95)), url("https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
           backgroundSize: 'cover',
@@ -35,7 +35,7 @@ export default function RegenerativeAgriculturePage() {
         </div>
       </section>
 
-      <section className="py-24 max-w-[1400px] mx-auto px-4 sm:px-8">
+      <section className="py-16 max-w-[1400px] mx-auto px-4 sm:px-8">
          <div className="text-center mb-16 max-w-3xl mx-auto">
             <h2 className="text-4xl font-bold text-[#0B3D2E] mb-6">Measuring the Unmeasurable</h2>
             <p className="text-lg text-gray-600">Regenerative agriculture requires moving beyond yield metrics. Our platform digitizes complex ecological indicators to prove the health of the ecosystem.</p>

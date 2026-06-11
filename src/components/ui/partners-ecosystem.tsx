@@ -20,7 +20,7 @@ const PARTNERS = [
 
 export function PartnersEcosystem() {
   return (
-    <section className="py-24 bg-white overflow-hidden relative">
+    <section className="py-16 bg-white overflow-hidden relative">
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500 blur-[150px] rounded-full opacity-5 pointer-events-none"></div>
       
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16 relative z-10">

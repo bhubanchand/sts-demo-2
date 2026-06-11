@@ -7,7 +7,7 @@ import { Award, FileSignature, CheckSquare, Layers } from "lucide-react";
 
 export default function CertificationManagementPage() {
   return (
-    <main className="min-h-screen pt-32 pb-24 bg-gray-50">
+    <main className="min-h-screen pt-32 pb-16 bg-gray-50">
       {/* Header */}
       <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16 text-center">
         <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Certification Management</span>
@@ -22,7 +22,7 @@ export default function CertificationManagementPage() {
       </section>
 
       {/* Certification Badges Carousel / Grid */}
-      <section className="bg-white border-y border-gray-200 py-12 mb-24 overflow-hidden">
+      <section className="bg-white border-y border-gray-200 py-12 mb-16 overflow-hidden">
          <div className="flex animate-marquee whitespace-nowrap opacity-60">
             {/* Mock Certification Names */}
             {['Fairtrade International', 'Rainforest Alliance', 'Organic', 'GlobalG.A.P.', 'FSC', 'RSPO', 'Bonsucro'].map((cert, idx) => (
@@ -35,7 +35,7 @@ export default function CertificationManagementPage() {
       </section>
 
       {/* Value Prop Cards */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-24">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16">
          <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                <div className="w-14 h-14 bg-[#53D769]/10 rounded-2xl flex items-center justify-center mb-6">

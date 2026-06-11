@@ -11,7 +11,7 @@ export default function TraceabilityGraphPage() {
   return (
     <main className="min-h-screen bg-white">
       <section 
-        className="pt-40 pb-32 px-4 sm:px-8 relative z-10"
+        className="pt-40 pb-16 px-4 sm:px-8 relative z-10"
         style={{
           backgroundImage: 'linear-gradient(rgba(11, 61, 46, 0.9), rgba(11, 61, 46, 0.98)), url("https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
           backgroundSize: 'cover',
@@ -35,7 +35,7 @@ export default function TraceabilityGraphPage() {
         </div>
       </section>
 
-      <section className="py-24 max-w-[1400px] mx-auto px-4 sm:px-8">
+      <section className="py-16 max-w-[1400px] mx-auto px-4 sm:px-8">
          <div className="bg-[#0B3D2E] rounded-[40px] p-12 lg:p-24 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-[600px] h-full opacity-20 mix-blend-screen pointer-events-none">
                <img src="/assets/traceability-diagram.png" alt="Graph" className="w-full h-full object-cover" />
