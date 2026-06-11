@@ -25,7 +25,8 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
 // Helper component for tracking scroll position of each challenge block
-function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, setActiveBlock }: any) {
+// Helper component for tracking scroll position of each challenge block
+function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, activeBlock, setActiveBlock }: any) {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-40% 0px -40% 0px" });
 
@@ -35,8 +36,18 @@ function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, setA
     }
   }, [isInView, id, setActiveBlock]);
 
+  const isActive = activeBlock === id;
+
   return (
-    <div ref={ref} className={`bg-white rounded-[40px] p-6 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 border border-gray-100 relative overflow-hidden group ${isInView ? 'scale-105 shadow-[0_20px_40px_rgb(0,0,0,0.1)]' : 'opacity-60 scale-95'}`}>
+    <div 
+      ref={ref} 
+      onClick={() => setActiveBlock(id)}
+      className={`cursor-pointer bg-white rounded-[40px] p-6 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 border relative overflow-hidden group ${
+        isActive 
+          ? 'scale-105 shadow-[0_20px_40px_rgb(0,0,0,0.1)] border-emerald-500/30' 
+          : 'opacity-60 scale-95 border-gray-100'
+      }`}
+    >
       <div className={`w-16 h-16 ${bgClass} ${colorClass} rounded-2xl flex items-center justify-center mb-8 relative z-10`}>
          <Icon className="w-8 h-8"/>
       </div>
@@ -48,10 +59,43 @@ function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, setA
 }
 
 const CHALLENGE_IMAGES = {
-  regulatory: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-  fragmented: "https://images.unsplash.com/photo-1592982537447-6f2a6a0c5b16?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-  climate: "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+  regulatory: "/assets/esg-dashboard.png",
+  fragmented: "/assets/traceability-diagram.png",
+  climate: "/assets/ai-graph.png"
 };
+
+const CHALLENGES = [
+  {
+    id: "regulatory",
+    title: "Regulatory Tsunami",
+    text: "Regulations like the EUDR, CSDDD, and FSMA 204 are moving from voluntary guidelines to strict legal mandates. Non-compliance now means blocked market access and massive fines.",
+    icon: ShieldCheck,
+    colorClass: "text-red-600",
+    bgClass: "bg-red-100",
+    quote: `"EUDR and FSMA 204 require precise geocoordinates. The era of self-reported sustainability is over."`,
+    image: "/assets/esg-dashboard.png"
+  },
+  {
+    id: "fragmented",
+    title: "Fragmented Data",
+    text: "Commodities pass through millions of unmapped smallholder farms and shadowy middlemen. Aggregating this fragmented data into a unified, auditable database is historically impossible.",
+    icon: MapPin,
+    colorClass: "text-orange-600",
+    bgClass: "bg-orange-100",
+    quote: `"Without node-level visibility, discovering the true origin of your raw materials is impossible."`,
+    image: "/assets/traceability-diagram.png"
+  },
+  {
+    id: "climate",
+    title: "Climate Volatility",
+    text: "Extreme weather events are disrupting crop yields globally. Procurement teams cannot react to supply shocks if they cannot monitor the weather at their exact sourcing origins.",
+    icon: Activity,
+    colorClass: "text-blue-600",
+    bgClass: "bg-blue-100",
+    quote: `"Hyper-local weather anomalies are creating supply shocks. You need predictive intelligence."`,
+    image: "/assets/ai-graph.png"
+  }
+];
 
 const HERO_SLIDES = [
   {
@@ -243,47 +287,36 @@ export default function Home() {
       <section className="py-16 bg-white relative">
          <div className="max-w-[1400px] mx-auto px-6 sm:px-8">
             <div className="flex flex-col lg:flex-row gap-20">
-               {/* Scrollable Text Blocks */}
-               <div className="lg:w-1/2 flex flex-col gap-20 relative z-10 py-16">
-                  <div className="mb-10">
+               {/* Left Column (Text Blocks) */}
+               <div className="w-full lg:w-1/2 flex flex-col gap-12 relative z-10 py-16">
+                  <div className="mb-6">
                      <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">The Challenge</span>
-                     <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Supply chains are broken at the source.</h2>
-                     <p className="text-xl text-gray-600 leading-relaxed mb-8">
+                     <h2 className="text-4xl sm:text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Supply chains are broken at the source.</h2>
+                     <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-8">
                         Enterprises lack visibility into the "first mile" where raw materials are actually grown. This opacity leads to deforestation risks, human rights violations, and the inability to prove ESG claims.
                      </p>
                   </div>
                   
-                  <ChallengeBlock 
-                     id="regulatory" 
-                     title="Regulatory Tsunami" 
-                     text="Regulations like the EUDR, CSDDD, and FSMA 204 are moving from voluntary guidelines to strict legal mandates. Non-compliance now means blocked market access and massive fines."
-                     icon={ShieldCheck} 
-                     colorClass="text-red-600" 
-                     bgClass="bg-red-100" 
-                     setActiveBlock={setActiveChallengeBlock} 
-                  />
-                  <ChallengeBlock 
-                     id="fragmented" 
-                     title="Fragmented Data" 
-                     text="Commodities pass through millions of unmapped smallholder farms and shadowy middlemen. Aggregating this fragmented data into a unified, auditable database is historically impossible."
-                     icon={MapPin} 
-                     colorClass="text-orange-600" 
-                     bgClass="bg-orange-100" 
-                     setActiveBlock={setActiveChallengeBlock} 
-                  />
-                  <ChallengeBlock 
-                     id="climate" 
-                     title="Climate Volatility" 
-                     text="Extreme weather events are disrupting crop yields globally. Procurement teams cannot react to supply shocks if they cannot monitor the weather at their exact sourcing origins."
-                     icon={Activity} 
-                     colorClass="text-blue-600" 
-                     bgClass="bg-blue-100" 
-                     setActiveBlock={setActiveChallengeBlock} 
-                  />
+                  {/* Desktop layout: vertical stack of ChallengeBlocks */}
+                  <div className="hidden lg:flex flex-col gap-12">
+                     {CHALLENGES.map((item) => (
+                        <ChallengeBlock 
+                           key={item.id}
+                           id={item.id} 
+                           title={item.title} 
+                           text={item.text}
+                           icon={item.icon} 
+                           colorClass={item.colorClass} 
+                           bgClass={item.bgClass} 
+                           activeBlock={activeChallengeBlock}
+                           setActiveBlock={setActiveChallengeBlock} 
+                        />
+                     ))}
+                  </div>
                </div>
 
-               {/* Sticky Image Container */}
-               <div className="lg:w-1/2 lg:sticky lg:top-40 h-[600px] rounded-[40px] overflow-hidden shadow-2xl relative">
+               {/* Right Column (Sticky Image Container) - desktop only */}
+               <div className="hidden lg:block lg:w-1/2 lg:sticky lg:top-40 h-[600px] rounded-[40px] overflow-hidden shadow-2xl relative self-start mt-16">
                   <AnimatePresence mode="wait">
                      <motion.img 
                         key={activeChallengeBlock}
@@ -309,12 +342,69 @@ export default function Home() {
                            transition={{ duration: 0.3, delay: 0.2 }}
                            className="bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-3xl"
                         >
-                           {activeChallengeBlock === "regulatory" && <p className="text-white font-bold text-xl leading-relaxed">"EUDR and FSMA 204 require precise geocoordinates. The era of self-reported sustainability is over."</p>}
-                           {activeChallengeBlock === "fragmented" && <p className="text-white font-bold text-xl leading-relaxed">"Without node-level visibility, discovering the true origin of your raw materials is impossible."</p>}
-                           {activeChallengeBlock === "climate" && <p className="text-white font-bold text-xl leading-relaxed">"Hyper-local weather anomalies are creating supply shocks. You need predictive intelligence."</p>}
+                           <p className="text-white font-bold text-xl leading-relaxed">
+                              {CHALLENGES.find(c => c.id === activeChallengeBlock)?.quote}
+                           </p>
                         </motion.div>
                      </AnimatePresence>
                   </div>
+               </div>
+
+               {/* Mobile Layout (Interactive Tabbed Widget) - mobile only */}
+               <div className="block lg:hidden w-full">
+                  {/* Tabs Row */}
+                  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-none border-b border-gray-100 mb-6">
+                     {CHALLENGES.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = activeChallengeBlock === item.id;
+                        return (
+                           <button
+                              key={item.id}
+                              onClick={() => setActiveChallengeBlock(item.id)}
+                              className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
+                                 isActive 
+                                    ? "bg-[#0B3D2E] text-white border-[#0B3D2E] shadow-md" 
+                                    : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
+                              }`}
+                           >
+                              <Icon className="w-3.5 h-3.5" />
+                              {item.title}
+                           </button>
+                        );
+                     })}
+                  </div>
+
+                  {/* Active Card Content */}
+                  {(() => {
+                     const activeItem = CHALLENGES.find(c => c.id === activeChallengeBlock) || CHALLENGES[0];
+                     const ActiveIcon = activeItem.icon;
+                     return (
+                        <div className="space-y-6">
+                           <div className="bg-white rounded-3xl p-6 border border-gray-150 shadow-md">
+                              <div className={`w-12 h-12 ${activeItem.bgClass} ${activeItem.colorClass} rounded-2xl flex items-center justify-center mb-6`}>
+                                 <ActiveIcon className="w-6 h-6"/>
+                              </div>
+                              <h3 className="text-2xl font-bold text-gray-900 mb-3">{activeItem.title}</h3>
+                              <p className="text-base text-gray-650 leading-relaxed mb-6">{activeItem.text}</p>
+                              
+                              {/* Integrated Image Frame */}
+                              <div className="relative h-[240px] rounded-2xl overflow-hidden shadow-lg mb-4">
+                                 <img 
+                                    src={activeItem.image}
+                                    alt={activeItem.title}
+                                    className="w-full h-full object-cover"
+                                 />
+                                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D2E] via-[#0B3D2E]/30 to-transparent opacity-90"></div>
+                                 <div className="absolute bottom-4 left-4 right-4 bg-white/10 backdrop-blur-md border border-white/10 p-4 rounded-xl">
+                                    <p className="text-white font-bold text-xs leading-relaxed">
+                                       {activeItem.quote}
+                                    </p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     );
+                  })()}
                </div>
             </div>
          </div>
