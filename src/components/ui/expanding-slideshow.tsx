@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Leaf, Shield, LineChart, Users, Satellite, Smartphone } from "lucide-react";
 
@@ -57,166 +57,116 @@ const SLIDES = [
 
 export function ExpandingSlideshow() {
   const [activeSlide, setActiveSlide] = useState(SLIDES[0].id);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 py-16 snap-center">
-      {/* 💻 DESKTOP VIEW (Expanding Accordion) */}
-      <div className="hidden md:flex gap-4 w-full h-[500px]">
-        {SLIDES.map((slide) => {
-          const isActive = activeSlide === slide.id;
+    <div className={`flex flex-col md:flex-row gap-4 w-full max-w-[1400px] mx-auto px-4 sm:px-8 py-16 snap-center ${
+      isMobile ? "h-auto" : "h-[500px]"
+    }`}>
+      {SLIDES.map((slide) => {
+        const isActive = activeSlide === slide.id;
 
-          return (
-            <motion.div
-              key={slide.id}
-              onHoverStart={() => setActiveSlide(slide.id)}
-              onClick={() => setActiveSlide(slide.id)}
-              layout
-              initial={false}
-              animate={{
-                flex: isActive ? 5 : 1,
-              }}
-              transition={{ type: "spring", stiffness: 250, damping: 25 }}
-              className="relative rounded-[2rem] overflow-hidden cursor-pointer group bg-gray-900 min-w-[80px]"
+        return (
+          <motion.div
+            key={slide.id}
+            onHoverStart={() => {
+              if (!isMobile) setActiveSlide(slide.id);
+            }}
+            onClick={() => setActiveSlide(slide.id)}
+            layout
+            initial={false}
+            animate={
+              isMobile
+                ? { height: isActive ? 340 : 76 }
+                : { flex: isActive ? 5 : 1 }
+            }
+            transition={{ type: "spring", stiffness: 220, damping: 24 }}
+            className={`relative rounded-[2rem] overflow-hidden cursor-pointer group bg-gray-900 ${
+              isMobile ? "w-full" : "min-w-[80px]"
+            }`}
+          >
+            {/* Background Image */}
+            <motion.div 
+               className="absolute inset-0 w-full h-full"
+               animate={{ scale: isActive ? 1.05 : 1 }}
+               transition={{ duration: 0.4, ease: "easeOut" }}
             >
-              {/* Background Image */}
-              <motion.div 
-                 className="absolute inset-0 w-full h-full"
-                 animate={{ scale: isActive ? 1.05 : 1 }}
-                 transition={{ duration: 0.4, ease: "easeOut" }}
-              >
-                 <img 
-                   src={slide.image} 
-                   alt={slide.title} 
-                   className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
-                 />
-                 {/* Dark Overlay */}
-                 <div className={`absolute inset-0 transition-opacity duration-300 ${isActive ? 'bg-gradient-to-t from-black/90 via-black/40 to-transparent' : 'bg-black/70'}`}></div>
-              </motion.div>
+               <img 
+                 src={slide.image} 
+                 alt={slide.title} 
+                 className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+               />
+               <div className={`absolute inset-0 transition-opacity duration-300 ${isActive ? 'bg-gradient-to-t from-black/90 via-black/40 to-transparent' : 'bg-black/70'}`}></div>
+            </motion.div>
 
-              {/* Content Container */}
-              <div className={`absolute inset-0 p-6 flex flex-col justify-end`}>
-                {/* Icon & Title Wrapper */}
-                <div className={`flex items-center gap-4 ${isActive ? 'flex-row mb-4' : 'flex-col mb-8'}`}>
-                  <div className={`w-12 h-12 rounded-full ${slide.color} flex items-center justify-center text-white shrink-0 shadow-lg z-10`}>
-                    <slide.icon className="w-6 h-6" />
-                  </div>
-                  
-                  {isActive ? (
-                     <motion.h3 
-                       layout="position"
-                       className="text-2xl lg:text-3xl font-bold text-white z-10"
-                     >
-                       {slide.title}
-                     </motion.h3>
-                  ) : (
-                     <h3 className="text-xl font-bold text-white whitespace-nowrap z-10 opacity-70 tracking-widest" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+            {/* Content Container */}
+            <div className={`absolute inset-0 flex flex-col ${
+              isActive 
+                ? 'p-5 lg:p-6 justify-between' 
+                : 'p-3.5 lg:p-6 justify-center'
+            }`}>
+              
+              {/* Icon & Title Wrapper */}
+              <div className={`flex items-center gap-4 ${
+                isActive ? 'flex-row mb-4' : 'flex-row md:flex-col md:mb-8'
+              }`}>
+                <div className={`w-11 h-11 lg:w-12 lg:h-12 rounded-full ${slide.color} flex items-center justify-center text-white shrink-0 shadow-lg z-10`}>
+                  <slide.icon className="w-5 h-5 lg:w-6 lg:h-6" />
+                </div>
+                
+                {isActive ? (
+                   <motion.h3 
+                     layout="position"
+                     className="text-2xl lg:text-3xl font-bold text-white z-10"
+                   >
+                     {slide.title}
+                   </motion.h3>
+                ) : (
+                   <>
+                     {/* Desktop Vertical Title */}
+                     <h3 className="hidden md:block text-xl font-bold text-white whitespace-nowrap z-10 opacity-70 tracking-widest" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
                        {slide.title}
                      </h3>
-                  )}
-                </div>
-
-                {/* Expanded Description */}
-                <AnimatePresence mode="wait">
-                  {isActive && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.3, delay: 0.1 }}
-                      className="overflow-hidden z-10"
-                    >
-                      <p className="text-gray-200 text-base mb-6 max-w-md leading-relaxed">
-                        {slide.description}
-                      </p>
-                      <button className="flex items-center gap-2 text-white font-bold hover:gap-4 hover:text-[#53D769] transition-all uppercase tracking-wider text-sm">
-                        Explore Solution <ArrowRight className="w-5 h-5" />
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                     {/* Mobile Horizontal Title */}
+                     <h3 className="block md:hidden text-lg font-bold text-white whitespace-nowrap z-10 opacity-70">
+                       {slide.title}
+                     </h3>
+                   </>
+                )}
               </div>
-            </motion.div>
-          );
-        })}
-      </div>
 
-      {/* 📱 MOBILE VIEW (Interactive Tabbed Slider) */}
-      <div className="block md:hidden w-full">
-         {/* Tabs Selector Bar */}
-         <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-none border-b border-gray-100 mb-6">
-            {SLIDES.map((slide) => {
-               const Icon = slide.icon;
-               const isActive = activeSlide === slide.id;
-               return (
-                  <button
-                     key={slide.id}
-                     onClick={() => setActiveSlide(slide.id)}
-                     className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
-                        isActive 
-                           ? "bg-[#0B3D2E] text-white border-[#0B3D2E] shadow-md" 
-                           : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"
-                     }`}
+              {/* Expanded Description */}
+              <AnimatePresence mode="wait">
+                {isActive && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden z-10"
                   >
-                     <Icon className={`w-4 h-4 ${isActive ? 'text-[#53D769]' : 'text-gray-400'}`} />
-                     {slide.title}
-                  </button>
-               );
-            })}
-         </div>
-
-         {/* Active Slide Card Container with Animations */}
-         <div className="relative h-[440px] w-full rounded-[2rem] overflow-hidden shadow-xl bg-gray-900">
-            <AnimatePresence mode="wait">
-               {(() => {
-                  const currentSlide = SLIDES.find(s => s.id === activeSlide) || SLIDES[0];
-                  const Icon = currentSlide.icon;
-                  return (
-                     <motion.div
-                        key={currentSlide.id}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.35, ease: "easeInOut" }}
-                        className="absolute inset-0 w-full h-full flex flex-col justify-between p-6"
-                     >
-                        {/* Background Image */}
-                        <div className="absolute inset-0 z-0">
-                           <img 
-                              src={currentSlide.image} 
-                              alt={currentSlide.title} 
-                              className="w-full h-full object-cover opacity-50"
-                           />
-                           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
-                        </div>
-
-                        {/* Top Accent Icon */}
-                        <div className="relative z-10 self-start">
-                           <div className={`w-12 h-12 rounded-2xl ${currentSlide.color} flex items-center justify-center text-white shadow-lg`}>
-                              <Icon className="w-6 h-6" />
-                           </div>
-                        </div>
-
-                        {/* Bottom Text & Button */}
-                        <div className="relative z-10 mt-auto">
-                           <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-widest mb-1 block">
-                              SourceTrace Solution
-                           </span>
-                           <h3 className="text-2xl font-bold text-white mb-3 leading-tight">
-                              {currentSlide.title}
-                           </h3>
-                           <p className="text-gray-200 text-sm leading-relaxed mb-6">
-                              {currentSlide.description}
-                           </p>
-                           <button className="flex items-center gap-2 text-white font-bold hover:text-[#53D769] transition-colors uppercase tracking-wider text-xs">
-                              Explore Solution <ArrowRight className="w-4 h-4 text-[#53D769]" />
-                           </button>
-                        </div>
-                     </motion.div>
-                  );
-               })()}
-            </AnimatePresence>
-         </div>
-      </div>
+                    <p className="text-gray-200 text-sm lg:text-base mb-4 lg:mb-6 max-w-md leading-relaxed">
+                      {slide.description}
+                    </p>
+                    <button className="flex items-center gap-2 text-white font-bold hover:gap-4 hover:text-[#53D769] transition-all uppercase tracking-wider text-xs lg:text-sm">
+                      Explore Solution <ArrowRight className="w-4 h-4 lg:w-5 lg:h-5 text-[#53D769]" />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
