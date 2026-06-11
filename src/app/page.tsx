@@ -155,7 +155,7 @@ export default function Home() {
         </button>
 
         {/* Pagination Controls - Inline arrows on Mobile, Dots only on Desktop */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-30">
+        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 flex items-center gap-4 z-30">
           {/* Mobile Prev Button */}
           <button
             onClick={handlePrevSlide}
@@ -192,7 +192,7 @@ export default function Home() {
         </div>
 
         {/* Slide Content with AnimatePresence for smooth cross-fades */}
-        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center justify-center text-center">
+        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center justify-center text-center pb-28 sm:pb-32">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSlideIndex}
@@ -228,9 +228,12 @@ export default function Home() {
             </motion.div>
           </AnimatePresence>
         </div>
-      </section>
 
-      <TrustBadges />
+        {/* Trust Badges Overlay at the Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 z-30 bg-[#0B3D2E]/80 backdrop-blur-md border-t border-white/5 py-4 w-full">
+          <TrustBadges />
+        </div>
+      </section>
 
       {/* 2. Expanding Slideshow (New feature highlights) */}
       <section className="bg-gray-50 border-y border-gray-100 min-h-screen flex flex-col justify-center snap-center">
