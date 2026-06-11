@@ -77,23 +77,23 @@ export function TechStackGrid() {
          <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Engineered for the First Mile.</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-3 gap-6 h-auto md:h-[750px]">
+      <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-3 gap-6 h-auto md:h-[880px]">
          {TECHNOLOGIES.map((tech) => (
             <div 
                key={tech.id}
-               className={`${tech.span} relative overflow-hidden bg-white rounded-[40px] border border-gray-100 p-8 group hover:shadow-2xl transition-all duration-300 hover:-translate-y-2`}
+               className={`${tech.span} relative overflow-hidden bg-white rounded-[40px] border border-gray-100 p-6 lg:p-8 group hover:shadow-2xl transition-all duration-300 hover:-translate-y-2`}
             >
                {/* Background Flare */}
                <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-br ${tech.gradient} rounded-full blur-[60px] group-hover:scale-150 transition-transform duration-300 opacity-50`}></div>
                
                <div className="relative z-10 h-full flex flex-col">
-                  <div className={`w-16 h-16 ${tech.color} rounded-2xl flex items-center justify-center mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
-                     <tech.icon className="w-8 h-8" />
+                  <div className={`w-14 h-14 lg:w-16 lg:h-16 ${tech.color} rounded-2xl flex items-center justify-center mb-4 lg:mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+                     <tech.icon className="w-7 h-7 lg:w-8 lg:h-8" />
                   </div>
                   
                   <div className="mt-auto">
-                     <h3 className="text-2xl font-bold text-gray-900 mb-2">{tech.title}</h3>
-                     <p className="text-base text-gray-600 leading-relaxed">{tech.description}</p>
+                     <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">{tech.title}</h3>
+                     <p className="text-sm lg:text-base text-gray-600 leading-relaxed">{tech.description}</p>
                   </div>
                </div>
                
