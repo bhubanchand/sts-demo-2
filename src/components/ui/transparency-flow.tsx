@@ -181,11 +181,13 @@ export function TransparencyFlow() {
          </div>
 
          {/* Current Stage Label */}
-         <div className="text-center mb-6">
-            <span className="text-[10px] font-mono font-black text-[#1F7A53] uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded-full">
-               Stage {activeStage + 1} of 4
-            </span>
-            <h3 className="text-2xl font-bold text-[#0B3D2E] mt-1">{STAGES[activeStage].title}</h3>
+         <div className="text-center mb-6 h-20 flex flex-col justify-center shrink-0">
+            <div>
+               <span className="text-[10px] font-mono font-black text-[#1F7A53] uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded-full">
+                  Stage {activeStage + 1} of 4
+               </span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-[#0B3D2E] mt-1 leading-tight">{STAGES[activeStage].title}</h3>
          </div>
 
          {/* Stack Container */}
