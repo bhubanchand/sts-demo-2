@@ -53,7 +53,7 @@ export function DashboardPreview() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="flex-1 flex flex-col h-full"
+      className="flex-1 flex flex-col h-full overflow-hidden"
     >
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 shrink-0">
@@ -81,7 +81,7 @@ export function DashboardPreview() {
       </div>
 
       {/* Map & Chart Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-[250px]">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 overflow-hidden mb-2">
         {/* Map Area */}
         <div className="lg:col-span-2 bg-gray-100 rounded-2xl border border-gray-200 overflow-hidden relative group h-full">
           <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Map View" className="w-full h-full object-cover opacity-80" />
@@ -102,9 +102,9 @@ export function DashboardPreview() {
               <AnimatePresence>
                 {hoveredPin === pin.id && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 p-3 z-20 pointer-events-none"
                   >
                     <p className="font-bold text-gray-900 text-sm mb-1">{pin.title}</p>
@@ -132,7 +132,7 @@ export function DashboardPreview() {
           <div className="text-gray-900 font-bold mb-4 flex justify-between items-center shrink-0">
             Recent Alerts <span className="text-[#1F7A53] text-xs cursor-pointer hover:underline">View All</span>
           </div>
-          <div className="space-y-3 pr-2 flex-1">
+          <div className="space-y-3 pr-2 flex-1 overflow-y-auto">
             {filteredAlerts.length > 0 ? (
               filteredAlerts.map(alert => (
                 <div key={alert.id} className="flex gap-3 items-start border-b border-gray-50 pb-3 hover:bg-gray-50 p-2 rounded-lg transition-colors cursor-pointer">
@@ -160,9 +160,9 @@ export function DashboardPreview() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="flex-1 flex flex-col h-full bg-white border border-gray-100 rounded-2xl shadow-sm p-6"
+      className="flex-1 flex flex-col h-full bg-white border border-gray-100 rounded-2xl shadow-sm p-6 overflow-hidden"
     >
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 shrink-0">
         <h3 className="text-lg font-bold text-gray-900">Supply Chain Graph: Batch #8922</h3>
         <button className="text-sm text-[#1F7A53] font-bold flex items-center gap-1 hover:underline">
           View Map <ArrowRight className="w-4 h-4" />
@@ -170,7 +170,7 @@ export function DashboardPreview() {
       </div>
       
       {/* Mock Graph Timeline */}
-      <div className="flex-1 flex items-center justify-center py-10 relative">
+      <div className="flex-1 flex items-center justify-center py-6 relative min-h-0">
         <div className="absolute top-1/2 left-[15%] right-[15%] h-1 bg-emerald-100 -translate-y-1/2 z-0"></div>
         <div className="absolute top-1/2 left-[15%] right-[50%] h-1 bg-emerald-500 -translate-y-1/2 z-0 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
         
@@ -193,7 +193,7 @@ export function DashboardPreview() {
       </div>
 
       {/* Mock Data Table */}
-      <div className="mt-auto border border-gray-100 rounded-xl overflow-hidden">
+      <div className="mt-auto border border-gray-100 rounded-xl overflow-hidden shrink-0">
          <div className="bg-gray-50 px-4 py-2 text-xs font-bold text-gray-500 uppercase grid grid-cols-4">
            <div>Date</div><div>Event</div><div>Location</div><div>Verified</div>
          </div>
@@ -223,7 +223,7 @@ export function DashboardPreview() {
       exit={{ opacity: 0, x: -20 }}
       className="flex-1 flex flex-col h-full bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden"
     >
-      <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+      <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 shrink-0">
         <div>
           <h3 className="text-lg font-bold text-gray-900">Deforestation Risk Assessment</h3>
           <p className="text-sm text-gray-500">Analysis run on 1,240 plots</p>
@@ -233,7 +233,7 @@ export function DashboardPreview() {
         </button>
       </div>
       
-      <div className="flex-1">
+      <div className="flex-1 overflow-y-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-white border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500 sticky top-0 z-10">
@@ -281,9 +281,9 @@ export function DashboardPreview() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="flex-1 flex flex-col h-full bg-white border border-gray-100 rounded-2xl shadow-sm p-6"
+      className="flex-1 flex flex-col h-full bg-white border border-gray-100 rounded-2xl shadow-sm p-6 overflow-hidden"
     >
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6 shrink-0">
         <h3 className="text-lg font-bold text-gray-900">Yield Prediction vs Actuals</h3>
         <select className="bg-gray-50 border border-gray-200 text-sm rounded-lg px-3 py-1.5 outline-none focus:border-[#53D769]">
           <option>2023 Season</option>
@@ -292,7 +292,7 @@ export function DashboardPreview() {
       </div>
 
       {/* Mock Bar Chart using HTML/CSS */}
-      <div className="flex-1 flex items-end justify-between gap-2 px-4 pb-8 pt-10 border-b border-gray-100 relative">
+      <div className="flex-1 flex items-end justify-between gap-2 px-4 pb-6 pt-10 border-b border-gray-100 relative min-h-0">
         {/* Y Axis Guides */}
         <div className="absolute top-0 left-0 right-0 border-t border-dashed border-gray-200 h-0"></div>
         <div className="absolute top-1/4 left-0 right-0 border-t border-dashed border-gray-200 h-0"></div>
@@ -308,8 +308,8 @@ export function DashboardPreview() {
           { month: "Jun", p: 80, a: 85 },
           { month: "Jul", p: 60, a: 65 },
         ].map((data, i) => (
-          <div key={i} className="flex flex-col items-center gap-2 group z-10 w-full">
-            <div className="flex items-end gap-1 w-full justify-center h-48 relative">
+          <div key={i} className="flex flex-col items-center gap-2 group z-10 w-full h-full justify-end">
+            <div className="flex items-end gap-1 w-full justify-center h-[80%] relative">
               {/* Predicted Bar */}
               <div 
                 className="w-1/3 max-w-[20px] bg-[#EAF6EC] border border-[#53D769] rounded-t-sm transition-all duration-500 group-hover:brightness-95" 
@@ -326,16 +326,253 @@ export function DashboardPreview() {
                 Pred: {data.p}k | Act: {data.a}k
               </div>
             </div>
-            <span className="text-xs text-gray-500 font-medium">{data.month}</span>
+            <span className="text-xs text-gray-500 font-medium shrink-0">{data.month}</span>
           </div>
         ))}
       </div>
-      <div className="flex justify-center gap-6 mt-4 text-xs font-medium text-gray-600">
+      <div className="flex justify-center gap-6 mt-4 text-xs font-medium text-gray-600 shrink-0">
         <div className="flex items-center gap-2"><div className="w-3 h-3 bg-[#EAF6EC] border border-[#53D769] rounded-sm"></div> Predicted Yield</div>
         <div className="flex items-center gap-2"><div className="w-3 h-3 bg-[#1F7A53] rounded-sm"></div> Actual Yield</div>
       </div>
     </motion.div>
   );
+
+  // Mobile App Tab Renderers
+  const renderMobileOverview = () => (
+    <motion.div
+      key="mobile-overview"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="space-y-4"
+    >
+      {/* KPI cards in vertical stack */}
+      <div className="space-y-3">
+        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+          <div className="text-gray-500 text-xs font-medium mb-0.5">Total Farmers Mapped</div>
+          <div className="text-2xl font-black text-gray-900 mb-1">1,245,890</div>
+          <div className="flex items-center gap-1 text-emerald-600 text-[10px] font-bold bg-emerald-50 w-fit px-1.5 py-0.5 rounded">
+            <TrendingUp className="w-3 h-3" /> +12% this month
+          </div>
+        </div>
+        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+          <div className="text-gray-500 text-xs font-medium mb-0.5">EUDR Compliance Rate</div>
+          <div className="text-2xl font-black text-gray-900 mb-1">98.4%</div>
+          <div className="flex items-center gap-1 text-emerald-600 text-[10px] font-bold bg-emerald-50 w-fit px-1.5 py-0.5 rounded">
+            <ShieldCheck className="w-3 h-3" /> 450 plots cleared
+          </div>
+        </div>
+        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+          <div className="text-gray-500 text-xs font-medium mb-0.5">Carbon Sequestered</div>
+          <div className="text-2xl font-black text-gray-900 mb-1">2.4M Tons</div>
+          <div className="flex items-center gap-1 text-emerald-600 text-[10px] font-bold bg-emerald-50 w-fit px-1.5 py-0.5 rounded">
+            <Leaf className="w-3 h-3" /> Above SBTi
+          </div>
+        </div>
+      </div>
+
+      {/* Compact Map Area */}
+      <div className="bg-gray-100 rounded-2xl border border-gray-200 overflow-hidden relative h-40">
+        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Map View" className="w-full h-full object-cover opacity-80" />
+        <div className="absolute inset-0 bg-[#0B3D2E]/20"></div>
+        
+        {/* Mobile Pins */}
+        <div className="absolute" style={{ top: "35%", left: "30%" }}>
+          <div className="w-3 h-3 bg-[#53D769] rounded-full border border-white shadow-md animate-pulse"></div>
+        </div>
+        <div className="absolute" style={{ top: "60%", left: "65%" }}>
+          <div className="w-3 h-3 bg-amber-400 rounded-full border border-white shadow-md animate-pulse"></div>
+        </div>
+        
+        <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-md px-2 py-1 rounded shadow text-[10px] font-bold text-gray-900 flex items-center gap-1">
+          <MapPin className="w-3 h-3 text-[#1F7A53]" /> Live Polygons
+        </div>
+      </div>
+
+      {/* Alerts Area */}
+      <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+        <div className="text-gray-900 font-bold text-xs mb-3 flex justify-between items-center">
+          Recent Alerts <span className="text-[#1F7A53] text-[10px] font-bold cursor-pointer">View All</span>
+        </div>
+        <div className="space-y-2.5">
+          {filteredAlerts.slice(0, 2).map(alert => (
+            <div key={alert.id} className="flex gap-2.5 items-start border-b border-gray-50 pb-2.5 last:border-0 last:pb-0">
+              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${alert.type === 'warning' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                <alert.icon className="w-3.5 h-3.5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-gray-900 truncate">{alert.title}</p>
+                <p className="text-[10px] text-gray-500 truncate mt-0.5">{alert.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  const renderMobileTraceability = () => (
+    <motion.div
+      key="mobile-traceability"
+      initial={{ opacity: 0, x: 10 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -10 }}
+      className="space-y-4"
+    >
+      <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+        <div className="flex justify-between items-center mb-3">
+          <h4 className="text-xs font-bold text-gray-900">Supply Chain Graph (#8922)</h4>
+          <span className="text-[10px] text-[#1F7A53] font-bold cursor-pointer">View Map</span>
+        </div>
+
+        {/* Vertical Timeline Graph */}
+        <div className="relative pl-6 py-2 space-y-4">
+          <div className="absolute left-[11px] top-4 bottom-4 w-[2px] bg-emerald-100"></div>
+          <div className="absolute left-[11px] top-4 h-1/2 w-[2px] bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+
+          {[
+            { step: "Farm (Plot #442)", desc: "Oct 20, 10:15", status: "completed", icon: Leaf },
+            { step: "Collection (Coop Alpha)", desc: "Oct 22, 14:20", status: "completed", icon: Users },
+            { step: "Processing (Mill B)", desc: "Oct 24, 09:41", status: "current", icon: Activity },
+            { step: "Export (Port of Abidjan)", desc: "Pending", status: "pending", icon: Globe2 },
+          ].map((node, i) => (
+            <div key={i} className="relative flex items-start gap-3">
+              <div className={`absolute -left-[20px] w-6 h-6 rounded-full flex items-center justify-center shadow-sm border border-white z-10 ${node.status === 'completed' ? 'bg-emerald-500 text-white' : node.status === 'current' ? 'bg-white border-emerald-500 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
+                <node.icon className="w-3 h-3" />
+              </div>
+              <div>
+                <p className={`font-bold text-xs ${node.status === 'pending' ? 'text-gray-400' : 'text-gray-900'}`}>{node.step}</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">{node.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Events List */}
+      <div className="space-y-2">
+        <div className="text-xs font-bold text-gray-900 px-1">Verified Events</div>
+        {[
+          { date: "Oct 24, 09:41", event: "Received at Mill B", location: "Facility B" },
+          { date: "Oct 22, 14:20", event: "Quality Checked", location: "Coop Alpha" },
+        ].map((evt, i) => (
+          <div key={i} className="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm flex justify-between items-center">
+            <div>
+              <div className="text-[9px] text-gray-400">{evt.date}</div>
+              <div className="text-xs font-bold text-gray-900 mt-0.5">{evt.event}</div>
+              <div className="text-[10px] text-gray-500">{evt.location}</div>
+            </div>
+            <div className="flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+              <CheckCircle2 className="w-3 h-3" /> Verified
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+
+  const renderMobileEUDR = () => (
+    <motion.div
+      key="mobile-eudr"
+      initial={{ opacity: 0, x: 10 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -10 }}
+      className="space-y-4"
+    >
+      <div className="flex justify-between items-center px-1">
+        <div>
+          <h4 className="text-xs font-bold text-gray-900">EUDR Assessment</h4>
+          <p className="text-[10px] text-gray-500">1,240 plots analyzed</p>
+        </div>
+        <button className="bg-[#1F7A53] hover:bg-[#0B3D2E] text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 shadow-sm">
+          <Download className="w-3.5 h-3.5" /> DDS Report
+        </button>
+      </div>
+
+      {/* Plot cards stack */}
+      <div className="space-y-3">
+        {[
+          { id: "PLT-8991", name: "Kofi Mensah", area: "2.4", risk: "Low", code: "text-emerald-600 bg-emerald-50" },
+          { id: "PLT-8992", name: "Abena Osei", area: "1.8", risk: "Low", code: "text-emerald-600 bg-emerald-50" },
+          { id: "PLT-8993", name: "Kwame Yeboah", area: "4.2", risk: "High", code: "text-red-600 bg-red-50", alert: true },
+          { id: "PLT-8994", name: "Ama Serwaa", area: "1.5", risk: "Low", code: "text-emerald-600 bg-emerald-50" },
+          { id: "PLT-8995", name: "Yaw Boakye", area: "3.1", risk: "Medium", code: "text-amber-600 bg-amber-50" },
+        ].map((plot, i) => (
+          <div key={i} className="bg-white border border-gray-100 rounded-2xl p-3.5 shadow-sm flex justify-between items-center">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold text-gray-900">{plot.id}</span>
+                <span className="text-[10px] text-gray-400">• {plot.area} Ha</span>
+              </div>
+              <div className="text-xs text-gray-500 truncate mt-0.5">{plot.name}</div>
+            </div>
+            <div>
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${plot.code}`}>
+                {plot.alert && <AlertTriangle className="w-2.5 h-2.5" />}
+                {plot.risk} Risk
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+
+  const renderMobileAnalytics = () => {
+    const mobileData = [
+      { month: "Jan", p: 40, a: 35 },
+      { month: "Feb", p: 50, a: 45 },
+      { month: "Mar", p: 70, a: 80 },
+      { month: "Apr", p: 90, a: 85 },
+      { month: "May", p: 100, a: 110 },
+    ];
+
+    return (
+      <motion.div
+        key="mobile-analytics"
+        initial={{ opacity: 0, x: 10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -10 }}
+        className="space-y-4"
+      >
+        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+          <div className="flex justify-between items-center mb-3">
+            <h4 className="text-xs font-bold text-gray-900">Yield Projections</h4>
+            <span className="text-[10px] text-gray-500 font-bold bg-gray-50 border border-gray-100 px-2 py-0.5 rounded">2023</span>
+          </div>
+
+          {/* Bar Chart */}
+          <div className="h-44 flex items-end justify-between gap-2 px-1 pb-4 pt-6 border-b border-gray-100 relative">
+            <div className="absolute top-0 left-0 right-0 border-t border-dashed border-gray-100 h-0"></div>
+            <div className="absolute top-1/3 left-0 right-0 border-t border-dashed border-gray-100 h-0"></div>
+            <div className="absolute top-2/3 left-0 right-0 border-t border-dashed border-gray-100 h-0"></div>
+
+            {mobileData.map((data, i) => (
+              <div key={i} className="flex flex-col items-center gap-1.5 flex-1 z-10">
+                <div className="flex items-end gap-1 w-full justify-center h-28 relative">
+                  <div 
+                    className="w-2.5 bg-[#EAF6EC] border border-[#53D769] rounded-t-2xs" 
+                    style={{ height: `${data.p}%` }}
+                  ></div>
+                  <div 
+                    className="w-2.5 bg-[#1F7A53] rounded-t-2xs" 
+                    style={{ height: `${data.a}%` }}
+                  ></div>
+                </div>
+                <span className="text-[9px] text-gray-450 font-bold">{data.month}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Legend */}
+          <div className="flex justify-center gap-4 mt-3 text-[9px] font-bold text-gray-500">
+            <div className="flex items-center gap-1"><div className="w-2 h-2 bg-[#EAF6EC] border border-[#53D769] rounded-2xs"></div> Predicted</div>
+            <div className="flex items-center gap-1"><div className="w-2 h-2 bg-[#1F7A53] rounded-2xs"></div> Actual</div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
 
   return (
     <section className="py-16 bg-gray-50 border-y border-gray-100 relative overflow-hidden" ref={containerRef}>
@@ -353,12 +590,12 @@ export function DashboardPreview() {
           </p>
         </div>
 
-        {/* Browser Window Mockup */}
+        {/* Desktop Browser Window Mockup */}
         <motion.div 
           initial={{ opacity: 0, y: 50, scale: 0.95 }}
           animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.95 }}
           transition={{ duration: 0.5, delay: 0.2, type: "spring", stiffness: 200, damping: 25 }}
-          className="rounded-[2rem] bg-white border border-gray-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col min-h-[600px]"
+          className="hidden md:flex rounded-[2rem] bg-white border border-gray-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex-col h-[720px]"
         >
           {/* Mac OS Header */}
           <div className="h-12 bg-gray-100 border-b border-gray-200 flex items-center px-6 gap-2 shrink-0">
@@ -375,7 +612,7 @@ export function DashboardPreview() {
           {/* Dashboard Layout */}
           <div className="flex flex-1 overflow-hidden">
             {/* Sidebar */}
-            <div className="w-64 bg-gray-50 border-r border-gray-100 p-6 hidden md:flex flex-col justify-between shrink-0">
+            <div className="w-64 bg-gray-50 border-r border-gray-100 p-6 flex flex-col justify-between shrink-0 h-full">
               <div>
                 <div className="text-[#0B3D2E] font-black text-xl mb-10 flex items-center gap-2 tracking-tight">
                   <Leaf className="w-6 h-6 text-[#53D769]" /> SourceTrace
@@ -421,7 +658,7 @@ export function DashboardPreview() {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 bg-white p-4 sm:p-8 flex flex-col relative">
+            <div className="flex-1 bg-white p-4 sm:p-8 flex flex-col relative overflow-hidden h-full">
               {/* Top Nav */}
               <div className="flex justify-between items-center mb-8 shrink-0 flex-wrap gap-4">
                 <div>
@@ -465,7 +702,7 @@ export function DashboardPreview() {
                         >
                           <div className="p-3 border-b border-gray-50 bg-gray-50/50 font-bold text-sm text-gray-900 flex justify-between items-center">
                             Notifications
-                            <button className="text-gray-400 hover:text-gray-600" onClick={() => setShowNotifications(false)}><X className="w-4 h-4" /></button>
+                            <button className="text-gray-450 hover:text-gray-655" onClick={() => setShowNotifications(false)}><X className="w-4 h-4" /></button>
                           </div>
                           <div className="max-h-64 overflow-y-auto">
                             {NOTIFICATIONS.map(alert => (
@@ -487,16 +724,143 @@ export function DashboardPreview() {
                 </div>
               </div>
 
-              {/* Dynamic Tab Content */}
-              <AnimatePresence mode="wait">
-                {activeTab === 'overview' && renderOverview()}
-                {activeTab === 'traceability' && renderTraceability()}
-                {activeTab === 'eudr' && renderEUDR()}
-                {activeTab === 'analytics' && renderAnalytics()}
-              </AnimatePresence>
-
+              {/* Dynamic Tab Content Wrapper */}
+              <div className="flex-1 min-h-0">
+                <AnimatePresence mode="wait">
+                  {activeTab === 'overview' && renderOverview()}
+                  {activeTab === 'traceability' && renderTraceability()}
+                  {activeTab === 'eudr' && renderEUDR()}
+                  {activeTab === 'analytics' && renderAnalytics()}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
+        </motion.div>
+
+        {/* Mobile Smartphone Mockup */}
+        <motion.div 
+          initial={{ opacity: 0, y: 50, scale: 0.95 }}
+          animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.95 }}
+          transition={{ duration: 0.5, delay: 0.2, type: "spring", stiffness: 200, damping: 25 }}
+          className="md:hidden w-full max-w-[340px] h-[680px] bg-slate-950 rounded-[3rem] border-[10px] border-slate-800 relative mx-auto overflow-hidden shadow-2xl flex flex-col text-left"
+        >
+          {/* Glassy reflection sheen */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none z-30"></div>
+
+          {/* Speaker / Camera Notch */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-6 bg-slate-800 rounded-b-2xl z-50 flex items-center justify-center">
+            <div className="w-12 h-1 bg-slate-700 rounded-full mb-1"></div>
+          </div>
+
+          {/* Status Bar */}
+          <div className="h-8 bg-gray-50 flex justify-between items-center px-6 pt-2 text-[10px] font-bold text-gray-500 shrink-0 select-none z-40">
+            <span>9:41</span>
+            <div className="flex items-center gap-1.5">
+              <div className="flex gap-0.5 items-end">
+                <div className="w-0.5 h-1 bg-gray-400 rounded-xs"></div>
+                <div className="w-0.5 h-1.5 bg-gray-400 rounded-xs"></div>
+                <div className="w-0.5 h-2 bg-gray-400 rounded-xs"></div>
+                <div className="w-0.5 h-2.5 bg-gray-500 rounded-xs"></div>
+              </div>
+              <span>5G</span>
+              <div className="w-5 h-2.5 border border-gray-400 rounded-xs p-0.5 flex items-center">
+                <div className="h-full w-3 bg-gray-550 rounded-2xs"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile App Header */}
+          <div className="h-14 bg-white border-b border-gray-100 flex justify-between items-center px-4 shrink-0 z-40">
+            <div className="flex items-center gap-1.5">
+              <Leaf className="w-5 h-5 text-[#53D769]" />
+              <span className="font-black text-gray-900 text-sm tracking-tight">SourceTrace</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <div 
+                className="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-600 relative cursor-pointer"
+                onClick={() => setShowNotifications(!showNotifications)}
+              >
+                <Bell className="w-4 h-4" />
+                <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Notifications Overlay */}
+          <AnimatePresence>
+            {showNotifications && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-[88px] left-2 right-2 max-h-[300px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden flex flex-col"
+              >
+                <div className="p-3 border-b border-gray-50 bg-gray-50/50 font-bold text-xs text-gray-900 flex justify-between items-center">
+                  Notifications
+                  <button className="text-gray-450 hover:text-gray-655" onClick={() => setShowNotifications(false)}><X className="w-3.5 h-3.5" /></button>
+                </div>
+                <div className="overflow-y-auto">
+                  {NOTIFICATIONS.map(alert => (
+                    <div key={alert.id} className="p-2.5 border-b border-gray-50 hover:bg-gray-50 transition-colors flex gap-2">
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${alert.type === 'warning' ? 'bg-amber-50 text-amber-600' : alert.type === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
+                        <alert.icon className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-gray-900 truncate">{alert.title}</p>
+                        <p className="text-[10px] text-gray-500 truncate mt-0.5">{alert.desc} • {alert.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Mobile Content Screen Area */}
+          <div className="flex-1 bg-gray-50 overflow-y-auto p-4 relative pb-20 scrollbar-none">
+            <AnimatePresence mode="wait">
+              {activeTab === 'overview' && renderMobileOverview()}
+              {activeTab === 'traceability' && renderMobileTraceability()}
+              {activeTab === 'eudr' && renderMobileEUDR()}
+              {activeTab === 'analytics' && renderMobileAnalytics()}
+            </AnimatePresence>
+          </div>
+
+          {/* Mobile Sticky Bottom Tab Bar */}
+          <div className="h-16 bg-white border-t border-gray-150 absolute bottom-0 left-0 right-0 flex justify-around items-center px-2 z-40 pb-2">
+            <button 
+              onClick={() => setActiveTab('overview')}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-colors ${activeTab === 'overview' ? 'text-[#1F7A53]' : 'text-gray-400 hover:text-gray-600'}`}
+            >
+              <Activity className="w-5 h-5 mb-0.5" />
+              <span className="text-[9px] font-bold">Overview</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('traceability')}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-colors ${activeTab === 'traceability' ? 'text-[#1F7A53]' : 'text-gray-400 hover:text-gray-600'}`}
+            >
+              <Globe2 className="w-5 h-5 mb-0.5" />
+              <span className="text-[9px] font-bold">Traceability</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('eudr')}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-colors ${activeTab === 'eudr' ? 'text-[#1F7A53]' : 'text-gray-400 hover:text-gray-600'}`}
+            >
+              <ShieldCheck className="w-5 h-5 mb-0.5" />
+              <span className="text-[9px] font-bold">EUDR</span>
+            </button>
+            <button 
+              onClick={() => setActiveTab('analytics')}
+              className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-colors ${activeTab === 'analytics' ? 'text-[#1F7A53]' : 'text-gray-400 hover:text-gray-600'}`}
+            >
+              <BarChart3 className="w-5 h-5 mb-0.5" />
+              <span className="text-[9px] font-bold">Analytics</span>
+            </button>
+          </div>
+          
+          {/* Home indicator bar */}
+          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-28 h-1 bg-gray-300 rounded-full z-45 pointer-events-none"></div>
         </motion.div>
       </div>
     </section>
