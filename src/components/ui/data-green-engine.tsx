@@ -950,17 +950,14 @@ export function DataGreenEngine() {
         {/* Column Stage Headers */}
         <div className="w-full grid grid-cols-3 text-center mb-6 border-b border-emerald-800/10 pb-4">
           <div>
-            <span className="text-xs font-black tracking-widest text-[#10b981] uppercase block">Stage 1</span>
             <h3 className="text-xl font-extrabold text-[#004D26] uppercase leading-none mt-1">Origins</h3>
             <p className="text-[11px] text-gray-500 mt-1">Farmer Onboarding & Profiles</p>
           </div>
           <div>
-            <span className="text-xs font-black tracking-widest text-[#10b981] uppercase block">Stage 2</span>
             <h3 className="text-xl font-extrabold text-[#004D26] uppercase leading-none mt-1">Operational Intelligence</h3>
             <p className="text-[11px] text-gray-500 mt-1">First-Mile Logistics, GIS & AI Models</p>
           </div>
           <div>
-            <span className="text-xs font-black tracking-widest text-[#10b981] uppercase block">Stage 3</span>
             <h3 className="text-xl font-extrabold text-[#004D26] uppercase leading-none mt-1">Outcomes</h3>
             <p className="text-[11px] text-gray-500 mt-1">Marketplace, Finance & ESG Offsets</p>
           </div>
@@ -1168,68 +1165,66 @@ export function DataGreenEngine() {
             {hoveredSlice === null && (
               <g>
                 <circle r="3" fill="#10b981" opacity="0.6">
-                  <animateMotion dur="6s" repeatCount="indefinite" path="M 170,350 L 450,190" />
+                  <animateMotion dur="6.4s" repeatCount="indefinite" path="M 170,350 L 450,190" />
                 </circle>
                 <circle r="3" fill="#10b981" opacity="0.6">
-                  <animateMotion dur="7s" repeatCount="indefinite" path="M 450,510 L 720,130" />
+                  <animateMotion dur="9.3s" repeatCount="indefinite" path="M 450,510 L 720,130" />
                 </circle>
                 <circle r="3" fill="#10b981" opacity="0.6">
-                  <animateMotion dur="8s" repeatCount="indefinite" path="M 720,130 L 990,190" />
+                  <animateMotion dur="5.5s" repeatCount="indefinite" path="M 720,130 L 990,190" />
                 </circle>
                 <circle r="3" fill="#10b981" opacity="0.6">
-                  <animateMotion dur="9s" repeatCount="indefinite" path="M 990,510 L 1270,350" />
+                  <animateMotion dur="6.4s" repeatCount="indefinite" path="M 990,510 L 1270,350" />
                 </circle>
               </g>
             )}
 
             {/* Active flow animations on hover */}
             {isPathActiveDesktop("farmer-traceability") && (
-              <circle r="4.5" fill="#10b981" className="filter drop-shadow-sm">
+              <circle r="4" fill="#10b981" className="filter drop-shadow-sm">
                 <animateMotion dur="1.8s" repeatCount="indefinite" path="M 170,350 L 450,190" />
               </circle>
             )}
             {isPathActiveDesktop("traceability-gis") && (
-              <circle r="4.5" fill="#10b981" className="filter drop-shadow-sm">
+              <circle r="4" fill="#10b981" className="filter drop-shadow-sm">
                 <animateMotion dur="1.8s" repeatCount="indefinite" path="M 450,190 L 450,510" />
               </circle>
             )}
             {isPathActiveDesktop("gis-ai") && (
-              <circle r="4.5" fill="#10b981" className="filter drop-shadow-sm">
-                <animateMotion dur="1.8s" repeatCount="indefinite" path="M 450,510 L 720,130" />
+              <circle r="4" fill="#10b981" className="filter drop-shadow-sm">
+                <animateMotion dur="2.6s" repeatCount="indefinite" path="M 450,510 L 720,130" />
               </circle>
             )}
             {isPathActiveDesktop("ai-marketplace") && (
-              <circle r="4.5" fill="#10b981" className="filter drop-shadow-sm">
-                <animateMotion dur="1.8s" repeatCount="indefinite" path="M 720,130 L 990,190" />
+              <circle r="4" fill="#10b981" className="filter drop-shadow-sm">
+                <animateMotion dur="1.5s" repeatCount="indefinite" path="M 720,130 L 990,190" />
               </circle>
             )}
             {isPathActiveDesktop("marketplace-finance") && (
-              <circle r="4.5" fill="#10b981" className="filter drop-shadow-sm">
+              <circle r="4" fill="#10b981" className="filter drop-shadow-sm">
                 <animateMotion dur="1.8s" repeatCount="indefinite" path="M 990,190 L 990,510" />
               </circle>
             )}
             {isPathActiveDesktop("finance-carbon") && (
-              <circle r="4.5" fill="#10b981" className="filter drop-shadow-sm">
+              <circle r="4" fill="#10b981" className="filter drop-shadow-sm">
                 <animateMotion dur="1.8s" repeatCount="indefinite" path="M 990,510 L 1270,350" />
               </circle>
             )}
             {isPathActiveDesktop("carbon-payout") && (
-              <g>
-                <circle r="5.5" fill="#10b981" className="filter drop-shadow-md">
-                  <animateMotion dur="2.5s" repeatCount="indefinite" path="M 1270,350 C 720,680 170,680 170,350" />
-                </circle>
-                <text fill="#fff" fontSize="5.5" fontWeight="bold" textAnchor="middle" dy="2.0">
-                  $
-                  <animateMotion dur="2.5s" repeatCount="indefinite" path="M 1270,350 C 720,680 170,680 170,350" />
-                </text>
-              </g>
+              <circle r="4" fill="#10b981" className="filter drop-shadow-sm">
+                <animateMotion dur="5.5s" repeatCount="indefinite" path="M 1270,350 C 720,680 170,680 170,350" />
+              </circle>
             )}
 
             {SLICES.map((s, i) => {
               if (!isPathActiveDesktop(`hub-${s.id}`)) return null;
+              const dx = s.x - 720;
+              const dy = s.y - 350;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              const duration = (distance / 180).toFixed(1) + "s";
               return (
-                <circle key={`hub-pulse-${i}`} r="3.5" fill="#10b981">
-                  <animateMotion dur="1.4s" repeatCount="indefinite" path={`M 720,350 L ${s.x},${s.y}`} />
+                <circle key={`hub-pulse-${i}`} r="4" fill="#10b981" className="filter drop-shadow-sm">
+                  <animateMotion dur={duration} repeatCount="indefinite" path={`M 720,350 L ${s.x},${s.y}`} />
                 </circle>
               );
             })}
