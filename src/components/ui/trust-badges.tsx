@@ -9,6 +9,11 @@ const BADGES = [
 ];
 
 export function TrustBadges() {
+  const repeatedBadges = [
+    ...BADGES, ...BADGES, ...BADGES,
+    ...BADGES, ...BADGES, ...BADGES
+  ];
+
   return (
     <div className="w-full text-center">
       <p className="text-[10px] sm:text-xs font-bold tracking-widest text-white/50 uppercase mb-3">
@@ -24,7 +29,7 @@ export function TrustBadges() {
         <div className="flex w-max animate-marquee py-1">
           {/* Track 1 */}
           <div className="flex gap-16 sm:gap-28 whitespace-nowrap shrink-0 pr-16 sm:pr-28">
-            {BADGES.map((badge, idx) => (
+            {repeatedBadges.map((badge, idx) => (
               <span
                 key={`t1-${idx}`}
                 className={`text-lg sm:text-2xl font-black text-white/40 tracking-wider uppercase ${badge.className}`}
@@ -35,7 +40,7 @@ export function TrustBadges() {
           </div>
           {/* Track 2 */}
           <div className="flex gap-16 sm:gap-28 whitespace-nowrap shrink-0 pr-16 sm:pr-28">
-            {BADGES.map((badge, idx) => (
+            {repeatedBadges.map((badge, idx) => (
               <span
                 key={`t2-${idx}`}
                 className={`text-lg sm:text-2xl font-black text-white/40 tracking-wider uppercase ${badge.className}`}

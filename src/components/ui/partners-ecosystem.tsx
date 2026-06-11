@@ -45,15 +45,29 @@ export function PartnersEcosystem() {
         <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
         <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
 
-        <div className="animate-marquee whitespace-nowrap flex items-center py-4 group-hover:[animation-play-state:paused]">
-          {[...PARTNERS, ...PARTNERS].map((partner, index) => (
-            <div 
-              key={index} 
-              className="mx-8 px-8 py-4 rounded-2xl bg-gray-50 border border-gray-100 shadow-sm flex items-center justify-center hover:shadow-md hover:border-gray-200 transition-all cursor-pointer min-w-[250px]"
-            >
-              <span className="text-xl font-extrabold text-gray-400 uppercase tracking-wider">{partner}</span>
-            </div>
-          ))}
+        <div className="flex w-max animate-marquee py-4 group-hover:[animation-play-state:paused]">
+          {/* Track 1 */}
+          <div className="flex shrink-0">
+            {PARTNERS.map((partner, index) => (
+              <div 
+                key={`t1-${index}`} 
+                className="mx-8 px-8 py-4 rounded-2xl bg-gray-50 border border-gray-100 shadow-sm flex items-center justify-center hover:shadow-md hover:border-gray-200 transition-all cursor-pointer min-w-[250px]"
+              >
+                <span className="text-xl font-extrabold text-gray-400 uppercase tracking-wider">{partner}</span>
+              </div>
+            ))}
+          </div>
+          {/* Track 2 */}
+          <div className="flex shrink-0">
+            {PARTNERS.map((partner, index) => (
+              <div 
+                key={`t2-${index}`} 
+                className="mx-8 px-8 py-4 rounded-2xl bg-gray-50 border border-gray-100 shadow-sm flex items-center justify-center hover:shadow-md hover:border-gray-200 transition-all cursor-pointer min-w-[250px]"
+              >
+                <span className="text-xl font-extrabold text-gray-400 uppercase tracking-wider">{partner}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
