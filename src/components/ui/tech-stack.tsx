@@ -77,7 +77,7 @@ export function TechStackGrid() {
          <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Engineered for the First Mile.</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-3 gap-6 h-auto md:h-[800px]">
+      <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-3 gap-6 h-auto md:h-[880px]">
          {TECHNOLOGIES.map((tech) => (
             <div 
                key={tech.id}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Leaf, Shield, LineChart, Users, Satellite, Smartphone } from "lucide-react";
 
@@ -57,42 +57,24 @@ const SLIDES = [
 
 export function ExpandingSlideshow() {
   const [activeSlide, setActiveSlide] = useState(SLIDES[0].id);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   return (
-    <div className={`flex flex-col md:flex-row gap-4 w-full max-w-[1400px] mx-auto px-4 sm:px-8 py-16 snap-center ${
-      isMobile ? "h-auto" : "h-[500px]"
-    }`}>
+    <div className="flex flex-col md:flex-row gap-4 w-full h-[800px] md:h-[600px] max-w-[1400px] mx-auto px-4 sm:px-8 py-16">
       {SLIDES.map((slide) => {
         const isActive = activeSlide === slide.id;
 
         return (
           <motion.div
             key={slide.id}
-            onHoverStart={() => {
-              if (!isMobile) setActiveSlide(slide.id);
-            }}
+            onHoverStart={() => setActiveSlide(slide.id)}
             onClick={() => setActiveSlide(slide.id)}
             layout
             initial={false}
-            animate={
-              isMobile
-                ? { height: isActive ? 340 : 76 }
-                : { flex: isActive ? 5 : 1 }
-            }
-            transition={{ type: "spring", stiffness: 220, damping: 24 }}
-            className={`relative rounded-[2rem] overflow-hidden cursor-pointer group bg-gray-900 ${
-              isMobile ? "w-full" : "min-w-[80px]"
-            }`}
+            animate={{
+              flex: isActive ? 5 : 1,
+            }}
+            transition={{ type: "spring", stiffness: 250, damping: 25 }}
+            className="relative rounded-[2rem] overflow-hidden cursor-pointer group bg-gray-900 min-h-[80px] md:min-h-0 min-w-0 md:min-w-[80px]"
           >
             {/* Background Image */}
             <motion.div 
@@ -105,32 +87,29 @@ export function ExpandingSlideshow() {
                  alt={slide.title} 
                  className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
                />
+               {/* Dark Overlay */}
                <div className={`absolute inset-0 transition-opacity duration-300 ${isActive ? 'bg-gradient-to-t from-black/90 via-black/40 to-transparent' : 'bg-black/70'}`}></div>
             </motion.div>
 
             {/* Content Container */}
-            <div className={`absolute inset-0 flex flex-col ${
-              isActive 
-                ? 'p-5 lg:p-6 justify-between' 
-                : 'p-3.5 lg:p-6 justify-center'
-            }`}>
+            <div className={`absolute inset-0 p-5 md:p-6 flex flex-col justify-center md:justify-end ${isActive ? 'justify-end' : ''}`}>
               
               {/* Icon & Title Wrapper */}
-              <div className={`flex items-center gap-4 ${
-                isActive ? 'flex-row mb-4' : 'flex-row md:flex-col md:mb-8'
-              }`}>
-                <div className={`w-11 h-11 lg:w-12 lg:h-12 rounded-full ${slide.color} flex items-center justify-center text-white shrink-0 shadow-lg z-10`}>
-                  <slide.icon className="w-5 h-5 lg:w-6 lg:h-6" />
+              <div className={`flex items-center gap-4 ${isActive ? 'flex-row mb-4' : 'flex-row md:flex-col md:mb-8'}`}>
+                <div className={`w-12 h-12 rounded-full ${slide.color} flex items-center justify-center text-white shrink-0 shadow-lg z-10`}>
+                  <slide.icon className="w-6 h-6" />
                 </div>
                 
                 {isActive ? (
+                   // Expanded Title
                    <motion.h3 
                      layout="position"
-                     className="text-2xl lg:text-3xl font-bold text-white z-10"
+                     className="text-2xl md:text-3xl font-bold text-white z-10"
                    >
                      {slide.title}
                    </motion.h3>
                 ) : (
+                   // Collapsed Title
                    <>
                      {/* Desktop Vertical Title */}
                      <h3 className="hidden md:block text-xl font-bold text-white whitespace-nowrap z-10 opacity-70 tracking-widest" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
@@ -148,17 +127,17 @@ export function ExpandingSlideshow() {
               <AnimatePresence mode="wait">
                 {isActive && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
                     className="overflow-hidden z-10"
                   >
-                    <p className="text-gray-200 text-sm lg:text-base mb-4 lg:mb-6 max-w-md leading-relaxed">
+                    <p className="text-gray-200 text-base md:text-lg mb-6 max-w-md leading-relaxed">
                       {slide.description}
                     </p>
-                    <button className="flex items-center gap-2 text-white font-bold hover:gap-4 hover:text-[#53D769] transition-all uppercase tracking-wider text-xs lg:text-sm">
-                      Explore Solution <ArrowRight className="w-4 h-4 lg:w-5 lg:h-5 text-[#53D769]" />
+                    <button className="flex items-center gap-2 text-white font-bold hover:gap-4 hover:text-[#53D769] transition-all uppercase tracking-wider text-sm">
+                      Explore Solution <ArrowRight className="w-5 h-5" />
                     </button>
                   </motion.div>
                 )}
