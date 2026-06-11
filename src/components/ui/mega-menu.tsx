@@ -203,14 +203,45 @@ export function MegaMenu() {
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button — Animated hamburger ↔ X */}
           <div className="flex lg:hidden items-center">
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="p-2 rounded-full text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
+              className="relative w-10 h-10 rounded-full flex items-center justify-center text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer active:scale-95"
               aria-label="Toggle menu"
             >
-              {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="overflow-visible">
+                <line
+                  x1="2" y1="5" x2="18" y2="5"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  className="origin-center transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                  style={{
+                    transform: isMobileOpen ? "translateY(5px) rotate(45deg)" : "translateY(0) rotate(0)",
+                    transformOrigin: "center",
+                  }}
+                />
+                <line
+                  x1="2" y1="10" x2="18" y2="10"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  className="transition-opacity duration-200"
+                  style={{ opacity: isMobileOpen ? 0 : 1 }}
+                />
+                <line
+                  x1="2" y1="15" x2="18" y2="15"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  className="origin-center transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                  style={{
+                    transform: isMobileOpen ? "translateY(-5px) rotate(-45deg)" : "translateY(0) rotate(0)",
+                    transformOrigin: "center",
+                  }}
+                />
+              </svg>
             </button>
           </div>
         </div>
@@ -286,229 +317,218 @@ export function MegaMenu() {
     </nav>
 
     {/* ═══════════════════════════════════════════════════════════
-        MOBILE FULL-SCREEN NAVIGATION
+        MOBILE PREMIUM DROPDOWN NAVIGATION
         Rendered OUTSIDE the <nav> to escape its stacking context.
         z-[9999] guarantees it sits above ALL page content.
        ═══════════════════════════════════════════════════════════ */}
     <AnimatePresence>
       {isMobileOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 flex flex-col lg:hidden"
-          style={{
-            zIndex: 9999,
-            background: "linear-gradient(180deg, #FFFFFF 0%, #F8FAF9 100%)",
-            isolation: "isolate",
-          }}
+        <>
+          {/* Backdrop overlay */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={closeMobile}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm lg:hidden"
+            style={{ zIndex: 9998 }}
+          />
+
+          {/* Dropdown Panel */}
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+            className="fixed left-0 right-0 lg:hidden overflow-hidden"
+            style={{
+              zIndex: 9999,
+              top: "0px",
+              maxHeight: "100dvh",
+            }}
           >
             {/* ─── Fixed Header ─── */}
-            <div className="h-[72px] flex items-center justify-between px-5 border-b border-gray-100/80 flex-shrink-0 bg-white/90 backdrop-blur-md">
+            <div className="h-20 flex items-center justify-between px-6 flex-shrink-0 bg-white border-b border-gray-100 shadow-sm">
               <Link href="/" className="flex items-center gap-2" onClick={closeMobile}>
-                <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-9 object-contain" />
+                <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-10 object-contain" />
               </Link>
               <button
                 onClick={closeMobile}
-                className="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:text-[#0B3D2E] hover:bg-gray-100 transition-all focus:outline-none cursor-pointer active:scale-95"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:text-[#0B3D2E] bg-gray-50 hover:bg-gray-100 transition-all focus:outline-none cursor-pointer active:scale-95"
                 aria-label="Close menu"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* ─── Sliding Panel Viewport ─── */}
-            <div className="flex-1 relative overflow-hidden">
-              <AnimatePresence initial={false} custom={direction} mode="wait">
+            {/* ─── Scrollable Dropdown Body ─── */}
+            <div
+              className="overflow-y-auto overscroll-contain bg-white"
+              style={{ maxHeight: "calc(100dvh - 80px)" }}
+            >
+              {/* Accordion Categories */}
+              <div className="px-4 pt-3 pb-2">
+                {menuItems.map((item, menuIdx) => {
+                  const meta = MOBILE_CATEGORY_META[item.id];
+                  const CategoryIcon = meta?.icon || ChevronRight;
+                  const isExpanded = activeCategory === item.id;
 
-                {/* ════════ LEVEL 1: Root Categories ════════ */}
-                {currentLevel === "root" ? (
-                  <motion.div
-                    key="mobile-root"
-                    custom={direction}
-                    variants={slideVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-                    className="absolute inset-0 flex flex-col"
-                  >
-                    {/* Scrollable category list */}
-                    <div className="flex-1 overflow-y-auto overscroll-contain px-5 pt-6 pb-4">
-                      <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.15em] mb-4 px-1">
-                        Navigation
-                      </p>
-                      <div className="flex flex-col gap-1.5">
-                        {menuItems.map((item) => {
-                          const meta = MOBILE_CATEGORY_META[item.id];
-                          const CategoryIcon = meta?.icon || ChevronRight;
-                          return (
-                            <button
-                              key={item.id}
-                              onClick={() => goToSubmenu(item.id)}
-                              className="w-full flex items-center gap-4 py-3.5 px-4 rounded-2xl text-left transition-all cursor-pointer group active:scale-[0.98] hover:bg-white hover:shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
-                            >
-                              {/* Category icon */}
-                              <div
-                                className={`w-11 h-11 rounded-xl bg-gradient-to-br ${meta?.gradient || "from-gray-100 to-gray-50"} flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105`}
-                              >
-                                <CategoryIcon className="w-5 h-5" style={{ color: meta?.color || "#374151" }} />
-                              </div>
-                              {/* Label + count */}
-                              <div className="flex-1 min-w-0">
-                                <span className="text-[15px] font-semibold text-gray-900 group-hover:text-[#0B3D2E] transition-colors block">
-                                  {item.label}
-                                </span>
-                                <span className="text-[11px] text-gray-400 font-medium">
-                                  {item.items.length} {item.items.length === 1 ? "page" : "pages"}
-                                </span>
-                              </div>
-                              {/* Arrow */}
-                              <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#1F7A53] group-hover:translate-x-0.5 transition-all flex-shrink-0" />
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Fixed bottom CTA area */}
-                    <div className="flex-shrink-0 px-5 py-5 border-t border-gray-100/80 bg-white/80 backdrop-blur-sm">
-                      <div className="flex gap-3">
-                        <Link
-                          href="/contact-sales"
-                          onClick={closeMobile}
-                          className="flex-1 py-3 text-center text-[13px] text-gray-700 font-semibold border border-gray-200 rounded-xl transition-colors bg-white hover:bg-gray-50 active:scale-[0.98]"
-                        >
-                          Contact Sales
-                        </Link>
-                        <Link
-                          href="/request-demo"
-                          onClick={closeMobile}
-                          className="flex-1 py-3 text-center text-[13px] font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-xl transition-colors shadow-lg shadow-[#0B3D2E]/20 active:scale-[0.98]"
-                        >
-                          Request Demo
-                        </Link>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : (
-                  /* ════════ LEVEL 2: Submenu Panel ════════ */
-                  (() => {
-                    const activeCat = menuItems.find(item => item.id === activeCategory);
-                    if (!activeCat) return null;
-                    const meta = MOBILE_CATEGORY_META[activeCat.id];
-                    const CategoryIcon = meta?.icon || ChevronRight;
-
-                    return (
-                      <motion.div
-                        key={`submenu-${activeCat.id}`}
-                        custom={direction}
-                        variants={slideVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-                        className="absolute inset-0 flex flex-col"
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25, delay: menuIdx * 0.04, ease: "easeOut" }}
+                    >
+                      {/* Category Header Button */}
+                      <button
+                        onClick={() => {
+                          if (isExpanded) {
+                            setActiveCategory(null);
+                          } else {
+                            setActiveCategory(item.id);
+                          }
+                        }}
+                        className={`w-full flex items-center gap-3.5 py-3.5 px-3 rounded-xl text-left transition-all cursor-pointer group active:scale-[0.99] ${
+                          isExpanded
+                            ? "bg-gray-50"
+                            : "hover:bg-gray-50/60"
+                        }`}
                       >
-                        {/* Sticky submenu header with back button */}
-                        <div className="flex-shrink-0 px-5 pt-5 pb-4 border-b border-gray-100/80 bg-white/90 backdrop-blur-md">
-                          <button
-                            onClick={goToRoot}
-                            className="flex items-center gap-1.5 text-[12px] font-semibold text-[#1F7A53] mb-3 cursor-pointer hover:opacity-80 transition-opacity active:scale-[0.97]"
+                        <div
+                          className={`w-10 h-10 rounded-xl bg-gradient-to-br ${meta?.gradient || "from-gray-100 to-gray-50"} flex items-center justify-center flex-shrink-0 transition-transform ${isExpanded ? "scale-105" : "group-hover:scale-105"}`}
+                        >
+                          <CategoryIcon className="w-[18px] h-[18px]" style={{ color: meta?.color || "#374151" }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className={`text-[15px] font-semibold transition-colors block ${isExpanded ? "text-[#0B3D2E]" : "text-gray-800 group-hover:text-[#0B3D2E]"}`}>
+                            {item.label}
+                          </span>
+                          <span className="text-[10px] text-gray-400 font-medium tracking-wide uppercase">
+                            {item.items.length} {item.items.length === 1 ? "page" : "pages"}
+                          </span>
+                        </div>
+                        <ChevronDown
+                          className={`w-4 h-4 text-gray-300 transition-transform duration-300 flex-shrink-0 ${isExpanded ? "rotate-180 text-[#1F7A53]" : ""}`}
+                        />
+                      </button>
+
+                      {/* Expanded Sub-links */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+                            className="overflow-hidden"
                           >
-                            <ArrowLeft className="w-3.5 h-3.5" />
-                            <span>All categories</span>
-                          </button>
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`w-10 h-10 rounded-xl bg-gradient-to-br ${meta?.gradient || "from-gray-100 to-gray-50"} flex items-center justify-center flex-shrink-0`}
-                            >
-                              <CategoryIcon className="w-5 h-5" style={{ color: meta?.color || "#374151" }} />
-                            </div>
-                            <div>
-                              <h3 className="text-xl font-bold text-[#0B3D2E] leading-tight">
-                                {activeCat.label}
-                              </h3>
-                              <p className="text-[11px] text-gray-400 font-medium mt-0.5">
-                                {activeCat.items.length} {activeCat.items.length === 1 ? "page" : "pages"} available
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Full-height scrollable sub-links */}
-                        <div className="flex-1 overflow-y-auto overscroll-contain px-5 pt-4 pb-6">
-                          <div className="flex flex-col gap-2">
-                            {activeCat.items.map((link: any, index: number) => (
-                              <Link
-                                key={index}
-                                href={link.href}
-                                onClick={closeMobile}
-                                className="group flex items-start gap-3.5 p-3 rounded-2xl bg-white border border-gray-100/80 hover:border-gray-200 hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-all active:scale-[0.98]"
-                              >
-                                {link.icon ? (
-                                  <div className="w-9 h-9 rounded-lg bg-[#53D769]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#53D769]/20 transition-colors">
-                                    <link.icon className="w-[18px] h-[18px] text-[#1F7A53]" />
-                                  </div>
-                                ) : (
-                                  <div
-                                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 font-bold text-xs"
-                                    style={{
-                                      backgroundColor: `${meta?.color || "#1F7A53"}10`,
-                                      color: meta?.color || "#1F7A53"
-                                    }}
+                            <div className="pl-4 pr-1 pb-3 pt-1">
+                              <div className="border-l-2 border-gray-100 pl-4 flex flex-col gap-0.5">
+                                {item.items.map((link: any, linkIdx: number) => (
+                                  <motion.div
+                                    key={linkIdx}
+                                    initial={{ opacity: 0, x: -8 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.2, delay: linkIdx * 0.03, ease: "easeOut" }}
                                   >
-                                    {link.name.substring(0, 2).toUpperCase()}
-                                  </div>
-                                )}
-                                <div className="flex-1 min-w-0">
-                                  <div className="font-semibold text-gray-900 group-hover:text-[#1F7A53] transition-colors text-[14px] leading-tight">
-                                    {link.name}
-                                  </div>
-                                  <p className="text-[12px] text-gray-400 mt-1 line-clamp-2 leading-relaxed">
-                                    {link.desc || `Explore ${link.name.toLowerCase()} solutions`}
-                                  </p>
-                                </div>
-                                <ArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#1F7A53] mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-all" />
-                              </Link>
-                            ))}
-                          </div>
+                                    <Link
+                                      href={link.href}
+                                      onClick={closeMobile}
+                                      className="group flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-white hover:shadow-[0_1px_8px_rgba(0,0,0,0.04)] transition-all active:scale-[0.98]"
+                                    >
+                                      {link.icon ? (
+                                        <div className="w-7 h-7 rounded-md bg-[#53D769]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#53D769]/20 transition-colors">
+                                          <link.icon className="w-3.5 h-3.5 text-[#1F7A53]" />
+                                        </div>
+                                      ) : (
+                                        <div
+                                          className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 text-[9px] font-black"
+                                          style={{
+                                            backgroundColor: `${meta?.color || "#1F7A53"}12`,
+                                            color: meta?.color || "#1F7A53"
+                                          }}
+                                        >
+                                          {link.name.substring(0, 2).toUpperCase()}
+                                        </div>
+                                      )}
+                                      <span className="text-[13px] font-medium text-gray-700 group-hover:text-[#0B3D2E] transition-colors truncate">
+                                        {link.name}
+                                      </span>
+                                      <ArrowRight className="w-3 h-3 text-gray-200 group-hover:text-[#1F7A53] ml-auto flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                                    </Link>
+                                  </motion.div>
+                                ))}
+                              </div>
 
-                          {/* Compact featured promo */}
-                          {activeCat.promo && (
-                            <div className="mt-5">
-                              <Link
-                                href={activeCat.promo.link}
-                                onClick={closeMobile}
-                                className="group flex items-center gap-4 p-3 rounded-2xl overflow-hidden border border-gray-100 bg-gradient-to-r from-[#0B3D2E] to-[#1F7A53] transition-all active:scale-[0.98]"
-                              >
-                                <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 border-white/20">
-                                  <img
-                                    src={activeCat.promo.image}
-                                    alt={activeCat.promo.title}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                  />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <span className="text-[9px] font-bold text-[#53D769] uppercase tracking-[0.12em]">Featured</span>
-                                  <h4 className="text-white font-bold text-[13px] leading-tight mt-0.5">{activeCat.promo.title}</h4>
-                                  <p className="text-white/60 text-[11px] mt-0.5 line-clamp-1">{activeCat.promo.desc}</p>
-                                </div>
-                                <ArrowRight className="w-4 h-4 text-white/50 group-hover:text-white group-hover:translate-x-0.5 transition-all flex-shrink-0" />
-                              </Link>
+                              {/* Featured promo card */}
+                              {item.promo && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: 4 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.3, delay: 0.15 }}
+                                  className="mt-3"
+                                >
+                                  <Link
+                                    href={item.promo.link}
+                                    onClick={closeMobile}
+                                    className="group flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-[#0B3D2E] to-[#1F7A53] transition-all active:scale-[0.98]"
+                                  >
+                                    <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-white/20">
+                                      <img
+                                        src={item.promo.image}
+                                        alt={item.promo.title}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                      />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <span className="text-[8px] font-bold text-[#53D769] uppercase tracking-[0.15em]">Featured</span>
+                                      <h4 className="text-white font-bold text-[12px] leading-tight">{item.promo.title}</h4>
+                                      <p className="text-white/50 text-[10px] mt-0.5 truncate">{item.promo.desc}</p>
+                                    </div>
+                                    <ArrowRight className="w-3.5 h-3.5 text-white/40 group-hover:text-white group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                                  </Link>
+                                </motion.div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                      </motion.div>
-                    );
-                  })()
-                )}
-              </AnimatePresence>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Divider */}
+                      {menuIdx < menuItems.length - 1 && !isExpanded && (
+                        <div className="mx-3 border-b border-gray-50" />
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              {/* Bottom CTA area */}
+              <div className="px-5 py-5 border-t border-gray-100 bg-gray-50/50">
+                <div className="flex gap-3">
+                  <Link
+                    href="/contact-sales"
+                    onClick={closeMobile}
+                    className="flex-1 py-3 text-center text-[13px] text-gray-700 font-semibold border border-gray-200 rounded-xl transition-colors bg-white hover:bg-gray-50 active:scale-[0.98]"
+                  >
+                    Contact Sales
+                  </Link>
+                  <Link
+                    href="/request-demo"
+                    onClick={closeMobile}
+                    className="flex-1 py-3 text-center text-[13px] font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-xl transition-colors shadow-lg shadow-[#0B3D2E]/20 active:scale-[0.98]"
+                  >
+                    Request Demo
+                  </Link>
+                </div>
+              </div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </>
+      )}
+    </AnimatePresence>
     </>
   );
 }
