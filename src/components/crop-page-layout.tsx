@@ -40,12 +40,23 @@ export interface CropData {
   diagram?: string;
 }
 
+export interface TracedBatch {
+  id: string;
+  farmer: string;
+  location: string;
+  area: string;
+  deforestationCheck: string;
+  yieldGrade: string;
+  timestamp: string;
+}
+
 interface CropPageLayoutProps {
   data: CropData;
 }
 
 export function CropPageLayout({ data }: CropPageLayoutProps) {
-  const [activeScene, setActiveScene] = useState(0);
+  const [activeSceneState, setActiveScene] = useState(0);
+  const activeSceneRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // General interactive states
@@ -57,7 +68,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
   const [sliderVal1, setSliderVal1] = useState(50);
   const [sliderVal2, setSliderVal2] = useState(30);
   const [qrInput, setQrInput] = useState("");
-  const [tracedBatch, setTracedBatch] = useState<any>(null);
+  const [tracedBatch, setTracedBatch] = useState<TracedBatch | null>(null);
   
   // Custom timers/counters
   const [sucrosePurity, setSucrosePurity] = useState(99.4);
@@ -88,28 +99,28 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
           closestIdx = idx;
         }
       });
-      setActiveScene(closestIdx);
+      
+      if (closestIdx !== activeSceneRef.current) {
+        activeSceneRef.current = closestIdx;
+        setActiveScene(closestIdx);
+        setPoints([]);
+        setWeight(0);
+        setIsWeighed(false);
+        setIsScanned(false);
+        setPayoutStatus("idle");
+        setTracedBatch(null);
+        setQrInput("");
+        setDefectsDetected(0);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Reset interactive widgets when switching scenes
-  useEffect(() => {
-    setPoints([]);
-    setWeight(0);
-    setIsWeighed(false);
-    setIsScanned(false);
-    setPayoutStatus("idle");
-    setTracedBatch(null);
-    setQrInput("");
-    setDefectsDetected(0);
-  }, [activeScene]);
-
   // Sugarcane sucrose decay simulation
   useEffect(() => {
-    if (cropKey === "sugarcane" && activeScene === 0) {
+    if (cropKey === "sugarcane" && activeSceneState === 0) {
       const interval = setInterval(() => {
         setSucrosePurity(p => {
           if (p <= 80) return 80;
@@ -118,11 +129,11 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
       }, 2000);
       return () => clearInterval(interval);
     }
-  }, [cropKey, activeScene]);
+  }, [cropKey, activeSceneState]);
 
   // Grains silo fans simulation
   useEffect(() => {
-    if (cropKey === "grains" && activeScene === 2) {
+    if (cropKey === "grains" && activeSceneState === 2) {
       const interval = setInterval(() => {
         setSiloTemp(t => {
           if (fansActive) {
@@ -134,11 +145,11 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [fansActive, cropKey, activeScene]);
+  }, [fansActive, cropKey, activeSceneState]);
 
   // Fruits & vegetables conveyor defect scanner simulation
   useEffect(() => {
-    if (cropKey === "fruits_vegetables" && activeScene === 0 && conveyorRunning) {
+    if (cropKey === "fruits_vegetables" && activeSceneState === 0 && conveyorRunning) {
       const interval = setInterval(() => {
         if (Math.random() > 0.7) {
           setDefectsDetected(d => d + 1);
@@ -146,7 +157,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
       }, 1500);
       return () => clearInterval(interval);
     }
-  }, [conveyorRunning, cropKey, activeScene]);
+  }, [conveyorRunning, cropKey, activeSceneState]);
 
   // Polygon Area calculation
   const calculateArea = (): string => {
@@ -188,7 +199,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
     const id = (customId || qrInput).trim().toUpperCase();
     if (!id) return;
 
-    let payload: any = {
+    let payload: TracedBatch = {
       id,
       farmer: "Kamlesh Patel",
       location: "Madhya Pradesh, India",
@@ -244,7 +255,8 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
   };
 
   // Renders the specific interactive widget based on crop key and current act index
-  const renderVisualWidget = () => {
+  const renderVisualWidget = (overrideIndex?: number) => {
+    const activeScene = overrideIndex !== undefined ? overrideIndex : activeSceneState;
     const scene = data.scenes[activeScene] || data.scenes[0];
     const isCoffee = cropKey === "coffee";
     const isCocoa = cropKey === "cocoa";
@@ -573,7 +585,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
               )}
             </div>
             <div className="text-[9px] text-gray-500 font-mono">
-              Try searching: "CH-8942"
+              Try searching: &quot;CH-8942&quot;
             </div>
           </div>
         );
@@ -623,7 +635,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
                 </div>
               )}
             </div>
-            <div className="text-[9px] text-gray-500 font-mono">Try searching: "ST-BALE-8942"</div>
+            <div className="text-[9px] text-gray-500 font-mono">Try searching: &quot;ST-BALE-8942&quot;</div>
           </div>
         );
       }
@@ -1166,7 +1178,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
                 </div>
               )}
             </div>
-            <div className="text-[9px] text-gray-500 font-mono">Try searching: "FSC-RUBBER-8942"</div>
+            <div className="text-[9px] text-gray-500 font-mono">Try searching: &quot;FSC-RUBBER-8942&quot;</div>
           </div>
         );
       }
@@ -1376,7 +1388,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
                 </div>
               )}
             </div>
-            <div className="text-[9px] text-gray-500 font-mono">Try searching: "ST-FRUIT-8942"</div>
+            <div className="text-[9px] text-gray-500 font-mono">Try searching: &quot;ST-FRUIT-8942&quot;</div>
           </div>
         );
       }
@@ -1580,7 +1592,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
                 </div>
               )}
             </div>
-            <div className="text-[9px] text-gray-500 font-mono">Try searching: "ST-SEED-9042"</div>
+            <div className="text-[9px] text-gray-500 font-mono">Try searching: &quot;ST-SEED-9042&quot;</div>
           </div>
         );
       }
@@ -1636,7 +1648,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl sm:text-2xl text-[#53D769] font-mono font-medium max-w-2xl mx-auto italic"
           >
-            "{data.logline}"
+            &quot;{data.logline}&quot;
           </motion.p>
 
           <motion.p 
@@ -1694,7 +1706,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
           {/* Left Hand: Scrolly Acts */}
           <div className="lg:col-span-6 space-y-32 py-12 lg:py-16">
             {data.scenes.map((scene, idx) => {
-              const isActive = activeScene === idx;
+              const isActive = activeSceneState === idx;
               return (
                 <div 
                   key={idx}
@@ -1730,6 +1742,11 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
                     </div>
                   )}
 
+                  {/* Mobile / Tablet Visual & Interactive Panel */}
+                  <div className="lg:hidden w-full border border-emerald-900/30 rounded-3xl bg-[#040C08] shadow-xl overflow-hidden p-5 flex flex-col my-4 h-[420px]">
+                    {renderVisualWidget(idx)}
+                  </div>
+
                   <div className="mt-6 flex items-center gap-2 text-[#1F7A53] font-mono text-xs font-semibold cursor-pointer group">
                     <span>Explore parameter data</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-all" />
@@ -1740,10 +1757,10 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
           </div>
 
           {/* Right Hand: Sticky Visual Widget */}
-          <div className="lg:col-span-6 lg:sticky lg:top-32 h-[500px] lg:h-[600px] mt-8 lg:mt-0 relative z-30">
+          <div className="hidden lg:flex lg:col-span-6 lg:sticky lg:top-32 h-[500px] lg:h-[600px] mt-8 lg:mt-0 relative z-30 flex-col">
             <AnimatePresence mode="wait">
               <motion.div 
-                key={activeScene}
+                key={activeSceneState}
                 initial={{ opacity: 0, scale: 0.95, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -15 }}

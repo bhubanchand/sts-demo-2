@@ -9,14 +9,14 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 
 // Lazy load below-the-fold components
-const ExpandingSlideshow = dynamic(() => import("@/components/ui/expanding-slideshow").then(mod => mod.ExpandingSlideshow));
-const InteractiveMap = dynamic(() => import("@/components/ui/interactive-map").then(mod => mod.InteractiveMap));
-const DataGreenEngine = dynamic(() => import("@/components/ui/data-green-engine").then(mod => mod.DataGreenEngine));
-const TransparencyFlow = dynamic(() => import("@/components/ui/transparency-flow").then(mod => mod.TransparencyFlow));
+const ExpandingSlideshow = dynamic(() => import("@/components/ui/expanding-slideshow").then(mod => mod.ExpandingSlideshow), { ssr: false });
+const InteractiveMap = dynamic(() => import("@/components/ui/interactive-map").then(mod => mod.InteractiveMap), { ssr: false });
+const DataGreenEngine = dynamic(() => import("@/components/ui/data-green-engine").then(mod => mod.DataGreenEngine), { ssr: false });
+const TransparencyFlow = dynamic(() => import("@/components/ui/transparency-flow").then(mod => mod.TransparencyFlow), { ssr: false });
 const TechStackGrid = dynamic(() => import("@/components/ui/tech-stack").then(mod => mod.TechStackGrid));
 const CaseStudiesGrid = dynamic(() => import("@/components/ui/case-studies-grid").then(mod => mod.CaseStudiesGrid));
 const SecurityCompliance = dynamic(() => import("@/components/ui/security-compliance").then(mod => mod.SecurityCompliance));
-const DashboardPreview = dynamic(() => import("@/components/ui/dashboard-preview").then(mod => mod.DashboardPreview));
+const DashboardPreview = dynamic(() => import("@/components/ui/dashboard-preview").then(mod => mod.DashboardPreview), { ssr: false });
 const PartnersEcosystem = dynamic(() => import("@/components/ui/partners-ecosystem").then(mod => mod.PartnersEcosystem));
 const TestimonialsCarousel = dynamic(() => import("@/components/ui/testimonials-carousel").then(mod => mod.TestimonialsCarousel));
 const IntegrationsGrid = dynamic(() => import("@/components/ui/integrations-grid").then(mod => mod.IntegrationsGrid));
@@ -26,7 +26,18 @@ import { useRef, useState, useEffect } from "react";
 
 // Helper component for tracking scroll position of each challenge block
 // Helper component for tracking scroll position of each challenge block
-function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, activeBlock, setActiveBlock }: any) {
+interface ChallengeBlockProps {
+  id: string;
+  title: string;
+  text: string;
+  icon: React.ComponentType<{ className?: string }>;
+  colorClass: string;
+  bgClass: string;
+  activeBlock: string;
+  setActiveBlock: (id: string) => void;
+}
+
+function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, activeBlock, setActiveBlock }: ChallengeBlockProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-40% 0px -40% 0px" });
 
@@ -293,7 +304,7 @@ export default function Home() {
                      <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">The Challenge</span>
                      <h2 className="text-4xl sm:text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Supply chains are broken at the source.</h2>
                      <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
-                        Enterprises lack visibility into the "first mile" where raw materials are actually grown. This opacity leads to deforestation risks, human rights violations, and the inability to prove ESG claims.
+                        Enterprises lack visibility into the &ldquo;first mile&rdquo; where raw materials are actually grown. This opacity leads to deforestation risks, human rights violations, and the inability to prove ESG claims.
                      </p>
                   </div>
                   

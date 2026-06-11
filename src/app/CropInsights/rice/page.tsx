@@ -214,7 +214,7 @@ export default function RiceSolutionsPage() {
             className="text-sm sm:text-base text-gray-200 max-w-3xl mx-auto leading-relaxed space-y-4"
           >
             <p>
-              Rice feeds more than half of the world's population, yet producers face increasing challenges from climate change, water scarcity, rising input costs, and sustainability requirements.
+              Rice feeds more than half of the world&apos;s population, yet producers face increasing challenges from climate change, water scarcity, rising input costs, and sustainability requirements.
             </p>
             <p className="text-gray-300">
               SourceTrace helps organizations digitize rice production systems, monitor cultivation activities, support farmer engagement, improve procurement visibility, and generate actionable insights across the rice value chain.

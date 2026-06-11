@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "fix_newlines.js",
+    "inject_sections.js",
   ]),
 ]);
 

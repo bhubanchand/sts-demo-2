@@ -784,7 +784,7 @@ export default function CocoaSolutionsPage() {
                 <div>
                   <label className="text-[10px] font-mono text-gray-500 uppercase block mb-1">Sourcing Interest / Origin</label>
                   <select className="w-full h-11 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none">
-                    <option>Cote d'Ivoire (West Africa)</option>
+                    <option>Cote d&apos;Ivoire (West Africa)</option>
                     <option>Ghana (West Africa)</option>
                     <option>Indonesia / Southeast Asia</option>
                     <option>Latin America / Specialty Cocoa</option>

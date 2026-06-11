@@ -195,7 +195,7 @@ export default function CoffeeSolutionsPage() {
             className="text-sm sm:text-base text-gray-200 max-w-3xl mx-auto leading-relaxed space-y-4"
           >
             <p>
-              Today's coffee buyers demand more than quality beans. They require proof of origin, sustainability compliance, farmer engagement, and supply chain transparency.
+              Today&apos;s coffee buyers demand more than quality beans. They require proof of origin, sustainability compliance, farmer engagement, and supply chain transparency.
             </p>
             <p className="text-gray-300">
               SourceTrace helps coffee organizations digitize sourcing operations, track every lot throughout the value chain, verify sustainability programs, and provide complete traceability from farm to final export.

@@ -10,7 +10,7 @@ interface Slice {
   id: string;
   name: string;
   column: "left" | "center" | "right";
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
   x: number; // Desktop coordinates
   y: number;
   metric: string;

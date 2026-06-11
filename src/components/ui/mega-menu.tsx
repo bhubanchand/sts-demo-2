@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight, Zap, BarChart3, Globe, Lock, Sprout } from "lucide-react";
@@ -22,8 +22,15 @@ const slideVariants = {
   }),
 };
 
+interface NavigationLink {
+  name: string;
+  href: string;
+  desc: string;
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
 /* ─── Navigation Data ─── */
-const PLATFORM_LINKS = [
+const PLATFORM_LINKS: NavigationLink[] = [
   { name: "Traceability", href: "/platform/traceability", icon: Map, desc: "End-to-end supply chain traceability from farm to fork." },
   { name: "Farmer Engagement", href: "/platform/farmer-engagement", icon: Users, desc: "Digital tools connecting with smallholder farmers worldwide." },
   { name: "Sustainability Intelligence", href: "/platform/sustainability-intelligence", icon: Leaf, desc: "AI-powered insights for sustainable agriculture practices." },
@@ -36,7 +43,7 @@ const PLATFORM_LINKS = [
   { name: "Mobile App", href: "/platform/mobile-app", icon: Smartphone, desc: "Field operations accessible from any device." },
 ];
 
-const INTELLIGENCE_LINKS = [
+const INTELLIGENCE_LINKS: NavigationLink[] = [
   { name: "AI Engine", href: "/intelligence/ai-engine", desc: "Core machine learning models powering our predictions." },
   { name: "Predictive Insights", href: "/intelligence/predictive-insights", desc: "Forecast yields, risks, and market trends." },
   { name: "Geospatial Intelligence", href: "/intelligence/geospatial-intelligence", desc: "Satellite imagery analysis for farm monitoring." },
@@ -47,7 +54,7 @@ const INTELLIGENCE_LINKS = [
   { name: "Traceability Graph", href: "/intelligence/traceability-graph", desc: "Knowledge graph linking every node in the chain." },
 ];
 
-const SOLUTIONS_LINKS = [
+const SOLUTIONS_LINKS: NavigationLink[] = [
   { name: "Sustainable Sourcing", href: "/solutions/sustainable-sourcing", desc: "Source responsibly with full origin transparency." },
   { name: "EUDR Compliance", href: "/solutions/eudr-compliance", desc: "Meet EU Deforestation Regulation requirements." },
   { name: "ESG Reporting", href: "/solutions/esg-reporting", desc: "Generate audit-ready ESG reports effortlessly." },
@@ -59,7 +66,7 @@ const SOLUTIONS_LINKS = [
   { name: "Certification Management", href: "/solutions/certification-management", desc: "Streamline certification workflows and audits." },
 ];
 
-const INDUSTRIES_LINKS = [
+const INDUSTRIES_LINKS: NavigationLink[] = [
   { name: "Coffee", href: "/CropInsights/coffee", desc: "Trace every bean from farm to cup." },
   { name: "Cocoa", href: "/CropInsights/cocoa", desc: "Ensure ethical sourcing of cocoa supply chains." },
   { name: "Cotton", href: "/CropInsights/cotton", desc: "Sustainable cotton sourcing and tracking." },
@@ -74,7 +81,7 @@ const INDUSTRIES_LINKS = [
   { name: "Seed Production", href: "/CropInsights/seed-production", desc: "Seed-to-harvest production management." },
 ];
 
-const COMPLIANCE_LINKS = [
+const COMPLIANCE_LINKS: NavigationLink[] = [
   { name: "EUDR", href: "/compliance/eudr", desc: "EU Deforestation Regulation readiness." },
   { name: "CSRD", href: "/compliance/csrd", desc: "Corporate Sustainability Reporting Directive." },
   { name: "ESRS", href: "/compliance/esrs", desc: "European Sustainability Reporting Standards." },
@@ -84,21 +91,21 @@ const COMPLIANCE_LINKS = [
   { name: "Sustainability Reporting", href: "/compliance/sustainability-reporting", desc: "Comprehensive sustainability disclosure." },
 ];
 
-const RESOURCES_LINKS = [
+const RESOURCES_LINKS: NavigationLink[] = [
   { name: "Blog", href: "/resources/blog", icon: BookOpen, desc: "Insights on AI and agriculture trends, innovation, and technology." },
   { name: "Case Studies", href: "/case-studies", icon: Briefcase, desc: "Success stories of AI transforming global agriculture with SourceTrace." },
   { name: "White Papers", href: "/resources/whitepapers", icon: FileText, desc: "Research on AI-driven agriculture & sustainable food system solutions." },
   { name: "Newsroom", href: "/resources/newsroom", icon: Activity, desc: "Latest news and updates on SourceTrace's agri-tech innovations." },
 ];
 
-const COMPANY_LINKS = [
+const COMPANY_LINKS: NavigationLink[] = [
   { name: "About SourceTrace", href: "/about", icon: Target, desc: "AI-driven platform transforming agriculture with data, insights, and sustainability." },
   { name: "Careers", href: "/careers", icon: GraduationCap, desc: "Explore opportunities to drive digital farming and sustainable agriculture solutions." },
   { name: "Connect With Us", href: "/contact", icon: Users, desc: "Connect with SourceTrace to explore global partnerships, support, and inquiries." },
 ];
 
 /* ─── Mobile category icons and accent colors ─── */
-const MOBILE_CATEGORY_META: Record<string, { icon: React.ComponentType<any>; color: string; gradient: string }> = {
+const MOBILE_CATEGORY_META: Record<string, { icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>; color: string; gradient: string }> = {
   platform:    { icon: Server,    color: "#1F7A53", gradient: "from-emerald-500/10 to-teal-500/10" },
   intelligence:{ icon: Zap,       color: "#6366F1", gradient: "from-indigo-500/10 to-violet-500/10" },
   solutions:   { icon: Target,    color: "#0891B2", gradient: "from-cyan-500/10 to-sky-500/10" },
@@ -114,15 +121,24 @@ export function MegaMenu() {
   const [currentLevel, setCurrentLevel] = useState<"root" | "submenu">("root");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [direction, setDirection] = useState<number>(1);
-  let timeoutId: NodeJS.Timeout;
+  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileOpen((prev) => {
+      const next = !prev;
+      if (next) {
+        setActiveMenu(null);
+        setCurrentLevel("root");
+        setActiveCategory(null);
+        setDirection(1);
+      }
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     if (isMobileOpen) {
       document.body.style.overflow = "hidden";
-      setActiveMenu(null);
-      setCurrentLevel("root");
-      setActiveCategory(null);
-      setDirection(1);
     } else {
       document.body.style.overflow = "";
     }
@@ -132,12 +148,14 @@ export function MegaMenu() {
   }, [isMobileOpen]);
 
   const handleMouseEnter = (menu: string) => {
-    clearTimeout(timeoutId);
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+    }
     setActiveMenu(menu);
   };
 
   const handleMouseLeave = () => {
-    timeoutId = setTimeout(() => {
+    timeoutIdRef.current = setTimeout(() => {
       setActiveMenu(null);
     }, 200);
   };
@@ -206,7 +224,7 @@ export function MegaMenu() {
           {/* Mobile Menu Button — Animated hamburger ↔ X */}
           <div className="flex lg:hidden items-center">
             <button
-              onClick={() => setIsMobileOpen(!isMobileOpen)}
+              onClick={toggleMobileMenu}
               className="relative w-10 h-10 rounded-full flex items-center justify-center text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer active:scale-95"
               aria-label="Toggle menu"
             >
@@ -267,8 +285,8 @@ export function MegaMenu() {
                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-8">
                          {menu.id === 'industries' ? 'Crop Insights' : `${menu.label} Overview`}
                        </h3>
-                       <div className={`grid gap-x-8 gap-y-6 ${(menu.items[0] as any)?.icon ? 'grid-cols-2' : 'grid-cols-3'}`}>
-                         {menu.items.map((link: any, index: number) => (
+                       <div className={`grid gap-x-8 gap-y-6 ${(menu.items[0] as NavigationLink)?.icon ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                         {menu.items.map((link: NavigationLink, index: number) => (
                            <Link
                              key={index}
                              href={link.href}
@@ -426,7 +444,7 @@ export function MegaMenu() {
                           >
                             <div className="pl-4 pr-1 pb-3 pt-1">
                               <div className="border-l-2 border-gray-100 pl-4 flex flex-col gap-0.5">
-                                {item.items.map((link: any, linkIdx: number) => (
+                                {item.items.map((link: NavigationLink, linkIdx: number) => (
                                   <motion.div
                                     key={linkIdx}
                                     initial={{ opacity: 0, x: -8 }}

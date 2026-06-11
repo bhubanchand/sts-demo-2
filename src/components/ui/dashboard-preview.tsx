@@ -146,7 +146,7 @@ export function DashboardPreview() {
                 </div>
               ))
             ) : (
-              <div className="text-sm text-gray-500 text-center py-4">No alerts match "{searchQuery}"</div>
+              <div className="text-sm text-gray-500 text-center py-4">No alerts match &quot;{searchQuery}&quot;</div>
             )}
           </div>
         </div>

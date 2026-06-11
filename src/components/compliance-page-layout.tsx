@@ -102,9 +102,9 @@ export function CompliancePageLayout({ data }: Props) {
   const getParserStatus = (idx: number) => parserStatuses[idx] || "idle";
   const setParserStatus = (idx: number, val: "idle" | "parsing" | "completed") => setParserStatuses(p => ({ ...p, [idx]: val }));
 
-  const [parsedFieldsMap, setParsedFieldsMap] = useState<Record<number, any>>({});
+  const [parsedFieldsMap, setParsedFieldsMap] = useState<Record<number, Record<string, string> | null>>({});
   const getParsedFields = (idx: number) => parsedFieldsMap[idx] || null;
-  const setParsedFields = (idx: number, val: any) => setParsedFieldsMap(p => ({ ...p, [idx]: val }));
+  const setParsedFields = (idx: number, val: Record<string, string> | null) => setParsedFieldsMap(p => ({ ...p, [idx]: val }));
 
   const [nitrogenReductions, setNitrogenReductions] = useState<Record<number, number>>({});
   const getNitrogenReduction = (idx: number) => nitrogenReductions[idx] || 20;
@@ -217,7 +217,7 @@ export function CompliancePageLayout({ data }: Props) {
     ];
   };
 
-  const getGridData = (sceneIdx: number) => {
+  const getGridData = (sceneIdx: number): { options: string[]; details: Record<string, string> } => {
     const title = data.scenes[sceneIdx]?.title || "";
 
     if (isSustainability && (title.toLowerCase().includes("transaction") || title.toLowerCase().includes("coordinate") || title.toLowerCase().includes("search"))) {
@@ -1173,8 +1173,8 @@ export function CompliancePageLayout({ data }: Props) {
 
       case "eudr-scrubber": {
         let label = "Scrub Deforestation Timeline";
-        let minVal = 2020;
-        let maxVal = 2026;
+        const minVal = 2020;
+        const maxVal = 2026;
         let labelStart = "2020 (Cut-Off)";
         let labelMid = "2023";
         let labelEnd = "2026";
@@ -1259,7 +1259,7 @@ export function CompliancePageLayout({ data }: Props) {
             </div>
             <div className="text-[10px] bg-gray-50 p-2.5 rounded-xl border border-gray-100 leading-relaxed text-left">
               <p className="font-bold text-[#0B3D2E] mb-0.5">{activeOption} Requirements:</p>
-              <p className="text-gray-550 font-light">{(gridData.details as any)[activeOption] || (gridData.details as any)[gridData.options[0]]}</p>
+              <p className="text-gray-550 font-light">{gridData.details[activeOption] || gridData.details[gridData.options[0]]}</p>
             </div>
           </div>
         );
@@ -1998,7 +1998,7 @@ export function CompliancePageLayout({ data }: Props) {
                     {(() => {
                       const gridData = getGridData(sceneIndex);
                       const selected = getSelectedCommodity(sceneIndex) || gridData.options[0];
-                      return (gridData.details as any)[selected] || (gridData.details as any)[gridData.options[0]];
+                      return gridData.details[selected] || gridData.details[gridData.options[0]];
                     })()}
                   </p>
                   <div className="flex justify-between text-[7px] font-mono text-gray-400 border-t border-gray-50 pt-1">
@@ -2183,16 +2183,19 @@ export function CompliancePageLayout({ data }: Props) {
                     <span className="text-[8px] text-[#1F7A53] font-mono font-black uppercase tracking-wider text-center animate-pulse">OCR Scanning...</span>
                   </div>
                 )}
-                {getParserStatus(sceneIndex) === "completed" && getParsedFields(sceneIndex) && (
-                  <div className="bg-white border border-gray-150 rounded-xl p-3 shadow-lg w-full max-w-[220px] border-l-4 border-l-emerald-500">
-                    <p className="font-mono font-black text-[9px] text-[#1F7A53] border-b border-gray-100 pb-1 mb-1.5 uppercase tracking-wider">✓ AI VERIFICATION EXTRACT</p>
-                    <div className="flex flex-col gap-1 text-[8px] font-mono text-gray-600">
-                      <p>Type: <span className="text-gray-800 font-bold">{getParsedFields(sceneIndex).docType}</span></p>
-                      <p>Entity: <span className="text-gray-800 font-bold">{getParsedFields(sceneIndex).farmName}</span></p>
-                      <p>Status: <span className="text-emerald-600 font-black">{getParsedFields(sceneIndex).riskStatus}</span></p>
+                {(() => {
+                  const fields = getParsedFields(sceneIndex);
+                  return getParserStatus(sceneIndex) === "completed" && fields && (
+                    <div className="bg-white border border-gray-150 rounded-xl p-3 shadow-lg w-full max-w-[220px] border-l-4 border-l-emerald-500">
+                      <p className="font-mono font-black text-[9px] text-[#1F7A53] border-b border-gray-100 pb-1 mb-1.5 uppercase tracking-wider">✓ AI VERIFICATION EXTRACT</p>
+                      <div className="flex flex-col gap-1 text-[8px] font-mono text-gray-600">
+                        <p>Type: <span className="text-gray-800 font-bold">{fields.docType}</span></p>
+                        <p>Entity: <span className="text-gray-800 font-bold">{fields.farmName}</span></p>
+                        <p>Status: <span className="text-emerald-600 font-black">{fields.riskStatus}</span></p>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
             )}
 

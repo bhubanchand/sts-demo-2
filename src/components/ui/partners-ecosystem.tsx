@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import { Globe2 } from "lucide-react";
 
 // Dummy partner logos (using placeholder SVGs or text for now, can be replaced with actual logos later)
@@ -30,7 +29,7 @@ export function PartnersEcosystem() {
               <Globe2 className="w-5 h-5" /> Global Ecosystem
             </span>
             <h2 className="text-4xl md:text-5xl font-black text-[#0B3D2E] leading-tight tracking-tighter">
-              Trusted by the world's leading organizations.
+              Trusted by the world&apos;s leading organizations.
             </h2>
           </div>
           <p className="text-lg text-gray-500 max-w-md">

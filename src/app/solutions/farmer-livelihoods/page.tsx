@@ -29,7 +29,7 @@ export default function FarmerLivelihoodsPage() {
             <div className="lg:w-1/2">
                <h2 className="text-4xl font-bold text-[#0B3D2E] mb-6">Bridging the Gap</h2>
                <p className="text-lg text-gray-600 mb-10">
-                  Many smallholders live below the poverty line despite producing the world's most valuable commodities. SourceTrace helps you identify these vulnerabilities and implement targeted interventions.
+                  Many smallholders live below the poverty line despite producing the world&apos;s most valuable commodities. SourceTrace helps you identify these vulnerabilities and implement targeted interventions.
                </p>
                
                <div className="grid grid-cols-2 gap-8">

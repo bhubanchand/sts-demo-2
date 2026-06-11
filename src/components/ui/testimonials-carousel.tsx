@@ -5,7 +5,7 @@ export function TestimonialsCarousel() {
     <section className="bg-white py-16 border-t border-gray-100 overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 mb-16 text-center">
          <h2 className="text-4xl font-bold text-[#0B3D2E] mb-6">Trusted by the Fortune 500</h2>
-         <p className="text-xl text-gray-600 max-w-2xl mx-auto">See how the world's leading enterprises use SourceTrace to secure their supply chains and prove their impact.</p>
+         <p className="text-xl text-gray-600 max-w-2xl mx-auto">See how the world&apos;s leading enterprises use SourceTrace to secure their supply chains and prove their impact.</p>
       </div>
 
       {/* CSS Marquee Carousel */}
@@ -20,7 +20,7 @@ export function TestimonialsCarousel() {
                         {[1,2,3,4,5].map(star => <Star key={star} className="w-5 h-5 fill-current"/>)}
                      </div>
                      <p className="text-gray-700 text-lg leading-relaxed mb-8 relative z-10">
-                        "SourceTrace completely revolutionized our approach to EUDR compliance. We mapped over 50,000 smallholder plots in under 6 months."
+                        &ldquo;SourceTrace completely revolutionized our approach to EUDR compliance. We mapped over 50,000 smallholder plots in under 6 months.&rdquo;
                      </p>
                      <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
@@ -41,7 +41,7 @@ export function TestimonialsCarousel() {
                         {[1,2,3,4,5].map(star => <Star key={star} className="w-5 h-5 fill-current"/>)}
                      </div>
                      <p className="text-gray-700 text-lg leading-relaxed mb-8 relative z-10">
-                        "SourceTrace completely revolutionized our approach to EUDR compliance. We mapped over 50,000 smallholder plots in under 6 months."
+                        &ldquo;SourceTrace completely revolutionized our approach to EUDR compliance. We mapped over 50,000 smallholder plots in under 6 months.&rdquo;
                      </p>
                      <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
