@@ -100,10 +100,10 @@ export function InteractiveMap() {
   }, []);
 
   return (
-    <div className="w-full max-w-6xl mx-auto overflow-x-auto scrollbar-none select-none mt-2 md:mt-10 flex flex-col items-center">
+    <div className="w-full max-w-6xl mx-auto flex flex-col items-center mt-2 md:mt-10">
       
       {/* Map box */}
-      <div className="relative w-[200%] md:w-full h-[320px] md:h-[550px] bg-white rounded-none md:rounded-[40px] md:border md:border-gray-100 md:shadow-sm overflow-hidden flex items-center justify-center shrink-0">
+      <div className="relative w-full h-auto aspect-[800/320] md:h-[550px] bg-white rounded-none md:rounded-[40px] md:border md:border-gray-100 md:shadow-sm overflow-hidden flex items-center justify-center">
         
         {/* Tooltip Overlay */}
         <AnimatePresence>
@@ -148,11 +148,11 @@ export function InteractiveMap() {
         <ComposableMap 
           projection="geoMercator" 
           projectionConfig={{ 
-            scale: isMobile ? 120 : 120,
-            center: isMobile ? [0, 10] : [0, 0]
+            scale: isMobile ? 80 : 120,
+            center: isMobile ? [0, 20] : [0, 0]
           }}
           width={800}
-          height={isMobile ? 380 : 450}
+          height={isMobile ? 320 : 450}
           className="w-full h-full"
         >
           <Geographies geography={geoUrl}>
