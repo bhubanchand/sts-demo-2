@@ -947,21 +947,6 @@ export function DataGreenEngine() {
       {/* ── 3. FLAGSHIP DESKTOP MAP VIEWPORT (1200px+ / xl:flex) ── */}
       <div className="hidden xl:flex w-full max-w-[1440px] flex-col items-center z-10">
         
-        {/* Column Stage Headers */}
-        <div className="w-full grid grid-cols-3 text-center mb-6 border-b border-emerald-800/10 pb-4">
-          <div>
-            <h3 className="text-xl font-extrabold text-[#004D26] uppercase leading-none mt-1">Origins</h3>
-            <p className="text-[11px] text-gray-500 mt-1">Farmer Onboarding & Profiles</p>
-          </div>
-          <div>
-            <h3 className="text-xl font-extrabold text-[#004D26] uppercase leading-none mt-1">Operational Intelligence</h3>
-            <p className="text-[11px] text-gray-500 mt-1">First-Mile Logistics, GIS & AI Models</p>
-          </div>
-          <div>
-            <h3 className="text-xl font-extrabold text-[#004D26] uppercase leading-none mt-1">Outcomes</h3>
-            <p className="text-[11px] text-gray-500 mt-1">Marketplace, Finance & ESG Offsets</p>
-          </div>
-        </div>
 
         {/* Widescreen Interactive Canvas */}
         <div className="w-full h-[700px] relative">
