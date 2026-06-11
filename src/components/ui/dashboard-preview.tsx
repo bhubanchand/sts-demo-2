@@ -614,8 +614,8 @@ export function DashboardPreview() {
             {/* Sidebar */}
             <div className="w-64 bg-gray-50 border-r border-gray-100 p-6 flex flex-col justify-between shrink-0 h-full">
               <div>
-                <div className="text-[#0B3D2E] font-black text-xl mb-10 flex items-center gap-2 tracking-tight">
-                  <Leaf className="w-6 h-6 text-[#53D769]" /> SourceTrace
+                <div className="mb-10 shrink-0">
+                  <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-10 object-contain" />
                 </div>
                 <div className="space-y-2">
                   <button 
@@ -771,9 +771,8 @@ export function DashboardPreview() {
 
           {/* Mobile App Header */}
           <div className="h-14 bg-white border-b border-gray-100 flex justify-between items-center px-4 shrink-0 z-40">
-            <div className="flex items-center gap-1.5">
-              <Leaf className="w-5 h-5 text-[#53D769]" />
-              <span className="font-black text-gray-900 text-sm tracking-tight">SourceTrace</span>
+            <div className="flex items-center">
+              <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-8 object-contain" />
             </div>
             
             <div className="flex items-center gap-2">
