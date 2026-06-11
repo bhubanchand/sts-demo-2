@@ -12,8 +12,8 @@ export function TestimonialsCarousel() {
       <div className="relative w-full overflow-hidden flex flex-col gap-8">
          {/* Row 1 - Left to Right */}
          <div className="flex w-max animate-marquee gap-8 pl-8">
-            {[1, 2, 3, 4, 5].map((item) => (
-               <div key={`row1-${item}`} className="w-[450px] bg-gray-50 border border-gray-100 rounded-3xl p-8 shrink-0">
+            {[1, 2, 3, 4, 5, 1, 2, 3, 4, 5].map((item, idx) => (
+               <div key={`row1-${idx}`} className="w-[450px] bg-gray-50 border border-gray-100 rounded-3xl p-8 shrink-0">
                   <div className="flex text-yellow-400 mb-6">
                      {[1,2,3,4,5].map(star => <Star key={star} className="w-5 h-5 fill-current"/>)}
                   </div>
