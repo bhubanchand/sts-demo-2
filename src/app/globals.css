@@ -116,3 +116,7 @@
   font-size: 11px !important;
 }
 
+.safe-area-top {
+  padding-top: calc(12px + env(safe-area-inset-top, 0px));
+}
+

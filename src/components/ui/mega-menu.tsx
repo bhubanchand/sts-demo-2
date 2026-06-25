@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight, Zap, BarChart3, Globe, Lock, Sprout } from "lucide-react";
 import { Button } from "./button";
+import { GlobalSearch } from "./global-search";
 
 /* ─── Slide variants with spring-like ease ─── */
 const slideVariants = {
@@ -121,7 +122,18 @@ export function MegaMenu() {
   const [currentLevel, setCurrentLevel] = useState<"root" | "submenu">("root");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [direction, setDirection] = useState<number>(1);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
+
+  const openSearch = useCallback(() => {
+    setIsSearchOpen(true);
+    setActiveMenu(null);
+    if (isMobileOpen) setIsMobileOpen(false);
+  }, [isMobileOpen]);
+
+  const closeSearch = useCallback(() => {
+    setIsSearchOpen(false);
+  }, []);
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileOpen((prev) => {
@@ -199,14 +211,14 @@ export function MegaMenu() {
             </Link>
           </div>
 
-          <div className="hidden lg:flex items-center gap-1 h-full">
+          <div className={`hidden lg:flex items-center h-full transition-all duration-250 ease-[cubic-bezier(0.32,0.72,0,1)] ${isSearchOpen ? "gap-0" : "gap-1"}`}>
             {menuItems.map((item) => (
               <div
                 key={item.id}
-                className="relative h-full flex items-center"
+                className={`relative h-full flex items-center transition-all duration-250 ${isSearchOpen ? "opacity-0 pointer-events-none w-0 overflow-hidden" : "opacity-100"}`}
                 onMouseEnter={() => handleMouseEnter(item.id)}
               >
-                <button className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${activeMenu === item.id ? "bg-gray-100 text-[#0B3D2E]" : "text-gray-600 hover:text-[#0B3D2E]"}`}>
+                <button className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 whitespace-nowrap ${activeMenu === item.id ? "bg-gray-100 text-[#0B3D2E]" : "text-gray-600 hover:text-[#0B3D2E]"}`}>
                   {item.label}
                   <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === item.id ? "rotate-180" : ""}`} />
                 </button>
@@ -214,15 +226,17 @@ export function MegaMenu() {
             ))}
           </div>
 
-          <div className="hidden lg:flex items-center gap-4">
-            <Link href="/contact-sales" className="text-sm font-medium text-gray-600 hover:text-[#0B3D2E] transition-colors">Contact Sales</Link>
-            <Link href="/request-demo">
+          <div className="hidden lg:flex items-center gap-3">
+            <GlobalSearch isSearchOpen={isSearchOpen} onSearchOpen={openSearch} onSearchClose={closeSearch} variant="desktop" />
+            <Link href="/contact-sales" className={`text-sm font-medium text-gray-600 hover:text-[#0B3D2E] transition-all duration-250 whitespace-nowrap ${isSearchOpen ? "opacity-0 pointer-events-none w-0 overflow-hidden" : "opacity-100"}`}>Contact Sales</Link>
+            <Link href="/request-demo" className={`transition-all duration-250 ${isSearchOpen ? "opacity-0 pointer-events-none w-0 overflow-hidden" : "opacity-100"}`}>
               <Button size="sm" className="h-10 px-6 rounded-full font-semibold bg-[#0B3D2E] text-white hover:bg-[#1F7A53]">Request Demo</Button>
             </Link>
           </div>
 
-          {/* Mobile Menu Button — Animated hamburger ↔ X */}
-          <div className="flex lg:hidden items-center">
+          {/* Mobile: Search + Menu Buttons */}
+          <div className="flex lg:hidden items-center gap-1">
+            <GlobalSearch isSearchOpen={isSearchOpen} onSearchOpen={openSearch} onSearchClose={closeSearch} variant="mobile" />
             <button
               onClick={toggleMobileMenu}
               className="relative w-10 h-10 rounded-full flex items-center justify-center text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer active:scale-95"
