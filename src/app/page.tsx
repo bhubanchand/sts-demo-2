@@ -184,88 +184,67 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white selection:bg-[#53D769] selection:text-[#0B3D2E]">
       {/* 1. Hero Section - Massive Impact */}
-      <section className="relative h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-[#0B3D2E] snap-start">
+      <section className="relative h-[75vh] sm:h-[80vh] md:h-[85vh] lg:h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-[#0B3D2E] snap-start">
         {/* Continuous looping background video */}
         <video 
           autoPlay 
           loop 
           muted 
           playsInline 
-          className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
           src="/assets/hero-background.mp4"
         />
         
         {/* Dark overlay for readability */}
         <div className="absolute inset-0 bg-black/60 z-10 pointer-events-none"></div>
         
-        {/* Left and Right navigation arrows - Desktop Only */}
+        {/* Left and Right navigation arrows - Centered vertically and inset responsively */}
         <button
           onClick={handlePrevSlide}
-          className="hidden md:flex absolute left-4 md:left-8 top-[46%] -translate-y-1/2 z-30 w-12 h-12 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group cursor-pointer"
+          className="absolute left-4 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group cursor-pointer"
           aria-label="Previous slide"
         >
-          <ChevronLeft className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-colors" />
         </button>
         
         <button
           onClick={handleNextSlide}
-          className="hidden md:flex absolute right-4 md:right-8 top-[46%] -translate-y-1/2 z-30 w-12 h-12 items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group cursor-pointer"
+          className="absolute right-4 sm:right-6 md:right-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group cursor-pointer"
           aria-label="Next slide"
         >
-          <ChevronRight className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-colors" />
         </button>
 
-        {/* Pagination Controls - Inline arrows on Mobile, Dots only on Desktop */}
-        <div className="absolute bottom-36 md:bottom-40 left-1/2 -translate-x-1/2 flex items-center gap-4 z-40">
-          {/* Mobile Prev Button */}
-          <button
-            onClick={handlePrevSlide}
-            className="md:hidden w-11 h-11 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 active:scale-95 backdrop-blur-md transition-all cursor-pointer"
-            aria-label="Previous slide"
-          >
-            <ChevronLeft className="w-5 h-5 text-white" />
-          </button>
-
-          {/* Dots */}
-          <div className="flex items-center gap-0 sm:gap-1">
-            {HERO_SLIDES.map((slide, index) => {
-              const isActive = activeSlideIndex === index;
-              const isBright = !!slide.isBright;
-              return (
-                <button
-                  key={index}
-                  onClick={() => handleDotClick(index)}
-                  className="relative flex items-center justify-center w-11 h-11 md:w-8 md:h-8 hover:scale-105 active:scale-95 transition-transform cursor-pointer"
-                  aria-label={`Go to slide ${index + 1}`}
-                >
-                  <span
-                    className={`rounded-full transition-all duration-300 ${
-                      isActive
-                        ? "w-8 h-2.5 md:h-3 bg-[#53D769]"
-                        : `w-2.5 h-2.5 md:w-3 md:h-3 ${
-                            isBright
-                              ? "bg-[#0B3D2E]/55 hover:bg-[#0B3D2E]/85"
-                              : "bg-white/75 hover:bg-white/95"
-                          }`
-                    }`}
-                  />
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Mobile Next Button */}
-          <button
-            onClick={handleNextSlide}
-            className="md:hidden w-11 h-11 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 active:scale-95 backdrop-blur-md transition-all cursor-pointer"
-            aria-label="Next slide"
-          >
-            <ChevronRight className="w-5 h-5 text-white" />
-          </button>
+        {/* Desktop Pagination Controls - Dots only on Desktop (absolute bottom) */}
+        <div className="hidden lg:flex absolute bottom-44 left-1/2 -translate-x-1/2 items-center gap-1 z-40">
+          {HERO_SLIDES.map((slide, index) => {
+            const isActive = activeSlideIndex === index;
+            const isBright = !!slide.isBright;
+            return (
+              <button
+                key={index}
+                onClick={() => handleDotClick(index)}
+                className="relative flex items-center justify-center w-8 h-8 hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+                aria-label={`Go to slide ${index + 1}`}
+              >
+                <span
+                  className={`rounded-full transition-all duration-300 ${
+                    isActive
+                      ? "w-8 h-3 bg-[#53D769]"
+                      : `w-3 h-3 ${
+                          isBright
+                            ? "bg-[#0B3D2E]/55 hover:bg-[#0B3D2E]/85"
+                            : "bg-white/75 hover:bg-white/95"
+                        }`
+                  }`}
+                />
+              </button>
+            );
+          })}
         </div>
 
         {/* Slide Content with AnimatePresence for smooth cross-fades */}
-        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center justify-center text-center pb-48 md:pb-52">
+        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-12 sm:px-16 md:px-20 lg:px-32 flex flex-col items-center justify-center text-center pb-20 lg:pb-60">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSlideIndex}
@@ -275,38 +254,70 @@ export default function Home() {
               transition={{ duration: 0.4, ease: "easeInOut" }}
               className="flex flex-col items-center justify-center max-w-4xl"
             >
-
-              
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tighter mb-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white leading-tight tracking-tighter mb-6">
                 {HERO_SLIDES[activeSlideIndex].heading}
               </h1>
               
-              <p className="text-lg sm:text-xl md:text-2xl text-gray-200/90 max-w-3xl mx-auto leading-relaxed mb-10 font-light">
+              <p className="text-base sm:text-lg lg:text-xl text-gray-200/90 max-w-[90%] sm:max-w-3xl mx-auto leading-relaxed mb-8 md:mb-10 font-light">
                 {HERO_SLIDES[activeSlideIndex].subheading}
               </p>
               
-              <div className="flex justify-center">
+              <div className="flex justify-center w-full">
                 <motion.div
+                  className="w-full sm:w-auto flex justify-center"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <Link 
                     href={HERO_SLIDES[activeSlideIndex].link}
-                    className="inline-flex items-center justify-center h-16 px-10 text-xl rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white hover:text-[#0B3D2E] border-none font-bold shadow-[0_0_40px_rgba(83,215,105,0.4)] hover:shadow-[0_0_60px_rgba(83,215,105,0.6)] transition-all transform hover:-translate-y-1 cursor-pointer"
+                    className="inline-flex items-center justify-center w-[88%] sm:w-auto h-[54px] sm:h-16 px-8 sm:px-10 text-lg sm:text-xl rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white hover:text-[#0B3D2E] border-none font-bold shadow-[0_0_40px_rgba(83,215,105,0.4)] hover:shadow-[0_0_60px_rgba(83,215,105,0.6)] transition-all transform hover:-translate-y-1 cursor-pointer select-none"
                   >
                     {HERO_SLIDES[activeSlideIndex].cta}
                   </Link>
                 </motion.div>
               </div>
+
+              {/* Mobile/Tablet Pagination Controls - Rendered inline below the CTA */}
+              <div className="flex lg:hidden items-center justify-center gap-0 sm:gap-1 mt-8">
+                {HERO_SLIDES.map((slide, index) => {
+                  const isActive = activeSlideIndex === index;
+                  const isBright = !!slide.isBright;
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleDotClick(index)}
+                      className="relative flex items-center justify-center w-11 h-11 hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+                      aria-label={`Go to slide ${index + 1}`}
+                    >
+                      <span
+                        className={`rounded-full transition-all duration-300 ${
+                          isActive
+                            ? "w-8 h-2.5 bg-[#53D769]"
+                            : `w-2.5 h-2.5 ${
+                                isBright
+                                  ? "bg-[#0B3D2E]/55 hover:bg-[#0B3D2E]/85"
+                                  : "bg-white/75 hover:bg-white/95"
+                              }`
+                        }`}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Trust Badges Overlay at the Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 z-30 w-full">
+        {/* Desktop Trust Badges Overlay (Absolute bottom) */}
+        <div className="hidden lg:block absolute bottom-0 left-0 right-0 z-30 w-full">
           <TrustBadges className="bg-[#EBF7F0]/95 backdrop-blur-md" />
         </div>
       </section>
+
+      {/* Mobile/Tablet Trust Badges flows below Hero section */}
+      <div className="block lg:hidden w-full relative z-20">
+        <TrustBadges className="bg-[#EBF7F0]" />
+      </div>
 
       <section className="bg-gray-50 border-y border-gray-100 flex flex-col justify-center snap-center">
          <ExpandingSlideshow />
