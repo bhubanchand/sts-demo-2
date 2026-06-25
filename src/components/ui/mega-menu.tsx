@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight, Zap, BarChart3, Globe, Lock, Sprout } from "lucide-react";
+import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight, Zap, BarChart3, Globe, Lock, Sprout, Search } from "lucide-react";
 import { Button } from "./button";
 import { GlobalSearch } from "./global-search";
 
@@ -149,7 +149,7 @@ export function MegaMenu() {
   }, []);
 
   useEffect(() => {
-    if (isMobileOpen) {
+    if (isMobileOpen || isSearchOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -157,7 +157,7 @@ export function MegaMenu() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isMobileOpen]);
+  }, [isMobileOpen, isSearchOpen]);
 
   const handleMouseEnter = (menu: string) => {
     if (timeoutIdRef.current) {
@@ -385,13 +385,22 @@ export function MegaMenu() {
               <Link href="/" className="flex items-center gap-2" onClick={closeMobile}>
                 <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-10 object-contain" />
               </Link>
-              <button
-                onClick={closeMobile}
-                className="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:text-[#0B3D2E] bg-gray-50 hover:bg-gray-100 transition-all focus:outline-none cursor-pointer active:scale-95"
-                aria-label="Close menu"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={openSearch}
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors cursor-pointer active:scale-95"
+                  aria-label="Open search"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={closeMobile}
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:text-[#0B3D2E] bg-gray-50 hover:bg-gray-100 transition-all focus:outline-none cursor-pointer active:scale-95"
+                  aria-label="Close menu"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* ─── Scrollable Dropdown Body ─── */}

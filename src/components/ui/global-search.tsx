@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -105,11 +106,16 @@ export function GlobalSearch({
   const [recentSearches, setRecentSearches] = useState<string[]>(() =>
     typeof window !== "undefined" ? getRecentSearches() : []
   );
+  const [isMounted, setIsMounted] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Focus input when search opens
   useEffect(() => {
@@ -239,7 +245,13 @@ export function GlobalSearch({
               transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
               className="relative overflow-hidden"
             >
-              <div className="flex items-center h-10 bg-gray-50 border border-gray-200 rounded-full px-3 gap-2 focus-within:border-[#53D769] focus-within:ring-2 focus-within:ring-[#53D769]/20 transition-all">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  viewAllResults();
+                }}
+                className="flex items-center h-10 bg-gray-50 border border-gray-200 rounded-full px-3 gap-2 focus-within:border-[#53D769] focus-within:ring-2 focus-within:ring-[#53D769]/20 transition-all"
+              >
                 <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 <input
                   ref={inputRef}
@@ -253,13 +265,14 @@ export function GlobalSearch({
                   spellCheck={false}
                 />
                 <button
+                  type="button"
                   onClick={onSearchClose}
                   className="w-5 h-5 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-colors flex-shrink-0 cursor-pointer"
                   aria-label="Close search"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
-              </div>
+              </form>
             </motion.div>
           )}
         </AnimatePresence>
@@ -322,6 +335,93 @@ export function GlobalSearch({
   }
 
   /* ── Mobile Render ──────────────────────────────────────── */
+  const mobileOverlay = (
+    <AnimatePresence>
+      {isSearchOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+          className="fixed inset-0 bg-white lg:hidden flex flex-col"
+          style={{ zIndex: 10000 }}
+        >
+          {/* Sticky Search Header */}
+          <div className="flex-shrink-0 px-4 pt-3 pb-3 border-b border-gray-100 bg-white safe-area-top">
+            <div className="flex items-center gap-3">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (query.trim()) {
+                    viewAllResults();
+                  } else {
+                    inputRef.current?.blur();
+                  }
+                }}
+                className="flex-1 flex items-center h-12 bg-gray-50 border border-gray-200 rounded-2xl px-4 gap-3 focus-within:border-[#53D769] focus-within:ring-2 focus-within:ring-[#53D769]/20 transition-all"
+              >
+                <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={query}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Search SourceTrace..."
+                  className="flex-1 bg-transparent text-base text-gray-900 placeholder-gray-400 outline-none min-w-0"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuery("");
+                      setResults([]);
+                      inputRef.current?.focus();
+                    }}
+                    className="w-6 h-6 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 flex-shrink-0 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </form>
+              <button
+                onClick={onSearchClose}
+                className="text-sm font-semibold text-gray-500 hover:text-[#0B3D2E] transition-colors cursor-pointer px-1"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          {/* Scrollable Body */}
+          <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4">
+            {showSuggestions && (
+              <MobileSuggestions
+                recentSearches={recentSearches}
+                onQuickSearch={handleQuickSearch}
+                onClearRecent={handleClearRecent}
+                onNavigate={navigateTo}
+              />
+            )}
+
+            {showResults && (
+              <MobileResults
+                results={results}
+                query={query}
+                isLoading={isLoading}
+                focusedIndex={focusedIndex}
+                onNavigate={navigateTo}
+                onViewAll={viewAllResults}
+              />
+            )}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <>
       {/* Mobile Search Button */}
@@ -335,80 +435,9 @@ export function GlobalSearch({
         </button>
       )}
 
-      {/* Mobile Full-Screen Search Overlay */}
-      <AnimatePresence>
-        {isSearchOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed inset-0 bg-white lg:hidden flex flex-col"
-            style={{ zIndex: 10000 }}
-          >
-            {/* Sticky Search Header */}
-            <div className="flex-shrink-0 px-4 pt-3 pb-3 border-b border-gray-100 bg-white safe-area-top">
-              <div className="flex items-center gap-3">
-                <div className="flex-1 flex items-center h-12 bg-gray-50 border border-gray-200 rounded-2xl px-4 gap-3 focus-within:border-[#53D769] focus-within:ring-2 focus-within:ring-[#53D769]/20 transition-all">
-                  <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={query}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Search SourceTrace..."
-                    className="flex-1 bg-transparent text-base text-gray-900 placeholder-gray-400 outline-none min-w-0"
-                    autoComplete="off"
-                    spellCheck={false}
-                  />
-                  {query && (
-                    <button
-                      onClick={() => {
-                        setQuery("");
-                        setResults([]);
-                        inputRef.current?.focus();
-                      }}
-                      className="w-6 h-6 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 flex-shrink-0 cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-                <button
-                  onClick={onSearchClose}
-                  className="text-sm font-semibold text-gray-500 hover:text-[#0B3D2E] transition-colors cursor-pointer px-1"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-
-            {/* Scrollable Body */}
-            <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4">
-              {showSuggestions && (
-                <MobileSuggestions
-                  recentSearches={recentSearches}
-                  onQuickSearch={handleQuickSearch}
-                  onClearRecent={handleClearRecent}
-                  onNavigate={navigateTo}
-                />
-              )}
-
-              {showResults && (
-                <MobileResults
-                  results={results}
-                  query={query}
-                  isLoading={isLoading}
-                  focusedIndex={focusedIndex}
-                  onNavigate={navigateTo}
-                  onViewAll={viewAllResults}
-                />
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isMounted && typeof window !== "undefined"
+        ? createPortal(mobileOverlay, document.body)
+        : null}
     </>
   );
 }
