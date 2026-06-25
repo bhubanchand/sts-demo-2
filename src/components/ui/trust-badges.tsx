@@ -1,30 +1,34 @@
 import React from "react";
 
+interface TrustBadgesProps {
+  className?: string;
+}
+
 const BADGES = [
-  { name: "Cargill", className: "font-serif", color: "#58D68D" }, // Cargill Green
-  { name: "Olam", className: "", color: "#F5B041" },            // Olam Orange
-  { name: "Unilever", className: "font-serif italic", color: "#85C1E9" }, // Unilever Blue
-  { name: "Nestlé", className: "tracking-tighter", color: "#5DADE2" },   // Nestlé Blue
-  { name: "Bunge", className: "", color: "#48C9B0" }             // Bunge Teal
+  { name: "Cargill", className: "font-serif", color: "#1B5E20" },  // Dark Cargill Green
+  { name: "Olam", className: "", color: "#E65100" },             // Dark Olam Orange
+  { name: "Unilever", className: "font-serif italic", color: "#0D47A1" }, // Dark Unilever Blue
+  { name: "Nestlé", className: "tracking-tighter", color: "#006064" },   // Dark Nestlé Teal/Blue
+  { name: "Bunge", className: "", color: "#004D40" }              // Dark Bunge Teal
 ];
 
-export function TrustBadges() {
+export function TrustBadges({ className = "" }: TrustBadgesProps) {
   const repeatedBadges = [
     ...BADGES, ...BADGES, ...BADGES,
     ...BADGES, ...BADGES, ...BADGES
   ];
 
   return (
-    <div className="w-full text-center">
-      <p className="text-[10px] sm:text-xs font-bold tracking-widest text-white/50 uppercase mb-3">
+    <div className={`w-full text-center py-6 bg-[#EBF7F0] border-t border-[#0B3D2E]/10 relative ${className}`}>
+      <p className="text-[10px] sm:text-xs font-bold tracking-widest text-[#0B3D2E]/60 uppercase mb-3 select-none">
         Trusted by global leaders in agriculture and sourcing
       </p>
       
       {/* Infinite Marquee Container */}
       <div className="relative w-full overflow-hidden flex items-center">
         {/* Gradient Masks for smooth fade at edges */}
-        <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-[#0B3D2E] to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-[#0B3D2E] to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-[#EBF7F0] to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-[#EBF7F0] to-transparent z-10 pointer-events-none"></div>
   
         <div className="flex w-max animate-marquee py-1" style={{ animationDuration: "120s" }}>
           {/* Track 1 */}
@@ -33,7 +37,7 @@ export function TrustBadges() {
               <span
                 key={`t1-${idx}`}
                 style={{ "--hover-color": badge.color } as React.CSSProperties}
-                className={`text-lg sm:text-2xl font-black text-white/20 tracking-wider uppercase transition-all duration-300 hover:text-[var(--hover-color)] hover:opacity-100 hover:scale-110 cursor-pointer select-none ${badge.className}`}
+                className={`text-lg sm:text-2xl font-black text-[#0B3D2E]/20 tracking-wider uppercase transition-all duration-300 hover:text-[var(--hover-color)] hover:opacity-100 hover:scale-110 cursor-pointer select-none ${badge.className}`}
               >
                 {badge.name}
               </span>
@@ -45,7 +49,7 @@ export function TrustBadges() {
               <span
                 key={`t2-${idx}`}
                 style={{ "--hover-color": badge.color } as React.CSSProperties}
-                className={`text-lg sm:text-2xl font-black text-white/20 tracking-wider uppercase transition-all duration-300 hover:text-[var(--hover-color)] hover:opacity-100 hover:scale-110 cursor-pointer select-none ${badge.className}`}
+                className={`text-lg sm:text-2xl font-black text-[#0B3D2E]/20 tracking-wider uppercase transition-all duration-300 hover:text-[var(--hover-color)] hover:opacity-100 hover:scale-110 cursor-pointer select-none ${badge.className}`}
               >
                 {badge.name}
               </span>

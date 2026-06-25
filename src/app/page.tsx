@@ -285,8 +285,8 @@ export default function Home() {
         </div>
 
         {/* Trust Badges Overlay at the Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 z-30 bg-[#0B3D2E]/80 backdrop-blur-md border-t border-white/5 py-4 w-full">
-          <TrustBadges />
+        <div className="absolute bottom-0 left-0 right-0 z-30 w-full">
+          <TrustBadges className="bg-[#EBF7F0]/95 backdrop-blur-md" />
         </div>
       </section>
 
