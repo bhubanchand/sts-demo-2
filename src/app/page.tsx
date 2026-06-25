@@ -113,37 +113,43 @@ const HERO_SLIDES = [
     heading: "Digital Agriculture for Smarter Farming",
     subheading: "Empower farmers, field teams, and agribusinesses with real-time visibility across crop production, field operations, and farmer engagement.",
     cta: "Explore Digital Agriculture",
-    link: "/solutions/digital-agriculture"
+    link: "/solutions/digital-agriculture",
+    isBright: false
   },
   {
     heading: "Complete Farm-to-Market Traceability",
     subheading: "Track every step of the agricultural journey with transparent, verifiable data that builds trust, supports compliance, and strengthens supply chains.",
     cta: "Explore Traceability",
-    link: "/solutions/supply-chain-traceability"
+    link: "/solutions/supply-chain-traceability",
+    isBright: false
   },
   {
     heading: "Driving Sustainable Agriculture at Scale",
     subheading: "Measure environmental impact, support regenerative practices, and achieve sustainability goals through data-driven agricultural intelligence.",
     cta: "Explore Sustainability",
-    link: "/solutions/sustainable-sourcing"
+    link: "/solutions/sustainable-sourcing",
+    isBright: false
   },
   {
     heading: "Stronger Connections with Every Farmer",
     subheading: "Digitize farmer onboarding, communication, training, and support programs while improving productivity and field-level outcomes.",
     cta: "Explore Farmer Engagement",
-    link: "/solutions/farmer-livelihoods"
+    link: "/solutions/farmer-livelihoods",
+    isBright: false
   },
   {
     heading: "Resilient Agricultural Supply Chains",
     subheading: "Monitor sourcing activities, procurement operations, and production risks with actionable insights across the value chain.",
     cta: "Explore Supply Chain Solutions",
-    link: "/solutions/responsible-sourcing"
+    link: "/solutions/responsible-sourcing",
+    isBright: false
   },
   {
     heading: "Turn Agricultural Data into Decisions",
     subheading: "Leverage analytics, field intelligence, and AI-powered insights to improve productivity, manage risks, and optimize agricultural operations.",
     cta: "Explore Analytics",
-    link: "/solutions/impact-measurement"
+    link: "/solutions/impact-measurement",
+    isBright: false
   }
 ];
 
@@ -210,44 +216,56 @@ export default function Home() {
         </button>
 
         {/* Pagination Controls - Inline arrows on Mobile, Dots only on Desktop */}
-        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 flex items-center gap-4 z-30">
+        <div className="absolute bottom-36 md:bottom-40 left-1/2 -translate-x-1/2 flex items-center gap-4 z-40">
           {/* Mobile Prev Button */}
           <button
             onClick={handlePrevSlide}
-            className="md:hidden w-8 h-8 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 active:scale-95 backdrop-blur-md transition-all cursor-pointer"
+            className="md:hidden w-11 h-11 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 active:scale-95 backdrop-blur-md transition-all cursor-pointer"
             aria-label="Previous slide"
           >
-            <ChevronLeft className="w-4 h-4 text-white" />
+            <ChevronLeft className="w-5 h-5 text-white" />
           </button>
 
           {/* Dots */}
-          <div className="flex items-center gap-2">
-            {HERO_SLIDES.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => handleDotClick(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  activeSlideIndex === index
-                    ? "w-8 bg-[#53D769]"
-                    : "w-2 bg-white/30 hover:bg-white/50"
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
+          <div className="flex items-center gap-0 sm:gap-1">
+            {HERO_SLIDES.map((slide, index) => {
+              const isActive = activeSlideIndex === index;
+              const isBright = !!slide.isBright;
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleDotClick(index)}
+                  className="relative flex items-center justify-center w-11 h-11 md:w-8 md:h-8 hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+                  aria-label={`Go to slide ${index + 1}`}
+                >
+                  <span
+                    className={`rounded-full transition-all duration-300 ${
+                      isActive
+                        ? "w-8 h-2.5 md:h-3 bg-[#53D769]"
+                        : `w-2.5 h-2.5 md:w-3 md:h-3 ${
+                            isBright
+                              ? "bg-[#0B3D2E]/55 hover:bg-[#0B3D2E]/85"
+                              : "bg-white/75 hover:bg-white/95"
+                          }`
+                    }`}
+                  />
+                </button>
+              );
+            })}
           </div>
 
           {/* Mobile Next Button */}
           <button
             onClick={handleNextSlide}
-            className="md:hidden w-8 h-8 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 active:scale-95 backdrop-blur-md transition-all cursor-pointer"
+            className="md:hidden w-11 h-11 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 active:scale-95 backdrop-blur-md transition-all cursor-pointer"
             aria-label="Next slide"
           >
-            <ChevronRight className="w-4 h-4 text-white" />
+            <ChevronRight className="w-5 h-5 text-white" />
           </button>
         </div>
 
         {/* Slide Content with AnimatePresence for smooth cross-fades */}
-        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center justify-center text-center pb-28 sm:pb-16">
+        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center justify-center text-center pb-48 md:pb-52">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSlideIndex}
