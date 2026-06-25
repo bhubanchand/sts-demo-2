@@ -216,7 +216,7 @@ export default function Home() {
         </button>
 
         {/* Desktop Pagination Controls - Dots only on Desktop (absolute bottom) */}
-        <div className="hidden lg:flex absolute bottom-44 left-1/2 -translate-x-1/2 items-center gap-1 z-40">
+        <div className="hidden lg:flex absolute bottom-48 left-1/2 -translate-x-1/2 items-center gap-1 z-40">
           {HERO_SLIDES.map((slide, index) => {
             const isActive = activeSlideIndex === index;
             const isBright = !!slide.isBright;
@@ -244,7 +244,7 @@ export default function Home() {
         </div>
 
         {/* Slide Content with AnimatePresence for smooth cross-fades */}
-        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-12 sm:px-16 md:px-20 lg:px-32 flex flex-col items-center justify-center text-center pb-20 lg:pb-60">
+        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-12 sm:px-16 md:px-20 lg:px-32 flex flex-col items-center justify-center text-center pt-14 pb-14 md:pt-20 md:pb-20 lg:pt-32 lg:pb-60">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSlideIndex}
