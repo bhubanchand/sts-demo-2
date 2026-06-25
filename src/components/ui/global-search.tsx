@@ -65,15 +65,16 @@ function HighlightMatch({ text, query }: { text: string; query: string }) {
 
   return (
     <>
-      {parts.map((part, i) =>
-        regex.test(part) ? (
+      {parts.map((part, i) => {
+        const isMatch = terms.some((t) => part.toLowerCase() === t.toLowerCase());
+        return isMatch ? (
           <mark key={i} className="bg-[#53D769]/20 text-[#0B3D2E] rounded-sm px-0.5 font-semibold">
             {part}
           </mark>
         ) : (
           <span key={i}>{part}</span>
-        )
-      )}
+        );
+      })}
     </>
   );
 }
@@ -344,7 +345,7 @@ export function GlobalSearch({
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
           className="fixed inset-0 bg-white lg:hidden flex flex-col"
-          style={{ zIndex: 10000 }}
+          style={{ zIndex: 10000, backgroundColor: "white" }}
         >
           {/* Sticky Search Header */}
           <div className="flex-shrink-0 px-4 pt-3 pb-3 border-b border-gray-100 bg-white safe-area-top">
@@ -358,7 +359,7 @@ export function GlobalSearch({
                     inputRef.current?.blur();
                   }
                 }}
-                className="flex-1 flex items-center h-12 bg-gray-50 border border-gray-200 rounded-2xl px-4 gap-3 focus-within:border-[#53D769] focus-within:ring-2 focus-within:ring-[#53D769]/20 transition-all"
+                className="flex-1 min-w-0 flex items-center h-12 bg-gray-50 border border-gray-200 rounded-2xl px-4 gap-3 focus-within:border-[#53D769] focus-within:ring-2 focus-within:ring-[#53D769]/20 transition-all"
               >
                 <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
                 <input
@@ -368,7 +369,7 @@ export function GlobalSearch({
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
                   placeholder="Search SourceTrace..."
-                  className="flex-1 bg-transparent text-base text-gray-900 placeholder-gray-400 outline-none min-w-0"
+                  className="flex-1 w-0 bg-transparent text-base text-gray-900 placeholder-gray-400 outline-none"
                   autoComplete="off"
                   spellCheck={false}
                 />
@@ -388,7 +389,7 @@ export function GlobalSearch({
               </form>
               <button
                 onClick={onSearchClose}
-                className="text-sm font-semibold text-gray-500 hover:text-[#0B3D2E] transition-colors cursor-pointer px-1"
+                className="text-sm font-semibold text-gray-500 hover:text-[#0B3D2E] transition-colors cursor-pointer px-1 flex-shrink-0"
               >
                 Cancel
               </button>
@@ -396,7 +397,7 @@ export function GlobalSearch({
           </div>
 
           {/* Scrollable Body */}
-          <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4">
+          <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 bg-white" style={{ backgroundColor: "white" }}>
             {showSuggestions && (
               <MobileSuggestions
                 recentSearches={recentSearches}

@@ -51,8 +51,9 @@ function HighlightMatch({ text, query }: { text: string; query: string }) {
   const parts = text.split(regex);
   return (
     <>
-      {parts.map((part, i) =>
-        regex.test(part) ? (
+      {parts.map((part, i) => {
+        const isMatch = terms.some((t) => part.toLowerCase() === t.toLowerCase());
+        return isMatch ? (
           <mark
             key={i}
             className="bg-[#53D769]/20 text-[#0B3D2E] rounded-sm px-0.5 font-semibold"
@@ -61,8 +62,8 @@ function HighlightMatch({ text, query }: { text: string; query: string }) {
           </mark>
         ) : (
           <span key={i}>{part}</span>
-        )
-      )}
+        );
+      })}
     </>
   );
 }
