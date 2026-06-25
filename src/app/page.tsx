@@ -183,8 +183,7 @@ export default function Home() {
   
   return (
     <main className="min-h-screen bg-white selection:bg-[#53D769] selection:text-[#0B3D2E]">
-      {/* 1. Hero Section - Massive Impact */}
-      <section className="relative h-[75vh] sm:h-[80vh] md:h-[85vh] lg:h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-[#0B3D2E] snap-start">
+      <section className="relative h-[80vh] sm:h-[82vh] md:h-[85vh] lg:h-screen w-full flex flex-col justify-center items-center overflow-hidden bg-[#0B3D2E] snap-start pt-24 lg:pt-0">
         {/* Continuous looping background video */}
         <video 
           autoPlay 
@@ -244,7 +243,7 @@ export default function Home() {
         </div>
 
         {/* Slide Content with AnimatePresence for smooth cross-fades */}
-        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-12 sm:px-16 md:px-20 lg:px-32 flex flex-col items-center justify-center text-center pt-14 pb-14 md:pt-20 md:pb-20 lg:pt-32 lg:pb-60">
+        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-16 sm:px-24 lg:px-32 flex flex-col items-center justify-center text-center pt-28 pb-14 md:pt-36 md:pb-20 lg:pt-32 lg:pb-60">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSlideIndex}
