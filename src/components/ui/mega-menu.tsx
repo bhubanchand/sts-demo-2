@@ -28,6 +28,7 @@ interface NavigationLink {
   href: string;
   desc: string;
   icon?: React.ComponentType<{ className?: string }>;
+  subItems?: { name: string; href: string }[];
 }
 
 /* ─── Navigation Data ─── */
@@ -101,8 +102,20 @@ const RESOURCES_LINKS: NavigationLink[] = [
 
 const COMPANY_LINKS: NavigationLink[] = [
   { name: "About SourceTrace", href: "/about", icon: Target, desc: "AI-driven platform transforming agriculture with data, insights, and sustainability." },
+  { name: "Connect With Us", href: "/contact", icon: Globe, desc: "Connect with SourceTrace to explore global partnerships, support, and inquiries." },
   { name: "Careers", href: "/careers", icon: GraduationCap, desc: "Explore opportunities to drive digital farming and sustainable agriculture solutions." },
-  { name: "Connect With Us", href: "/contact", icon: Users, desc: "Connect with SourceTrace to explore global partnerships, support, and inquiries." },
+  {
+    name: "Meet the Team",
+    href: "/company/meet-the-team",
+    icon: Users,
+    desc: "Explore our leadership team across divisions.",
+    subItems: [
+      { name: "Thought Leaders", href: "/company/meet-the-team?section=thought-leaders" },
+      { name: "Functional Leaders", href: "/company/meet-the-team?section=functional-leaders" },
+      { name: "Regional Leaders", href: "/company/meet-the-team?section=regional-leaders" },
+      { name: "Geographical Leaders", href: "/company/meet-the-team?section=geographical-leaders" },
+    ]
+  },
 ];
 
 /* ─── Mobile category icons and accent colors ─── */
@@ -299,26 +312,62 @@ export function MegaMenu() {
                          {menu.id === 'industries' ? 'Crop Insights' : `${menu.label} Overview`}
                        </h3>
                        <div className={`grid gap-x-8 gap-y-6 ${(menu.items[0] as NavigationLink)?.icon ? 'grid-cols-2' : 'grid-cols-3'}`}>
-                         {menu.items.map((link: NavigationLink, index: number) => (
-                           <Link
-                             key={index}
-                             href={link.href}
-                             onClick={() => setActiveMenu(null)}
-                             className="group flex items-start gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors"
-                           >
-                             {link.icon && (
-                               <div className="mt-1 w-10 h-10 rounded-lg bg-[#53D769]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#53D769]/20 transition-colors">
-                                 <link.icon className="w-5 h-5 text-[#1F7A53]" />
-                               </div>
-                             )}
-                             <div>
-                               <div className="font-semibold text-gray-900 group-hover:text-[#1F7A53] transition-colors">
-                                 {link.name}
+                          {menu.items.map((link: NavigationLink, index: number) => {
+                            const hasSubItems = !!link.subItems;
+                            if (hasSubItems) {
+                              return (
+                                <div
+                                  key={index}
+                                  className="group flex items-start gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors"
+                                >
+                                  {link.icon && (
+                                    <div className="mt-1 w-10 h-10 rounded-lg bg-[#53D769]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#53D769]/20 transition-colors">
+                                      <link.icon className="w-5 h-5 text-[#1F7A53]" />
+                                    </div>
+                                  )}
+                                  <div>
+                                    <Link href={link.href} onClick={() => setActiveMenu(null)} className="font-semibold text-gray-900 hover:text-[#1F7A53] transition-colors block">
+                                      {link.name}
+                                    </Link>
+                                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{link.desc || `Explore ${link.name.toLowerCase()} solutions`}</p>
+                                    <div className="mt-3 flex flex-wrap gap-x-2 gap-y-2">
+                                      {link.subItems!.map((sub, sIdx) => (
+                                        <Link
+                                          key={sIdx}
+                                          href={sub.href}
+                                          onClick={() => setActiveMenu(null)}
+                                          className="text-xs font-semibold text-gray-600 hover:text-[#0B3D2E] transition-colors bg-gray-100 hover:bg-[#53D769]/20 px-2.5 py-1.5 rounded-lg"
+                                        >
+                                          {sub.name}
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  </div>
                                 </div>
-                               <p className="text-sm text-gray-500 mt-1 line-clamp-2">{link.desc || `Explore ${link.name.toLowerCase()} solutions`}</p>
-                             </div>
-                           </Link>
-                         ))}
+                              );
+                            } else {
+                              return (
+                                <Link
+                                  key={index}
+                                  href={link.href}
+                                  onClick={() => setActiveMenu(null)}
+                                  className="group flex items-start gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors"
+                                >
+                                  {link.icon && (
+                                    <div className="mt-1 w-10 h-10 rounded-lg bg-[#53D769]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#53D769]/20 transition-colors">
+                                      <link.icon className="w-5 h-5 text-[#1F7A53]" />
+                                    </div>
+                                  )}
+                                  <div>
+                                    <div className="font-semibold text-gray-900 group-hover:text-[#1F7A53] transition-colors">
+                                      {link.name}
+                                    </div>
+                                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{link.desc || `Explore ${link.name.toLowerCase()} solutions`}</p>
+                                  </div>
+                                </Link>
+                              );
+                            }
+                          })}
                        </div>
                     </div>
 
@@ -496,8 +545,23 @@ export function MegaMenu() {
                                       <span className="text-[13px] font-medium text-gray-700 group-hover:text-[#0B3D2E] transition-colors truncate">
                                         {link.name}
                                       </span>
-                                      <ArrowRight className="w-3 h-3 text-gray-200 group-hover:text-[#1F7A53] ml-auto flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                                      {!link.subItems && <ArrowRight className="w-3 h-3 text-gray-200 group-hover:text-[#1F7A53] ml-auto flex-shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />}
                                     </Link>
+                                    {link.subItems && (
+                                      <div className="pl-12 flex flex-col gap-0.5 border-l border-gray-100 ml-6 mb-2 mt-1">
+                                        {link.subItems.map((sub, sIdx) => (
+                                          <Link
+                                            key={sIdx}
+                                            href={sub.href}
+                                            onClick={closeMobile}
+                                            className="group flex items-center gap-2 py-1.5 px-3 rounded-md hover:bg-white transition-all text-xs font-semibold text-gray-500 hover:text-[#0B3D2E]"
+                                          >
+                                            <span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-[#53D769] transition-colors" />
+                                            <span>{sub.name}</span>
+                                          </Link>
+                                        ))}
+                                      </div>
+                                    )}
                                   </motion.div>
                                 ))}
                               </div>
