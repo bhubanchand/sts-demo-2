@@ -153,13 +153,18 @@ interface SearchableSelectProps {
   error?: string;
   placeholder?: string;
   required?: boolean;
+  allowCustom?: boolean;
 }
 
-function SearchableSelect({ label, options, value, onChange, error, placeholder, required }: SearchableSelectProps) {
+function SearchableSelect({ label, options, value, onChange, error, placeholder, required, allowCustom = false }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
+  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -170,18 +175,82 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Autofocus input when dropdown opens
+  useEffect(() => {
+    if (isOpen) {
+      inputRef.current?.focus();
+      setHighlightedIndex(-1);
+    } else {
+      setSearch("");
+    }
+  }, [isOpen]);
+
   const filtered = options.filter(opt =>
     opt.toLowerCase().includes(search.toLowerCase())
   );
 
+  const showCustomOption = allowCustom && search.trim() && !filtered.some(opt => opt.toLowerCase() === search.trim().toLowerCase());
+
+  const handleSelect = (val: string) => {
+    onChange(val);
+    setIsOpen(false);
+    setSearch("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen) {
+      if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+        e.preventDefault();
+        setIsOpen(true);
+      }
+      return;
+    }
+
+    const totalItems = filtered.length + (showCustomOption ? 1 : 0);
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex(prev => (prev + 1 < totalItems ? prev + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex(prev => (prev - 1 >= 0 ? prev - 1 : totalItems - 1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (highlightedIndex >= 0 && highlightedIndex < totalItems) {
+        if (showCustomOption && highlightedIndex === filtered.length) {
+          handleSelect(search.trim());
+        } else {
+          handleSelect(filtered[highlightedIndex]);
+        }
+      } else if (showCustomOption) {
+        handleSelect(search.trim());
+      }
+    } else if (e.key === "Escape" || e.key === "Tab") {
+      setIsOpen(false);
+    }
+  };
+
+  // Scroll active item into view
+  useEffect(() => {
+    if (highlightedIndex >= 0 && listRef.current) {
+      const activeEl = listRef.current.children[highlightedIndex] as HTMLElement;
+      if (activeEl) {
+        activeEl.scrollIntoView({ block: "nearest" });
+      }
+    }
+  }, [highlightedIndex]);
+
   return (
-    <div className="relative flex flex-col gap-1 w-full" ref={containerRef}>
-      <label className="text-xs font-semibold text-slate-700">
+    <div className="relative flex flex-col gap-1 w-full" ref={containerRef} onKeyDown={handleKeyDown}>
+      <label className="text-xs font-semibold text-slate-700 select-none">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-      <div
+      <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`border rounded-xl px-4 py-3 bg-white text-slate-800 text-sm flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        className={`w-full border rounded-xl px-4 py-3 bg-white text-slate-800 text-sm flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all text-left ${
           error ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
         }`}
       >
@@ -189,41 +258,59 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
           {value || placeholder || "Select..."}
         </span>
         <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
-      </div>
+      </button>
 
       {isOpen && (
         <div className="absolute top-[105%] left-0 right-0 bg-white border border-slate-200 rounded-2xl shadow-xl z-[60] max-h-60 p-2 flex flex-col gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
             <input
+              ref={inputRef}
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search..."
+              placeholder="Search or type custom..."
               className="w-full border border-slate-200 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#1F7A53] focus:border-transparent"
               onClick={(e) => e.stopPropagation()}
             />
           </div>
-          <div className="overflow-y-auto max-h-40 flex flex-col scrollbar-thin">
-            {filtered.length > 0 ? (
-              filtered.map((opt) => (
-                <div
-                  key={opt}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onChange(opt);
-                    setIsOpen(false);
-                    setSearch("");
-                  }}
-                  className={`px-3 py-2 text-xs rounded-lg cursor-pointer hover:bg-slate-50 transition-colors ${
-                    value === opt ? "bg-[#1F7A53]/5 text-[#1F7A53] font-semibold" : "text-slate-700"
-                  }`}
-                >
-                  {opt}
-                </div>
-              ))
-            ) : (
-              <span className="text-xs text-slate-400 text-center py-4">No results found</span>
+          <div ref={listRef} role="listbox" className="overflow-y-auto max-h-40 flex flex-col scrollbar-thin">
+            {filtered.map((opt, idx) => (
+              <div
+                key={opt}
+                role="option"
+                aria-selected={value === opt}
+                onClick={() => handleSelect(opt)}
+                onMouseEnter={() => setHighlightedIndex(idx)}
+                className={`px-3 py-2 text-xs rounded-lg cursor-pointer transition-colors ${
+                  highlightedIndex === idx
+                    ? "bg-[#1F7A53] text-white"
+                    : value === opt
+                    ? "bg-[#1F7A53]/10 text-[#1F7A53] font-semibold"
+                    : "text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                {opt}
+              </div>
+            ))}
+
+            {showCustomOption && (
+              <div
+                role="option"
+                onClick={() => handleSelect(search.trim())}
+                onMouseEnter={() => setHighlightedIndex(filtered.length)}
+                className={`px-3 py-2 text-xs rounded-lg cursor-pointer transition-colors border-t border-slate-100 ${
+                  highlightedIndex === filtered.length
+                    ? "bg-[#1F7A53] text-white"
+                    : "text-slate-700 bg-slate-50 font-medium"
+                }`}
+              >
+                Use custom: "{search.trim()}"
+              </div>
+            )}
+
+            {filtered.length === 0 && !showCustomOption && (
+              <span className="text-xs text-slate-400 text-center py-4 select-none">No results found</span>
             )}
           </div>
         </div>
@@ -241,6 +328,7 @@ export function FloatingContact() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const firstNameInputRef = useRef<HTMLInputElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   // Initialize Form State with Session Storage Fallback
   const [formData, setFormData] = useState<FormData>(() => {
@@ -274,6 +362,41 @@ export function FloatingContact() {
       }, 150);
       return () => clearTimeout(timer);
     }
+  }, [isOpen]);
+
+  // Focus trap implementation
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const modalElement = modalRef.current;
+    if (!modalElement) return;
+
+    const focusableElements = modalElement.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0] as HTMLElement;
+    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+    const handleTabTrap = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleTabTrap);
+    return () => {
+      window.removeEventListener("keydown", handleTabTrap);
+    };
   }, [isOpen]);
 
   // Escape key closing
@@ -317,8 +440,11 @@ export function FloatingContact() {
 
     if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber = "Business Phone is required";
-    } else if (formData.phoneNumber.replace(/\D/g, "").length < 7) {
-      newErrors.phoneNumber = "Please enter a valid phone number (min 7 digits)";
+    } else {
+      const cleanPhone = formData.phoneNumber.replace(/\D/g, "");
+      if (cleanPhone.length < 7 || cleanPhone.length > 15) {
+        newErrors.phoneNumber = "Phone number must be between 7 and 15 digits";
+      }
     }
 
     if (!formData.jobTitle) newErrors.jobTitle = "Job Title is required";
@@ -351,8 +477,6 @@ export function FloatingContact() {
 
     try {
       // ─── Backend ready placeholder ───
-      // Here you can add integrations with HubSpot, Salesforce, Zoho, API, etc.
-      // Example payload:
       const payload = {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -399,6 +523,7 @@ export function FloatingContact() {
   }, []);
 
   const hasStatesList = formData.country && !!STATES_MAP[formData.country];
+  const statesOptions = hasStatesList ? STATES_MAP[formData.country] : [];
 
   return (
     <>
@@ -433,6 +558,7 @@ export function FloatingContact() {
 
             {/* Modal Body Container */}
             <motion.div
+              ref={modalRef}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -616,42 +742,17 @@ export function FloatingContact() {
                         required
                       />
 
-                      {/* Dynamic State / Province Dropdown or input fallback */}
-                      <div className="flex flex-col gap-1">
-                        {hasStatesList ? (
-                          <SearchableSelect
-                            label={
-                              formData.country === "Kenya" ? "County" : "State / Province"
-                            }
-                            options={STATES_MAP[formData.country]}
-                            value={formData.stateProvince}
-                            onChange={(val) => setFormData({ ...formData, stateProvince: val })}
-                            error={errors.stateProvince}
-                            placeholder={
-                              formData.country === "Kenya"
-                                ? "Select county..."
-                                : "Select state/province..."
-                            }
-                            required
-                          />
-                        ) : (
-                          <>
-                            <label className="text-xs font-semibold text-slate-700">
-                              State / Province <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                              type="text"
-                              value={formData.stateProvince}
-                              onChange={(e) => setFormData({ ...formData, stateProvince: e.target.value })}
-                              placeholder="e.g. British Columbia"
-                              className={`border rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
-                                errors.stateProvince ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
-                              }`}
-                            />
-                            {errors.stateProvince && <span className="text-xs text-red-500 mt-0.5">{errors.stateProvince}</span>}
-                          </>
-                        )}
-                      </div>
+                      {/* Dynamic State / Province Searchable Dropdown */}
+                      <SearchableSelect
+                        label={formData.country === "Kenya" ? "County" : "State / Province"}
+                        options={statesOptions}
+                        value={formData.stateProvince}
+                        onChange={(val) => setFormData({ ...formData, stateProvince: val })}
+                        error={errors.stateProvince}
+                        placeholder={formData.country === "Kenya" ? "Search county..." : "Search state/province..."}
+                        allowCustom
+                        required
+                      />
 
                       {/* ZIP / Postal Code */}
                       <div className="flex flex-col gap-1">
