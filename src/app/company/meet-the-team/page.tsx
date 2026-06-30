@@ -158,6 +158,7 @@ const TEAM_SECTIONS: TeamSection[] = [
 function MeetTheTeamContent() {
   const searchParams = useSearchParams();
   const [activeSection, setActiveSection] = useState<string>("thought-leaders");
+  const [scrollToSectionId, setScrollToSectionId] = useState<string | null>(null);
 
   // Read section query parameter or location hash on mount and when query changes
   useEffect(() => {
@@ -166,14 +167,29 @@ function MeetTheTeamContent() {
     const activeId = sectionParam || hashParam;
 
     if (activeId && TEAM_SECTIONS.some((s) => s.id === activeId)) {
-      setActiveSection(activeId);
-      // Smooth scroll to the active section
-      setTimeout(() => {
-        const element = document.getElementById(activeId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "start" });
+      setActiveSection((currentActive) => {
+        if (currentActive === activeId) {
+          // Already active, scroll immediately
+          setTimeout(() => {
+            const element = document.getElementById(activeId);
+            if (element) {
+              const navbarHeight = 85;
+              const spacing = 25;
+              const elementRect = element.getBoundingClientRect();
+              const absoluteElementTop = elementRect.top + window.pageYOffset;
+              const targetScrollPosition = absoluteElementTop - navbarHeight - spacing;
+
+              window.scrollTo({
+                top: targetScrollPosition,
+                behavior: "smooth"
+              });
+            }
+          }, 100);
+        } else {
+          setScrollToSectionId(activeId);
         }
-      }, 300);
+        return activeId;
+      });
     }
   }, [searchParams]);
 
@@ -181,6 +197,7 @@ function MeetTheTeamContent() {
     // If clicking the already active section, do not collapse (keep one open at all times as requested)
     if (activeSection === id) return;
     setActiveSection(id);
+    setScrollToSectionId(id);
     
     // Update hash or query param in URL dynamically
     window.history.replaceState(null, "", `/company/meet-the-team?section=${id}`);
@@ -239,6 +256,27 @@ function MeetTheTeamContent() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                      onAnimationComplete={() => {
+                        if (scrollToSectionId === section.id) {
+                          // Allow the layout to finish updating completely before reading positions
+                          setTimeout(() => {
+                            const element = document.getElementById(section.id);
+                            if (element) {
+                              const navbarHeight = 85; // fixed navbar offset
+                              const spacing = 25; // 20-30px spacing below navbar
+                              const elementRect = element.getBoundingClientRect();
+                              const absoluteElementTop = elementRect.top + window.pageYOffset;
+                              const targetScrollPosition = absoluteElementTop - navbarHeight - spacing;
+
+                              window.scrollTo({
+                                top: targetScrollPosition,
+                                behavior: "smooth"
+                              });
+                            }
+                            setScrollToSectionId(null);
+                          }, 50);
+                        }
+                      }}
                       className="overflow-hidden"
                     >
                       <div className="px-8 pb-12 pt-6 border-t border-slate-100/50">
