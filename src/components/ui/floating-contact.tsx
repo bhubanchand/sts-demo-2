@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { CalendarDays, X, Search, ChevronDown, CheckCircle2, Loader2 } from "lucide-react";
 
@@ -161,34 +160,24 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Recalculate dropdown position from trigger button
-  const updatePosition = useCallback(() => {
-    if (triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect();
-      setDropdownPos({
-        top: rect.bottom + 4,
-        left: rect.left,
-        width: rect.width,
-      });
-    }
-  }, []);
+  // Custom scrollbar state
+  const [thumbTop, setThumbTop] = useState(0);
+  const [thumbHeight, setThumbHeight] = useState(0);
+  const [showThumb, setShowThumb] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartY = useRef(0);
+  const dragStartScroll = useRef(0);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on click outside (check both container and portal dropdown)
+  // Close dropdown on click outside
   useEffect(() => {
     if (!isOpen) return;
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        containerRef.current && !containerRef.current.contains(target) &&
-        dropdownRef.current && !dropdownRef.current.contains(target)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -196,25 +185,125 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  // Position dropdown on open and update on scroll/resize
+  // Autofocus + reset on open/close
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 50);
+      setHighlightedIndex(-1);
+    } else {
       setSearch("");
+    }
+  }, [isOpen]);
+
+  // Update custom scrollbar thumb size and position
+  const updateScrollThumb = useCallback(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    if (scrollHeight <= clientHeight) {
+      setShowThumb(false);
       return;
     }
-    updatePosition();
-    inputRef.current?.focus();
-    setHighlightedIndex(-1);
+    setShowThumb(true);
+    const trackH = clientHeight;
+    const ratio = clientHeight / scrollHeight;
+    const tH = Math.max(ratio * trackH, 28);
+    const maxScroll = scrollHeight - clientHeight;
+    const tTop = maxScroll > 0 ? (scrollTop / maxScroll) * (trackH - tH) : 0;
+    setThumbHeight(tH);
+    setThumbTop(tTop);
+  }, []);
 
-    const handleScrollOrResize = () => updatePosition();
-    // Listen on all scroll events (capture) since the modal itself scrolls
-    window.addEventListener("scroll", handleScrollOrResize, true);
-    window.addEventListener("resize", handleScrollOrResize);
-    return () => {
-      window.removeEventListener("scroll", handleScrollOrResize, true);
-      window.removeEventListener("resize", handleScrollOrResize);
+  // Sync scrollbar on list scroll
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el || !isOpen) return;
+    updateScrollThumb();
+    el.addEventListener("scroll", updateScrollThumb, { passive: true });
+    return () => el.removeEventListener("scroll", updateScrollThumb);
+  }, [isOpen, updateScrollThumb]);
+
+  // Update thumb after filter changes
+  useEffect(() => {
+    if (isOpen) requestAnimationFrame(updateScrollThumb);
+  }, [search, isOpen, updateScrollThumb]);
+
+  // Mouse drag for scrollbar thumb
+  useEffect(() => {
+    if (!isDragging) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      e.preventDefault();
+      const el = listRef.current;
+      if (!el) return;
+      const { scrollHeight, clientHeight } = el;
+      const trackH = clientHeight;
+      const maxScroll = scrollHeight - clientHeight;
+      const tH = Math.max((clientHeight / scrollHeight) * trackH, 28);
+      const maxThumbTop = trackH - tH;
+      const deltaY = e.clientY - dragStartY.current;
+      const newTop = Math.max(0, Math.min(maxThumbTop, dragStartScroll.current + deltaY));
+      el.scrollTop = maxThumbTop > 0 ? (newTop / maxThumbTop) * maxScroll : 0;
     };
-  }, [isOpen, updatePosition]);
+    const handleMouseUp = () => setIsDragging(false);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
+
+  // Touch drag for mobile scrollbar thumb
+  useEffect(() => {
+    if (!isDragging) return;
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const el = listRef.current;
+      if (!el || !e.touches[0]) return;
+      const { scrollHeight, clientHeight } = el;
+      const trackH = clientHeight;
+      const maxScroll = scrollHeight - clientHeight;
+      const tH = Math.max((clientHeight / scrollHeight) * trackH, 28);
+      const maxThumbTop = trackH - tH;
+      const deltaY = e.touches[0].clientY - dragStartY.current;
+      const newTop = Math.max(0, Math.min(maxThumbTop, dragStartScroll.current + deltaY));
+      el.scrollTop = maxThumbTop > 0 ? (newTop / maxThumbTop) * maxScroll : 0;
+    };
+    const handleTouchEnd = () => setIsDragging(false);
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("touchend", handleTouchEnd);
+    return () => {
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [isDragging]);
+
+  const onThumbMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+    dragStartY.current = e.clientY;
+    dragStartScroll.current = thumbTop;
+  };
+
+  const onThumbTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    if (!e.touches[0]) return;
+    setIsDragging(true);
+    dragStartY.current = e.touches[0].clientY;
+    dragStartScroll.current = thumbTop;
+  };
+
+  const onTrackClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const el = listRef.current;
+    const track = trackRef.current;
+    if (!el || !track) return;
+    const rect = track.getBoundingClientRect();
+    const clickY = e.clientY - rect.top;
+    const { scrollHeight, clientHeight } = el;
+    el.scrollTop = (clickY / clientHeight) * (scrollHeight - clientHeight);
+  };
 
   const filtered = options.filter(opt =>
     opt.toLowerCase().includes(search.toLowerCase())
@@ -236,9 +325,7 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
       }
       return;
     }
-
     const totalItems = filtered.length + (showCustomOption ? 1 : 0);
-
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setHighlightedIndex(prev => (prev + 1 < totalItems ? prev + 1 : 0));
@@ -261,108 +348,13 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
     }
   };
 
-  // Scroll active item into view
+  // Scroll active item into view on keyboard nav
   useEffect(() => {
     if (highlightedIndex >= 0 && listRef.current) {
       const activeEl = listRef.current.children[highlightedIndex] as HTMLElement;
-      if (activeEl) {
-        activeEl.scrollIntoView({ block: "nearest" });
-      }
+      if (activeEl) activeEl.scrollIntoView({ block: "nearest" });
     }
   }, [highlightedIndex]);
-
-  // Dropdown panel rendered via portal
-  const dropdownPanel = isOpen && typeof document !== "undefined"
-    ? ReactDOM.createPortal(
-        <div
-          ref={dropdownRef}
-          onKeyDown={handleKeyDown}
-          style={{
-            position: "fixed",
-            top: dropdownPos.top,
-            left: dropdownPos.left,
-            width: dropdownPos.width,
-            zIndex: 99999,
-          }}
-          className="bg-white border border-slate-200 rounded-2xl shadow-2xl p-2 flex flex-col gap-1.5"
-        >
-          <style dangerouslySetInnerHTML={{ __html: `
-            .dropdown-scroll {
-              scrollbar-width: thin !important;
-              scrollbar-color: rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.05) !important;
-            }
-            .dropdown-scroll::-webkit-scrollbar {
-              width: 6px !important;
-              height: 6px !important;
-              display: block !important;
-            }
-            .dropdown-scroll::-webkit-scrollbar-track {
-              background: rgba(0, 0, 0, 0.03) !important;
-              border-radius: 8px !important;
-            }
-            .dropdown-scroll::-webkit-scrollbar-thumb {
-              background: rgba(0, 0, 0, 0.25) !important;
-              border-radius: 8px !important;
-            }
-            .dropdown-scroll::-webkit-scrollbar-thumb:hover {
-              background: rgba(0, 0, 0, 0.4) !important;
-            }
-          `}} />
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
-            <input
-              ref={inputRef}
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search..."
-              className="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#1F7A53] focus:border-transparent"
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
-          <div ref={listRef} role="listbox" className="overflow-y-auto flex flex-col dropdown-scroll" style={{ maxHeight: "200px" }}>
-            {filtered.map((opt, idx) => (
-              <div
-                key={opt}
-                role="option"
-                aria-selected={value === opt}
-                onClick={() => handleSelect(opt)}
-                onMouseEnter={() => setHighlightedIndex(idx)}
-                className={`px-2.5 py-1.5 text-xs rounded-lg cursor-pointer transition-colors ${
-                  highlightedIndex === idx
-                    ? "bg-[#1F7A53] text-white"
-                    : value === opt
-                    ? "bg-[#1F7A53]/10 text-[#1F7A53] font-semibold"
-                    : "text-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                {opt}
-              </div>
-            ))}
-
-            {showCustomOption && (
-              <div
-                role="option"
-                onClick={() => handleSelect(search.trim())}
-                onMouseEnter={() => setHighlightedIndex(filtered.length)}
-                className={`px-2.5 py-1.5 text-xs rounded-lg cursor-pointer transition-colors border-t border-slate-100 ${
-                  highlightedIndex === filtered.length
-                    ? "bg-[#1F7A53] text-white"
-                    : "text-slate-700 bg-slate-50 font-medium"
-                }`}
-              >
-                Use custom: &quot;{search.trim()}&quot;
-              </div>
-            )}
-
-            {filtered.length === 0 && !showCustomOption && (
-              <span className="text-xs text-slate-400 text-center py-3 select-none">No results found</span>
-            )}
-          </div>
-        </div>,
-        document.body
-      )
-    : null;
 
   return (
     <div className="relative flex flex-col gap-1 w-full" ref={containerRef} onKeyDown={handleKeyDown}>
@@ -370,7 +362,6 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <button
-        ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
@@ -384,7 +375,117 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
         </span>
         <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
-      {dropdownPanel}
+
+      {isOpen && (
+        <div className="absolute top-[100%] mt-1 left-0 right-0 bg-white border border-slate-200 rounded-2xl shadow-2xl p-2 flex flex-col gap-1.5" style={{ zIndex: 99999 }}>
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
+            <input
+              ref={inputRef}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#1F7A53] focus:border-transparent"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+
+          {/* Options list + custom scrollbar wrapper */}
+          <div className="relative">
+            {/* Hide native scrollbar via inline <style> */}
+            <style dangerouslySetInnerHTML={{ __html: `
+              .hide-native-sb::-webkit-scrollbar { display:none!important; width:0!important; }
+              .hide-native-sb { scrollbar-width:none!important; -ms-overflow-style:none!important; }
+            `}} />
+            <div
+              ref={listRef}
+              role="listbox"
+              data-hide-scrollbar
+              className="flex flex-col pr-3 hide-native-sb"
+              style={{
+                maxHeight: "180px",
+                overflowY: "auto",
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
+              {filtered.map((opt, idx) => (
+                <div
+                  key={opt}
+                  role="option"
+                  aria-selected={value === opt}
+                  onClick={() => handleSelect(opt)}
+                  onMouseEnter={() => setHighlightedIndex(idx)}
+                  className={`px-2.5 py-1.5 text-xs rounded-lg cursor-pointer transition-colors flex-shrink-0 ${
+                    highlightedIndex === idx
+                      ? "bg-[#1F7A53] text-white"
+                      : value === opt
+                      ? "bg-[#1F7A53]/10 text-[#1F7A53] font-semibold"
+                      : "text-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  {opt}
+                </div>
+              ))}
+
+              {showCustomOption && (
+                <div
+                  role="option"
+                  onClick={() => handleSelect(search.trim())}
+                  onMouseEnter={() => setHighlightedIndex(filtered.length)}
+                  className={`px-2.5 py-1.5 text-xs rounded-lg cursor-pointer transition-colors border-t border-slate-100 flex-shrink-0 ${
+                    highlightedIndex === filtered.length
+                      ? "bg-[#1F7A53] text-white"
+                      : "text-slate-700 bg-slate-50 font-medium"
+                  }`}
+                >
+                  Use custom: &quot;{search.trim()}&quot;
+                </div>
+              )}
+
+              {filtered.length === 0 && !showCustomOption && (
+                <span className="text-xs text-slate-400 text-center py-3 select-none">No results found</span>
+              )}
+            </div>
+
+            {/* ── Always-visible custom scrollbar track + draggable thumb ── */}
+            {showThumb && (
+              <div
+                ref={trackRef}
+                onClick={onTrackClick}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  width: "8px",
+                  height: "180px",
+                  backgroundColor: "rgba(0,0,0,0.06)",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  zIndex: 10,
+                }}
+              >
+                <div
+                  onMouseDown={onThumbMouseDown}
+                  onTouchStart={onThumbTouchStart}
+                  style={{
+                    position: "absolute",
+                    top: thumbTop,
+                    left: 0,
+                    width: "8px",
+                    height: thumbHeight,
+                    backgroundColor: isDragging ? "rgba(31,122,83,0.85)" : "rgba(31,122,83,0.5)",
+                    borderRadius: "8px",
+                    cursor: "grab",
+                    transition: isDragging ? "none" : "background-color 0.15s",
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       {error && <span className="text-[10px] text-red-500 mt-0.5">{error}</span>}
     </div>
   );
