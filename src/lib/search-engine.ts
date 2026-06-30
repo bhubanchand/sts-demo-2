@@ -71,7 +71,7 @@ export const POPULAR_PAGES: { title: string; href: string; category: string }[] 
   { title: "AI Engine", href: "/intelligence/ai-engine", category: "Intelligence" },
   { title: "Coffee Insights", href: "/CropInsights/coffee", category: "Crop Insights" },
   { title: "About SourceTrace", href: "/about", category: "Company" },
-  { title: "Request Demo", href: "/request-demo", category: "Company" },
+  { title: "Contact Sales", href: "/contact-sales", category: "Company" },
 ];
 
 export const SUGGESTED_CATEGORIES = [

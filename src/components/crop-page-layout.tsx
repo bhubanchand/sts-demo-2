@@ -1825,7 +1825,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
               variant="outline" 
               className="h-14 px-8 text-base font-semibold font-mono rounded-full border-gray-300 hover:bg-slate-50 text-slate-700 transition-all bg-transparent"
             >
-              <Link href="/request-demo" className="w-full h-full flex items-center justify-center">Talk to a Sourcing Expert</Link>
+              <Link href="/contact-sales" className="w-full h-full flex items-center justify-center">Talk to a Sourcing Expert</Link>
             </Button>
           </div>
         </div>

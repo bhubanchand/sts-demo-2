@@ -2366,13 +2366,8 @@ export function CompliancePageLayout({ data }: Props) {
           </p>
 
           <div className="flex gap-4">
-            <Link href="/request-demo">
+            <Link href="/contact-sales">
                <Button size="lg" className="rounded-full bg-[#0B3D2E] text-white hover:bg-[#1F7A53] border-none font-bold shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer">
-                 Request Demo
-               </Button>
-            </Link>
-            <Link href="/contact">
-               <Button size="lg" variant="outline" className="rounded-full border-gray-200 text-[#0B3D2E] hover:bg-gray-50 font-bold cursor-pointer">
                  Contact Sales
                </Button>
             </Link>

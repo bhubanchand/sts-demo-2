@@ -228,9 +228,8 @@ export function MegaMenu() {
 
           <div className="hidden lg:flex items-center gap-3">
             <GlobalSearch isSearchOpen={isSearchOpen} onSearchOpen={openSearch} onSearchClose={closeSearch} variant="desktop" />
-            <Link href="/contact-sales" className={`text-sm font-medium text-gray-600 hover:text-[#0B3D2E] transition-all duration-250 whitespace-nowrap ${isSearchOpen ? "opacity-0 pointer-events-none w-0 overflow-hidden" : "opacity-100"}`}>Contact Sales</Link>
-            <Link href="/request-demo" className={`transition-all duration-250 ${isSearchOpen ? "opacity-0 pointer-events-none w-0 overflow-hidden" : "opacity-100"}`}>
-              <Button size="sm" className="h-10 px-6 rounded-full font-semibold bg-[#0B3D2E] text-white hover:bg-[#1F7A53]">Request Demo</Button>
+            <Link href="/contact-sales" className={`transition-all duration-250 ${isSearchOpen ? "opacity-0 pointer-events-none w-0 overflow-hidden" : "opacity-100"}`}>
+              <Button size="sm" className="h-10 px-6 rounded-full font-semibold bg-[#0B3D2E] text-white hover:bg-[#1F7A53]">Contact Sales</Button>
             </Link>
           </div>
 
@@ -548,22 +547,13 @@ export function MegaMenu() {
 
               {/* Bottom CTA area */}
               <div className="px-5 py-5 border-t border-gray-100 bg-gray-50/50">
-                <div className="flex gap-3">
                   <Link
                     href="/contact-sales"
                     onClick={closeMobile}
-                    className="flex-1 py-3 text-center text-[13px] text-gray-700 font-semibold border border-gray-200 rounded-xl transition-colors bg-white hover:bg-gray-50 active:scale-[0.98]"
+                    className="block w-full py-3.5 text-center text-[13px] font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-xl transition-colors shadow-lg shadow-[#0B3D2E]/20 active:scale-[0.98]"
                   >
                     Contact Sales
                   </Link>
-                  <Link
-                    href="/request-demo"
-                    onClick={closeMobile}
-                    className="flex-1 py-3 text-center text-[13px] font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-xl transition-colors shadow-lg shadow-[#0B3D2E]/20 active:scale-[0.98]"
-                  >
-                    Request Demo
-                  </Link>
-                </div>
               </div>
             </div>
           </motion.div>

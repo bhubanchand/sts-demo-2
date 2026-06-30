@@ -31,9 +31,9 @@ export function Footer() {
               <p className="text-gray-300 mb-6 text-lg">
                  Transform your agri-business with SourceTrace&apos;s AI-powered solutions. Reach out to us today to accelerate growth and boost yields with data-driven insights.
               </p>
-              <Link href="/request-demo">
+              <Link href="/contact-sales">
                  <Button className="rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white border-none font-bold px-8">
-                    Schedule a demo →
+                    Contact Sales →
                  </Button>
               </Link>
            </div>

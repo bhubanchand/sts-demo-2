@@ -17,13 +17,8 @@ export function CTASection() {
                Join hundreds of leading global enterprises who trust SourceTrace to digitize their first mile, ensure compliance, and prove their impact.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 relative z-10">
-               <Link href="/request-demo">
-                  <Button size="lg" className="h-14 px-10 text-lg rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white border-none font-bold">
-                     Request a Demo
-                  </Button>
-               </Link>
                <Link href="/contact-sales">
-                  <Button size="lg" variant="outline" className="h-14 px-10 text-lg rounded-full border-white/20 text-white hover:bg-white/10 font-bold flex items-center gap-2">
+                  <Button size="lg" className="h-14 px-10 text-lg rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white border-none font-bold flex items-center gap-2">
                      Contact Sales <ArrowRight className="w-5 h-5" />
                   </Button>
                </Link>
