@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { CalendarDays, X, Search, ChevronDown, CheckCircle2, Loader2 } from "lucide-react";
 
@@ -160,30 +161,60 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on click outside
+  // Recalculate dropdown position from trigger button
+  const updatePosition = useCallback(() => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+      });
+    }
+  }, []);
+
+  // Close dropdown on click outside (check both container and portal dropdown)
   useEffect(() => {
+    if (!isOpen) return;
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        containerRef.current && !containerRef.current.contains(target) &&
+        dropdownRef.current && !dropdownRef.current.contains(target)
+      ) {
         setIsOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Autofocus input when dropdown opens
-  useEffect(() => {
-    if (isOpen) {
-      inputRef.current?.focus();
-      setHighlightedIndex(-1);
-    } else {
-      setSearch("");
-    }
   }, [isOpen]);
+
+  // Position dropdown on open and update on scroll/resize
+  useEffect(() => {
+    if (!isOpen) {
+      setSearch("");
+      return;
+    }
+    updatePosition();
+    inputRef.current?.focus();
+    setHighlightedIndex(-1);
+
+    const handleScrollOrResize = () => updatePosition();
+    // Listen on all scroll events (capture) since the modal itself scrolls
+    window.addEventListener("scroll", handleScrollOrResize, true);
+    window.addEventListener("resize", handleScrollOrResize);
+    return () => {
+      window.removeEventListener("scroll", handleScrollOrResize, true);
+      window.removeEventListener("resize", handleScrollOrResize);
+    };
+  }, [isOpen, updatePosition]);
 
   const filtered = options.filter(opt =>
     opt.toLowerCase().includes(search.toLowerCase())
@@ -240,50 +271,43 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
     }
   }, [highlightedIndex]);
 
-  return (
-    <div className="relative flex flex-col gap-1 w-full" ref={containerRef} onKeyDown={handleKeyDown}>
-      <style dangerouslySetInnerHTML={{ __html: `
-        .dropdown-scroll {
-          scrollbar-width: thin !important;
-          scrollbar-color: rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.05) !important;
-        }
-        .dropdown-scroll::-webkit-scrollbar {
-          width: 6px !important;
-          height: 6px !important;
-          display: block !important;
-        }
-        .dropdown-scroll::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.03) !important;
-          border-radius: 8px !important;
-        }
-        .dropdown-scroll::-webkit-scrollbar-thumb {
-          background: rgba(0, 0, 0, 0.25) !important;
-          border-radius: 8px !important;
-        }
-        .dropdown-scroll::-webkit-scrollbar-thumb:hover {
-          background: rgba(0, 0, 0, 0.4) !important;
-        }
-      `}} />
-      <label className="text-[11px] font-semibold text-slate-700 select-none">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        className={`w-full border rounded-xl px-3 py-2 bg-white text-slate-800 text-xs flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all text-left ${
-          error ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
-        }`}
-      >
-        <span className={value ? "text-slate-800 font-medium" : "text-slate-400"}>
-          {value || placeholder || "Select..."}
-        </span>
-        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-[105%] left-0 right-0 bg-white border border-slate-200 rounded-2xl shadow-xl z-[60] p-2 flex flex-col gap-1.5">
+  // Dropdown panel rendered via portal
+  const dropdownPanel = isOpen && typeof document !== "undefined"
+    ? ReactDOM.createPortal(
+        <div
+          ref={dropdownRef}
+          onKeyDown={handleKeyDown}
+          style={{
+            position: "fixed",
+            top: dropdownPos.top,
+            left: dropdownPos.left,
+            width: dropdownPos.width,
+            zIndex: 99999,
+          }}
+          className="bg-white border border-slate-200 rounded-2xl shadow-2xl p-2 flex flex-col gap-1.5"
+        >
+          <style dangerouslySetInnerHTML={{ __html: `
+            .dropdown-scroll {
+              scrollbar-width: thin !important;
+              scrollbar-color: rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.05) !important;
+            }
+            .dropdown-scroll::-webkit-scrollbar {
+              width: 6px !important;
+              height: 6px !important;
+              display: block !important;
+            }
+            .dropdown-scroll::-webkit-scrollbar-track {
+              background: rgba(0, 0, 0, 0.03) !important;
+              border-radius: 8px !important;
+            }
+            .dropdown-scroll::-webkit-scrollbar-thumb {
+              background: rgba(0, 0, 0, 0.25) !important;
+              border-radius: 8px !important;
+            }
+            .dropdown-scroll::-webkit-scrollbar-thumb:hover {
+              background: rgba(0, 0, 0, 0.4) !important;
+            }
+          `}} />
           <div className="relative">
             <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
             <input
@@ -291,12 +315,12 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search or type custom..."
-              className="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#1F7A53] focus:border-transparent"
+              placeholder="Search..."
+              className="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#1F7A53] focus:border-transparent"
               onClick={(e) => e.stopPropagation()}
             />
           </div>
-          <div ref={listRef} role="listbox" className="overflow-y-auto max-h-48 flex flex-col dropdown-scroll">
+          <div ref={listRef} role="listbox" className="overflow-y-auto flex flex-col dropdown-scroll" style={{ maxHeight: "200px" }}>
             {filtered.map((opt, idx) => (
               <div
                 key={opt}
@@ -327,7 +351,7 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
                     : "text-slate-700 bg-slate-50 font-medium"
                 }`}
               >
-                Use custom: "{search.trim()}"
+                Use custom: &quot;{search.trim()}&quot;
               </div>
             )}
 
@@ -335,8 +359,32 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
               <span className="text-xs text-slate-400 text-center py-3 select-none">No results found</span>
             )}
           </div>
-        </div>
-      )}
+        </div>,
+        document.body
+      )
+    : null;
+
+  return (
+    <div className="relative flex flex-col gap-1 w-full" ref={containerRef} onKeyDown={handleKeyDown}>
+      <label className="text-[11px] font-semibold text-slate-700 select-none">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        className={`w-full border rounded-xl px-3 py-2 bg-white text-slate-800 text-xs flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all text-left ${
+          error ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
+        }`}
+      >
+        <span className={value ? "text-slate-800 font-medium" : "text-slate-400"}>
+          {value || placeholder || "Select..."}
+        </span>
+        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+      </button>
+      {dropdownPanel}
       {error && <span className="text-[10px] text-red-500 mt-0.5">{error}</span>}
     </div>
   );
