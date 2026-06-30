@@ -187,7 +187,7 @@ function MeetTheTeamContent() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-gradient-to-b from-white via-slate-50/80 to-white pt-32 pb-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1200px] mx-auto">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -199,7 +199,7 @@ function MeetTheTeamContent() {
             text="Meet The Team"
             className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#0B3D2E] mb-6 leading-tight"
           />
-          <p className="text-gray-600 text-lg sm:text-xl leading-relaxed">
+          <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
             SourceTrace is driven by global visionaries, technologists, and agricultural specialists committed to building transparent, compliant, and resilient value chains.
           </p>
         </div>
@@ -212,19 +212,21 @@ function MeetTheTeamContent() {
               <div
                 key={section.id}
                 id={section.id}
-                className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-300"
+                className={`rounded-3xl overflow-hidden shadow-sm border transition-all duration-300 ${
+                  isOpen ? "bg-white border-[#1F7A53]/25 shadow-md border-l-4 border-l-[#1F7A53]" : "bg-white border-slate-100 hover:border-slate-200"
+                }`}
               >
                 {/* Accordion Header */}
                 <button
                   onClick={() => handleToggle(section.id)}
-                  className={`w-full flex items-center justify-between px-8 py-7 text-left font-bold text-xl sm:text-2xl transition-colors select-none cursor-pointer ${
-                    isOpen ? "bg-[#0B3D2E]/5 text-[#0B3D2E]" : "text-gray-800 hover:bg-gray-50"
+                  className={`w-full flex items-center justify-between px-8 py-7 text-left font-extrabold text-xl sm:text-2xl transition-colors select-none cursor-pointer ${
+                    isOpen ? "bg-gradient-to-r from-[#0B3D2E]/5 to-transparent text-[#0B3D2E]" : "text-slate-800 hover:bg-slate-50/50"
                   }`}
                 >
                   <span>{section.title}</span>
                   <ChevronDown
-                    className={`w-6 h-6 text-gray-400 transition-transform duration-300 ${
-                      isOpen ? "rotate-180 text-[#0B3D2E]" : ""
+                    className={`w-6 h-6 text-slate-400 transition-transform duration-300 ${
+                      isOpen ? "rotate-180 text-[#1F7A53]" : ""
                     }`}
                   />
                 </button>
@@ -239,44 +241,43 @@ function MeetTheTeamContent() {
                       transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="px-8 pb-12 pt-4">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                      <div className="px-8 pb-12 pt-6 border-t border-slate-100/50">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
                           {section.members.map((member, mIdx) => (
                             <motion.div
                               key={member.name}
                               initial={{ opacity: 0, y: 16 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ duration: 0.3, delay: mIdx * 0.05 }}
-                              className="flex flex-col items-center text-center group"
+                              className="flex flex-col items-center text-center group bg-slate-50/40 hover:bg-white border border-transparent hover:border-slate-100 hover:shadow-md rounded-3xl p-6 transition-all duration-300"
                             >
                               {/* Photo container */}
-                              <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden mb-5 border-2 border-gray-100 group-hover:border-[#53D769] transition-all duration-300 shadow-sm flex-shrink-0">
+                              <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden mb-5 border-4 border-white shadow-md ring-2 ring-slate-100 group-hover:ring-[#53D769] transition-all duration-300 flex-shrink-0">
                                 <img
                                   src={member.image}
                                   alt={member.name}
                                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                 />
-                                {/* LinkedIn Hover Overlay */}
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                  <a
-                                    href={member.linkedin}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-10 h-10 rounded-full bg-white text-[#0A66C2] flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-md"
-                                    aria-label={`Visit ${member.name}'s LinkedIn profile`}
-                                  >
-                                    <LinkedinIcon className="w-5 h-5" />
-                                  </a>
-                                </div>
                               </div>
 
                               {/* Details */}
-                              <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-1 group-hover:text-[#0B3D2E] transition-colors leading-tight">
+                              <h3 className="font-bold text-slate-800 text-base sm:text-lg mb-1 group-hover:text-[#0B3D2E] transition-colors leading-tight">
                                 {member.name}
                               </h3>
-                              <p className="text-gray-500 text-xs sm:text-sm font-medium leading-normal max-w-[150px] mx-auto">
+                              <p className="text-slate-500 text-xs sm:text-sm font-medium leading-normal mb-4 min-h-[40px] flex items-center justify-center max-w-[170px] mx-auto">
                                 {member.role}
                               </p>
+                              
+                              {/* Always Visible LinkedIn Icon */}
+                              <a
+                                href={member.linkedin}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-9 h-9 rounded-full bg-slate-100 hover:bg-[#0A66C2] text-slate-400 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm active:scale-90"
+                                aria-label={`Visit ${member.name}'s LinkedIn profile`}
+                              >
+                                <LinkedinIcon className="w-4 h-4" />
+                              </a>
                             </motion.div>
                           ))}
                         </div>
