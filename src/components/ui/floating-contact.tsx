@@ -242,6 +242,28 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
 
   return (
     <div className="relative flex flex-col gap-1 w-full" ref={containerRef} onKeyDown={handleKeyDown}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .dropdown-scroll {
+          scrollbar-width: thin !important;
+          scrollbar-color: rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.05) !important;
+        }
+        .dropdown-scroll::-webkit-scrollbar {
+          width: 6px !important;
+          height: 6px !important;
+          display: block !important;
+        }
+        .dropdown-scroll::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.03) !important;
+          border-radius: 8px !important;
+        }
+        .dropdown-scroll::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.25) !important;
+          border-radius: 8px !important;
+        }
+        .dropdown-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.4) !important;
+        }
+      `}} />
       <label className="text-[11px] font-semibold text-slate-700 select-none">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
@@ -261,7 +283,7 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
       </button>
 
       {isOpen && (
-        <div className="absolute top-[105%] left-0 right-0 bg-white border border-slate-200 rounded-2xl shadow-xl z-[60] max-h-48 p-2 flex flex-col gap-1.5">
+        <div className="absolute top-[105%] left-0 right-0 bg-white border border-slate-200 rounded-2xl shadow-xl z-[60] p-2 flex flex-col gap-1.5">
           <div className="relative">
             <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
             <input
@@ -274,7 +296,7 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
               onClick={(e) => e.stopPropagation()}
             />
           </div>
-          <div ref={listRef} role="listbox" className="overflow-y-auto max-h-32 flex flex-col scrollbar-thin">
+          <div ref={listRef} role="listbox" className="overflow-y-auto max-h-48 flex flex-col dropdown-scroll">
             {filtered.map((opt, idx) => (
               <div
                 key={opt}
