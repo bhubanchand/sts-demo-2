@@ -242,7 +242,7 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
 
   return (
     <div className="relative flex flex-col gap-1 w-full" ref={containerRef} onKeyDown={handleKeyDown}>
-      <label className="text-xs font-semibold text-slate-700 select-none">
+      <label className="text-[11px] font-semibold text-slate-700 select-none">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <button
@@ -250,31 +250,31 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        className={`w-full border rounded-xl px-4 py-3 bg-white text-slate-800 text-sm flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all text-left ${
+        className={`w-full border rounded-xl px-3 py-2 bg-white text-slate-800 text-xs flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all text-left ${
           error ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
         }`}
       >
         <span className={value ? "text-slate-800 font-medium" : "text-slate-400"}>
           {value || placeholder || "Select..."}
         </span>
-        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute top-[105%] left-0 right-0 bg-white border border-slate-200 rounded-2xl shadow-xl z-[60] max-h-60 p-2 flex flex-col gap-2">
+        <div className="absolute top-[105%] left-0 right-0 bg-white border border-slate-200 rounded-2xl shadow-xl z-[60] max-h-48 p-2 flex flex-col gap-1.5">
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
             <input
               ref={inputRef}
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search or type custom..."
-              className="w-full border border-slate-200 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#1F7A53] focus:border-transparent"
+              className="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#1F7A53] focus:border-transparent"
               onClick={(e) => e.stopPropagation()}
             />
           </div>
-          <div ref={listRef} role="listbox" className="overflow-y-auto max-h-40 flex flex-col scrollbar-thin">
+          <div ref={listRef} role="listbox" className="overflow-y-auto max-h-32 flex flex-col scrollbar-thin">
             {filtered.map((opt, idx) => (
               <div
                 key={opt}
@@ -282,7 +282,7 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
                 aria-selected={value === opt}
                 onClick={() => handleSelect(opt)}
                 onMouseEnter={() => setHighlightedIndex(idx)}
-                className={`px-3 py-2 text-xs rounded-lg cursor-pointer transition-colors ${
+                className={`px-2.5 py-1.5 text-xs rounded-lg cursor-pointer transition-colors ${
                   highlightedIndex === idx
                     ? "bg-[#1F7A53] text-white"
                     : value === opt
@@ -299,7 +299,7 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
                 role="option"
                 onClick={() => handleSelect(search.trim())}
                 onMouseEnter={() => setHighlightedIndex(filtered.length)}
-                className={`px-3 py-2 text-xs rounded-lg cursor-pointer transition-colors border-t border-slate-100 ${
+                className={`px-2.5 py-1.5 text-xs rounded-lg cursor-pointer transition-colors border-t border-slate-100 ${
                   highlightedIndex === filtered.length
                     ? "bg-[#1F7A53] text-white"
                     : "text-slate-700 bg-slate-50 font-medium"
@@ -310,12 +310,12 @@ function SearchableSelect({ label, options, value, onChange, error, placeholder,
             )}
 
             {filtered.length === 0 && !showCustomOption && (
-              <span className="text-xs text-slate-400 text-center py-4 select-none">No results found</span>
+              <span className="text-xs text-slate-400 text-center py-3 select-none">No results found</span>
             )}
           </div>
         </div>
       )}
-      {error && <span className="text-xs text-red-500 mt-0.5">{error}</span>}
+      {error && <span className="text-[10px] text-red-500 mt-0.5">{error}</span>}
     </div>
   );
 }
@@ -443,7 +443,7 @@ export function FloatingContact() {
     } else {
       const cleanPhone = formData.phoneNumber.replace(/\D/g, "");
       if (cleanPhone.length < 7 || cleanPhone.length > 15) {
-        newErrors.phoneNumber = "Phone number must be between 7 and 15 digits";
+        newErrors.phoneNumber = "Phone number must be 7-15 digits";
       }
     }
 
@@ -457,9 +457,9 @@ export function FloatingContact() {
     // Dynamic postal code validation
     if (formData.zipCode.trim()) {
       if (formData.country === "United States" && !/^\d{5}(-\d{4})?$/.test(formData.zipCode)) {
-        newErrors.zipCode = "Invalid US ZIP code format (5 digits)";
+        newErrors.zipCode = "Invalid US ZIP format (5 digits)";
       } else if (formData.country === "India" && !/^\d{6}$/.test(formData.zipCode)) {
-        newErrors.zipCode = "Invalid Indian Pin Code (6 digits)";
+        newErrors.zipCode = "Invalid Indian PIN (6 digits)";
       } else if (formData.country === "Canada" && !/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(formData.zipCode)) {
         newErrors.zipCode = "Invalid Canadian Postal Code";
       }
@@ -546,7 +546,7 @@ export function FloatingContact() {
       {/* Modal Popup & Overlay */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop Blur Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -563,7 +563,7 @@ export function FloatingContact() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ type: "spring", duration: 0.4 }}
-              className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 max-h-[85vh] flex flex-col overflow-hidden relative border border-slate-100 z-10"
+              className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full flex flex-col relative border border-slate-100 z-10 max-h-[90vh] overflow-y-auto lg:overflow-visible scrollbar-thin"
             >
               {/* Close Button */}
               <button
@@ -577,20 +577,20 @@ export function FloatingContact() {
               {!success ? (
                 <>
                   {/* Header Title & Subtitle */}
-                  <div className="p-6 md:p-8 pb-4 border-b border-slate-100 pr-12">
-                    <h2 className="text-2xl font-black text-[#0B3D2E]">Request a Demo</h2>
-                    <p className="text-slate-500 text-xs sm:text-sm mt-1.5 leading-relaxed">
+                  <div className="px-6 py-5 md:px-8 md:py-6 border-b border-slate-100 pr-12">
+                    <h2 className="text-xl md:text-2xl font-black text-[#0B3D2E]">Request a Demo</h2>
+                    <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                       See how SourceTrace can help your organization improve traceability, compliance, sustainability, and supply chain visibility.
                     </p>
                   </div>
 
-                  {/* Scrollable Form Body */}
-                  <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 md:p-8 space-y-5 scrollbar-thin">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Non-scrollable unified form on large screens */}
+                  <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-4 overflow-visible">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3.5">
                       
                       {/* First Name */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-700">
+                        <label className="text-[11px] font-semibold text-slate-700">
                           First Name <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -598,58 +598,75 @@ export function FloatingContact() {
                           type="text"
                           value={formData.firstName}
                           onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                          className={`border rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
+                          className={`border rounded-xl px-3 py-2 text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
                             errors.firstName ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
                           }`}
                           placeholder="Jane"
                         />
-                        {errors.firstName && <span className="text-xs text-red-500 mt-0.5">{errors.firstName}</span>}
+                        {errors.firstName && <span className="text-[10px] text-red-500 mt-0.5">{errors.firstName}</span>}
                       </div>
 
                       {/* Last Name */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-700">
+                        <label className="text-[11px] font-semibold text-slate-700">
                           Last Name <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
                           value={formData.lastName}
                           onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                          className={`border rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
+                          className={`border rounded-xl px-3 py-2 text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
                             errors.lastName ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
                           }`}
                           placeholder="Doe"
                         />
-                        {errors.lastName && <span className="text-xs text-red-500 mt-0.5">{errors.lastName}</span>}
+                        {errors.lastName && <span className="text-[10px] text-red-500 mt-0.5">{errors.lastName}</span>}
+                      </div>
+
+                      {/* Organization Name */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[11px] font-semibold text-slate-700">
+                          Organization Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.organizationName}
+                          onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
+                          className={`border rounded-xl px-3 py-2 text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
+                            errors.organizationName ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
+                          }`}
+                          placeholder="Acme Corp"
+                        />
+                        {errors.organizationName && <span className="text-[10px] text-red-500 mt-0.5">{errors.organizationName}</span>}
                       </div>
 
                       {/* Business Email */}
-                      <div className="flex flex-col gap-1 md:col-span-2">
-                        <label className="text-xs font-semibold text-slate-700">
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[11px] font-semibold text-slate-700">
                           Business Email <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="email"
                           value={formData.businessEmail}
                           onChange={(e) => setFormData({ ...formData, businessEmail: e.target.value })}
-                          className={`border rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
+                          className={`border rounded-xl px-3 py-2 text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
                             errors.businessEmail ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
                           }`}
                           placeholder="jane.doe@company.com"
                         />
-                        {errors.businessEmail && <span className="text-xs text-red-500 mt-0.5">{errors.businessEmail}</span>}
+                        {errors.businessEmail && <span className="text-[10px] text-red-500 mt-0.5">{errors.businessEmail}</span>}
                       </div>
 
                       {/* Business Phone with Prefix */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-700">
+                        <label className="text-[11px] font-semibold text-slate-700">
                           Business Phone <span className="text-red-500">*</span>
                         </label>
                         <div className="flex gap-2">
                           <select
                             value={formData.phonePrefix}
                             onChange={(e) => setFormData({ ...formData, phonePrefix: e.target.value })}
-                            className="w-24 border border-slate-200 rounded-xl px-2 py-3 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent cursor-pointer"
+                            className="w-20 border border-slate-200 rounded-xl px-2 py-2 bg-white text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent cursor-pointer"
                           >
                             {PHONE_PREFIXES.map((item) => (
                               <option key={`${item.code}-${item.prefix}`} value={item.prefix}>
@@ -661,41 +678,24 @@ export function FloatingContact() {
                             type="tel"
                             value={formData.phoneNumber}
                             onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                            className={`flex-1 border rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
+                            className={`flex-1 border rounded-xl px-3 py-2 text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
                               errors.phoneNumber ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
                             }`}
                             placeholder="555-0199"
                           />
                         </div>
-                        {errors.phoneNumber && <span className="text-xs text-red-500 mt-0.5">{errors.phoneNumber}</span>}
-                      </div>
-
-                      {/* Organization Name */}
-                      <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-700">
-                          Organization Name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.organizationName}
-                          onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
-                          className={`border rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
-                            errors.organizationName ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
-                          }`}
-                          placeholder="Acme Corp"
-                        />
-                        {errors.organizationName && <span className="text-xs text-red-500 mt-0.5">{errors.organizationName}</span>}
+                        {errors.phoneNumber && <span className="text-[10px] text-red-500 mt-0.5">{errors.phoneNumber}</span>}
                       </div>
 
                       {/* Job Title / Role */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-700">
+                        <label className="text-[11px] font-semibold text-slate-700">
                           Job Title / Role <span className="text-red-500">*</span>
                         </label>
                         <select
                           value={formData.jobTitle}
                           onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
-                          className={`border rounded-xl px-4 py-3 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all cursor-pointer ${
+                          className={`border rounded-xl px-3 py-2 bg-white text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all cursor-pointer ${
                             errors.jobTitle ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
                           }`}
                         >
@@ -706,18 +706,18 @@ export function FloatingContact() {
                             </option>
                           ))}
                         </select>
-                        {errors.jobTitle && <span className="text-xs text-red-500 mt-0.5">{errors.jobTitle}</span>}
+                        {errors.jobTitle && <span className="text-[10px] text-red-500 mt-0.5">{errors.jobTitle}</span>}
                       </div>
 
                       {/* Department */}
                       <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-700">
+                        <label className="text-[11px] font-semibold text-slate-700">
                           Department <span className="text-red-500">*</span>
                         </label>
                         <select
                           value={formData.department}
                           onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                          className={`border rounded-xl px-4 py-3 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all cursor-pointer ${
+                          className={`border rounded-xl px-3 py-2 bg-white text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all cursor-pointer ${
                             errors.department ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
                           }`}
                         >
@@ -728,7 +728,46 @@ export function FloatingContact() {
                             </option>
                           ))}
                         </select>
-                        {errors.department && <span className="text-xs text-red-500 mt-0.5">{errors.department}</span>}
+                        {errors.department && <span className="text-[10px] text-red-500 mt-0.5">{errors.department}</span>}
+                      </div>
+
+                      {/* Primary Product of Interest */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[11px] font-semibold text-slate-700">
+                          Primary Product of Interest <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          value={formData.productOfInterest}
+                          onChange={(e) => setFormData({ ...formData, productOfInterest: e.target.value })}
+                          className={`border rounded-xl px-3 py-2 bg-white text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all cursor-pointer ${
+                            errors.productOfInterest ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
+                          }`}
+                        >
+                          <option value="">Select Option...</option>
+                          {PRODUCTS.map((prod) => (
+                            <option key={prod} value={prod}>
+                              {prod}
+                            </option>
+                          ))}
+                        </select>
+                        {errors.productOfInterest && <span className="text-[10px] text-red-500 mt-0.5">{errors.productOfInterest}</span>}
+                      </div>
+
+                      {/* ZIP / Postal Code */}
+                      <div className="flex flex-col gap-1">
+                        <label className="text-[11px] font-semibold text-slate-700">
+                          ZIP / Postal Code
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.zipCode}
+                          onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
+                          className={`border rounded-xl px-3 py-2 text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
+                            errors.zipCode ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
+                          }`}
+                          placeholder="e.g. 90210"
+                        />
+                        {errors.zipCode && <span className="text-[10px] text-red-500 mt-0.5">{errors.zipCode}</span>}
                       </div>
 
                       {/* Country Searchable Dropdown */}
@@ -738,7 +777,7 @@ export function FloatingContact() {
                         value={formData.country}
                         onChange={handleCountryChange}
                         error={errors.country}
-                        placeholder="Search & select country..."
+                        placeholder="Search country..."
                         required
                       />
 
@@ -754,63 +793,24 @@ export function FloatingContact() {
                         required
                       />
 
-                      {/* ZIP / Postal Code */}
-                      <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-700">
-                          ZIP / Postal Code
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.zipCode}
-                          onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
-                          className={`border rounded-xl px-4 py-3 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all ${
-                            errors.zipCode ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
-                          }`}
-                          placeholder="e.g. 90210"
-                        />
-                        {errors.zipCode && <span className="text-xs text-red-500 mt-0.5">{errors.zipCode}</span>}
-                      </div>
-
-                      {/* Primary Product of Interest */}
-                      <div className="flex flex-col gap-1">
-                        <label className="text-xs font-semibold text-slate-700">
-                          Primary Product of Interest <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                          value={formData.productOfInterest}
-                          onChange={(e) => setFormData({ ...formData, productOfInterest: e.target.value })}
-                          className={`border rounded-xl px-4 py-3 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F7A53] focus:border-transparent transition-all cursor-pointer ${
-                            errors.productOfInterest ? "border-red-500 ring-1 ring-red-500" : "border-slate-200 hover:border-slate-300"
-                          }`}
+                      {/* Submit Button (spans all 3 columns on desktop grid) */}
+                      <div className="lg:col-span-3 pt-2">
+                        <button
+                          type="submit"
+                          disabled={loading}
+                          className="w-full bg-[#53D769] hover:bg-[#0B3D2E] text-[#0B3D2E] hover:text-white font-bold text-sm py-3.5 rounded-2xl transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed select-none"
                         >
-                          <option value="">Select Option...</option>
-                          {PRODUCTS.map((prod) => (
-                            <option key={prod} value={prod}>
-                              {prod}
-                            </option>
-                          ))}
-                        </select>
-                        {errors.productOfInterest && <span className="text-xs text-red-500 mt-0.5">{errors.productOfInterest}</span>}
+                          {loading ? (
+                            <>
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                              <span>Processing Request...</span>
+                            </>
+                          ) : (
+                            <span>Request Demo</span>
+                          )}
+                        </button>
                       </div>
 
-                    </div>
-
-                    {/* Submit Button */}
-                    <div className="pt-4">
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-[#53D769] hover:bg-[#0B3D2E] text-[#0B3D2E] hover:text-white font-bold text-base py-4 rounded-2xl transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed select-none"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                            <span>Processing Request...</span>
-                          </>
-                        ) : (
-                          <span>Request Demo</span>
-                        )}
-                      </button>
                     </div>
                   </form>
                 </>
@@ -819,18 +819,18 @@ export function FloatingContact() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-8 md:p-12 flex flex-col items-center text-center justify-center my-auto min-h-[350px]"
+                  className="p-8 md:p-12 flex flex-col items-center text-center justify-center my-auto min-h-[300px]"
                 >
-                  <div className="w-20 h-20 rounded-full bg-[#53D769]/10 flex items-center justify-center mb-6">
-                    <CheckCircle2 className="w-12 h-12 text-[#1F7A53]" />
+                  <div className="w-16 h-16 rounded-full bg-[#53D769]/10 flex items-center justify-center mb-6">
+                    <CheckCircle2 className="w-10 h-10 text-[#1F7A53]" />
                   </div>
-                  <h2 className="text-3xl font-black text-[#0B3D2E] mb-3">Thank You!</h2>
-                  <p className="text-slate-600 text-sm max-w-md leading-relaxed mb-8">
+                  <h2 className="text-2xl md:text-3xl font-black text-[#0B3D2E] mb-3">Thank You!</h2>
+                  <p className="text-slate-600 text-xs sm:text-sm max-w-md leading-relaxed mb-8">
                     Your demo request has been received. Our team will contact you shortly to schedule a personalized demonstration of SourceTrace.
                   </p>
                   <button
                     onClick={handleClose}
-                    className="bg-[#0B3D2E] hover:bg-[#1F7A53] text-white font-bold px-8 py-3 rounded-xl transition-all shadow-md active:scale-95 cursor-pointer select-none"
+                    className="bg-[#0B3D2E] hover:bg-[#1F7A53] text-white font-bold px-8 py-2.5 rounded-xl transition-all shadow-md active:scale-95 cursor-pointer select-none"
                   >
                     Close
                   </button>
