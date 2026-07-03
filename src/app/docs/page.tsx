@@ -1,4 +1,13 @@
 import { AnimatedText } from "@/components/ui/animated-text";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Developer Documentation & Guides | SourceTrace API",
+  description: "Access API references, authentication guides, integration instructions, and tutorials for the SourceTrace Traceability Platform.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/docs",
+  }
+};
 
 export default function DocsPage() {
   return (

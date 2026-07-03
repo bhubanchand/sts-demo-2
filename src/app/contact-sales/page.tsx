@@ -1,5 +1,14 @@
 import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact Our Sales Team | SourceTrace Systems",
+  description: "Schedule a conversation with our enterprise sales team to discuss supply chain traceability, EUDR compliance, and sustainability solutions.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/contact-sales",
+  }
+};
 
 export default function ContactSalesPage() {
   return (

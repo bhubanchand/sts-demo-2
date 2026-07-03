@@ -2,7 +2,7 @@
   {
     "url": "/about",
     "title": "About SourceTrace",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "metaDescription": "Learn about SourceTrace's mission to digitize agriculture, promote sustainable sourcing, and deliver supply chain visibility.",
     "headings": [
       "About SourceTrace",
       "Drive predictable outcomes across your agricultural operations",
@@ -36,8 +36,8 @@
   },
   {
     "url": "/careers",
-    "title": "Careers",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "title": "Careers at SourceTrace",
+    "metaDescription": "Explore career opportunities at SourceTrace and help build technology that creates sustainable agricultural supply chains globally.",
     "headings": [
       "Careers",
       "Drive predictable outcomes across your agricultural operations",
@@ -51,6 +51,7 @@
     "category": "Company",
     "keywords": [
       "careers",
+      "sourcetrace",
       "drive",
       "predictable",
       "outcomes",
@@ -71,7 +72,7 @@
   {
     "url": "/contact",
     "title": "Connect With Us",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "metaDescription": "Get in touch with SourceTrace systems. Reach out to our global offices for support, partnership opportunities, or general queries.",
     "headings": [
       "Connect With Us",
       "Drive predictable outcomes across your agricultural operations",
@@ -106,8 +107,8 @@
   },
   {
     "url": "/contact-sales",
-    "title": "Contact Sales",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "title": "Contact Our Sales Team",
+    "metaDescription": "Schedule a conversation with our enterprise sales team to discuss supply chain traceability, EUDR compliance, and sustainability solutions.",
     "headings": [
       "Contact Sales",
       "Drive predictable outcomes across your agricultural operations",
@@ -121,7 +122,9 @@
     "category": "Company",
     "keywords": [
       "contact",
+      "our",
       "sales",
+      "team",
       "drive",
       "predictable",
       "outcomes",
@@ -130,7 +133,6 @@
       "agricultural",
       "operations",
       "join",
-      "our",
       "newsletter",
       "products",
       "industry",
@@ -141,8 +143,8 @@
   },
   {
     "url": "/company/meet-the-team",
-    "title": "SourceTrace",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "title": "Meet the Team",
+    "metaDescription": "Meet the leadership team at SourceTrace driving agricultural digitization, ESG compliance, and supply chain transparency.",
     "headings": [
       "Drive predictable outcomes across your agricultural operations",
       "Join Our Newsletter",
@@ -154,7 +156,9 @@
     "bodyText": "Request Demo Loading Team...",
     "category": "Company",
     "keywords": [
-      "sourcetrace",
+      "meet",
+      "the",
+      "team",
       "drive",
       "predictable",
       "outcomes",
@@ -170,10 +174,7 @@
       "solutions",
       "quick",
       "links",
-      "company",
-      "meet",
-      "the",
-      "team"
+      "company"
     ]
   },
   {
@@ -792,9 +793,50 @@
     ]
   },
   {
+    "url": "/CropInsights/cocoa",
+    "title": "Cocoa Sourcing & Compliance Solutions",
+    "metaDescription": "Leverage real-time traceability, polygon mapping, and EUDR compliance checkers for cocoa supply chains.",
+    "headings": [
+      "Ethical Cocoa. Verified Impact.",
+      "The Future Of Cocoa Requires Transparency",
+      "Deforestation risks",
+      "Child labor concerns",
+      "Farm-level visibility gaps",
+      "Certification compliance",
+      "Farmer payment transparency",
+      "Complex cooperative networks",
+      "EUDR readiness requirements",
+      "Digitizing Cocoa Supply Chains From The Ground Up"
+    ],
+    "bodyText": "Cocoa Solutions Ethical Cocoa. Verified Impact. Build transparent, deforestation-free cocoa supply chains with full visibility from farm to export. Global cocoa supply chains face increasing pressure to demonstrate sustainability, prevent deforestation, improve farmer livelihoods, and comply with evolving regulations. SourceTrace enables cocoa organizations to digitize sourcing operations, verify farm locations, monitor environmental risks, strengthen compliance programs, and deliver complete traceability across the value chain. Request Demo Explore Cocoa Solutions The Sourcing Gap The Future",
+    "category": "Crop Insights",
+    "keywords": [
+      "cocoa",
+      "sourcing",
+      "compliance",
+      "solutions",
+      "ethical",
+      "cocoa.",
+      "verified",
+      "impact.",
+      "the",
+      "future",
+      "requires",
+      "transparency",
+      "deforestation",
+      "risks",
+      "child",
+      "labor",
+      "concerns",
+      "farm-level",
+      "visibility",
+      "gaps"
+    ]
+  },
+  {
     "url": "/CropInsights/coffee",
-    "title": "Coffee Traceability From Farm To Cup",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "title": "Coffee Sourcing & Traceability Solutions",
+    "metaDescription": "Track coffee from smallholder cooperatives through wet mills to dry mills with secure mobile payment validation.",
     "headings": [
       "Coffee Traceability From Farm To Cup",
       "Coffee Supply Chains Are More Complex Than Ever",
@@ -811,7 +853,9 @@
     "category": "Crop Insights",
     "keywords": [
       "coffee",
+      "sourcing",
       "traceability",
+      "solutions",
       "from",
       "farm",
       "cup",
@@ -827,97 +871,13 @@
       "inconsistent",
       "quality",
       "records",
-      "sustainability",
-      "reporting",
-      "gaps"
-    ]
-  },
-  {
-    "url": "/CropInsights/cocoa",
-    "title": "Ethical Cocoa. Verified Impact.",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
-    "headings": [
-      "Ethical Cocoa. Verified Impact.",
-      "The Future Of Cocoa Requires Transparency",
-      "Deforestation risks",
-      "Child labor concerns",
-      "Farm-level visibility gaps",
-      "Certification compliance",
-      "Farmer payment transparency",
-      "Complex cooperative networks",
-      "EUDR readiness requirements",
-      "Digitizing Cocoa Supply Chains From The Ground Up"
-    ],
-    "bodyText": "Cocoa Solutions Ethical Cocoa. Verified Impact. Build transparent, deforestation-free cocoa supply chains with full visibility from farm to export. Global cocoa supply chains face increasing pressure to demonstrate sustainability, prevent deforestation, improve farmer livelihoods, and comply with evolving regulations. SourceTrace enables cocoa organizations to digitize sourcing operations, verify farm locations, monitor environmental risks, strengthen compliance programs, and deliver complete traceability across the value chain. Request Demo Explore Cocoa Solutions The Sourcing Gap The Future",
-    "category": "Crop Insights",
-    "keywords": [
-      "ethical",
-      "cocoa.",
-      "verified",
-      "impact.",
-      "the",
-      "future",
-      "cocoa",
-      "requires",
-      "transparency",
-      "deforestation",
-      "risks",
-      "child",
-      "labor",
-      "concerns",
-      "farm-level",
-      "visibility",
-      "gaps",
-      "certification",
-      "compliance",
-      "farmer"
-    ]
-  },
-  {
-    "url": "/CropInsights/tea",
-    "title": "Every Leaf. Every Grower. Fully Traceable.",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
-    "headings": [
-      "Every Leaf. Every Grower. Fully Traceable.",
-      "Managing Modern Tea Supply Chains Requires Complete Visibility",
-      "Inconsistent leaf quality",
-      "Limited grower visibility",
-      "Manual collection processes",
-      "Payment transparency challenges",
-      "Sustainability reporting requirements",
-      "Certification compliance risks",
-      "Supply chain inefficiencies",
-      "Connecting The Entire Tea Value Chain"
-    ],
-    "bodyText": "Tea Solutions Every Leaf. Every Grower. Fully Traceable. Digitize tea sourcing, improve quality control, strengthen grower engagement, and build transparent tea supply chains from estate to cup. Tea producers, exporters, and brands face increasing pressure to deliver consistent quality, verify sourcing origins, ensure ethical labor practices, and maintain supply chain transparency. SourceTrace enables tea organizations to connect growers, field operations, collection centers, factories, and buyers through a single digital platform that delivers real-time visibility and traceability. Request De",
-    "category": "Crop Insights",
-    "keywords": [
-      "every",
-      "leaf.",
-      "grower.",
-      "fully",
-      "traceable.",
-      "managing",
-      "modern",
-      "tea",
-      "supply",
-      "chains",
-      "requires",
-      "complete",
-      "visibility",
-      "inconsistent",
-      "leaf",
-      "quality",
-      "limited",
-      "grower",
-      "manual",
-      "collection"
+      "sustainability"
     ]
   },
   {
     "url": "/CropInsights/cotton",
-    "title": "From Seed To Bale. Full Cotton Traceability.",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "title": "Cotton Traceability & ESG Compliance Solutions",
+    "metaDescription": "Gain complete transparency into cotton supply chains from ginning to spinning. Meet organic and ESG certification audit requirements.",
     "headings": [
       "From Seed To Bale. Full Cotton Traceability.",
       "Cotton Supply Chains Demand Greater Transparency",
@@ -933,11 +893,15 @@
     "bodyText": "Cotton Solutions From Seed To Bale. Full Cotton Traceability. Build transparent, sustainable, and traceable cotton supply chains with complete visibility from farm to textile production. Global brands, manufacturers, and sourcing organizations are under increasing pressure to prove the origin, sustainability, and integrity of cotton throughout the value chain. SourceTrace helps organizations digitize farmer networks, verify sustainable farming practices, monitor procurement activities, and create complete traceability from seed sourcing to finished cotton bales. Request Demo Explore Cotton Sol",
     "category": "Crop Insights",
     "keywords": [
+      "cotton",
+      "traceability",
+      "esg",
+      "compliance",
+      "solutions",
       "from",
       "seed",
       "bale.",
       "full",
-      "cotton",
       "traceability.",
       "supply",
       "chains",
@@ -948,17 +912,13 @@
       "sourcing",
       "origins",
       "organic",
-      "integrity",
-      "risks",
-      "limited",
-      "farmer",
-      "visibility"
+      "integrity"
     ]
   },
   {
     "url": "/CropInsights/rice",
-    "title": "Smarter Rice Cultivation. Sustainable Outcomes.",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "title": "Rice Traceability & Smallholder Management Solutions",
+    "metaDescription": "Improve water efficiency, monitor methane emissions, and manage smallholder paddy networks with smart agritech tools.",
     "headings": [
       "Smarter Rice Cultivation. Sustainable Outcomes.",
       "Rice Production Faces Growing Pressure",
@@ -974,8 +934,12 @@
     "bodyText": "Rice Solutions Smarter Rice Cultivation. Sustainable Outcomes. Improve productivity, optimize water use, strengthen traceability, and support climate-smart rice programs from field to market. Rice feeds more than half of the world's population, yet producers face increasing challenges from climate change, water scarcity, rising input costs, and sustainability requirements. SourceTrace helps organizations digitize rice production systems, monitor cultivation activities, support farmer engagement, improve procurement visibility, and generate actionable insights across the rice value chain. Reque",
     "category": "Crop Insights",
     "keywords": [
-      "smarter",
       "rice",
+      "traceability",
+      "smallholder",
+      "management",
+      "solutions",
+      "smarter",
       "cultivation.",
       "sustainable",
       "outcomes.",
@@ -984,15 +948,52 @@
       "growing",
       "pressure",
       "water",
-      "management",
       "inefficiencies",
       "climate-related",
       "risks",
       "low",
       "visibility",
-      "into",
-      "field",
-      "operations",
+      "into"
+    ]
+  },
+  {
+    "url": "/CropInsights/tea",
+    "title": "Tea Sustainable Sourcing & Traceability",
+    "metaDescription": "Track tea leaves from estate pluckers through factories to blending points with detailed carbon and labor audits.",
+    "headings": [
+      "Every Leaf. Every Grower. Fully Traceable.",
+      "Managing Modern Tea Supply Chains Requires Complete Visibility",
+      "Inconsistent leaf quality",
+      "Limited grower visibility",
+      "Manual collection processes",
+      "Payment transparency challenges",
+      "Sustainability reporting requirements",
+      "Certification compliance risks",
+      "Supply chain inefficiencies",
+      "Connecting The Entire Tea Value Chain"
+    ],
+    "bodyText": "Tea Solutions Every Leaf. Every Grower. Fully Traceable. Digitize tea sourcing, improve quality control, strengthen grower engagement, and build transparent tea supply chains from estate to cup. Tea producers, exporters, and brands face increasing pressure to deliver consistent quality, verify sourcing origins, ensure ethical labor practices, and maintain supply chain transparency. SourceTrace enables tea organizations to connect growers, field operations, collection centers, factories, and buyers through a single digital platform that delivers real-time visibility and traceability. Request De",
+    "category": "Crop Insights",
+    "keywords": [
+      "tea",
+      "sustainable",
+      "sourcing",
+      "traceability",
+      "every",
+      "leaf.",
+      "grower.",
+      "fully",
+      "traceable.",
+      "managing",
+      "modern",
+      "supply",
+      "chains",
+      "requires",
+      "complete",
+      "visibility",
+      "inconsistent",
+      "leaf",
+      "quality",
       "limited"
     ]
   },
@@ -1689,8 +1690,8 @@
   },
   {
     "url": "/docs",
-    "title": "Documentation",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "title": "Developer Documentation & Guides",
+    "metaDescription": "Access API references, authentication guides, integration instructions, and tutorials for the SourceTrace Traceability Platform.",
     "headings": [
       "Getting Started",
       "Documentation",
@@ -1704,7 +1705,9 @@
     "bodyText": "Getting Started Introduction Authentication API Reference Documentation Welcome to the SourceTrace developer documentation. curl https://api.sourcetrace.com/v1/traceability",
     "category": "Resources",
     "keywords": [
+      "developer",
       "documentation",
+      "guides",
       "getting",
       "started",
       "drive",
@@ -1721,14 +1724,13 @@
       "industry",
       "solutions",
       "quick",
-      "links",
-      "docs"
+      "links"
     ]
   },
   {
     "url": "/case-studies",
     "title": "Enterprise Success Stories",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "metaDescription": "Read case studies on how global food, agriculture, and apparel brands use SourceTrace to achieve sustainability and EUDR compliance.",
     "headings": [
       "Enterprise Success Stories",
       "Global Enterprise 1",

@@ -1,4 +1,13 @@
 import { AnimatedText } from "@/components/ui/animated-text";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Enterprise Success Stories | SourceTrace Case Studies",
+  description: "Read case studies on how global food, agriculture, and apparel brands use SourceTrace to achieve sustainability and EUDR compliance.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/case-studies",
+  }
+};
 
 export default function CaseStudiesPage() {
   return (
