@@ -35,7 +35,7 @@ const MAP_PINS = [
   { id: 3, top: "66%", left: "33%", title: "Sector Gamma", risk: "High", crop: "Rubber", color: "bg-amber-400" },
 ];
 
-export function DashboardPreview() {
+export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean }) {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: "-10%" });
   
@@ -575,20 +575,24 @@ export function DashboardPreview() {
   };
 
   return (
-    <section className="py-16 bg-gray-50 border-y border-gray-100 relative overflow-hidden" ref={containerRef}>
+    <section className={hideHeader ? "relative w-full overflow-visible" : "py-16 bg-gray-50 border-y border-gray-100 relative overflow-hidden"} ref={containerRef}>
       {/* Background elements */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#53D769] blur-[200px] rounded-full opacity-10 pointer-events-none"></div>
+      {!hideHeader && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#53D769] blur-[200px] rounded-full opacity-10 pointer-events-none"></div>
+      )}
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Command Center</span>
-          <h2 className="text-5xl md:text-6xl font-black text-[#0B3D2E] leading-tight mb-6 tracking-tighter">
-            Your supply chain at a glance.
-          </h2>
-          <p className="text-xl text-gray-600 font-light">
-            Actionable intelligence, real-time compliance tracking, and predictive ESG analytics, unified in one powerful interface. Try interacting with it below.
-          </p>
-        </div>
+      <div className={hideHeader ? "w-full relative z-10" : "max-w-[1400px] mx-auto px-4 sm:px-8 relative z-10"}>
+        {!hideHeader && (
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">The Platform</span>
+            <h2 className="text-5xl md:text-6xl font-black text-[#0B3D2E] leading-tight mb-6 tracking-tighter">
+              Your supply chain at a glance.
+            </h2>
+            <p className="text-xl text-gray-600 font-light">
+              Actionable intelligence, real-time compliance tracking, and predictive ESG analytics, unified in one powerful interface. Try interacting with it below.
+            </p>
+          </div>
+        )}
 
         {/* Desktop Browser Window Mockup */}
         <motion.div 

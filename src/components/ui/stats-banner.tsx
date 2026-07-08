@@ -7,12 +7,12 @@ import { useRef } from "react";
 
 function Counter({ from, to, suffix, decimals = 0 }: { from: number, to: number, suffix: string, decimals?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const inView = useInView(ref, { once: false, amount: 0.2 });
 
   useEffect(() => {
     if (inView) {
       const controls = animate(from, to, {
-        duration: 2.5,
+        duration: 1.5,
         ease: "easeOut",
         onUpdate(value) {
           if (ref.current) {
@@ -21,6 +21,10 @@ function Counter({ from, to, suffix, decimals = 0 }: { from: number, to: number,
         }
       });
       return () => controls.stop();
+    } else {
+      if (ref.current) {
+        ref.current.textContent = from.toFixed(decimals) + suffix;
+      }
     }
   }, [from, to, inView, suffix, decimals]);
 
@@ -29,39 +33,66 @@ function Counter({ from, to, suffix, decimals = 0 }: { from: number, to: number,
 
 export function StatsBanner() {
   return (
-    <div className="bg-[#0B3D2E] text-white py-16 relative overflow-hidden snap-center">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10 mix-blend-overlay"></div>
+    <div className="bg-[#164E33] text-white py-6 border-y border-[#1b5e3e] relative overflow-hidden snap-center">
+      {/* Subtle glowing ambient spots for visual interest */}
+      <div className="absolute w-[300px] h-[100px] -left-10 top-0 bg-[#53D769]/10 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute w-[300px] h-[100px] -right-10 bottom-0 bg-[#53D769]/10 rounded-full blur-[80px] pointer-events-none" />
       
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center divide-x divide-white/10">
-          <div className="flex flex-col items-center">
-            <Globe2 className="w-10 h-10 text-[#53D769] mb-6 opacity-80" />
-            <h4 className="text-5xl md:text-7xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-400">
-               <Counter from={0} to={38} suffix="+" />
-            </h4>
-            <p className="text-gray-400 font-medium tracking-wide uppercase text-sm">Countries</p>
+      <div className="max-w-[1280px] mx-auto px-6 sm:px-8 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          
+          {/* Country Card */}
+          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.08] rounded-2xl transition-all duration-300">
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0 shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
+              <Globe2 className="w-5 h-5 text-[#86EFAC] opacity-90" />
+            </div>
+            <div>
+              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-200 tracking-tight leading-none">
+                 <Counter from={0} to={38} suffix="+" />
+              </h4>
+              <p className="text-emerald-100/80 font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Countries</p>
+            </div>
           </div>
-          <div className="flex flex-col items-center">
-            <Users2 className="w-10 h-10 text-[#53D769] mb-6 opacity-80" />
-            <h4 className="text-5xl md:text-7xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-400">
-               <Counter from={0} to={2.5} decimals={1} suffix="M" />
-            </h4>
-            <p className="text-gray-400 font-medium tracking-wide uppercase text-sm">Farmers Empowered</p>
+          
+          {/* Farmers Card */}
+          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.08] rounded-2xl transition-all duration-300">
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0 shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
+              <Users2 className="w-5 h-5 text-[#86EFAC] opacity-90" />
+            </div>
+            <div>
+              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-200 tracking-tight leading-none">
+                 <Counter from={0} to={2.5} decimals={1} suffix="M" />
+              </h4>
+              <p className="text-emerald-100/80 font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Farmers Empowered</p>
+            </div>
           </div>
-          <div className="flex flex-col items-center">
-            <Map className="w-10 h-10 text-[#53D769] mb-6 opacity-80" />
-            <h4 className="text-5xl md:text-7xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-400">
-               <Counter from={0} to={3} suffix="M+" />
-            </h4>
-            <p className="text-gray-400 font-medium tracking-wide uppercase text-sm">Hectares Mapped</p>
+          
+          {/* Hectares Card */}
+          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.08] rounded-2xl transition-all duration-300">
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0 shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
+              <Map className="w-5 h-5 text-[#86EFAC] opacity-90" />
+            </div>
+            <div>
+              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-200 tracking-tight leading-none">
+                 <Counter from={0} to={3} suffix="M+" />
+              </h4>
+              <p className="text-emerald-100/80 font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Hectares Mapped</p>
+            </div>
           </div>
-          <div className="flex flex-col items-center">
-            <Database className="w-10 h-10 text-[#53D769] mb-6 opacity-80" />
-            <h4 className="text-5xl md:text-7xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-400">
-               <Counter from={0} to={1} suffix="B+" />
-            </h4>
-            <p className="text-gray-400 font-medium tracking-wide uppercase text-sm">Data Points Logged</p>
+          
+          {/* Data Points Card */}
+          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.08] rounded-2xl transition-all duration-300">
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0 shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
+              <Database className="w-5 h-5 text-[#86EFAC] opacity-90" />
+            </div>
+            <div>
+              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-200 tracking-tight leading-none">
+                 <Counter from={0} to={1} suffix="B+" />
+              </h4>
+              <p className="text-emerald-100/80 font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Data Points Logged</p>
+            </div>
           </div>
+          
         </div>
       </div>
     </div>

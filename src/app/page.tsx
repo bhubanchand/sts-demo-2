@@ -2,7 +2,6 @@
 
 import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
-import { CTASection } from "@/components/ui/cta-section";
 import { TrustBadges } from "@/components/ui/trust-badges";
 import { ShieldCheck, MapPin, ScanFace, Globe, ArrowRight, Activity, Leaf, MousePointerClick, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -12,12 +11,10 @@ import dynamic from "next/dynamic";
 const ExpandingSlideshow = dynamic(() => import("@/components/ui/expanding-slideshow").then(mod => mod.ExpandingSlideshow), { ssr: false });
 const InteractiveMap = dynamic(() => import("@/components/ui/interactive-map").then(mod => mod.InteractiveMap), { ssr: false });
 const DataGreenEngine = dynamic(() => import("@/components/ui/data-green-engine").then(mod => mod.DataGreenEngine), { ssr: false });
-const TransparencyFlow = dynamic(() => import("@/components/ui/transparency-flow").then(mod => mod.TransparencyFlow), { ssr: false });
 const TechStackGrid = dynamic(() => import("@/components/ui/tech-stack").then(mod => mod.TechStackGrid));
 const CaseStudiesGrid = dynamic(() => import("@/components/ui/case-studies-grid").then(mod => mod.CaseStudiesGrid));
 const SecurityCompliance = dynamic(() => import("@/components/ui/security-compliance").then(mod => mod.SecurityCompliance));
 const DashboardPreview = dynamic(() => import("@/components/ui/dashboard-preview").then(mod => mod.DashboardPreview), { ssr: false });
-const PartnersEcosystem = dynamic(() => import("@/components/ui/partners-ecosystem").then(mod => mod.PartnersEcosystem));
 const TestimonialsCarousel = dynamic(() => import("@/components/ui/testimonials-carousel").then(mod => mod.TestimonialsCarousel));
 const IntegrationsGrid = dynamic(() => import("@/components/ui/integrations-grid").then(mod => mod.IntegrationsGrid));
 const StatsBanner = dynamic(() => import("@/components/ui/stats-banner").then(mod => mod.StatsBanner));
@@ -153,14 +150,31 @@ const HERO_SLIDES = [
   }
 ];
 
+const slideVariants = {
+  initial: (dir: number) => ({
+    opacity: 0,
+    x: dir > 0 ? 100 : -100
+  }),
+  animate: {
+    opacity: 1,
+    x: 0
+  },
+  exit: (dir: number) => ({
+    opacity: 0,
+    x: dir > 0 ? -100 : 100
+  })
+};
+
 export default function Home() {
   const [activeChallengeBlock, setActiveChallengeBlock] = useState("regulatory");
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [direction, setDirection] = useState(1); // 1: next (R-to-L), -1: prev (L-to-R)
   const [userInteracted, setUserInteracted] = useState(false);
 
   useEffect(() => {
     if (userInteracted) return;
     const interval = setInterval(() => {
+      setDirection(1); // Autoplay goes right to left
       setActiveSlideIndex((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 5000);
     return () => clearInterval(interval);
@@ -168,16 +182,23 @@ export default function Home() {
 
   const handlePrevSlide = () => {
     setUserInteracted(true);
+    setDirection(-1);
     setActiveSlideIndex((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
   };
 
   const handleNextSlide = () => {
     setUserInteracted(true);
+    setDirection(1);
     setActiveSlideIndex((prev) => (prev + 1) % HERO_SLIDES.length);
   };
 
   const handleDotClick = (index: number) => {
     setUserInteracted(true);
+    if (index > activeSlideIndex) {
+      setDirection(1);
+    } else if (index < activeSlideIndex) {
+      setDirection(-1);
+    }
     setActiveSlideIndex(index);
   };
   
@@ -244,12 +265,14 @@ export default function Home() {
 
         {/* Slide Content with AnimatePresence for smooth cross-fades */}
         <div className="relative z-20 w-full max-w-[1400px] mx-auto px-16 sm:px-24 lg:px-32 flex flex-col items-center justify-center text-center pt-28 pb-14 md:pt-36 md:pb-20 lg:pt-32 lg:pb-60">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={activeSlideIndex}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
+              custom={direction}
+              variants={slideVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
               transition={{ duration: 0.4, ease: "easeInOut" }}
               className="flex flex-col items-center justify-center max-w-4xl"
             >
@@ -393,12 +416,16 @@ export default function Home() {
       </section>
 
       {/* 4. The SourceTrace DATA GREEN Engine (7-Slice SVG) */}
-      <section className="bg-[#0B3D2E] border-y border-white/10 overflow-hidden relative">
-         <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'radial-gradient(circle at center, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+      <section className="bg-white border-y border-gray-100 overflow-hidden relative">
+         <div className="text-center pt-12 pb-2 z-10 relative">
+            <span className="font-extrabold tracking-[0.2em] uppercase mb-1.5 block text-[#10b981] text-xs">Data Green Operating System</span>
+            <h2 className="text-3xl md:text-[40px] font-black leading-tight text-[#004D26] tracking-tight">Connected Agriculture Ecosystem</h2>
+            <p className="text-xs md:text-sm text-gray-400 mt-2 font-semibold max-w-lg mx-auto">Hover any module to trace the living data journey.</p>
+         </div>
          <DataGreenEngine />
       </section>
 
-      {/* 5. The Solution: Massive Interactive 3D Bento Box */}
+      {/* 5. Command Center */}
        <section className="flex flex-col justify-center py-16 bg-gray-50 border-t border-gray-100">
          <div className="max-w-[1400px] mx-auto px-6 sm:px-8 w-full">
             <div className="text-center max-w-4xl mx-auto mb-16">
@@ -407,60 +434,8 @@ export default function Home() {
                <p className="text-xl text-gray-600">We replace fragmented spreadsheets and siloed apps with a single, unified data architecture that connects farmers to the enterprise.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-6 h-auto md:h-[800px] perspective-1000">
-               {/* Big Traceability Card - Interactive 3D */}
-               <div className="md:col-span-2 md:row-span-2 bg-[#0B3D2E] rounded-[40px] p-12 relative overflow-hidden group hover:shadow-[0_20px_50px_rgba(11,61,46,0.3)] transition-all duration-300 transform hover:-translate-y-2 hover:rotate-x-2 hover:rotate-y-[-2deg]">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#0B3D2E] to-[#1F7A53] opacity-80 z-0"></div>
-                  <img src="/assets/traceability-diagram.png" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full object-cover mix-blend-screen opacity-20 group-hover:scale-105 transition-transform duration-500 group-hover:opacity-40" alt="Traceability Graph" />
-                  
-                  {/* Floating Elements inside card for 3D depth */}
-                  <div className="absolute right-10 top-10 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-xl text-white font-bold text-sm transform translate-y-10 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 delay-100">
-                     +1.2M Nodes Mapped
-                  </div>
-
-                  <div className="relative z-10 flex flex-col h-full justify-between">
-                     <div className="w-16 h-16 bg-[#53D769]/20 text-[#53D769] rounded-2xl flex items-center justify-center backdrop-blur-md transform group-hover:rotate-12 group-hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(83,215,105,0.2)]">
-                        <Globe className="w-8 h-8" />
-                     </div>
-                     <div className="mt-24 transform group-hover:translate-x-4 transition-transform duration-300">
-                        <h3 className="text-4xl font-bold text-white mb-4">Supply Chain Traceability</h3>
-                        <p className="text-xl text-gray-300 max-w-lg mb-8 leading-relaxed">Visualize your entire supply network as a dynamic graph. Track every batch from the individual farmer polygon through mills, processors, and factories.</p>
-                        <Link href="/solutions/supply-chain-traceability">
-                           <Button className="rounded-full bg-white text-[#0B3D2E] hover:bg-[#53D769] border-none font-bold transition-colors shadow-xl">Explore Traceability</Button>
-                        </Link>
-                     </div>
-                  </div>
-               </div>
-
-               {/* EUDR Card - Interactive */}
-               <div className="bg-white rounded-[40px] p-10 border border-gray-200 shadow-sm hover:shadow-2xl transition-all duration-300 group relative overflow-hidden hover:-translate-y-2">
-                  <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-100 rounded-full blur-[50px] group-hover:scale-150 transition-transform duration-500 opacity-50 group-hover:opacity-100"></div>
-                  <div className="relative z-10">
-                     <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                        <ScanFace className="w-7 h-7" />
-                     </div>
-                     <h3 className="text-2xl font-bold text-[#0B3D2E] mb-3">EUDR Compliance</h3>
-                     <p className="text-gray-600 leading-relaxed mb-6">Automated polygon mapping, deforestation analysis, and Due Diligence Statement generation.</p>
-                     <Link href="/solutions/eudr-compliance" className="text-[#1F7A53] font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
-                        View Solution <ArrowRight className="w-4 h-4"/>
-                     </Link>
-                  </div>
-               </div>
-
-               {/* Sustainability Card - Interactive */}
-               <div className="bg-white rounded-[40px] p-10 border border-gray-200 shadow-sm hover:shadow-2xl transition-all duration-300 group relative overflow-hidden hover:-translate-y-2">
-                  <div className="absolute top-0 right-0 w-48 h-48 bg-blue-100 rounded-full blur-[50px] group-hover:scale-150 transition-transform duration-500 opacity-50 group-hover:opacity-100"></div>
-                  <div className="relative z-10">
-                     <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 transform group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300">
-                        <Leaf className="w-7 h-7" />
-                     </div>
-                     <h3 className="text-2xl font-bold text-[#0B3D2E] mb-3">ESG & Scope 3</h3>
-                     <p className="text-gray-600 leading-relaxed mb-6">Measure carbon sequestration, track living wages, and align with SBTi FLAG reporting guidelines.</p>
-                     <Link href="/solutions/esg-reporting" className="text-[#1F7A53] font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
-                        View Solution <ArrowRight className="w-4 h-4"/>
-                     </Link>
-                  </div>
-               </div>
+            <div className="w-full">
+               <DashboardPreview hideHeader={true} />
             </div>
          </div>
       </section>
@@ -480,17 +455,11 @@ export default function Home() {
       <StatsBanner />
       <TestimonialsCarousel />
       <IntegrationsGrid />
-      <div className="bg-gray-50 border-y border-gray-100">
-         <TransparencyFlow />
-      </div>
       <div className="bg-white">
          <TechStackGrid />
       </div>
       <CaseStudiesGrid />
       <SecurityCompliance />
-      <DashboardPreview />
-      <PartnersEcosystem />
-      <CTASection />
     </main>
   );
 }
