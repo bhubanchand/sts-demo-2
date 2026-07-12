@@ -49,6 +49,17 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(event.request.url);
 
+  // Bypass service worker caching/interception completely for local development and hot module reloading (HMR)
+  if (
+    url.hostname === "localhost" ||
+    url.hostname === "127.0.0.1" ||
+    url.pathname.includes("webpack-hmr") ||
+    url.pathname.includes("hmr") ||
+    url.pathname.includes("fast-refresh")
+  ) {
+    return;
+  }
+
   // If it's a page navigation request, handle with Network-First and fallback to offline.html
   if (event.request.mode === "navigate") {
     event.respondWith(

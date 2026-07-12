@@ -25,16 +25,30 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 
     // 1. Service Worker Registration
     if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("/sw.js")
-          .then((reg) => {
-            console.log("Service Worker registered successfully with scope:", reg.scope);
-          })
-          .catch((err) => {
-            console.error("Service Worker registration failed:", err);
-          });
-      });
+      if (process.env.NODE_ENV === "production") {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((reg) => {
+              console.log("Service Worker registered successfully with scope:", reg.scope);
+            })
+            .catch((err) => {
+              console.error("Service Worker registration failed:", err);
+            });
+        });
+      } else {
+        // In development, automatically unregister active service workers to prevent cached Turbopack chunk bugs
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const registration of registrations) {
+            registration.unregister().then((success) => {
+              if (success) {
+                console.log("Stale Service Worker unregistered successfully in development mode.");
+                window.location.reload();
+              }
+            });
+          }
+        });
+      }
     }
 
     // 2. Connectivity Listeners
