@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   title: "SourceTrace | Enterprise Nature Intelligence",
   description: "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
   metadataBase: new URL("https://www.sourcetrace.com"),
+  manifest: "/manifest.json",
   alternates: {
     canonical: "/",
   },
@@ -45,9 +46,9 @@ export const metadata: Metadata = {
 };
 
 import { MegaMenu } from "@/components/ui/mega-menu";
-
 import { Footer } from "@/components/ui/footer";
 import { FloatingContact } from "@/components/ui/floating-contact";
+import { PwaProvider } from "@/components/pwa-provider";
 
 export default function RootLayout({
   children,
@@ -93,10 +94,12 @@ export default function RootLayout({
         className={`${inter.variable} ${interTight.variable} antialiased`}
       >
         <Providers>
-          <MegaMenu />
-          <FloatingContact />
-          {children}
-          <Footer />
+          <PwaProvider>
+            <MegaMenu />
+            <FloatingContact />
+            {children}
+            <Footer />
+          </PwaProvider>
         </Providers>
       </body>
     </html>

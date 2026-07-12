@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline | SourceTrace</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/sourcetrace-logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #F4FAF6;
+      font-family: 'Outfit', sans-serif;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+    /* HUD UI elements */
+    .hud-left {
+      position: absolute;
+      top: 32px;
+      left: 32px;
+      z-index: 10;
+      pointer-events: none;
+      text-align: left;
+    }
+    .hud-left h2 {
+      font-weight: 900;
+      font-size: 24px;
+      color: #0B3D2E;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .hud-left h3 {
+      font-weight: 800;
+      font-size: 13px;
+      color: #1F7A53;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+    .hud-left p {
+      font-weight: 600;
+      font-size: 10px;
+      color: rgba(31, 89, 70, 0.7);
+      margin-top: 4px;
+    }
+    .hud-right {
+      position: absolute;
+      top: 32px;
+      right: 32px;
+      z-index: 10;
+      pointer-events: none;
+      text-align: right;
+    }
+    .hud-right .label {
+      font-weight: 800;
+      font-size: 10px;
+      color: #1F7A53;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .hud-right .score {
+      font-weight: 900;
+      font-size: 24px;
+      color: #0B3D2E;
+    }
+    .hud-bottom {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      pointer-events: none;
+      text-align: center;
+      font-weight: 800;
+      font-size: 10px;
+      color: #1F7A53;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    /* Achievement Banner */
+    .achievement-banner {
+      position: absolute;
+      top: 110px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      pointer-events: none;
+      background: rgba(11, 61, 70, 0.9);
+      color: #FFF;
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      border: 1px solid rgba(83, 215, 105, 0.3);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .achievement-banner.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+    /* Glassmorphic Overlay Box */
+    .overlay-container {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+      background: rgba(11, 61, 46, 0.15);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .overlay-container.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #FFF;
+      padding: 40px;
+      border-radius: 32px;
+      width: 90%;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0, 77, 38, 0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .overlay-container.show .card {
+      transform: scale(1);
+    }
+    .card .category {
+      font-weight: 800;
+      font-size: 10px;
+      color: #1F7A53;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .card .category.error {
+      color: #D13C3C;
+    }
+    .card h2 {
+      font-weight: 900;
+      font-size: 24px;
+      color: #0B3D2E;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .card p {
+      font-size: 13px;
+      color: #1F5946;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+    .score-summary {
+      background: #F4FAF6;
+      border: 1px solid rgba(11, 61, 46, 0.08);
+      padding: 12px 24px;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 12px;
+    }
+    .score-summary span {
+      font-weight: 800;
+      color: #1F5946;
+    }
+    .score-summary strong {
+      font-weight: 900;
+      font-size: 16px;
+      color: #0B3D2E;
+    }
+    .btn {
+      width: 100%;
+      height: 44px;
+      border-radius: 9999px;
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: #0B3D2E;
+      color: #FFF;
+      box-shadow: 0 4px 16px rgba(11, 61, 46, 0.15);
+      margin-bottom: 12px;
+    }
+    .btn-primary:hover {
+      background: #125c44;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(11, 61, 46, 0.12);
+      color: #0B3D2E;
+    }
+    .btn-secondary:hover {
+      background: rgba(0, 0, 0, 0.02);
+      transform: translateY(-1px);
+    }
+    /* Toast Online alert */
+    .online-toast {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(11, 61, 46, 0.95);
+      color: #FFF;
+      padding: 12px 24px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      box-shadow: 0 8px 30px rgba(0, 77, 38, 0.15);
+      border: 1px solid rgba(83, 215, 105, 0.3);
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .online-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- HUD overlay -->
+  <div class="hud-left">
+    <h2>You're Offline</h2>
+    <h3>Connection lost.</h3>
+    <p>While we reconnect, help deliver today's harvest.</p>
+  </div>
+
+  <div class="hud-right">
+    <span class="label">Harvest Score</span>
+    <span class="score" id="scoreVal">0</span>
+  </div>
+
+  <div class="hud-bottom">
+    Press Space or Tap to Jump
+  </div>
+
+  <!-- Achievement Alert Banner -->
+  <div class="achievement-banner" id="achievementAlert">
+    🌾 10 Farms Digitized
+  </div>
+
+  <!-- Start Overlay -->
+  <div class="overlay-container show" id="startOverlay">
+    <div class="card">
+      <span class="category">SourceTrace</span>
+      <h2>Tractor Supply Dash</h2>
+      <p>Help our tractor jump obstacles, collect crops, and restore connected digital networks across the supply chain!</p>
+      <button class="btn btn-primary" id="btnStart">Start Harvest Run</button>
+    </div>
+  </div>
+
+  <!-- Game Over Overlay -->
+  <div class="overlay-container" id="gameOverOverlay">
+    <div class="card">
+      <span class="category error">Trace Broken</span>
+      <h2>Harvest Interrupted</h2>
+      <p>Silos or spreadsheets crashed the first mile.</p>
+      <div class="score-summary">
+        <span>Final Harvest:</span>
+        <strong id="finalScoreVal">0</strong>
+      </div>
+      <button class="btn btn-primary" id="btnPlayAgain">Play Again</button>
+      <button class="btn btn-secondary" id="btnReturnHome">Return Home</button>
+    </div>
+  </div>
+
+  <!-- Online Toast -->
+  <div class="online-toast" id="onlineToast">
+    ✨ Back Online! Redirecting to Home...
+  </div>
+
+  <script>
+    // Elements
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const scoreVal = document.getElementById("scoreVal");
+    const finalScoreVal = document.getElementById("finalScoreVal");
+    const startOverlay = document.getElementById("startOverlay");
+    const gameOverOverlay = document.getElementById("gameOverOverlay");
+    const achievementAlert = document.getElementById("achievementAlert");
+    const onlineToast = document.getElementById("onlineToast");
+
+    const btnStart = document.getElementById("btnStart");
+    const btnPlayAgain = document.getElementById("btnPlayAgain");
+    const btnReturnHome = document.getElementById("btnReturnHome");
+
+    // Game Variables
+    let gameState = "idle"; // idle, playing, gameover
+    let scoreDistance = 0;
+    let scoreHarvestVal = 0;
+    let highScore = 0;
+    let lastAchievementDistance = 0;
+    let gameSpeed = 5;
+    let cameraShake = 0;
+    let cycleTimer = 0;
+    let activeWeather = "sun"; // sun, sunset, night, rain
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+    let groundY = height * 0.72;
+
+    // Load Highscore
+    try {
+      const saved = localStorage.getItem("sourcetrace_tractor_dino_highscore");
+      if (saved) highScore = parseInt(saved, 10);
+    } catch(e) {}
+
+    // Resize Handler
+    window.addEventListener("resize", () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      groundY = height * 0.72;
+    });
+
+    // Characters & Arrays
+    const tractor = {
+      x: width * 0.12,
+      y: 0,
+      width: 60,
+      height: 48,
+      vy: 0,
+      gravity: 0.65,
+      jumpStrength: -13.5,
+      isJumping: false,
+      wheelAngle: 0,
+      vibrationOffset: 0,
+      smokeCooldown: 0
+    };
+    tractor.y = groundY - tractor.height;
+
+    let obstacles = [];
+    let collectibles = [];
+    let particles = [];
+
+    // Background decoration coordinates
+    const clouds = [
+      { x: 100, y: height * 0.15, size: 50 },
+      { x: width * 0.5, y: height * 0.08, size: 70 },
+      { x: width * 0.8, y: height * 0.2, size: 45 }
+    ];
+
+    const distantMountains = [
+      { x: 0, w: width * 0.6, h: height * 0.28 },
+      { x: width * 0.4, w: width * 0.7, h: height * 0.32 },
+      { x: width * 0.8, w: width * 0.5, h: height * 0.24 }
+    ];
+
+    const midgroundHills = [
+      { x: 0, w: width * 0.4, h: height * 0.15, color: "#D1EAD8" },
+      { x: width * 0.3, w: width * 0.5, h: height * 0.18, color: "#C6E4CD" },
+      { x: width * 0.7, w: width * 0.4, h: height * 0.14, color: "#D1EAD8" }
+    ];
+
+    const windmills = [
+      { x: width * 0.25, rot: 0, size: 40 },
+      { x: width * 0.75, rot: 1.5, size: 30 }
+    ];
+
+    const silos = [
+      { x: width * 0.45, w: 32, h: 70 },
+      { x: width * 0.9, w: 26, h: 55 }
+    ];
+
+    // Trigger Achievements
+    const showAchievement = (text) => {
+      achievementAlert.textContent = "🌾 " + text;
+      achievementAlert.classList.add("show");
+      setTimeout(() => {
+        achievementAlert.classList.remove("show");
+      }, 3000);
+    };
+
+    // Particles Spawning
+    const spawnSmoke = () => {
+      particles.push({
+        x: tractor.x + 12,
+        y: tractor.y + 4,
+        vx: -gameSpeed * 0.3 + (Math.random() - 0.5) * 0.5,
+        vy: -1 - Math.random() * 1.5,
+        size: 3 + Math.random() * 5,
+        color: activeWeather === "night" ? "rgba(100, 100, 110, 0.25)" : "rgba(80, 80, 80, 0.18)",
+        alpha: 0.7,
+        life: 0,
+        maxLife: 40 + Math.random() * 20
+      });
+    };
+
+    const spawnLandingDust = () => {
+      for (let i = 0; i < 15; i++) {
+        particles.push({
+          x: tractor.x + tractor.width * 0.5 + (Math.random() - 0.5) * 20,
+          y: groundY,
+          vx: -gameSpeed * 0.5 + (Math.random() - 0.5) * 4,
+          vy: -Math.random() * 4,
+          size: 2 + Math.random() * 4,
+          color: "rgba(139, 90, 43, 0.45)",
+          alpha: 0.8,
+          life: 0,
+          maxLife: 30 + Math.random() * 20
+        });
+      }
+      cameraShake = 5;
+    };
+
+    const triggerJump = () => {
+      if (gameState === "playing" && !tractor.isJumping) {
+        tractor.vy = tractor.jumpStrength;
+        tractor.isJumping = true;
+      }
+    };
+
+    const restartGame = () => {
+      obstacles = [];
+      collectibles = [];
+      particles = [];
+      scoreDistance = 0;
+      scoreHarvestVal = 0;
+      scoreVal.textContent = "0";
+      gameSpeed = 5;
+      tractor.y = groundY - tractor.height;
+      tractor.vy = 0;
+      tractor.isJumping = false;
+      
+      startOverlay.classList.remove("show");
+      gameOverOverlay.classList.remove("show");
+      gameState = "playing";
+    };
+
+    // Click/Touch Actions
+    document.body.addEventListener("click", (e) => {
+      // Don't trigger jump if clicking overlay buttons
+      if (e.target.closest(".card") || e.target.closest(".online-toast")) return;
+      if (gameState === "idle" || gameState === "gameover") {
+        restartGame();
+      } else {
+        triggerJump();
+      }
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space" || e.code === "ArrowUp") {
+        e.preventDefault();
+        if (gameState === "idle" || gameState === "gameover") {
+          restartGame();
+        } else {
+          triggerJump();
+        }
+      }
+    });
+
+    btnStart.addEventListener("click", (e) => {
+      e.stopPropagation();
+      restartGame();
+    });
+    btnPlayAgain.addEventListener("click", (e) => {
+      e.stopPropagation();
+      restartGame();
+    });
+    btnReturnHome.addEventListener("click", (e) => {
+      e.stopPropagation();
+      window.location.href = "/";
+    });
+
+    // ── GAME LOOP ──
+    const update = () => {
+      cycleTimer++;
+      if (cycleTimer > 900) {
+        cycleTimer = 0;
+        const weathers = ["sun", "sunset", "night", "rain"];
+        const currentIdx = weathers.indexOf(activeWeather);
+        activeWeather = weathers[(currentIdx + 1) % weathers.length];
+      }
+
+      ctx.save();
+      if (cameraShake > 0) {
+        const shakeX = (Math.random() - 0.5) * cameraShake;
+        const shakeY = (Math.random() - 0.5) * cameraShake;
+        ctx.translate(shakeX, shakeY);
+        cameraShake *= 0.9;
+        if (cameraShake < 0.1) cameraShake = 0;
+      }
+
+      // Draw Sky
+      let skyGrad = ctx.createLinearGradient(0, 0, 0, height);
+      if (activeWeather === "sun") {
+        skyGrad.addColorStop(0, "#BAE6FD");
+        skyGrad.addColorStop(1, "#F0FDFA");
+      } else if (activeWeather === "sunset") {
+        skyGrad.addColorStop(0, "#FDBA74");
+        skyGrad.addColorStop(1, "#FDF2F8");
+      } else if (activeWeather === "night") {
+        skyGrad.addColorStop(0, "#0F172A");
+        skyGrad.addColorStop(1, "#1E293B");
+      } else if (activeWeather === "rain") {
+        skyGrad.addColorStop(0, "#9CA3AF");
+        skyGrad.addColorStop(1, "#E5E7EB");
+      }
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Night moon and stars
+      if (activeWeather === "night") {
+        ctx.fillStyle = "#FFF";
+        for (let i = 0; i < 20; i++) {
+          const starX = (Math.sin(i * 123.4) * 0.5 + 0.5) * width;
+          const starY = (Math.cos(i * 987.6) * 0.5 + 0.5) * (height * 0.4);
+          ctx.globalAlpha = 0.4;
+          ctx.fillRect(starX, starY, 2, 2);
+        }
+        ctx.globalAlpha = 1.0;
+        
+        ctx.fillStyle = "#FEF08A";
+        ctx.beginPath();
+        ctx.arc(width - 120, 80, 24, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = skyGrad;
+        ctx.beginPath();
+        ctx.arc(width - 132, 74, 24, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Parallax Distant Mountains
+      ctx.fillStyle = activeWeather === "night" ? "#1E293B" : "#B2DCC0";
+      distantMountains.forEach((mtn) => {
+        if (gameState === "playing") {
+          mtn.x -= gameSpeed * 0.04;
+          if (mtn.x + mtn.w < 0) mtn.x = width;
+        }
+        ctx.beginPath();
+        ctx.moveTo(mtn.x, groundY);
+        ctx.lineTo(mtn.x + mtn.w * 0.5, groundY - mtn.h);
+        ctx.lineTo(mtn.x + mtn.w, groundY);
+        ctx.closePath();
+        ctx.fill();
+      });
+
+      // Parallax Midground Hills
+      midgroundHills.forEach((hill) => {
+        if (gameState === "playing") {
+          hill.x -= gameSpeed * 0.12;
+          if (hill.x + hill.w < 0) hill.x = width;
+        }
+        ctx.fillStyle = activeWeather === "night" ? "#0F172A" : hill.color;
+        ctx.beginPath();
+        ctx.ellipse(hill.x + hill.w * 0.5, groundY, hill.w * 0.6, hill.h * 1.5, 0, Math.PI, 0);
+        ctx.fill();
+      });
+
+      // Windmills
+      ctx.strokeStyle = activeWeather === "night" ? "rgba(255,255,255,0.06)" : "#789B85";
+      ctx.lineWidth = 2.5;
+      windmills.forEach((wm) => {
+        if (gameState === "playing") {
+          wm.x -= gameSpeed * 0.12;
+          if (wm.x < -80) wm.x = width + 80;
+        }
+        ctx.beginPath();
+        ctx.moveTo(wm.x, groundY);
+        ctx.lineTo(wm.x - 5, groundY - wm.size * 1.4);
+        ctx.lineTo(wm.x + 5, groundY - wm.size * 1.4);
+        ctx.closePath();
+        ctx.fillStyle = activeWeather === "night" ? "#1E293B" : "#A6C7B3";
+        ctx.fill();
+
+        wm.rot += 0.015;
+        ctx.save();
+        ctx.translate(wm.x, groundY - wm.size * 1.4);
+        ctx.rotate(wm.rot);
+        for (let b = 0; b < 3; b++) {
+          ctx.rotate((Math.PI * 2) / 3);
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(-4, -wm.size);
+          ctx.lineTo(4, -wm.size);
+          ctx.closePath();
+          ctx.stroke();
+        }
+        ctx.restore();
+      });
+
+      // Silos
+      silos.forEach((silo) => {
+        if (gameState === "playing") {
+          silo.x -= gameSpeed * 0.12;
+          if (silo.x < -80) silo.x = width + 80;
+        }
+        ctx.fillStyle = activeWeather === "night" ? "#1E293B" : "#B1D5BE";
+        ctx.fillRect(silo.x, groundY - silo.h, silo.w, silo.h);
+        ctx.beginPath();
+        ctx.arc(silo.x + silo.w * 0.5, groundY - silo.h, silo.w * 0.5, Math.PI, 0);
+        ctx.fill();
+      });
+
+      // Ground Field
+      ctx.fillStyle = activeWeather === "night" ? "#062C21" : "#EAF5EE";
+      ctx.fillRect(0, groundY, width, height - groundY);
+
+      // Crop row lines
+      ctx.strokeStyle = activeWeather === "night" ? "rgba(255,255,255,0.03)" : "rgba(31,89,70,0.06)";
+      ctx.lineWidth = 4;
+      let fieldOffset = (gameState === "playing") ? -(scoreDistance * 1.2) % 60 : 0;
+      for (let x = fieldOffset; x < width; x += 60) {
+        ctx.beginPath();
+        ctx.moveTo(x, groundY);
+        ctx.lineTo(x - 200, height);
+        ctx.stroke();
+      }
+
+      // Tractor Track Path
+      ctx.fillStyle = activeWeather === "night" ? "#041B14" : "#DCEFE4";
+      ctx.fillRect(0, groundY, width, 55);
+
+      // Game updates
+      if (gameState === "playing") {
+        scoreDistance += 0.25;
+
+        // Achievements triggers
+        const milestoneCheck = Math.floor(scoreDistance);
+        if (milestoneCheck > 0 && milestoneCheck % 200 === 0 && milestoneCheck !== lastAchievementDistance) {
+          lastAchievementDistance = milestoneCheck;
+          const achievements = [
+            "10 Farms Digitized",
+            "500 Hectares Mapped",
+            "Supply Chain Restored",
+            "Farmer Income Increased",
+            "Carbon Data Verified",
+            "Compliance Achieved",
+            "Export Approved",
+            "Harvest Traced Successfully"
+          ];
+          const textIdx = Math.floor(milestoneCheck / 200) - 1;
+          showAchievement(achievements[textIdx % achievements.length]);
+        }
+
+        // Tractor Physics
+        tractor.vy += tractor.gravity;
+        tractor.y += tractor.vy;
+
+        if (tractor.y >= groundY - tractor.height) {
+          tractor.y = groundY - tractor.height;
+          tractor.vy = 0;
+          if (tractor.isJumping) {
+            tractor.isJumping = false;
+            spawnLandingDust();
+          }
+        }
+
+        tractor.wheelAngle += gameSpeed * 0.05;
+        tractor.vibrationOffset = Math.sin(Date.now() * 0.08) * 0.45;
+
+        tractor.smokeCooldown++;
+        if (tractor.smokeCooldown > 7) {
+          tractor.smokeCooldown = 0;
+          spawnSmoke();
+        }
+
+        // Spawns obstacles
+        if (Math.random() < 0.015 && obstacles.length < 3) {
+          const obsTypes = ["fence", "rock", "haybale"];
+          const selected = obsTypes[Math.floor(Math.random() * obsTypes.length)];
+          const obstacleW = selected === "haybale" ? 28 : 22;
+          const obstacleH = selected === "haybale" ? 28 : 20;
+
+          const lastObs = obstacles[obstacles.length - 1];
+          if (!lastObs || lastObs.x < width - 250) {
+            obstacles.push({
+              x: width + 20,
+              y: groundY - obstacleH,
+              width: obstacleW,
+              height: obstacleH,
+              type: selected,
+              color: selected === "rock" ? "#9CA3AF" : selected === "haybale" ? "#EAB308" : "#EF4444",
+              passed: false
+            });
+          }
+        }
+
+        // Spawns Crop Collectibles
+        if (Math.random() < 0.02 && collectibles.length < 4) {
+          const cropTypes = ["wheat", "coffee", "cotton", "drone"];
+          const selected = cropTypes[Math.floor(Math.random() * cropTypes.length)];
+          const collectY = groundY - 45 - Math.random() * 45;
+
+          const lastColl = collectibles[collectibles.length - 1];
+          if (!lastColl || lastColl.x < width - 150) {
+            collectibles.push({
+              x: width + 20,
+              y: collectY,
+              width: 16,
+              height: 16,
+              type: selected,
+              color: selected === "wheat" ? "#F59E0B" : selected === "coffee" ? "#B45309" : selected === "cotton" ? "#F3F4F6" : "#10B981",
+              collected: false,
+              pulse: 0
+            });
+          }
+        }
+      }
+
+      // Draw Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life++;
+        p.x += p.vx * (gameState === "playing" ? 1 : 0.1);
+        p.y += p.vy * (gameState === "playing" ? 1 : 0.1);
+        p.alpha = 1 - p.life / p.maxLife;
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        if (p.life >= p.maxLife) {
+          particles.splice(i, 1);
+        }
+      }
+
+      // Fireflies at night
+      if (activeWeather === "night") {
+        ctx.fillStyle = "rgba(134, 239, 172, 0.4)";
+        for (let i = 0; i < 10; i++) {
+          const ffX = (Math.cos(Date.now() * 0.001 + i * 2) * 0.5 + 0.5) * width;
+          const ffY = groundY - 10 - (Math.sin(Date.now() * 0.002 + i) * 0.5 + 0.5) * 80;
+          ctx.beginPath();
+          ctx.arc(ffX, ffY, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Rain streaks
+      if (activeWeather === "rain") {
+        ctx.strokeStyle = "rgba(156, 163, 175, 0.22)";
+        ctx.lineWidth = 1.2;
+        for (let i = 0; i < 25; i++) {
+          const rx = (Math.sin(i * 45) * 0.5 + 0.5) * width;
+          const ry = ((Date.now() * 0.015 + i * 20) % height);
+          ctx.beginPath();
+          ctx.moveTo(rx, ry);
+          ctx.lineTo(rx - 8, ry + 24);
+          ctx.stroke();
+        }
+      }
+
+      // Draw Tractor
+      const curY = tractor.y + (gameState === "playing" ? tractor.vibrationOffset : 0);
+      ctx.fillStyle = "#0B3D2E";
+      ctx.fillRect(tractor.x + 12, curY + 12, 34, 20);
+      ctx.fillRect(tractor.x + 26, curY + 2, 18, 14);
+      ctx.fillStyle = "#86EFAC";
+      ctx.fillRect(tractor.x + 29, curY + 4, 12, 10);
+      ctx.fillStyle = "#1F7A53";
+      ctx.fillRect(tractor.x + 5, curY + 18, 9, 14);
+
+      // Exhaust
+      ctx.strokeStyle = "#4B5563";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(tractor.x + 9, curY + 18);
+      ctx.lineTo(tractor.x + 9, curY + 4);
+      ctx.lineTo(tractor.x + 13, curY + 4);
+      ctx.stroke();
+
+      // Wheels
+      ctx.save();
+      ctx.translate(tractor.x + 36, curY + 30);
+      ctx.rotate(tractor.wheelAngle);
+      ctx.fillStyle = "#1F5946";
+      ctx.beginPath();
+      ctx.arc(0, 0, 11, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#FFF";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-11, 0); ctx.lineTo(11, 0);
+      ctx.moveTo(0, -11); ctx.lineTo(0, 11);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      ctx.translate(tractor.x + 11, curY + 33);
+      ctx.rotate(tractor.wheelAngle * 1.3);
+      ctx.fillStyle = "#1F5946";
+      ctx.beginPath();
+      ctx.arc(0, 0, 7.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#FFF";
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(-7.5, 0); ctx.lineTo(7.5, 0);
+      ctx.moveTo(0, -7.5); ctx.lineTo(0, 7.5);
+      ctx.stroke();
+      ctx.restore();
+
+      // Draw & Check Obstacles
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const obs = obstacles[i];
+        if (gameState === "playing") obs.x -= gameSpeed;
+
+        ctx.fillStyle = activeWeather === "night" ? "#0F172A" : obs.color;
+        if (obs.type === "rock") {
+          ctx.beginPath();
+          ctx.moveTo(obs.x, groundY);
+          ctx.lineTo(obs.x + obs.width * 0.3, groundY - obs.height);
+          ctx.lineTo(obs.x + obs.width * 0.7, groundY - obs.height * 0.9);
+          ctx.lineTo(obs.x + obs.width, groundY);
+          ctx.closePath();
+          ctx.fill();
+        } else if (obs.type === "fence") {
+          ctx.strokeStyle = activeWeather === "night" ? "#1E293B" : "#B45309";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(obs.x, groundY);
+          ctx.lineTo(obs.x + obs.width, groundY - obs.height);
+          ctx.stroke();
+        } else {
+          ctx.beginPath();
+          ctx.arc(obs.x + obs.width * 0.5, groundY - obs.height * 0.5, obs.width * 0.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Collision Check
+        if (
+          tractor.x + 4 < obs.x + obs.width &&
+          tractor.x + tractor.width - 4 > obs.x &&
+          tractor.y + 4 < groundY &&
+          tractor.y + tractor.height - 2 > groundY - obs.height
+        ) {
+          gameState = "gameover";
+          finalScoreVal.textContent = scoreHarvestVal.toString();
+          gameOverOverlay.classList.add("show");
+          if (scoreHarvestVal > highScore) {
+            highScore = scoreHarvestVal;
+            try { localStorage.setItem("sourcetrace_tractor_dino_highscore", highScore.toString()); } catch(e) {}
+          }
+        }
+
+        if (obs.x < -80) obstacles.splice(i, 1);
+      }
+
+      // Draw Collectibles
+      for (let i = collectibles.length - 1; i >= 0; i--) {
+        const coll = collectibles[i];
+        if (gameState === "playing") coll.x -= gameSpeed;
+
+        coll.pulse += 0.08;
+        const scaleOffset = Math.sin(coll.pulse) * 2;
+
+        if (!coll.collected) {
+          ctx.save();
+          if (coll.type === "drone") {
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "#53D769";
+          }
+          ctx.fillStyle = coll.color;
+          if (coll.type === "wheat") {
+            ctx.beginPath();
+            ctx.ellipse(coll.x, coll.y + scaleOffset, 5, 8, 0.2, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (coll.type === "coffee") {
+            ctx.beginPath();
+            ctx.arc(coll.x, coll.y + scaleOffset, 7, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (coll.type === "cotton") {
+            ctx.beginPath();
+            ctx.arc(coll.x - 3, coll.y + scaleOffset, 5, 0, Math.PI * 2);
+            ctx.arc(coll.x + 3, coll.y + scaleOffset, 5, 0, Math.PI * 2);
+            ctx.arc(coll.x, coll.y - 3 + scaleOffset, 5, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            ctx.fillRect(coll.x - 8, coll.y + scaleOffset - 2, 16, 4);
+          }
+          ctx.restore();
+
+          // Collision Check
+          if (
+            tractor.x < coll.x + coll.width &&
+            tractor.x + tractor.width > coll.x &&
+            tractor.y < coll.y + coll.height &&
+            tractor.y + tractor.height > coll.y
+          ) {
+            coll.collected = true;
+            scoreHarvestVal += coll.type === "drone" ? 50 : 15;
+            scoreVal.textContent = scoreHarvestVal.toString();
+            // sparks
+            for (let s = 0; s < 6; s++) {
+              particles.push({
+                x: coll.x,
+                y: coll.y,
+                vx: (Math.random() - 0.5) * 6,
+                vy: (Math.random() - 0.5) * 6,
+                size: 2,
+                color: coll.color,
+                alpha: 1.0,
+                life: 0,
+                maxLife: 20
+              });
+            }
+          }
+        }
+
+        if (coll.x < -80) collectibles.splice(i, 1);
+      }
+
+      ctx.restore();
+      requestAnimationFrame(update);
+    };
+
+    update();
+
+    // Online / Offline handlers
+    window.addEventListener("online", () => {
+      onlineToast.classList.add("show");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2500);
+    });
+  </script>
+</body>
+</html>

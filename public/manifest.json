@@ -1,0 +1,24 @@
+{
+  "name": "SourceTrace - Sustainable Agriculture Platform",
+  "short_name": "SourceTrace",
+  "description": "Progressive Web App for SourceTrace agricultural traceability, ESG compliance, and grower management systems.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4FAF6",
+  "theme_color": "#0B3D2E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/sourcetrace-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/sourcetrace-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
