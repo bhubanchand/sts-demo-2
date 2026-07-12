@@ -4,1142 +4,272 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Offline | SourceTrace</title>
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/sourcetrace-logo.png">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              dark: '#0B3D2E',
+              mint: '#86EFAC',
+              green: '#10B981',
+              light: '#EAF5EE',
+              text: '#1F5946',
+              accent: '#1F7A53'
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
+    @keyframes slow-drift {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(30px); }
     }
-    body, html {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #F4FAF6;
-      font-family: 'Outfit', sans-serif;
+    @keyframes slow-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      z-index: 0;
+    @keyframes flap {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.5); }
     }
-    /* HUD UI elements - WCAG AA Contrast Compliant, safe offset from header */
-    .hud-left-panel {
-      position: absolute;
-      top: 24px;
-      left: 24px;
-      z-index: 10;
-      pointer-events: none;
-      text-align: left;
-      background: #0B3D2E;
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      padding: 28px 32px;
-      border-radius: 24px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-      max-width: 480px;
+    .drift-slow {
+      animation: slow-drift 12s ease-in-out infinite;
     }
-    .hud-left-panel h2 {
-      font-weight: 900;
-      font-size: 56px;
-      color: #FFFFFF;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      line-height: 1;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    .spin-slow {
+      animation: slow-spin 20s linear infinite;
     }
-    .hud-left-panel h3 {
-      font-weight: 800;
-      font-size: 22px;
-      color: #86EFAC;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-top: 14px;
-      line-height: 1.2;
-    }
-    .hud-left-panel p {
-      font-weight: 600;
-      font-size: 16px;
-      color: rgba(255, 255, 255, 0.9);
-      margin-top: 12px;
-      line-height: 1.5;
-    }
-    .hud-right {
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      z-index: 10;
-      pointer-events: none;
-      text-align: right;
-      background: #0B3D2E;
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      padding: 24px 32px;
-      border-radius: 24px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-    }
-    .hud-right .label {
-      font-weight: 800;
-      font-size: 14px;
-      color: #86EFAC;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      display: block;
-      margin-bottom: 4px;
-    }
-    .hud-right .score {
-      font-weight: 900;
-      font-size: 56px;
-      color: #FFFFFF;
-      line-height: 1;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    .hud-bottom-pill {
-      position: absolute;
-      bottom: 48px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      pointer-events: none;
-      text-align: center;
-      background: #0B3D2E;
-      color: #FFF;
-      font-weight: 800;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      padding: 12px 24px;
-      border-radius: 9999px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      animation: bounce 2s infinite;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translate(-50%, 0); }
-      50% { transform: translate(-50%, -8px); }
-    }
-    /* Achievement Banner */
-    .achievement-banner {
-      position: absolute;
-      top: 180px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 20;
-      pointer-events: none;
-      background: rgba(11, 61, 46, 0.95);
-      color: #FFF;
-      font-weight: 800;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      padding: 10px 22px;
-      border-radius: 9999px;
-      border: 1px solid rgba(83, 215, 105, 0.3);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-    .achievement-banner.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-    /* Floating crop text (+25 kg) */
-    .floating-text-item {
-      position: absolute;
-      z-index: 20;
-      transform: translateX(-50%);
-      font-weight: 900;
-      font-size: 16px;
-      color: #10B981;
-      background: #FFFFFF;
-      border: 1px solid rgba(11, 61, 46, 0.1);
-      padding: 6px 14px;
-      border-radius: 9999px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      pointer-events: none;
-      animation: fadeUpOut 1.5s forwards;
-    }
-    @keyframes fadeUpOut {
-      0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-      50% { opacity: 1; transform: translate(-50%, -30px) scale(1.1); }
-      100% { opacity: 0; transform: translate(-50%, -60px) scale(1); }
-    }
-    /* Glassmorphic Overlay Box */
-    .overlay-container {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 30;
-      background: rgba(11, 61, 46, 0.15);
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-    .overlay-container.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .card {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid #FFF;
-      padding: 40px;
-      border-radius: 32px;
-      width: 90%;
-      max-width: 380px;
-      text-align: center;
-      box-shadow: 0 16px 40px rgba(0, 77, 38, 0.06);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      transform: scale(0.9);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .overlay-container.show .card {
-      transform: scale(1);
-    }
-    .card .category {
-      font-weight: 800;
-      font-size: 10px;
-      color: #1F7A53;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      margin-bottom: 8px;
-      display: block;
-    }
-    .card .category.error {
-      color: #D13C3C;
-    }
-    .card h2 {
-      font-weight: 900;
-      font-size: 24px;
-      color: #0B3D2E;
-      margin-bottom: 12px;
-      letter-spacing: -0.02em;
-    }
-    .card p {
-      font-size: 13px;
-      color: #1F5946;
-      line-height: 1.6;
-      margin-bottom: 24px;
-      font-weight: 600;
-    }
-    .score-summary {
-      background: #F4FAF6;
-      border: 1px solid rgba(11, 61, 46, 0.08);
-      padding: 12px 24px;
-      border-radius: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      font-size: 12px;
-    }
-    .score-summary span {
-      font-weight: 800;
-      color: #1F5946;
-    }
-    .score-summary strong {
-      font-weight: 900;
-      font-size: 18px;
-      color: #0B3D2E;
-    }
-    .btn {
-      width: 100%;
-      height: 44px;
-      border-radius: 9999px;
-      font-weight: 800;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.3s ease;
-    }
-    .btn-primary {
-      background: #0B3D2E;
-      color: #FFF;
-      box-shadow: 0 4px 16px rgba(11, 61, 46, 0.15);
-      margin-bottom: 12px;
-    }
-    .btn-primary:hover {
-      background: #125c44;
-      transform: translateY(-1px);
-    }
-    .btn-secondary {
-      background: transparent;
-      border: 1px solid rgba(11, 61, 46, 0.12);
-      color: #0B3D2E;
-    }
-    .btn-secondary:hover {
-      background: rgba(0, 0, 0, 0.02);
-      transform: translateY(-1px);
-    }
-    /* Toast Online alert */
-    .online-toast {
-      position: absolute;
-      bottom: 24px;
-      right: 24px;
-      background: rgba(11, 61, 46, 0.95);
-      color: #FFF;
-      padding: 12px 24px;
-      border-radius: 16px;
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      box-shadow: 0 8px 30px rgba(0, 77, 38, 0.15);
-      border: 1px solid rgba(83, 215, 105, 0.3);
-      z-index: 50;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(20px);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .online-toast.show {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
+    .bird-flap {
+      animation: flap 1.5s ease-in-out infinite;
     }
   </style>
 </head>
-<body>
+<body class="bg-brand-light text-brand-dark min-h-screen flex flex-col justify-between p-6 sm:p-10 relative overflow-hidden select-none font-sans">
+  
+  <!-- ── BACKGROUND: Ambient rolling farmland landscape ── -->
+  <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+    <!-- Soft atmospheric gradient sky -->
+    <div class="absolute inset-0 bg-gradient-to-b from-[#BFE6D2] via-[#EAF5EE] to-[#F4FAF6]"></div>
+    
+    <!-- Glowing Sun -->
+    <div class="absolute top-[8%] left-[20%] w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-[#FFF7ED] to-[#FEF3C7] opacity-60 blur-3xl"></div>
 
-  <canvas id="gameCanvas"></canvas>
+    <!-- Slow Flying Birds -->
+    <svg class="absolute top-[15%] right-[25%] w-32 h-16 opacity-30" viewBox="0 0 120 60">
+      <path d="M10,25 Q20,15 30,25 Q40,15 50,25" fill="none" stroke="#0B3D2E" stroke-width="2.5" stroke-linecap="round" class="bird-flap"></path>
+      <path d="M60,15 Q68,7 76,15 Q84,7 92,15" fill="none" stroke="#0B3D2E" stroke-width="2" stroke-linecap="round" class="bird-flap" style="animation-delay: 0.5s;"></path>
+    </svg>
 
-  <!-- HUD overlay -->
-  <div class="hud-left-panel">
-    <h2>You're Offline</h2>
-    <h3>Connection lost.</h3>
-    <p>While we reconnect, help deliver today's harvest.</p>
-  </div>
+    <!-- Slowly drifting clouds -->
+    <div class="absolute top-[10%] left-[20vw] w-[350px] h-[120px] bg-white/40 blur-2xl rounded-full drift-slow"></div>
 
-  <div class="hud-right">
-    <span class="label">🌾 Harvest</span>
-    <span class="score" id="scoreVal">0 kg</span>
-  </div>
+    <!-- Rolling Farmland Hills Layer 3 (Distant) -->
+    <svg class="absolute bottom-[10%] left-0 w-full h-[35%] opacity-20 text-[#2B7A58]" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="currentColor" d="M0,192 C240,230 480,260 720,230 C960,200 1200,240 1440,192 L1440,320 L0,320 Z"></path>
+    </svg>
 
-  <div class="hud-bottom-pill">
-    Press Space or Tap to Jump
-  </div>
+    <!-- Rolling Farmland Hills Layer 2 (Mid-ground) -->
+    <svg class="absolute bottom-[4%] left-0 w-full h-[25%] opacity-40 text-[#1F6B47]" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="currentColor" d="M0,128 C360,192 720,160 1080,224 C1260,256 1380,210 1440,192 L1440,320 L0,320 Z"></path>
+    </svg>
 
-  <!-- Achievement Alert Banner -->
-  <div class="achievement-banner" id="achievementAlert">
-    🌾 10 Farms Digitized
-  </div>
-
-  <!-- Start Overlay -->
-  <div class="overlay-container show" id="startOverlay">
-    <div class="card">
-      <span class="category">SourceTrace</span>
-      <h2>Tractor Delivery Run</h2>
-      <p>Navigate the farm road. Jump over spreadsheets, mud, and fences to collect the harvest and digitize the first mile!</p>
-      <button class="btn btn-primary" id="btnStart">Start Harvest Run</button>
+    <!-- Distant Windmills with rotating rotors -->
+    <div class="absolute bottom-[20%] left-[15%] opacity-35 scale-75 hidden sm:block">
+      <div class="w-1.5 h-16 bg-[#0B3D2E]/70 mx-auto"></div>
+      <div class="w-12 h-12 border-2 border-dashed border-[#0B3D2E]/70 rounded-full spin-slow -mt-20 -ml-5"></div>
     </div>
+    <div class="absolute bottom-[24%] right-[18%] opacity-25 scale-50 hidden sm:block">
+      <div class="w-1.5 h-16 bg-[#0B3D2E]/70 mx-auto"></div>
+      <div class="w-12 h-12 border-2 border-dashed border-[#0B3D2E]/70 rounded-full spin-slow -mt-20 -ml-5" style="animation-duration: 30s;"></div>
+    </div>
+
+    <!-- Front rolling hill layer -->
+    <svg class="absolute bottom-0 left-0 w-full h-[15%] text-[#0B3D2E]/10" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="currentColor" d="M0,224 C480,180 960,250 1440,160 L1440,320 L0,320 Z"></path>
+    </svg>
   </div>
 
-  <!-- Game Over Overlay -->
-  <div class="overlay-container" id="gameOverOverlay">
-    <div class="card">
-      <span class="category error">Trace Broken</span>
-      <h2>Harvest Interrupted</h2>
-      <p>Silos or spreadsheets crashed the first mile.</p>
-      <div class="score-summary">
-        <span>Final Harvest:</span>
-        <strong id="finalScoreVal">0 kg</strong>
+  <!-- ── HEADER: Elegant Minimalist Branding ── -->
+  <div class="relative z-10 w-full flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 group transition-all">
+      <div class="w-9 h-9 rounded-xl bg-brand-dark flex items-center justify-center text-white shadow-md shadow-brand-dark/10">
+        <svg class="w-5 h-5 text-brand-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.364 17.636l-.707.707M17.636 17.636l-.707-.707M6.364 6.364l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+        </svg>
       </div>
-      <button class="btn btn-primary" id="btnPlayAgain">Play Again</button>
-      <button class="btn btn-secondary" id="btnReturnHome">Return Home</button>
+      <span class="font-extrabold text-lg text-brand-dark tracking-tight">SourceTrace</span>
+    </a>
+    
+    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#EF4444]/10 rounded-full text-xs font-semibold text-[#B91C1C] border border-[#EF4444]/20">
+      <span class="w-2 h-2 rounded-full bg-[#EF4444] animate-pulse"></span>
+      <span>Offline Mode Active</span>
     </div>
   </div>
 
-  <!-- Online Toast -->
-  <div class="online-toast" id="onlineToast">
-    ✨ Back Online! Redirecting to Home...
+  <!-- ── CENTERPIECE: Elegant Glassmorphic Panel ── -->
+  <div class="relative z-10 w-full flex justify-center items-center my-auto py-8">
+    <div class="bg-white/80 backdrop-blur-xl border border-white/60 px-6 py-10 sm:p-12 rounded-[32px] shadow-[0_32px_80px_rgba(11,61,46,0.06)] max-w-xl w-full text-center">
+      
+      <!-- Status Badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-dark/5 border border-brand-dark/10 text-brand-dark rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+        <svg class="w-3.5 h-3.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-3.536 4.978 4.978 0 011.414-3.536m0 0L8.464 12m-6.364-.364l2.829 2.829"></path>
+        </svg>
+        Connection Lost
+      </div>
+
+      <!-- Headline -->
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-dark tracking-tight leading-tight mb-4">
+        Looks like our data truck lost its signal.
+      </h2>
+
+      <!-- Conversational Copy -->
+      <p class="text-sm sm:text-base text-brand-text font-medium leading-relaxed mb-6 max-w-lg mx-auto">
+        We lost contact with the server. While we reconnect automatically, you can return to the dashboard or explore popular destinations below.
+      </p>
+
+      <!-- Smart Search Bar -->
+      <div class="relative max-w-md mx-auto mb-8">
+        <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+          <svg class="h-5 w-5 text-brand-text/75" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Offline search index..."
+          disabled
+          class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-brand-dark/10 rounded-2xl text-sm font-semibold text-brand-dark placeholder-brand-text/50 shadow-sm focus:outline-none cursor-not-allowed"
+        />
+        <div class="absolute right-4 inset-y-0 flex items-center">
+          <span class="text-[10px] uppercase font-bold text-gray-400 bg-gray-200/50 px-2 py-0.5 rounded">DISABLED</span>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+        <a href="/">
+          <button class="flex items-center gap-2 h-11 px-6 rounded-full bg-brand-dark hover:bg-[#155a44] text-white font-bold text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 active:scale-95 shadow-md">
+            <svg class="w-4 h-4 text-brand-mint" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Return Home
+          </button>
+        </a>
+        
+        <a href="/solutions">
+          <button class="flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-brand-dark/10 hover:border-brand-dark/20 text-brand-dark font-bold text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 active:scale-95 shadow-sm">
+            <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+            Explore Solutions
+          </button>
+        </a>
+
+        <a href="/company/contact">
+          <button class="flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-brand-dark/10 hover:border-brand-dark/20 text-brand-dark font-bold text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 active:scale-95 shadow-sm">
+            <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            Contact Sales
+          </button>
+        </a>
+      </div>
+
+      <!-- Rotating One-Liners -->
+      <div class="border-t border-brand-dark/5 pt-6">
+        <div id="quote-el" class="text-xs text-brand-accent font-bold italic tracking-wide h-5 transition-all duration-300">
+          “ Looks like our data truck lost its signal. We'll reconnect automatically. ”
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── FOOTER: Trust Signals & Empathy Note ── -->
+  <div class="relative z-10 w-full flex flex-col items-center gap-4">
+    
+    <!-- Popular Destinations Grid -->
+    <div class="w-full max-w-4xl grid grid-cols-2 md:grid-cols-4 gap-3">
+      <a href="/solutions/eudr-compliance" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-sm">
+        <div class="text-xs font-extrabold text-brand-dark mb-1">EUDR Compliance</div>
+        <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">Deforestation traceability</div>
+      </a>
+      <a href="/solutions/esg-reporting" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-sm">
+        <div class="text-xs font-extrabold text-brand-dark mb-1">ESG Reporting</div>
+        <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">Carbon & nature metrics</div>
+      </a>
+      <a href="/solutions/smallholder-management" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-sm">
+        <div class="text-xs font-extrabold text-brand-dark mb-1">Smallholder Mgmt</div>
+        <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">First-mile connectivity</div>
+      </a>
+      <a href="/solutions/supply-chain-traceability" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-sm">
+        <div class="text-xs font-extrabold text-brand-dark mb-1">Traceability Flow</div>
+        <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">Interactive mapping</div>
+      </a>
+    </div>
+
+    <!-- Conditional bottom text -->
+    <div class="text-[11px] text-brand-accent font-bold tracking-wide mt-2">
+      Reconnecting to the network automatically...
+    </div>
+
+    <!-- Divider -->
+    <div class="w-24 h-px bg-brand-dark/10"></div>
+
+    <!-- Corporate Trust Indicators -->
+    <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[10px] font-bold text-brand-text/60 tracking-wider uppercase mb-2">
+      <span class="flex items-center gap-1.5">
+        Trusted by global food leaders
+      </span>
+      <span class="w-1 h-1 rounded-full bg-brand-dark/20"></span>
+      <span class="flex items-center gap-1.5">
+        Active across millions of hectares
+      </span>
+      <span class="w-1 h-1 rounded-full bg-brand-dark/20"></span>
+      <span class="flex items-center gap-1.5">
+        Real-time digital traceability
+      </span>
+    </div>
   </div>
 
   <script>
-    // Elements
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-    const scoreVal = document.getElementById("scoreVal");
-    const finalScoreVal = document.getElementById("finalScoreVal");
-    const startOverlay = document.getElementById("startOverlay");
-    const gameOverOverlay = document.getElementById("gameOverOverlay");
-    const achievementAlert = document.getElementById("achievementAlert");
-    const onlineToast = document.getElementById("onlineToast");
-
-    const btnStart = document.getElementById("btnStart");
-    const btnPlayAgain = document.getElementById("btnPlayAgain");
-    const btnReturnHome = document.getElementById("btnReturnHome");
-
-    // Game Variables
-    let gameState = "idle"; // idle, playing, gameover
-    let scoreDistance = 0;
-    let scoreHarvestVal = 0;
-    let highScore = 0;
-    let lastAchievementDistance = 0;
-    let gameSpeed = 0.011;
-    let cameraShake = 0;
-    let cycleTimer = 0;
-    let activeWeather = "sun";
-
-    // Collision Freeze states
-    let freezeTimer = 0;
-    let collidedItemIdx = -1;
-
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
-    let horizonY = height * 0.10;
-    let groundY = height;
-
-    // Load Highscore
-    try {
-      const saved = localStorage.getItem("sourcetrace_tractor_weight_highscore");
-      if (saved) highScore = parseInt(saved, 10);
-    } catch(e) {}
-
-    // Resize Handler
-    window.addEventListener("resize", () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      horizonY = height * 0.10;
-      groundY = height;
-    });
-
-    // 2.5x Zoomed Tractor (250x190)
-    const tractor = {
-      x: width / 2,
-      y: height * 0.84,
-      width: 400,
-      height: 300,
-      yOffset: 0,
-      vy: 0,
-      gravity: 0.9,
-      jumpStrength: -22,
-      isJumping: false,
-      vibration: 0,
-      wheelRot: 0
-    };
-
-    let roadItems = [];
-    let particles = [];
-    let roadDashes = [0, 0.2, 0.4, 0.6, 0.8];
-
-    // Background decoration coordinates (Pastel & Desaturated)
-    const clouds = [
-      { x: width * 0.25, y: horizonY * 0.35, size: 25 },
-      { x: width * 0.65, y: horizonY * 0.25, size: 30 }
+    // Rotating Quotes
+    const farmQuotes = [
+      "We're checking every field... still no sign of this page.",
+      "The GPS coordinates say 'somewhere over that hill.'",
+      "Even our AI couldn't convince this page to stay in the supply chain.",
+      "Our farmers are better at finding crops than missing URLs.",
+      "The trace ended here... but your journey doesn't have to."
     ];
+    let quoteIndex = 0;
+    const quoteEl = document.getElementById("quote-el");
 
-    const mountains = [
-      { x: width * 0.05, w: width * 0.5, h: horizonY * 0.6 },
-      { x: width * 0.5, w: width * 0.55, h: horizonY * 0.7 }
-    ];
-
-    const sceneryItems = [
-      { z: 0.1, side: "left", type: "tree", rot: 0 },
-      { z: 0.3, side: "right", type: "windmill", rot: 0 },
-      { z: 0.5, side: "left", type: "tree", rot: 0 },
-      { z: 0.7, side: "right", type: "tree", rot: 0 },
-      { z: 0.9, side: "left", type: "windmill", rot: 1 }
-    ];
-
-    // Spawning control
-    let spawnTimer = 0;
-
-    const showAchievement = (text) => {
-      achievementAlert.textContent = "✔ " + text;
-      achievementAlert.classList.add("show");
+    setInterval(() => {
+      quoteEl.classList.add("opacity-0", "translate-y-1");
       setTimeout(() => {
-        achievementAlert.classList.remove("show");
-      }, 3000);
-    };
-
-    const spawnSparks = (x, y, color) => {
-      for (let i = 0; i < 8; i++) {
-        particles.push({
-          x,
-          y,
-          vx: (Math.random() - 0.5) * 5,
-          vy: (Math.random() - 0.5) * 5,
-          size: 2.5 + Math.random() * 4,
-          color,
-          alpha: 1.0,
-          life: 0,
-          maxLife: 20 + Math.random() * 15
-        });
-      }
-    };
-
-    const spawnLandingDust = () => {
-      for (let i = 0; i < 25; i++) {
-        particles.push({
-          x: width / 2 + (Math.random() - 0.5) * 110,
-          y: tractor.y + 35,
-          vx: (Math.random() - 0.5) * 9,
-          vy: -1.5 - Math.random() * 4,
-          size: 4 + Math.random() * 8,
-          color: "rgba(167, 133, 100, 0.45)",
-          alpha: 0.85,
-          life: 0,
-          maxLife: 25 + Math.random() * 20
-        });
-      }
-      cameraShake = 9;
-    };
-
-    const formatWeight = (w) => {
-      return w >= 1000 ? `${(w / 1000).toFixed(1)} Tons` : `${w} kg`;
-    };
-
-    const triggerFloatingText = (text, rx, ry) => {
-      const div = document.createElement("div");
-      div.className = "floating-text-item";
-      div.textContent = text;
-      div.style.left = rx + "px";
-      div.style.top = ry + "px";
-      document.body.appendChild(div);
-      setTimeout(() => div.remove(), 1500);
-    };
-
-    const triggerJump = () => {
-      if (gameState === "playing" && !tractor.isJumping && freezeTimer === 0) {
-        tractor.vy = tractor.jumpStrength;
-        tractor.isJumping = true;
-      }
-    };
-
-    const restartGame = () => {
-      roadItems = [];
-      particles = [];
-      distanceTraveled = 0;
-      scoreHarvestVal = 0;
-      freezeTimer = 0;
-      collidedItemIdx = -1;
-      scoreVal.textContent = "0 kg";
-      gameSpeed = 0.011;
-      tractor.yOffset = 0;
-      tractor.vy = 0;
-      tractor.isJumping = false;
-      
-      startOverlay.classList.remove("show");
-      gameOverOverlay.classList.remove("show");
-      gameState = "playing";
-    };
-
-    // Events
-    document.body.addEventListener("click", (e) => {
-      if (e.target.closest(".card") || e.target.closest(".online-toast")) return;
-      if (gameState === "idle" || gameState === "gameover") {
-        restartGame();
-      } else {
-        triggerJump();
-      }
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.code === "Space" || e.code === "ArrowUp") {
-        e.preventDefault();
-        if (gameState === "idle" || gameState === "gameover") {
-          restartGame();
-        } else {
-          triggerJump();
-        }
-      }
-    });
-
-    btnStart.addEventListener("click", (e) => {
-      e.stopPropagation();
-      restartGame();
-    });
-    btnPlayAgain.addEventListener("click", (e) => {
-      e.stopPropagation();
-      restartGame();
-    });
-    btnReturnHome.addEventListener("click", (e) => {
-      e.stopPropagation();
-      window.location.href = "/";
-    });
-
-    // ── GAME LOOP ──
-    const update = () => {
-      cycleTimer++;
-      if (cycleTimer > 950) {
-        cycleTimer = 0;
-        const weathers = ["sun", "sunset", "night", "rain"];
-        const currentIdx = weathers.indexOf(activeWeather);
-        activeWeather = weathers[(currentIdx + 1) % weathers.length];
-      }
-
-      ctx.save();
-      if (cameraShake > 0) {
-        const shakeX = (Math.random() - 0.5) * cameraShake;
-        const shakeY = (Math.random() - 0.5) * cameraShake;
-        ctx.translate(shakeX, shakeY);
-        cameraShake *= 0.88;
-        if (cameraShake < 0.1) cameraShake = 0;
-      }
-
-      // Draw Sky
-      let skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
-      if (activeWeather === "sun") {
-        skyGrad.addColorStop(0, "#BAE6FD");
-        skyGrad.addColorStop(1, "#E0F2FE");
-      } else if (activeWeather === "sunset") {
-        skyGrad.addColorStop(0, "#FDBA74");
-        skyGrad.addColorStop(1, "#FFEDD5");
-      } else if (activeWeather === "night") {
-        skyGrad.addColorStop(0, "#0F172A");
-        skyGrad.addColorStop(1, "#1E293B");
-      } else if (activeWeather === "rain") {
-        skyGrad.addColorStop(0, "#9CA3AF");
-        skyGrad.addColorStop(1, "#D1D5DB");
-      }
-      ctx.fillStyle = skyGrad;
-      ctx.fillRect(0, 0, width, horizonY);
-
-      // Mountains
-      ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(178, 220, 192, 0.15)";
-      mountains.forEach((mtn) => {
-        ctx.beginPath();
-        ctx.moveTo(mtn.x, horizonY);
-        ctx.lineTo(mtn.x + mtn.w * 0.5, horizonY - mtn.h);
-        ctx.lineTo(mtn.x + mtn.w, horizonY);
-        ctx.closePath();
-        ctx.fill();
-      });
-
-      // Ground Field
-      ctx.fillStyle = activeWeather === "night" ? "#041C15" : "#EAF5EE";
-      ctx.fillRect(0, horizonY, width, height - horizonY);
-
-      // Vanishing Road
-      const roadStartWidth = 48;
-      const roadEndWidth = width * 0.95;
-      const leftHorizonX = width / 2 - roadStartWidth / 2;
-      const rightHorizonX = width / 2 + roadStartWidth / 2;
-      const leftBottomX = width / 2 - roadEndWidth / 2;
-      const rightBottomX = width / 2 + roadEndWidth / 2;
-
-      ctx.fillStyle = activeWeather === "night" ? "#020D09" : "#C6DCBA";
-      ctx.beginPath();
-      ctx.moveTo(leftHorizonX, horizonY);
-      ctx.lineTo(rightHorizonX, horizonY);
-      ctx.lineTo(rightBottomX, height);
-      ctx.lineTo(leftBottomX, height);
-      ctx.closePath();
-      ctx.fill();
-
-      // Road grass borders
-      ctx.strokeStyle = activeWeather === "night" ? "#052E20" : "#A1C6A0";
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.moveTo(leftHorizonX, horizonY);
-      ctx.lineTo(leftBottomX, height);
-      ctx.moveTo(rightHorizonX, horizonY);
-      ctx.lineTo(rightBottomX, height);
-      ctx.stroke();
-
-      // Road dashes
-      if (gameState === "playing" && freezeTimer === 0) {
-        for (let i = 0; i < roadDashes.length; i++) {
-          roadDashes[i] += gameSpeed * 1.5;
-          if (roadDashes[i] >= 1.0) roadDashes[i] = 0;
-        }
-      }
-      ctx.strokeStyle = activeWeather === "night" ? "rgba(11,61,46,0.2)" : "rgba(31,89,70,0.08)";
-      roadDashes.forEach((z) => {
-        const ry = horizonY + z * (height - horizonY);
-        const rw = roadStartWidth * (1 - z) + roadEndWidth * z;
-        ctx.lineWidth = 1.5 + z * 11;
-        ctx.beginPath();
-        ctx.moveTo(width / 2 - rw / 2, ry);
-        ctx.lineTo(width / 2 + rw / 2, ry);
-        ctx.stroke();
-      });
-
-      // Scenery Parallax
-      sceneryItems.forEach((item) => {
-        if (gameState === "playing" && freezeTimer === 0) {
-          item.z += gameSpeed;
-          if (item.z >= 1.0) {
-            item.z = 0.05;
-            item.side = Math.random() > 0.5 ? "left" : "right";
-            item.type = Math.random() > 0.5 ? "windmill" : "tree";
-          }
-        }
-
-        const scale = Math.pow(item.z, 2);
-        const ry = horizonY + item.z * (height - horizonY);
-        const rw = roadStartWidth * (1 - item.z) + roadEndWidth * item.z;
-        const sideMultiplier = item.side === "left" ? -1 : 1;
-        const rx = width / 2 + sideMultiplier * (rw / 2 + 80 * scale * (width * 0.002));
-
-        ctx.save();
-        ctx.translate(rx, ry);
-        ctx.scale(scale * 2.0, scale * 2.0);
-
-        ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(120, 155, 133, 0.25)";
-        if (item.type === "tree") {
-          ctx.beginPath();
-          ctx.moveTo(0, -40);
-          ctx.lineTo(-12, -15);
-          ctx.lineTo(12, -15);
-          ctx.closePath();
-          ctx.fill();
-          ctx.beginPath();
-          ctx.moveTo(0, -25);
-          ctx.lineTo(-18, 5);
-          ctx.lineTo(18, 5);
-          ctx.closePath();
-          ctx.fill();
-          ctx.fillRect(-2.5, 5, 5, 8);
-        } else if (item.type === "windmill") {
-          ctx.fillRect(-2, -35, 4, 35);
-          item.rot += 0.012;
-          ctx.save();
-          ctx.translate(0, -35);
-          ctx.rotate(item.rot);
-          ctx.strokeStyle = activeWeather === "night" ? "rgba(255,255,255,0.03)" : "rgba(120, 155, 133, 0.2)";
-          ctx.lineWidth = 1.5;
-          for (let b = 0; b < 3; b++) {
-            ctx.rotate((Math.PI * 2) / 3);
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(0, -18);
-            ctx.stroke();
-          }
-          ctx.restore();
-        }
-        ctx.restore();
-      });
-
-      // Spawning updates
-      if (gameState === "playing" && freezeTimer === 0) {
-        distanceTraveled += 0.25;
-
-        let lastItemZ = 0;
-        if (roadItems.length > 0) {
-          lastItemZ = roadItems[roadItems.length - 1].z;
-        }
-
-        spawnTimer++;
-        if (spawnTimer > 95 && lastItemZ > 0.48) {
-          spawnTimer = 0;
-          const isCrop = Math.random() > 0.42;
-          if (isCrop) {
-            const cropTypes = ["wheat", "tomato"];
-            roadItems.push({
-              z: 0.05,
-              type: "crop",
-              subType: cropTypes[Math.floor(Math.random() * cropTypes.length)],
-              xOffset: 0,
-              collected: false,
-              pulse: Math.random() * 5
-            });
-          } else {
-            const obstacleTypes = ["rock", "haybale", "cow"];
-            roadItems.push({
-              z: 0.05,
-              type: "obstacle",
-              subType: obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)],
-              xOffset: 0,
-              collected: false,
-              pulse: 0
-            });
-          }
-        }
-
-        // Tractor Physics
-        tractor.vy += tractor.gravity;
-        tractor.yOffset -= tractor.vy;
-
-        if (tractor.yOffset <= 0) {
-          tractor.yOffset = 0;
-          tractor.vy = 0;
-          if (tractor.isJumping) {
-            tractor.isJumping = false;
-            spawnLandingDust();
-          }
-        }
-
-        tractor.wheelRot += gameSpeed * 9;
-        tractor.vibration = Math.sin(Date.now() * 0.08) * 1.1;
-      }
-
-      // Draw Items
-      for (let i = roadItems.length - 1; i >= 0; i--) {
-        const item = roadItems[i];
-        if (gameState === "playing" && freezeTimer === 0) item.z += gameSpeed;
-
-        const scale = Math.pow(item.z, 1.2);
-        const ry = horizonY + item.z * (height - horizonY);
-        const rx = width / 2;
-
-        if (item.z >= 1.05) {
-          roadItems.splice(i, 1);
-          continue;
-        }
-
-        // Collision Check
-        if (item.z >= 0.82 && item.z <= 0.92 && freezeTimer === 0) {
-          if (item.type === "obstacle") {
-            const obsHeightMap = { rock: 80, haybale: 90, cow: 100 };
-            const obstacleHeight = obsHeightMap[item.subType] || 85;
-            
-            if (tractor.yOffset < obstacleHeight - 15) {
-              freezeTimer = 18;
-              collidedItemIdx = i;
-              cameraShake = 16;
-              
-              for (let d = 0; d < 30; d++) {
-                particles.push({
-                  x: rx + (Math.random() - 0.5) * 80,
-                  y: ry - 20,
-                  vx: (Math.random() - 0.5) * 12,
-                  vy: -2 - Math.random() * 6,
-                  size: 5 + Math.random() * 8,
-                  color: "rgba(180, 50, 50, 0.8)",
-                  alpha: 1.0,
-                  life: 0,
-                  maxLife: 30 + Math.random() * 15
-                });
-              }
-            }
-          } else if (item.type === "crop" && !item.collected) {
-            item.collected = true;
-            const rewardMap = { wheat: 25, tomato: 35 };
-            const weightReward = rewardMap[item.subType] || 20;
-            scoreHarvestVal += weightReward;
-            scoreVal.textContent = formatWeight(scoreHarvestVal);
-            
-            spawnSparks(rx, ry - 30 * scale, item.subType === "wheat" ? "#FBBF24" : "#EF4444");
-            triggerFloatingText(`+${weightReward} kg ${item.subType.toUpperCase()}`, rx, ry - 40);
-          }
-        }
-
-        // Render Road Item
-        if (item.type === "obstacle") {
-          ctx.save();
-          ctx.translate(rx, ry);
-          const isCollidedThis = (collidedItemIdx === i);
-          const finalScaleMultiplier = isCollidedThis ? scale * 6.0 : scale * 5.0;
-          ctx.scale(finalScaleMultiplier, finalScaleMultiplier);
-
-          ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-          ctx.beginPath();
-          ctx.ellipse(0, 0, 16, 4.5, 0, 0, Math.PI * 2);
-          ctx.fill();
-
-          if (isCollidedThis && Math.floor(Date.now() / 80) % 2 === 0) {
-            ctx.fillStyle = "#DC2626";
-            ctx.beginPath();
-            ctx.arc(0, -10, 15, 0, Math.PI * 2);
-            ctx.fill();
-          } else {
-            ctx.fillStyle = "#374151";
-            if (item.subType === "rock") {
-              ctx.fillStyle = "#2D3748";
-              ctx.beginPath();
-              ctx.moveTo(-14, 0);
-              ctx.lineTo(-9, -18);
-              ctx.lineTo(8, -16);
-              ctx.lineTo(14, 0);
-              ctx.closePath();
-              ctx.fill();
-
-              ctx.fillStyle = "#1A202C"; // matte shaded side
-              ctx.beginPath();
-              ctx.moveTo(-14, 0);
-              ctx.lineTo(-9, -18);
-              ctx.lineTo(-3, 0);
-              ctx.closePath();
-              ctx.fill();
-
-              // Add crack details
-              ctx.strokeStyle = "#4A5568";
-              ctx.lineWidth = 1.5;
-              ctx.beginPath();
-              ctx.moveTo(-5, -12);
-              ctx.lineTo(-1, -6);
-              ctx.lineTo(2, -10);
-              ctx.stroke();
-            } else if (item.subType === "haybale") {
-              ctx.fillStyle = "#B45309";
-              ctx.beginPath();
-              ctx.ellipse(0, -12, 14, 12, 0, 0, Math.PI * 2);
-              ctx.fill();
-              ctx.fillStyle = "#D97706";
-              ctx.beginPath();
-              ctx.ellipse(0, -12, 11, 9, 0, 0, Math.PI * 2);
-              ctx.fill();
-
-              // Twine wrapping bands
-              ctx.fillStyle = "#78350F";
-              ctx.fillRect(-7, -22, 2, 20);
-              ctx.fillRect(5, -22, 2, 20);
-
-              // Concentric spiral layers
-              ctx.strokeStyle = "#78350F";
-              ctx.lineWidth = 2.0;
-              ctx.beginPath();
-              ctx.arc(0, -12, 5, 0, Math.PI * 1.5);
-              ctx.stroke();
-            } else if (item.subType === "cow") {
-              ctx.fillStyle = "#F3F4F6";
-              ctx.beginPath();
-              ctx.roundRect(-16, -18, 32, 18, 4);
-              ctx.fill();
-
-              // Black patches
-              ctx.fillStyle = "#111827";
-              ctx.beginPath();
-              ctx.arc(-8, -13, 5, 0, Math.PI * 2);
-              ctx.arc(5, -11, 4, 0, Math.PI * 2);
-              ctx.fill();
-
-              // Hooves
-              ctx.fillRect(-12, 0, 4, 2);
-              ctx.fillRect(6, 0, 4, 2);
-
-              // Tail
-              ctx.strokeStyle = "#111827";
-              ctx.lineWidth = 1.5;
-              ctx.beginPath();
-              ctx.moveTo(-16, -10);
-              ctx.lineTo(-20, -2);
-              ctx.stroke();
-
-              // Head
-              ctx.fillStyle = "#F3F4F6";
-              ctx.beginPath();
-              ctx.roundRect(8, -26, 10, 12, 3);
-              ctx.fill();
-              ctx.fillStyle = "#FCA5A5"; // pink nose
-              ctx.fillRect(14, -20, 4, 6);
-
-              // Ears
-              ctx.beginPath();
-              ctx.arc(8, -26, 2, 0, Math.PI * 2);
-              ctx.arc(14, -26, 2, 0, Math.PI * 2);
-              ctx.fill();
-            }
-          }
-          ctx.restore();
-        } else if (item.type === "crop" && !item.collected) {
-          const hoverOffset = Math.sin(item.pulse) * 5 * scale;
-          ctx.save();
-          ctx.translate(rx, ry - 90 * scale + hoverOffset);
-          ctx.scale(scale * 5.0, scale * 5.0);
-
-          ctx.shadowBlur = 18;
-          ctx.fillStyle = "#F59E0B";
-
-          if (item.subType === "wheat") {
-            // Glowing golden wheat bundle fanned out (3 stalks)
-            let cropGrad = ctx.createRadialGradient(0, -6, 2, 0, 0, 12);
-            cropGrad.addColorStop(0, "#FDE047");
-            cropGrad.addColorStop(1, "#D97706");
-            ctx.fillStyle = cropGrad;
-
-            // Stalk 1 (left tilt)
-            ctx.save();
-            ctx.rotate(-0.25);
-            ctx.beginPath();
-            ctx.ellipse(-3, -2, 3.5, 9, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-
-            // Stalk 2 (vertical center)
-            ctx.beginPath();
-            ctx.ellipse(0, -1, 4, 10, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Stalk 3 (right tilt)
-            ctx.save();
-            ctx.rotate(0.25);
-            ctx.beginPath();
-            ctx.ellipse(3, -2, 3.5, 9, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-
-            // Tied red ribbon in center
-            ctx.fillStyle = "#EF4444";
-            ctx.beginPath();
-            ctx.roundRect(-6, 2, 12, 3, 1);
-            ctx.fill();
-          } else if (item.subType === "tomato") {
-            // Basket of Tomatoes
-            // Woven wooden basket/crate in brown
-            ctx.fillStyle = "#78350F";
-            ctx.beginPath();
-            ctx.roundRect(-9, 1, 18, 9, 2);
-            ctx.fill();
-
-            // Basket highlights
-            ctx.strokeStyle = "#451A03";
-            ctx.lineWidth = 1.0;
-            ctx.beginPath();
-            ctx.moveTo(-9, 4); ctx.lineTo(9, 4);
-            ctx.moveTo(-3, 1); ctx.lineTo(-3, 10);
-            ctx.moveTo(3, 1); ctx.lineTo(3, 10);
-            ctx.stroke();
-
-            // 3 Glossy Tomatoes stacked inside
-            let tomGrad1 = ctx.createRadialGradient(-5, -4, 1, -3, -2, 5);
-            tomGrad1.addColorStop(0, "#FCA5A5");
-            tomGrad1.addColorStop(1, "#DC2626");
-            ctx.fillStyle = tomGrad1;
-            ctx.beginPath();
-            ctx.arc(-4, -1, 5, 0, Math.PI * 2);
-            ctx.fill();
-
-            let tomGrad2 = ctx.createRadialGradient(5, -4, 1, 3, -2, 5);
-            tomGrad2.addColorStop(0, "#FCA5A5");
-            tomGrad2.addColorStop(1, "#DC2626");
-            ctx.fillStyle = tomGrad2;
-            ctx.beginPath();
-            ctx.arc(4, -1, 5, 0, Math.PI * 2);
-            ctx.fill();
-
-            let tomGrad3 = ctx.createRadialGradient(0, -6, 1, 0, -4, 6);
-            tomGrad3.addColorStop(0, "#FCA5A5");
-            tomGrad3.addColorStop(1, "#DC2626");
-            ctx.fillStyle = tomGrad3;
-            ctx.beginPath();
-            ctx.arc(0, -3, 6, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Shiny specular dots
-            ctx.fillStyle = "#FFF";
-            ctx.beginPath();
-            ctx.arc(-5, -2, 1, 0, Math.PI * 2);
-            ctx.arc(3, -2, 1, 0, Math.PI * 2);
-            ctx.arc(-1, -4, 1.2, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Green leaf caps
-            ctx.fillStyle = "#10B981";
-            ctx.fillRect(-1.5, -9, 3, 2);
-          }
-          ctx.restore();
-        }
-      }
-
-      // Freeze frame countdown
-      if (freezeTimer > 0) {
-        freezeTimer--;
-        if (freezeTimer === 0) {
-          gameState = "gameover";
-          finalScoreVal.textContent = formatWeight(scoreHarvestVal);
-          gameOverOverlay.classList.add("show");
-          if (scoreHarvestVal > highScore) {
-            highScore = scoreHarvestVal;
-            try { localStorage.setItem("sourcetrace_tractor_weight_highscore", highScore.toString()); } catch(e) {}
-          }
-        }
-      }
-
-      // Draw Behind View Tractor (2.5x larger)
-      const tractorBounce = (gameState === "playing" && freezeTimer === 0) ? tractor.vibration : 0;
-      const curY = tractor.y - tractor.yOffset + tractorBounce;
-
-      ctx.save();
-      ctx.translate(tractor.x, curY);
-
-      // Mudguards
-      ctx.fillStyle = "#0B3D2E";
-      ctx.beginPath();
-      ctx.roundRect(-102, -26, 32, 24, 6);
-      ctx.roundRect(70, -26, 32, 24, 6);
-      ctx.fill();
-
-      // Tyres
-      ctx.fillStyle = "#1F2937";
-      ctx.beginPath();
-      ctx.roundRect(-100, -4, 26, 62, 8);
-      ctx.roundRect(74, -4, 26, 62, 8);
-      ctx.fill();
-      
-      // Rims
-      ctx.fillStyle = "#FBBF24";
-      ctx.beginPath();
-      ctx.arc(-87, 26, 14, 0, Math.PI * 2);
-      ctx.arc(87, 26, 14, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Chassis
-      ctx.fillStyle = "#0B3D2E";
-      ctx.beginPath();
-      ctx.roundRect(-66, -10, 132, 50, 10);
-      ctx.fill();
-
-      // Cabin
-      ctx.beginPath();
-      ctx.roundRect(-46, -82, 92, 78, [18, 18, 5, 5]);
-      ctx.fill();
-
-      // Window
-      let windowGrad = ctx.createLinearGradient(-34, -70, 34, -28);
-      windowGrad.addColorStop(0, "#E0F2FE");
-      windowGrad.addColorStop(1, "#86EFAC");
-      ctx.fillStyle = windowGrad;
-      ctx.beginPath();
-      ctx.roundRect(-34, -70, 68, 42, 8);
-      ctx.fill();
-
-      // Exhaust
-      ctx.fillStyle = "#4B5563";
-      ctx.fillRect(-58, -70, 7, 62);
-
-      ctx.restore();
-
-      // Draw Particles
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.life++;
-        p.x += p.vx * (gameState === "playing" ? 1 : 0.1);
-        p.y += p.vy * (gameState === "playing" ? 1 : 0.1);
-        p.alpha = 1 - p.life / p.maxLife;
-
-        ctx.save();
-        ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-
-        if (p.life >= p.maxLife) particles.splice(i, 1);
-      }
-
-      ctx.restore();
-      requestAnimationFrame(update);
-    };
-
-    update();
-
-    // Online / Offline handlers
+        quoteIndex = (quoteIndex + 1) % farmQuotes.length;
+        quoteEl.textContent = `“ ${farmQuotes[quoteIndex]} ”`;
+        quoteEl.classList.remove("opacity-0", "translate-y-1");
+      }, 300);
+    }, 6000);
+
+    // Online Listener: Auto reload when connection is restored
     window.addEventListener("online", () => {
-      onlineToast.classList.add("show");
+      quoteEl.textContent = "“ Connection restored! Refreshing page... ”";
       setTimeout(() => {
-        window.location.href = "/";
-      }, 2500);
+        window.location.reload();
+      }, 1000);
     });
   </script>
 </body>
