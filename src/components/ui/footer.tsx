@@ -117,14 +117,15 @@ export function Footer() {
         </div>
 
         {/* Bottom Section with Giant Outline Text & Socials */}
-        <div className="relative flex flex-col items-end pt-8">
+        <div className="relative flex flex-col items-end pt-8 w-full">
            {/* Giant Background Text */}
            <div 
-             className="absolute bottom-0 left-0 text-[10rem] md:text-[18rem] lg:text-[24rem] font-black leading-none pointer-events-none select-none"
+             className="absolute bottom-0 left-2 sm:left-6 text-[10vw] md:text-[14vw] lg:text-[16vw] xl:text-[18rem] font-black leading-none pointer-events-none select-none"
              style={{
                color: 'transparent',
-               WebkitTextStroke: '2px rgba(255,255,255,0.05)',
-               transform: 'translateY(15%)'
+               WebkitTextStroke: '2px rgba(255,255,255,0.12)',
+               whiteSpace: 'nowrap',
+               transform: 'translateY(10%)'
              }}
            >
               SourceTrace
