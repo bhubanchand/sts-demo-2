@@ -42,6 +42,9 @@
       0%, 100% { transform: scaleY(1); }
       50% { transform: scaleY(0.5); }
     }
+    @keyframes driftRoute {
+      to { stroke-dashoffset: 0; }
+    }
     .drift-slow {
       animation: slow-drift 12s ease-in-out infinite;
     }
@@ -51,93 +54,155 @@
     .bird-flap {
       animation: flap 1.5s ease-in-out infinite;
     }
+    .route-drift {
+      stroke-dashoffset: 20;
+      animation: driftRoute 30s linear infinite;
+    }
   </style>
 </head>
-<body class="bg-brand-light text-brand-dark min-h-screen flex flex-col justify-between p-6 sm:p-10 relative overflow-hidden select-none font-sans">
+<body class="bg-brand-light text-brand-dark min-h-screen flex flex-col justify-between pt-24 pb-12 relative overflow-hidden select-none font-sans">
   
-  <!-- ── BACKGROUND: Ambient rolling farmland landscape ── -->
+  <!-- ── BACKGROUND: Ambient rolling farmland landscape with GIS details ── -->
   <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
     <!-- Soft atmospheric gradient sky -->
-    <div class="absolute inset-0 bg-gradient-to-b from-[#BFE6D2] via-[#EAF5EE] to-[#F4FAF6]"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#BFE6D2]/60 via-[#EAF5EE] to-[#F4FAF6]"></div>
     
     <!-- Glowing Sun -->
-    <div class="absolute top-[8%] left-[20%] w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-[#FFF7ED] to-[#FEF3C7] opacity-60 blur-3xl"></div>
+    <div class="absolute top-[5%] left-[25%] w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-[#FFF7ED] to-[#FEF3C7] opacity-50 blur-3xl"></div>
+
+    <!-- GIS Lat/Lng Grid Overlay -->
+    <svg class="absolute inset-0 w-full h-full opacity-[0.05] text-[#0B3D2E]" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+          <path d="M 80 0 L 0 0 0 80" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3,3" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+    </svg>
+
+    <!-- GIS Geolocation pulsing target nodes -->
+    <div class="absolute top-[35%] left-[12%] flex flex-col items-center gap-1 opacity-30">
+      <div class="relative w-4 h-4">
+        <span class="absolute inset-0 rounded-full bg-[#10B981] opacity-75 animate-ping"></span>
+        <span class="relative block w-4 h-4 rounded-full bg-[#0B3D2E] border border-white/50"></span>
+      </div>
+      <span class="text-[10px] text-brand-text font-mono tracking-tight">12.9716° N, 77.5946° E</span>
+    </div>
+
+    <div class="absolute top-[48%] right-[15%] flex flex-col items-center gap-1 opacity-25">
+      <div class="relative w-4 h-4">
+        <span class="absolute inset-0 rounded-full bg-[#10B981] opacity-75 animate-ping" style="animation-delay: 1s;"></span>
+        <span class="relative block w-4 h-4 rounded-full bg-[#0B3D2E] border border-white/50"></span>
+      </div>
+      <span class="text-[10px] text-brand-text font-mono tracking-tight">40.7128° N, 74.0060° W</span>
+    </div>
+
+    <!-- GIS Dotted mapping route lines -->
+    <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 1440 800" preserveAspectRatio="none">
+      <path d="M 172,280 Q 400,100 720,250 T 1220,380" fill="none" stroke="#1F7A53" stroke-width="2.5" stroke-dasharray="6,6" class="route-drift" />
+    </svg>
+
+    <!-- Farmland Parcel Boundaries (Faint green polygon bounds) -->
+    <svg class="absolute bottom-[10%] inset-x-0 w-full h-[40%] opacity-[0.06] text-[#1F7A53]" viewBox="0 0 1440 400" preserveAspectRatio="none">
+      <polygon points="100,280 320,250 480,310 200,360" fill="none" stroke="currentColor" stroke-width="1.5" />
+      <polygon points="480,310 720,260 880,330 600,380" fill="none" stroke="currentColor" stroke-width="1.5" />
+      <polygon points="880,330 1120,280 1340,340 1050,390" fill="none" stroke="currentColor" stroke-width="1.5" />
+    </svg>
 
     <!-- Slow Flying Birds -->
-    <svg class="absolute top-[15%] right-[25%] w-32 h-16 opacity-30" viewBox="0 0 120 60">
-      <path d="M10,25 Q20,15 30,25 Q40,15 50,25" fill="none" stroke="#0B3D2E" stroke-width="2.5" stroke-linecap="round" class="bird-flap"></path>
-      <path d="M60,15 Q68,7 76,15 Q84,7 92,15" fill="none" stroke="#0B3D2E" stroke-width="2" stroke-linecap="round" class="bird-flap" style="animation-delay: 0.5s;"></path>
+    <svg class="absolute top-[15%] right-[22%] w-32 h-16 opacity-30" viewBox="0 0 120 60">
+      <path d="M10,25 Q20,15 30,25 Q40,15 50,25" fill="none" stroke="#0B3D2E" stroke-width="2" stroke-linecap="round" class="bird-flap"></path>
+      <path d="M60,15 Q68,7 76,15 Q84,7 92,15" fill="none" stroke="#0B3D2E" stroke-width="1.5" stroke-linecap="round" class="bird-flap" style="animation-delay: 0.5s;"></path>
     </svg>
 
     <!-- Slowly drifting clouds -->
-    <div class="absolute top-[10%] left-[20vw] w-[350px] h-[120px] bg-white/40 blur-2xl rounded-full drift-slow"></div>
+    <div class="absolute top-[8%] left-[20vw] w-[400px] h-[150px] bg-white/40 blur-3xl rounded-full drift-slow"></div>
 
     <!-- Rolling Farmland Hills Layer 3 (Distant) -->
-    <svg class="absolute bottom-[10%] left-0 w-full h-[35%] opacity-20 text-[#2B7A58]" viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <svg class="absolute bottom-[10%] left-0 w-full h-[35%] opacity-15 text-[#2B7A58]" viewBox="0 0 1440 320" preserveAspectRatio="none">
       <path fill="currentColor" d="M0,192 C240,230 480,260 720,230 C960,200 1200,240 1440,192 L1440,320 L0,320 Z"></path>
     </svg>
 
     <!-- Rolling Farmland Hills Layer 2 (Mid-ground) -->
-    <svg class="absolute bottom-[4%] left-0 w-full h-[25%] opacity-40 text-[#1F6B47]" viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <svg class="absolute bottom-[4%] left-0 w-full h-[25%] opacity-35 text-[#1F6B47]" viewBox="0 0 1440 320" preserveAspectRatio="none">
       <path fill="currentColor" d="M0,128 C360,192 720,160 1080,224 C1260,256 1380,210 1440,192 L1440,320 L0,320 Z"></path>
     </svg>
 
     <!-- Distant Windmills with rotating rotors -->
-    <div class="absolute bottom-[20%] left-[15%] opacity-35 scale-75 hidden sm:block">
+    <div class="absolute bottom-[22%] left-[18%] opacity-30 scale-50 hidden sm:block">
       <div class="w-1.5 h-16 bg-[#0B3D2E]/70 mx-auto"></div>
       <div class="w-12 h-12 border-2 border-dashed border-[#0B3D2E]/70 rounded-full spin-slow -mt-20 -ml-5"></div>
     </div>
-    <div class="absolute bottom-[24%] right-[18%] opacity-25 scale-50 hidden sm:block">
-      <div class="w-1.5 h-16 bg-[#0B3D2E]/70 mx-auto"></div>
-      <div class="w-12 h-12 border-2 border-dashed border-[#0B3D2E]/70 rounded-full spin-slow -mt-20 -ml-5" style="animation-duration: 30s;"></div>
-    </div>
 
     <!-- Front rolling hill layer -->
-    <svg class="absolute bottom-0 left-0 w-full h-[15%] text-[#0B3D2E]/10" viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <svg class="absolute bottom-0 left-0 w-full h-[15%] text-[#0B3D2E]/5" viewBox="0 0 1440 320" preserveAspectRatio="none">
       <path fill="currentColor" d="M0,224 C480,180 960,250 1440,160 L1440,320 L0,320 Z"></path>
     </svg>
   </div>
 
-  <!-- ── HEADER: Elegant Minimalist Branding ── -->
-  <div class="relative z-10 w-full flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2 group transition-all">
-      <div class="w-9 h-9 rounded-xl bg-brand-dark flex items-center justify-center text-white shadow-md shadow-brand-dark/10">
-        <svg class="w-5 h-5 text-brand-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.364 17.636l-.707.707M17.636 17.636l-.707-.707M6.364 6.364l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
-        </svg>
+  <!-- ── HEADER: Mock Navbar for Offline Consistency ── -->
+  <div class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100 shadow-sm h-20 flex items-center justify-between px-6 sm:px-8">
+    <div class="flex items-center gap-8">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-xl bg-brand-dark flex items-center justify-center text-white shadow-md shadow-brand-dark/10">
+          <svg class="w-5 h-5 text-brand-mint animate-bounce" style="animation-duration: 4s;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.364 17.636l-.707.707M17.636 17.636l-.707-.707M6.364 6.364l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+          </svg>
+        </div>
+        <span class="font-extrabold text-lg text-brand-dark tracking-tight">SourceTrace</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-1">
+        <span class="px-4 py-2 text-sm font-medium text-gray-600">Platform</span>
+        <span class="px-4 py-2 text-sm font-medium text-gray-600">Solutions</span>
+        <span class="px-4 py-2 text-sm font-medium text-gray-600">Compliance</span>
+        <span class="px-4 py-2 text-sm font-medium text-gray-600">Resources</span>
+        <span class="px-4 py-2 text-sm font-medium text-gray-600">Company</span>
       </div>
-      <span class="font-extrabold text-lg text-brand-dark tracking-tight">SourceTrace</span>
-    </a>
+    </div>
     
-    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#EF4444]/10 rounded-full text-xs font-semibold text-[#B91C1C] border border-[#EF4444]/20">
-      <span class="w-2 h-2 rounded-full bg-[#EF4444] animate-pulse"></span>
-      <span>Offline Mode Active</span>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5 px-3 py-1.5 bg-[#EF4444]/10 rounded-full text-xs font-semibold text-[#B91C1C] border border-[#EF4444]/20">
+        <span class="w-2 h-2 rounded-full bg-[#EF4444] animate-pulse"></span>
+        <span>Offline Mode Active</span>
+      </div>
     </div>
   </div>
 
-  <!-- ── CENTERPIECE: Elegant Glassmorphic Panel ── -->
-  <div class="relative z-10 w-full flex justify-center items-center my-auto py-8">
-    <div class="bg-white/80 backdrop-blur-xl border border-white/60 px-6 py-10 sm:p-12 rounded-[32px] shadow-[0_32px_80px_rgba(11,61,46,0.06)] max-w-xl w-full text-center">
+  <!-- ── CENTERPIECE: Elegant Glassmorphic Recovery Panel ── -->
+  <div class="relative z-10 w-full flex justify-center items-center my-auto px-4 py-4">
+    <div class="bg-white/70 backdrop-blur-xl border border-white/60 px-6 py-10 sm:p-12 rounded-[32px] shadow-[0_32px_80px_rgba(11,61,46,0.06)] max-w-xl w-full text-center transition-all duration-300 hover:shadow-[0_40px_96px_rgba(11,61,46,0.1)] relative">
       
+      <!-- Systems status indicator inside card -->
+      <div class="absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1 bg-white/60 border border-[#0B3D2E]/5 rounded-full text-[10px] font-bold shadow-sm">
+        <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+        <span class="text-brand-text">Network Disconnected</span>
+      </div>
+
+      <!-- Leaf Emblem -->
+      <div class="flex justify-center mb-6 pt-4">
+        <div class="w-12 h-12 rounded-2xl bg-brand-dark flex items-center justify-center text-white shadow-md shadow-brand-dark/10 group cursor-pointer transition-transform hover:scale-105 duration-300">
+          <svg class="w-6 h-6 text-brand-mint transition-transform duration-500 group-hover:rotate-[30deg]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.364 17.636l-.707.707M17.636 17.636l-.707-.707M6.364 6.364l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+          </svg>
+        </div>
+      </div>
+
       <!-- Status Badge -->
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-dark/5 border border-brand-dark/10 text-brand-dark rounded-full text-xs font-bold uppercase tracking-widest mb-6">
-        <svg class="w-3.5 h-3.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-3.536 4.978 4.978 0 011.414-3.536m0 0L8.464 12m-6.364-.364l2.829 2.829"></path>
-        </svg>
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-dark/5 border border-brand-dark/10 text-brand-dark rounded-full text-xs font-bold uppercase tracking-widest mb-4">
         Connection Lost
       </div>
 
       <!-- Headline -->
-      <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-dark tracking-tight leading-tight mb-4">
+      <h2 class="text-xl sm:text-2xl font-black text-brand-dark tracking-tight leading-snug mb-4 px-2">
         Looks like our data truck lost its signal.
       </h2>
 
       <!-- Conversational Copy -->
-      <p class="text-sm sm:text-base text-brand-text font-medium leading-relaxed mb-6 max-w-lg mx-auto">
+      <p class="text-sm text-brand-text font-medium leading-relaxed mb-6 max-w-md mx-auto px-2">
         We lost contact with the server. While we reconnect automatically, you can return to the dashboard or explore popular destinations below.
       </p>
 
-      <!-- Smart Search Bar -->
+      <!-- Smart Search Bar (Mock/Disabled Offline) -->
       <div class="relative max-w-md mx-auto mb-8">
         <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
           <svg class="h-5 w-5 text-brand-text/75" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -146,10 +211,9 @@
         </div>
         <input
           type="text"
-          id="search-input"
           placeholder="Offline search index..."
           disabled
-          class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-brand-dark/10 rounded-2xl text-sm font-semibold text-brand-dark placeholder-brand-text/50 shadow-sm focus:outline-none cursor-not-allowed"
+          class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-brand-dark/10 rounded-2xl text-sm font-semibold text-brand-dark placeholder-brand-text/50 shadow-sm cursor-not-allowed"
         />
         <div class="absolute right-4 inset-y-0 flex items-center">
           <span class="text-[10px] uppercase font-bold text-gray-400 bg-gray-200/50 px-2 py-0.5 rounded">DISABLED</span>
@@ -160,27 +224,18 @@
       <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
         <a href="/">
           <button class="flex items-center gap-2 h-11 px-6 rounded-full bg-brand-dark hover:bg-[#155a44] text-white font-bold text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 active:scale-95 shadow-md">
-            <svg class="w-4 h-4 text-brand-mint" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-            </svg>
             Return Home
           </button>
         </a>
         
         <a href="/solutions">
           <button class="flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-brand-dark/10 hover:border-brand-dark/20 text-brand-dark font-bold text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 active:scale-95 shadow-sm">
-            <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-            </svg>
             Explore Solutions
           </button>
         </a>
 
         <a href="/company/contact">
           <button class="flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-brand-dark/10 hover:border-brand-dark/20 text-brand-dark font-bold text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 active:scale-95 shadow-sm">
-            <svg class="w-4 h-4 text-brand-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-            </svg>
             Contact Sales
           </button>
         </a>
@@ -196,39 +251,80 @@
     </div>
   </div>
 
-  <!-- ── FOOTER: Trust Signals & Empathy Note ── -->
-  <div class="relative z-10 w-full flex flex-col items-center gap-4">
+  <!-- ── FOOTER: Popular Destinations Grid & Trust Signals ── -->
+  <div class="relative z-10 w-full flex flex-col items-center gap-4 px-4">
     
     <!-- Popular Destinations Grid -->
-    <div class="w-full max-w-4xl grid grid-cols-2 md:grid-cols-4 gap-3">
-      <a href="/solutions/eudr-compliance" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-sm">
-        <div class="text-xs font-extrabold text-brand-dark mb-1">EUDR Compliance</div>
-        <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">Deforestation traceability</div>
+    <div class="w-full max-w-5xl grid grid-cols-2 md:grid-cols-6 gap-3">
+      <a href="/solutions/supply-chain-traceability" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-1 hover:shadow-md shadow-sm group relative overflow-hidden">
+        <div class="absolute inset-0 bg-brand-green/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div class="relative z-10">
+          <div class="w-8 h-8 rounded-lg bg-brand-dark/5 flex items-center justify-center text-brand-dark mb-3 group-hover:bg-brand-dark group-hover:text-brand-mint transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+          </div>
+          <div class="text-xs font-extrabold text-brand-dark mb-1">Platform</div>
+          <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">First-mile tracking</div>
+        </div>
       </a>
-      <a href="/solutions/esg-reporting" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-sm">
-        <div class="text-xs font-extrabold text-brand-dark mb-1">ESG Reporting</div>
-        <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">Carbon & nature metrics</div>
+      
+      <a href="/solutions/impact-measurement" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-1 hover:shadow-md shadow-sm group relative overflow-hidden">
+        <div class="absolute inset-0 bg-brand-green/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div class="relative z-10">
+          <div class="w-8 h-8 rounded-lg bg-brand-dark/5 flex items-center justify-center text-brand-dark mb-3 group-hover:bg-brand-dark group-hover:text-brand-mint transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          </div>
+          <div class="text-xs font-extrabold text-brand-dark mb-1">Intelligence</div>
+          <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">Predictive metrics</div>
+        </div>
       </a>
-      <a href="/solutions/smallholder-management" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-sm">
-        <div class="text-xs font-extrabold text-brand-dark mb-1">Smallholder Mgmt</div>
-        <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">First-mile connectivity</div>
+
+      <a href="/CropInsights/coffee" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-1 hover:shadow-md shadow-sm group relative overflow-hidden">
+        <div class="absolute inset-0 bg-brand-green/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div class="relative z-10">
+          <div class="w-8 h-8 rounded-lg bg-brand-dark/5 flex items-center justify-center text-brand-dark mb-3 group-hover:bg-brand-dark group-hover:text-brand-mint transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.364 17.636l-.707.707M17.636 17.636l-.707-.707M6.364 6.364l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>
+          </div>
+          <div class="text-xs font-extrabold text-brand-dark mb-1">Crop Insights</div>
+          <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">Farmland crop profiles</div>
+        </div>
       </a>
-      <a href="/solutions/supply-chain-traceability" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-sm">
-        <div class="text-xs font-extrabold text-brand-dark mb-1">Traceability Flow</div>
-        <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">Interactive mapping</div>
+
+      <a href="/compliance/eudr" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-1 hover:shadow-md shadow-sm group relative overflow-hidden">
+        <div class="absolute inset-0 bg-brand-green/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div class="relative z-10">
+          <div class="w-8 h-8 rounded-lg bg-brand-dark/5 flex items-center justify-center text-brand-dark mb-3 group-hover:bg-brand-dark group-hover:text-brand-mint transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+          </div>
+          <div class="text-xs font-extrabold text-brand-dark mb-1">Compliance</div>
+          <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">EUDR & ESG reporting</div>
+        </div>
+      </a>
+
+      <a href="/case-studies" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-1 hover:shadow-md shadow-sm group relative overflow-hidden">
+        <div class="absolute inset-0 bg-brand-green/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div class="relative z-10">
+          <div class="w-8 h-8 rounded-lg bg-brand-dark/5 flex items-center justify-center text-brand-dark mb-3 group-hover:bg-brand-dark group-hover:text-brand-mint transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          </div>
+          <div class="text-xs font-extrabold text-brand-dark mb-1">Resources</div>
+          <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">Whitepapers & cases</div>
+        </div>
+      </a>
+
+      <a href="/about" class="bg-white/40 hover:bg-white/95 border border-brand-dark/5 hover:border-brand-dark/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-1 hover:shadow-md shadow-sm group relative overflow-hidden">
+        <div class="absolute inset-0 bg-brand-green/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div class="relative z-10">
+          <div class="w-8 h-8 rounded-lg bg-brand-dark/5 flex items-center justify-center text-brand-dark mb-3 group-hover:bg-brand-dark group-hover:text-brand-mint transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+          </div>
+          <div class="text-xs font-extrabold text-brand-dark mb-1">Company</div>
+          <div class="text-[10px] text-brand-text/75 font-semibold leading-normal">Our global mission</div>
+        </div>
       </a>
     </div>
-
-    <!-- Conditional bottom text -->
-    <div class="text-[11px] text-brand-accent font-bold tracking-wide mt-2">
-      Reconnecting to the network automatically...
-    </div>
-
-    <!-- Divider -->
-    <div class="w-24 h-px bg-brand-dark/10"></div>
 
     <!-- Corporate Trust Indicators -->
-    <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[10px] font-bold text-brand-text/60 tracking-wider uppercase mb-2">
+    <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[10px] font-bold text-brand-text/60 tracking-wider uppercase mt-6 mb-2">
       <span class="flex items-center gap-1.5">
         Trusted by global food leaders
       </span>
@@ -238,7 +334,7 @@
       </span>
       <span class="w-1 h-1 rounded-full bg-brand-dark/20"></span>
       <span class="flex items-center gap-1.5">
-        Real-time digital traceability
+        Helping organizations build transparent supply chains
       </span>
     </div>
   </div>
@@ -246,11 +342,11 @@
   <script>
     // Rotating Quotes
     const farmQuotes = [
+      "The trace ended here... but your journey doesn't have to.",
       "We're checking every field... still no sign of this page.",
-      "The GPS coordinates say 'somewhere over that hill.'",
-      "Even our AI couldn't convince this page to stay in the supply chain.",
-      "Our farmers are better at finding crops than missing URLs.",
-      "The trace ended here... but your journey doesn't have to."
+      "Looks like this shipment took a scenic route.",
+      "The GPS says it's somewhere over that hill.",
+      "No crops were harmed while losing this page."
     ];
     let quoteIndex = 0;
     const quoteEl = document.getElementById("quote-el");
@@ -262,7 +358,7 @@
         quoteEl.textContent = `“ ${farmQuotes[quoteIndex]} ”`;
         quoteEl.classList.remove("opacity-0", "translate-y-1");
       }, 300);
-    }, 6000);
+    }, 5500);
 
     // Online Listener: Auto reload when connection is restored
     window.addEventListener("online", () => {
