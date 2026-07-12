@@ -75,6 +75,17 @@ export function AgriGame({ mode }: AgriGameProps) {
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (searchResults.length > 0) {
+        router.push(searchResults[0].item.url);
+      } else if (searchQuery.trim()) {
+        router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      }
+    }
+  };
+
   // Determine specific details based on state
   const headingInfo = {
     "404": {
@@ -239,6 +250,7 @@ export function AgriGame({ mode }: AgriGameProps) {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+              onKeyDown={handleSearchKeyDown}
               className="w-full pl-12 pr-4 py-3 bg-white/95 border border-[#0B3D2E]/10 focus:border-[#0B3D2E]/30 focus:ring-4 focus:ring-[#0B3D2E]/5 rounded-2xl text-sm font-semibold text-[#0B3D2E] placeholder-[#1F5946]/50 shadow-sm focus:outline-none transition-all duration-300"
             />
             {isSearching && (
