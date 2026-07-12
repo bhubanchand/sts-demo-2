@@ -93,7 +93,7 @@ export function ExpandingSlideshow() {
             {/* Background Image - Rich, clear presentation */}
             <motion.div 
                className="absolute inset-0 w-full h-full"
-               animate={{ scale: isActive ? 1.05 : 1 }}
+               animate={{ scale: isActive ? 1.08 : 1 }}
                transition={{ duration: 0.4, ease: "easeOut" }}
             >
                <img 
@@ -102,37 +102,38 @@ export function ExpandingSlideshow() {
                  className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-300"
                />
                {/* Soft overlay gradient to ensure high clarity at top and text readability at bottom */}
-               <div className={`absolute inset-0 transition-opacity duration-300 ${isActive ? 'bg-gradient-to-t from-black/25 to-transparent' : 'bg-[#EAF5EE]/20'}`}></div>
+               <div className={`absolute inset-0 transition-opacity duration-300 ${isActive ? 'bg-gradient-to-t from-black/20 to-transparent' : 'bg-[#EAF5EE]/20'}`}></div>
             </motion.div>
 
             {/* Separated Content Blocks to prevent Layout Text Jiggling */}
             <AnimatePresence mode="wait">
               {isActive ? (
-                /* ── EXPANDED PANEL LAYOUT (Fades in cleanly without jiggling layout width) ── */
+                /* ── COMPACT EXPANDED PANEL LAYOUT (Fades in cleanly without layout width jiggling) ── */
                 <motion.div 
                   key="expanded"
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 15 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-[#0B3D2E]/10 p-5 lg:p-6 z-20 flex flex-col justify-between h-[180px] select-none"
+                  className="absolute bottom-0 left-0 right-0 bg-white/90 group-hover:bg-white/95 backdrop-blur-md border-t border-[#0B3D2E]/10 p-4 lg:p-5 z-20 flex flex-col justify-center gap-3 h-[130px] select-none transition-colors duration-300 shadow-[0_-4px_24px_rgba(0,0,0,0.02)]"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-full ${slide.color} flex items-center justify-center text-white shadow-md shrink-0`}>
-                      <Icon className="w-6 h-6" />
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-full ${slide.color} flex items-center justify-center text-white shadow-sm shrink-0 transform group-hover:scale-105 transition-transform duration-300`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <h3 className="text-lg lg:text-xl font-black text-[#0B3D2E] tracking-tight transition-colors duration-300">
+                        {slide.title}
+                      </h3>
                     </div>
-                    <h3 className="text-xl lg:text-2xl font-black text-[#0B3D2E] tracking-tight">
-                      {slide.title}
-                    </h3>
-                  </div>
-                  <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mt-2">
-                    <p className="text-[#1F5946] text-xs lg:text-sm leading-relaxed max-w-xl font-semibold">
-                      {slide.description}
-                    </p>
-                    <button className="flex items-center gap-2 text-[#0B3D2E] font-bold hover:gap-3 hover:text-[#1F7A53] transition-all uppercase tracking-wider text-xs lg:text-sm whitespace-nowrap shrink-0">
-                      Explore Solution <ArrowRight className="w-4 h-4 text-[#1F7A53]" />
+                    <button className="flex items-center gap-1.5 text-[#0B3D2E] font-bold hover:text-[#1F7A53] transition-all uppercase tracking-wider text-xs whitespace-nowrap shrink-0 group">
+                      Explore <ArrowRight className="w-3.5 h-3.5 text-[#1F7A53] group-hover:translate-x-1 transition-transform duration-300" />
                     </button>
                   </div>
+                  
+                  <p className="text-[#1F5946] text-xs lg:text-sm leading-relaxed max-w-2xl font-semibold">
+                    {slide.description}
+                  </p>
                 </motion.div>
               ) : (
                 /* ── COLLAPSED VERTICAL TAB LAYOUT (Fades in when inactive) ── */
@@ -144,12 +145,12 @@ export function ExpandingSlideshow() {
                   transition={{ duration: 0.15 }}
                   className="absolute inset-0 flex flex-col items-center justify-center p-4 z-10 bg-black/[0.04] select-none"
                 >
-                  <div className={`w-11 h-11 rounded-full ${slide.color} flex items-center justify-center text-white mb-6 shadow-md shrink-0`}>
+                  <div className={`w-11 h-11 rounded-full ${slide.color} flex items-center justify-center text-white mb-6 shadow-md shrink-0 group-hover:scale-105 transition-transform duration-300`}>
                     <Icon className="w-5 h-5" />
                   </div>
                   
                   {/* Desktop Vertical Title */}
-                  <h3 className="hidden md:block text-[11px] font-extrabold text-[#0B3D2E] whitespace-nowrap z-10 tracking-widest uppercase bg-white/90 border border-[#0B3D2E]/10 py-4 px-2.5 rounded-full backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)]" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+                  <h3 className="hidden md:block text-[11px] font-extrabold text-[#0B3D2E] whitespace-nowrap z-10 tracking-widest uppercase bg-white/90 border border-[#0B3D2E]/10 py-4 px-2.5 rounded-full backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)] group-hover:bg-white transition-colors duration-300" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
                     {slide.title}
                   </h3>
                   
