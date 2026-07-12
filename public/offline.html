@@ -34,64 +34,71 @@
     /* HUD UI elements - WCAG AA Contrast Compliant, safe offset from header */
     .hud-left-panel {
       position: absolute;
-      top: 140px;
-      left: 48px;
+      top: 120px;
+      left: 24px;
       z-index: 10;
       pointer-events: none;
       text-align: left;
       background: #0B3D2E;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 32px;
-      border-radius: 16px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-      max-w: 420px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      padding: 28px 32px;
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      max-width: 480px;
     }
     .hud-left-panel h2 {
       font-weight: 900;
-      font-size: 42px;
+      font-size: 56px;
       color: #FFFFFF;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       line-height: 1;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     .hud-left-panel h3 {
       font-weight: 800;
-      font-size: 18px;
+      font-size: 22px;
       color: #86EFAC;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-top: 12px;
+      margin-top: 14px;
       line-height: 1.2;
     }
     .hud-left-panel p {
       font-weight: 600;
-      font-size: 14px;
-      color: #FFFFFF;
-      margin-top: 10px;
-      line-height: 1.4;
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 12px;
+      line-height: 1.5;
     }
     .hud-right {
       position: absolute;
-      top: 140px;
-      right: 48px;
+      top: 120px;
+      right: 24px;
       z-index: 10;
       pointer-events: none;
       text-align: right;
+      background: #0B3D2E;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      padding: 24px 32px;
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
     }
     .hud-right .label {
       font-weight: 800;
-      font-size: 12px;
-      color: #1F7A53;
+      font-size: 14px;
+      color: #86EFAC;
       text-transform: uppercase;
       letter-spacing: 0.15em;
       display: block;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
     .hud-right .score {
       font-weight: 900;
-      font-size: 48px;
-      color: #0B3D2E;
+      font-size: 56px;
+      color: #FFFFFF;
       line-height: 1;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     .hud-bottom-pill {
       position: absolute;
@@ -782,7 +789,7 @@
         const item = roadItems[i];
         if (gameState === "playing" && freezeTimer === 0) item.z += gameSpeed;
 
-        const scale = Math.pow(item.z, 2.3);
+        const scale = Math.pow(item.z, 1.6);
         const ry = horizonY + item.z * (height - horizonY);
         const rx = width / 2;
 
@@ -833,7 +840,7 @@
           ctx.save();
           ctx.translate(rx, ry);
           const isCollidedThis = (collidedItemIdx === i);
-          const finalScaleMultiplier = isCollidedThis ? scale * 3.8 : scale * 2.8;
+          const finalScaleMultiplier = isCollidedThis ? scale * 5.5 : scale * 4.5;
           ctx.scale(finalScaleMultiplier, finalScaleMultiplier);
 
           ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
@@ -939,8 +946,8 @@
         } else if (item.type === "crop" && !item.collected) {
           const hoverOffset = Math.sin(item.pulse) * 5 * scale;
           ctx.save();
-          ctx.translate(rx, ry - 55 * scale + hoverOffset);
-          ctx.scale(scale * 5.2, scale * 5.2); // 5.2x larger crops for perfect visibility
+          ctx.translate(rx, ry - 70 * scale + hoverOffset);
+          ctx.scale(scale * 7.0, scale * 7.0); // 7x — crops are unmissable
 
           ctx.shadowBlur = 18;
           ctx.fillStyle = "#F59E0B";
