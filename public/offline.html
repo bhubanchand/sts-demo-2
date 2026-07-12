@@ -34,7 +34,7 @@
     /* HUD UI elements - WCAG AA Contrast Compliant, safe offset from header */
     .hud-left-panel {
       position: absolute;
-      top: 120px;
+      top: 24px;
       left: 24px;
       z-index: 10;
       pointer-events: none;
@@ -73,7 +73,7 @@
     }
     .hud-right {
       position: absolute;
-      top: 120px;
+      top: 24px;
       right: 24px;
       z-index: 10;
       pointer-events: none;
@@ -404,7 +404,7 @@
 
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
-    let horizonY = height * 0.22;
+    let horizonY = height * 0.10;
     let groundY = height;
 
     // Load Highscore
@@ -417,20 +417,20 @@
     window.addEventListener("resize", () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      horizonY = height * 0.22;
+      horizonY = height * 0.10;
       groundY = height;
     });
 
     // 2.5x Zoomed Tractor (250x190)
     const tractor = {
       x: width / 2,
-      y: height * 0.76,
-      width: 250,
-      height: 190,
+      y: height * 0.84,
+      width: 400,
+      height: 300,
       yOffset: 0,
       vy: 0,
-      gravity: 0.8,
-      jumpStrength: -18,
+      gravity: 0.9,
+      jumpStrength: -22,
       isJumping: false,
       vibration: 0,
       wheelRot: 0
@@ -442,15 +442,13 @@
 
     // Background decoration coordinates (Pastel & Desaturated)
     const clouds = [
-      { x: width * 0.15, y: horizonY * 0.3, size: 50 },
-      { x: width * 0.55, y: horizonY * 0.2, size: 70 },
-      { x: width * 0.85, y: horizonY * 0.4, size: 40 }
+      { x: width * 0.25, y: horizonY * 0.35, size: 25 },
+      { x: width * 0.65, y: horizonY * 0.25, size: 30 }
     ];
 
     const mountains = [
-      { x: width * 0.1, w: width * 0.4, h: horizonY * 0.8 },
-      { x: width * 0.45, w: width * 0.5, h: horizonY * 0.9 },
-      { x: width * 0.75, w: width * 0.35, h: horizonY * 0.7 }
+      { x: width * 0.05, w: width * 0.5, h: horizonY * 0.6 },
+      { x: width * 0.5, w: width * 0.55, h: horizonY * 0.7 }
     ];
 
     const sceneryItems = [
@@ -789,7 +787,7 @@
         const item = roadItems[i];
         if (gameState === "playing" && freezeTimer === 0) item.z += gameSpeed;
 
-        const scale = Math.pow(item.z, 1.6);
+        const scale = Math.pow(item.z, 1.2);
         const ry = horizonY + item.z * (height - horizonY);
         const rx = width / 2;
 
@@ -799,10 +797,10 @@
         }
 
         // Collision Check
-        if (item.z >= 0.78 && item.z <= 0.88 && freezeTimer === 0) {
+        if (item.z >= 0.82 && item.z <= 0.92 && freezeTimer === 0) {
           if (item.type === "obstacle") {
-            const obsHeightMap = { rock: 65, haybale: 75, cow: 85 };
-            const obstacleHeight = obsHeightMap[item.subType] || 70;
+            const obsHeightMap = { rock: 80, haybale: 90, cow: 100 };
+            const obstacleHeight = obsHeightMap[item.subType] || 85;
             
             if (tractor.yOffset < obstacleHeight - 15) {
               freezeTimer = 18;
@@ -840,7 +838,7 @@
           ctx.save();
           ctx.translate(rx, ry);
           const isCollidedThis = (collidedItemIdx === i);
-          const finalScaleMultiplier = isCollidedThis ? scale * 5.5 : scale * 4.5;
+          const finalScaleMultiplier = isCollidedThis ? scale * 6.0 : scale * 5.0;
           ctx.scale(finalScaleMultiplier, finalScaleMultiplier);
 
           ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
@@ -946,8 +944,8 @@
         } else if (item.type === "crop" && !item.collected) {
           const hoverOffset = Math.sin(item.pulse) * 5 * scale;
           ctx.save();
-          ctx.translate(rx, ry - 70 * scale + hoverOffset);
-          ctx.scale(scale * 7.0, scale * 7.0); // 7x — crops are unmissable
+          ctx.translate(rx, ry - 90 * scale + hoverOffset);
+          ctx.scale(scale * 5.0, scale * 5.0);
 
           ctx.shadowBlur = 18;
           ctx.fillStyle = "#F59E0B";

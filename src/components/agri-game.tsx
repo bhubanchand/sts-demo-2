@@ -75,14 +75,14 @@ export function AgriGame({ mode }: AgriGameProps) {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Zoomed Camera: Horizon Y sits higher, road takes up 78% of viewport
-    let horizonY = height * 0.22;
+    // GAME-FIRST: Horizon at 10% — sky is just a sliver, road dominates 90%
+    let horizonY = height * 0.10;
     let groundY = height;
 
     const handleResize = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      horizonY = height * 0.22;
+      horizonY = height * 0.10;
       groundY = height;
     };
     window.addEventListener("resize", handleResize);
@@ -100,16 +100,16 @@ export function AgriGame({ mode }: AgriGameProps) {
     let cycleTimer = 0;
     let activeWeather: "sun" | "sunset" | "night" | "rain" = "sun";
 
-    // Zoomed Camera: Tractor is 2.5x larger (from 110x88 to 260x208)
+    // GAME-FIRST: Tractor is THE HERO — massive, low on screen
     const tractor = {
       x: width / 2,
-      y: height * 0.76, // Sits prominently in foreground
-      width: 250,
-      height: 190,
+      y: height * 0.84, // Sits very low, dominating bottom third
+      width: 400,
+      height: 300,
       yOffset: 0,
       vy: 0,
-      gravity: 0.8,
-      jumpStrength: -18,
+      gravity: 0.9,
+      jumpStrength: -22,
       isJumping: false,
       vibration: 0,
       wheelRot: 0
@@ -120,17 +120,15 @@ export function AgriGame({ mode }: AgriGameProps) {
     let particles: Particle[] = [];
     let roadDashes: number[] = [0, 0.2, 0.4, 0.6, 0.8]; // For road lines motion
 
-    // Background decoration (Pastel & Desaturated)
+    // Minimal background — only enough to sell the farm vibe, not distract
     const clouds = [
-      { x: width * 0.15, y: horizonY * 0.3, size: 50 },
-      { x: width * 0.55, y: horizonY * 0.2, size: 70 },
-      { x: width * 0.85, y: horizonY * 0.4, size: 40 }
+      { x: width * 0.25, y: horizonY * 0.35, size: 25 },
+      { x: width * 0.65, y: horizonY * 0.25, size: 30 }
     ];
 
     const mountains = [
-      { x: width * 0.1, w: width * 0.4, h: horizonY * 0.8 },
-      { x: width * 0.45, w: width * 0.5, h: horizonY * 0.9 },
-      { x: width * 0.75, w: width * 0.35, h: horizonY * 0.7 }
+      { x: width * 0.05, w: width * 0.5, h: horizonY * 0.6 },
+      { x: width * 0.5, w: width * 0.55, h: horizonY * 0.7 }
     ];
 
     // Scenery assets on the sides of the road (Pastel, de-saturated silhouettes)
@@ -454,8 +452,8 @@ export function AgriGame({ mode }: AgriGameProps) {
           item.z += gameSpeed;
         }
 
-        // Zoomed Camera scale — flattened exponent so items are HUGE
-        const scale = Math.pow(item.z, 1.6); 
+        // GAME-FIRST: Very flat exponent = objects are MASSIVE on screen
+        const scale = Math.pow(item.z, 1.2); 
         const ry = horizonY + item.z * (height - horizonY);
         const rx = width / 2;
 
@@ -465,11 +463,11 @@ export function AgriGame({ mode }: AgriGameProps) {
           continue;
         }
 
-        // ── TRACTOR COLLISION CHECK (At Z ≈ 0.80 to 0.88) ──
-        if (item.z >= 0.78 && item.z <= 0.88 && freezeTimer === 0) {
+        // ── TRACTOR COLLISION CHECK (shifted to match tractor at 84% height) ──
+        if (item.z >= 0.82 && item.z <= 0.92 && freezeTimer === 0) {
           if (item.type === "obstacle") {
-            const obsHeightMap = { rock: 65, haybale: 75, cow: 85 };
-            const obstacleHeight = obsHeightMap[item.subType as keyof typeof obsHeightMap] || 70;
+            const obsHeightMap = { rock: 80, haybale: 90, cow: 100 };
+            const obstacleHeight = obsHeightMap[item.subType as keyof typeof obsHeightMap] || 85;
             
             if (tractor.yOffset < obstacleHeight - 15) {
               // COLLISION TRIGGERED! Start freeze frame animations
@@ -514,110 +512,212 @@ export function AgriGame({ mode }: AgriGameProps) {
           
           // Collision impact enlargement + flash red
           const isCollidedThis = (collidedItemIdx === i);
-          const finalScaleMultiplier = isCollidedThis ? scale * 5.5 : scale * 4.5; // massive obstacles
+          const finalScaleMultiplier = isCollidedThis ? scale * 6.0 : scale * 5.0;
           ctx.scale(finalScaleMultiplier, finalScaleMultiplier);
 
           // Shadow
-          ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+          ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
           ctx.beginPath();
-          ctx.ellipse(0, 0, 16, 4.5, 0, 0, Math.PI * 2);
+          ctx.ellipse(0, 2, 40, 10, 0, 0, Math.PI * 2);
           ctx.fill();
 
           if (isCollidedThis && Math.floor(Date.now() / 80) % 2 === 0) {
             // Flash Solid Red on collision
             ctx.fillStyle = "#DC2626";
             ctx.beginPath();
-            ctx.arc(0, -10, 15, 0, Math.PI * 2);
+            ctx.arc(0, -25, 35, 0, Math.PI * 2);
             ctx.fill();
           } else {
-            ctx.fillStyle = "#374151";
             if (item.subType === "rock") {
-              // Large heavy rock silhouette
-              ctx.fillStyle = "#2D3748";
+              // ── LARGE BOULDER ──
+              // Main body
+              ctx.fillStyle = "#4B5563";
               ctx.beginPath();
-              ctx.moveTo(-14, 0);
-              ctx.lineTo(-9, -18);
-              ctx.lineTo(8, -16);
-              ctx.lineTo(14, 0);
-              ctx.closePath();
-              ctx.fill();
-              
-              ctx.fillStyle = "#1A202C"; // matte shaded side
-              ctx.beginPath();
-              ctx.moveTo(-14, 0);
-              ctx.lineTo(-9, -18);
-              ctx.lineTo(-3, 0);
+              ctx.moveTo(-35, 0);
+              ctx.quadraticCurveTo(-38, -25, -20, -45);
+              ctx.quadraticCurveTo(-5, -55, 15, -48);
+              ctx.quadraticCurveTo(35, -38, 38, -15);
+              ctx.quadraticCurveTo(40, 0, 35, 0);
               ctx.closePath();
               ctx.fill();
 
-              // Add crack details
-              ctx.strokeStyle = "#4A5568";
-              ctx.lineWidth = 1.5;
+              // Dark shaded left face
+              ctx.fillStyle = "#374151";
               ctx.beginPath();
-              ctx.moveTo(-5, -12);
-              ctx.lineTo(-1, -6);
-              ctx.lineTo(2, -10);
-              ctx.stroke();
-            } else if (item.subType === "haybale") {
-              // Large gold/brown cylinder haybale
-              ctx.fillStyle = "#B45309";
-              ctx.beginPath();
-              ctx.ellipse(0, -12, 14, 12, 0, 0, Math.PI * 2);
+              ctx.moveTo(-35, 0);
+              ctx.quadraticCurveTo(-38, -25, -20, -45);
+              ctx.lineTo(-5, -30);
+              ctx.lineTo(-10, 0);
+              ctx.closePath();
               ctx.fill();
+
+              // Light highlight on top
+              ctx.fillStyle = "#6B7280";
+              ctx.beginPath();
+              ctx.moveTo(-15, -42);
+              ctx.quadraticCurveTo(0, -52, 12, -46);
+              ctx.quadraticCurveTo(5, -38, -10, -38);
+              ctx.closePath();
+              ctx.fill();
+
+              // Crack lines
+              ctx.strokeStyle = "#1F2937";
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(-8, -40);
+              ctx.lineTo(0, -25);
+              ctx.lineTo(8, -32);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.moveTo(10, -20);
+              ctx.lineTo(18, -10);
+              ctx.stroke();
+              
+              // Small pebbles around base
+              ctx.fillStyle = "#6B7280";
+              ctx.beginPath();
+              ctx.arc(-25, -2, 4, 0, Math.PI * 2);
+              ctx.arc(28, -1, 3, 0, Math.PI * 2);
+              ctx.arc(-15, 0, 2.5, 0, Math.PI * 2);
+              ctx.fill();
+
+            } else if (item.subType === "haybale") {
+              // ── LARGE HAY BALE (cylinder front view) ──
+              // Back circle edge
+              ctx.fillStyle = "#92400E";
+              ctx.beginPath();
+              ctx.ellipse(0, -22, 35, 30, 0, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Front face
               ctx.fillStyle = "#D97706";
               ctx.beginPath();
-              ctx.ellipse(0, -12, 11, 9, 0, 0, Math.PI * 2);
+              ctx.ellipse(0, -22, 30, 26, 0, 0, Math.PI * 2);
               ctx.fill();
-              
-              // Twine wrapping bands
-              ctx.fillStyle = "#78350F";
-              ctx.fillRect(-7, -22, 2, 20);
-              ctx.fillRect(5, -22, 2, 20);
 
-              // Concentric spiral layers
-              ctx.strokeStyle = "#78350F";
-              ctx.lineWidth = 2.0;
+              // Straw spiral pattern
+              ctx.strokeStyle = "#B45309";
+              ctx.lineWidth = 2.5;
               ctx.beginPath();
-              ctx.arc(0, -12, 5, 0, Math.PI * 1.5);
+              ctx.arc(0, -22, 8, 0, Math.PI * 3);
               ctx.stroke();
-            } else if (item.subType === "cow") {
-              // Large blocky white cow with black patches
-              ctx.fillStyle = "#F3F4F6";
               ctx.beginPath();
-              ctx.roundRect(-16, -18, 32, 18, 4);
-              ctx.fill();
-              
-              // Black patches
-              ctx.fillStyle = "#111827";
+              ctx.arc(0, -22, 16, 0.5, Math.PI * 2.5);
+              ctx.stroke();
+
+              // Twine binding bands (horizontal)
+              ctx.strokeStyle = "#78350F";
+              ctx.lineWidth = 3;
               ctx.beginPath();
-              ctx.arc(-8, -13, 5, 0, Math.PI * 2);
-              ctx.arc(5, -11, 4, 0, Math.PI * 2);
+              ctx.moveTo(-28, -10);
+              ctx.lineTo(28, -10);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.moveTo(-25, -35);
+              ctx.lineTo(25, -35);
+              ctx.stroke();
+
+              // Light highlight
+              ctx.fillStyle = "rgba(255, 220, 130, 0.3)";
+              ctx.beginPath();
+              ctx.ellipse(-8, -30, 10, 6, -0.3, 0, Math.PI * 2);
               ctx.fill();
 
-              // Hooves
-              ctx.fillRect(-12, 0, 4, 2);
-              ctx.fillRect(6, 0, 4, 2);
-
-              // Tail
-              ctx.strokeStyle = "#111827";
+              // Loose straw pieces sticking out
+              ctx.strokeStyle = "#D97706";
               ctx.lineWidth = 1.5;
               ctx.beginPath();
-              ctx.moveTo(-16, -10);
-              ctx.lineTo(-20, -2);
+              ctx.moveTo(28, -18); ctx.lineTo(38, -22);
+              ctx.moveTo(26, -28); ctx.lineTo(35, -33);
+              ctx.moveTo(-27, -15); ctx.lineTo(-36, -12);
               ctx.stroke();
 
-              // Head
-              ctx.fillStyle = "#F3F4F6";
+            } else if (item.subType === "cow") {
+              // ── LARGE COW (side view) ──
+              // Body
+              ctx.fillStyle = "#F9FAFB";
               ctx.beginPath();
-              ctx.roundRect(8, -26, 10, 12, 3);
+              ctx.ellipse(0, -25, 38, 22, 0, 0, Math.PI * 2);
               ctx.fill();
-              ctx.fillStyle = "#FCA5A5"; // pink nose
-              ctx.fillRect(14, -20, 4, 6);
 
-              // Ears
+              // Black patches
+              ctx.fillStyle = "#1F2937";
               ctx.beginPath();
-              ctx.arc(8, -26, 2, 0, Math.PI * 2);
-              ctx.arc(14, -26, 2, 0, Math.PI * 2);
+              ctx.ellipse(-12, -30, 12, 8, -0.2, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.ellipse(10, -20, 9, 7, 0.3, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.ellipse(-5, -18, 6, 5, 0, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Legs (4 legs)
+              ctx.fillStyle = "#F3F4F6";
+              ctx.fillRect(-28, -6, 8, 10);
+              ctx.fillRect(-14, -6, 8, 10);
+              ctx.fillRect(8, -6, 8, 10);
+              ctx.fillRect(22, -6, 8, 10);
+              // Hooves
+              ctx.fillStyle = "#1F2937";
+              ctx.fillRect(-28, 3, 8, 4);
+              ctx.fillRect(-14, 3, 8, 4);
+              ctx.fillRect(8, 3, 8, 4);
+              ctx.fillRect(22, 3, 8, 4);
+
+              // Head (right side)
+              ctx.fillStyle = "#F9FAFB";
+              ctx.beginPath();
+              ctx.ellipse(35, -38, 14, 12, 0.15, 0, Math.PI * 2);
+              ctx.fill();
+              // Snout
+              ctx.fillStyle = "#FBCFE8";
+              ctx.beginPath();
+              ctx.ellipse(44, -34, 8, 6, 0, 0, Math.PI * 2);
+              ctx.fill();
+              // Nostrils
+              ctx.fillStyle = "#9F1239";
+              ctx.beginPath();
+              ctx.arc(42, -33, 1.5, 0, Math.PI * 2);
+              ctx.arc(46, -33, 1.5, 0, Math.PI * 2);
+              ctx.fill();
+              // Eyes
+              ctx.fillStyle = "#111827";
+              ctx.beginPath();
+              ctx.arc(32, -40, 3, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.fillStyle = "#FFF";
+              ctx.beginPath();
+              ctx.arc(31, -41, 1, 0, Math.PI * 2);
+              ctx.fill();
+              // Ears
+              ctx.fillStyle = "#FBCFE8";
+              ctx.beginPath();
+              ctx.ellipse(26, -48, 6, 4, -0.5, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.ellipse(38, -48, 6, 4, 0.5, 0, Math.PI * 2);
+              ctx.fill();
+              // Horns
+              ctx.fillStyle = "#D4D4D8";
+              ctx.beginPath();
+              ctx.moveTo(28, -48); ctx.lineTo(24, -56); ctx.lineTo(30, -50);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.moveTo(40, -48); ctx.lineTo(44, -56); ctx.lineTo(42, -50);
+              ctx.fill();
+
+              // Tail
+              ctx.strokeStyle = "#1F2937";
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              ctx.moveTo(-36, -30);
+              ctx.quadraticCurveTo(-50, -20, -46, -8);
+              ctx.stroke();
+              // Tail tuft
+              ctx.fillStyle = "#1F2937";
+              ctx.beginPath();
+              ctx.arc(-46, -7, 4, 0, Math.PI * 2);
               ctx.fill();
             }
           }
@@ -626,100 +726,155 @@ export function AgriGame({ mode }: AgriGameProps) {
           /* ═══════════════════════════════════════
              COLLECTIBLES: BRIGHT, GLOWING, FLOATING CROP ASSETS
              ═══════════════════════════════════════ */
-          const hoverOffset = Math.sin(item.pulse) * 5 * scale;
+          const hoverOffset = Math.sin(item.pulse) * 6 * scale;
           ctx.save();
-          ctx.translate(rx, ry - 70 * scale + hoverOffset); // float higher above road
-          ctx.scale(scale * 7.0, scale * 7.0); // 7x — crops are unmissable
+          ctx.translate(rx, ry - 90 * scale + hoverOffset);
+          ctx.scale(scale * 5.0, scale * 5.0);
 
-          ctx.shadowBlur = 18;
-          ctx.fillStyle = "#F59E0B";
+          // Outer glow
+          ctx.shadowBlur = 25;
+          ctx.shadowColor = item.subType === "wheat" ? "#FBBF24" : "#EF4444";
 
           if (item.subType === "wheat") {
-            // Glowing golden wheat bundle fanned out (3 stalks)
-            let cropGrad = ctx.createRadialGradient(0, -6, 2, 0, 0, 12);
-            cropGrad.addColorStop(0, "#FDE047");
-            cropGrad.addColorStop(1, "#D97706");
-            ctx.fillStyle = cropGrad;
-
-            // Stalk 1 (left tilt)
-            ctx.save();
-            ctx.rotate(-0.25);
+            // ── WHEAT BUNDLE: 3 tall golden stalks with grain heads ──
+            
+            // Stalks (long green-gold stems)
+            ctx.strokeStyle = "#65A30D";
+            ctx.lineWidth = 3;
+            // Left stalk
             ctx.beginPath();
-            ctx.ellipse(-3, -2, 3.5, 9, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-
-            // Stalk 2 (vertical center)
+            ctx.moveTo(-8, 30); ctx.lineTo(-12, -20);
+            ctx.stroke();
+            // Center stalk
             ctx.beginPath();
-            ctx.ellipse(0, -1, 4, 10, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Stalk 3 (right tilt)
-            ctx.save();
-            ctx.rotate(0.25);
+            ctx.moveTo(0, 30); ctx.lineTo(0, -30);
+            ctx.stroke();
+            // Right stalk
             ctx.beginPath();
-            ctx.ellipse(3, -2, 3.5, 9, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-
-            // Tied red ribbon in center
-            ctx.fillStyle = "#EF4444";
-            ctx.beginPath();
-            ctx.roundRect(-6, 2, 12, 3, 1);
-            ctx.fill();
-          } else if (item.subType === "tomato") {
-            // Basket of Tomatoes
-            // Woven wooden basket/crate in brown
-            ctx.fillStyle = "#78350F";
-            ctx.beginPath();
-            ctx.roundRect(-9, 1, 18, 9, 2);
-            ctx.fill();
-
-            // Basket highlights
-            ctx.strokeStyle = "#451A03";
-            ctx.lineWidth = 1.0;
-            ctx.beginPath();
-            ctx.moveTo(-9, 4); ctx.lineTo(9, 4);
-            ctx.moveTo(-3, 1); ctx.lineTo(-3, 10);
-            ctx.moveTo(3, 1); ctx.lineTo(3, 10);
+            ctx.moveTo(8, 30); ctx.lineTo(12, -20);
             ctx.stroke();
 
-            // 3 Glossy Tomatoes stacked inside
-            let tomGrad1 = ctx.createRadialGradient(-5, -4, 1, -3, -2, 5);
-            tomGrad1.addColorStop(0, "#FCA5A5");
-            tomGrad1.addColorStop(1, "#DC2626");
-            ctx.fillStyle = tomGrad1;
+            // Small leaves on stalks
+            ctx.fillStyle = "#84CC16";
             ctx.beginPath();
-            ctx.arc(-4, -1, 5, 0, Math.PI * 2);
+            ctx.ellipse(-14, 0, 8, 3, -0.6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(14, 5, 8, 3, 0.6, 0, Math.PI * 2);
             ctx.fill();
 
-            let tomGrad2 = ctx.createRadialGradient(5, -4, 1, 3, -2, 5);
-            tomGrad2.addColorStop(0, "#FCA5A5");
-            tomGrad2.addColorStop(1, "#DC2626");
-            ctx.fillStyle = tomGrad2;
+            // Grain heads (golden oval clusters at top of each stalk)
+            const grainGrad = ctx.createRadialGradient(0, -35, 3, 0, -30, 18);
+            grainGrad.addColorStop(0, "#FDE047");
+            grainGrad.addColorStop(1, "#D97706");
+            ctx.fillStyle = grainGrad;
+
+            // Left grain head
             ctx.beginPath();
-            ctx.arc(4, -1, 5, 0, Math.PI * 2);
+            ctx.ellipse(-12, -28, 7, 14, -0.15, 0, Math.PI * 2);
+            ctx.fill();
+            // Center grain head (tallest)
+            ctx.beginPath();
+            ctx.ellipse(0, -38, 8, 16, 0, 0, Math.PI * 2);
+            ctx.fill();
+            // Right grain head
+            ctx.beginPath();
+            ctx.ellipse(12, -28, 7, 14, 0.15, 0, Math.PI * 2);
             ctx.fill();
 
-            let tomGrad3 = ctx.createRadialGradient(0, -6, 1, 0, -4, 6);
-            tomGrad3.addColorStop(0, "#FCA5A5");
-            tomGrad3.addColorStop(1, "#DC2626");
-            ctx.fillStyle = tomGrad3;
+            // Grain kernel texture lines
+            ctx.strokeStyle = "#B45309";
+            ctx.lineWidth = 1;
+            [-12, 0, 12].forEach((gx, gi) => {
+              const gy = gi === 1 ? -38 : -28;
+              for (let k = -8; k < 10; k += 4) {
+                ctx.beginPath();
+                ctx.moveTo(gx - 4, gy + k);
+                ctx.lineTo(gx + 4, gy + k);
+                ctx.stroke();
+              }
+            });
+
+            // Awns (whiskers at top)
+            ctx.strokeStyle = "#D97706";
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
-            ctx.arc(0, -3, 6, 0, Math.PI * 2);
+            ctx.moveTo(-12, -42); ctx.lineTo(-16, -52);
+            ctx.moveTo(-10, -41); ctx.lineTo(-8, -50);
+            ctx.moveTo(0, -54); ctx.lineTo(-3, -62);
+            ctx.moveTo(2, -53); ctx.lineTo(5, -61);
+            ctx.moveTo(12, -42); ctx.lineTo(16, -52);
+            ctx.moveTo(10, -41); ctx.lineTo(8, -50);
+            ctx.stroke();
+
+            // Red twine tie around the bundle
+            ctx.fillStyle = "#DC2626";
+            ctx.beginPath();
+            ctx.roundRect(-16, 15, 32, 6, 3);
+            ctx.fill();
+            // Twine knot
+            ctx.beginPath();
+            ctx.arc(0, 18, 4, 0, Math.PI * 2);
             ctx.fill();
 
-            // Shiny specular dots
-            ctx.fillStyle = "#FFF";
+          } else if (item.subType === "tomato") {
+            // ── LARGE TOMATO: Round, glossy, with stem and leaves ──
+
+            // Main body - large glossy red sphere
+            const tomGrad = ctx.createRadialGradient(-8, -18, 5, 0, -8, 30);
+            tomGrad.addColorStop(0, "#FCA5A5");
+            tomGrad.addColorStop(0.4, "#EF4444");
+            tomGrad.addColorStop(1, "#991B1B");
+            ctx.fillStyle = tomGrad;
             ctx.beginPath();
-            ctx.arc(-5, -2, 1, 0, Math.PI * 2);
-            ctx.arc(3, -2, 1, 0, Math.PI * 2);
-            ctx.arc(-1, -4, 1.2, 0, Math.PI * 2);
+            ctx.arc(0, -8, 28, 0, Math.PI * 2);
             ctx.fill();
 
-            // Green leaf caps
-            ctx.fillStyle = "#10B981";
-            ctx.fillRect(-1.5, -9, 3, 2);
+            // Tomato segment lines (subtle)
+            ctx.strokeStyle = "rgba(153, 27, 27, 0.3)";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, -36); ctx.quadraticCurveTo(-5, -8, 0, 20);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-10, -34); ctx.quadraticCurveTo(-20, -8, -10, 18);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(10, -34); ctx.quadraticCurveTo(20, -8, 10, 18);
+            ctx.stroke();
+
+            // Specular highlight (big shiny spot)
+            const shineGrad = ctx.createRadialGradient(-10, -20, 2, -8, -16, 14);
+            shineGrad.addColorStop(0, "rgba(255, 255, 255, 0.7)");
+            shineGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+            ctx.fillStyle = shineGrad;
+            ctx.beginPath();
+            ctx.ellipse(-10, -20, 12, 8, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Small secondary shine
+            ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+            ctx.beginPath();
+            ctx.arc(12, -2, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Green stem
+            ctx.fillStyle = "#15803D";
+            ctx.beginPath();
+            ctx.roundRect(-3, -42, 6, 10, 2);
+            ctx.fill();
+
+            // Star-shaped calyx (5 green leaves around stem)
+            ctx.fillStyle = "#22C55E";
+            for (let a = 0; a < 5; a++) {
+              ctx.save();
+              ctx.translate(0, -35);
+              ctx.rotate((a * Math.PI * 2) / 5 - Math.PI / 2);
+              ctx.beginPath();
+              ctx.ellipse(10, 0, 10, 4, 0, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.restore();
+            }
           }
           ctx.restore();
         }
@@ -853,7 +1008,7 @@ export function AgriGame({ mode }: AgriGameProps) {
 
   return (
     <div 
-      className="relative w-screen h-screen overflow-hidden select-none bg-[#F4FAF6]"
+      className="fixed inset-0 z-[9999] overflow-hidden select-none bg-[#F4FAF6]"
       onClick={() => {
         if (gameState === "idle" || gameState === "gameover") handleRestart();
         else {
@@ -871,26 +1026,26 @@ export function AgriGame({ mode }: AgriGameProps) {
       />
 
       {/* ═══════════════════════════════════════
-          HUD UI OVERLAYS (WCAG AA Contrast Compliant, 100px Safe Offset)
+          HUD — Game owns the full screen, no navbar to avoid
           ═══════════════════════════════════════ */}
       
-      {/* Top-Left: Solid dark-green panel offset below MegaMenu */}
-      <div className="absolute top-[120px] left-6 sm:left-10 z-10 bg-[#0B3D2E] border-2 border-white/25 px-8 py-7 rounded-3xl shadow-[0_24px_60px_rgba(0,0,0,0.45)] max-w-lg text-left pointer-events-none select-none">
-        <span className="font-black text-6xl sm:text-7xl uppercase tracking-widest text-white block leading-none drop-shadow-lg">
+      {/* Top-Left: Error context */}
+      <div className="absolute top-6 left-6 sm:left-10 z-10 bg-[#0B3D2E] border-2 border-white/20 px-7 py-5 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.4)] max-w-md text-left pointer-events-none select-none">
+        <span className="font-black text-5xl sm:text-6xl uppercase tracking-widest text-white block leading-none drop-shadow-lg">
           {headingInfo.title}
         </span>
-        <h1 className="font-black text-xl sm:text-2xl tracking-wider uppercase text-[#86EFAC] mt-4 leading-snug drop-shadow-sm">
+        <h1 className="font-black text-base sm:text-lg tracking-wider uppercase text-[#86EFAC] mt-2 leading-snug">
           {headingInfo.subtitle}
         </h1>
-        <p className="text-base sm:text-lg text-white/90 mt-3 font-semibold leading-relaxed">
+        <p className="text-sm text-white/80 mt-1.5 font-medium leading-relaxed">
           {headingInfo.desc}
         </p>
       </div>
 
-      {/* Top-Right: Harvest score box — solid bg so it's always readable */}
-      <div className="absolute top-[120px] right-6 sm:right-10 z-10 pointer-events-none bg-[#0B3D2E] border-2 border-white/25 px-8 py-6 rounded-3xl shadow-[0_24px_60px_rgba(0,0,0,0.45)] text-right">
-        <span className="text-sm uppercase font-extrabold tracking-widest text-[#86EFAC] block mb-1">🌾 Harvest</span>
-        <span className="font-black text-5xl sm:text-6xl text-white tracking-tight leading-none drop-shadow-lg">{formattedWeight}</span>
+      {/* Top-Right: Harvest score */}
+      <div className="absolute top-6 right-6 sm:right-10 z-10 pointer-events-none bg-[#0B3D2E] border-2 border-white/20 px-7 py-5 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.4)] text-right">
+        <span className="text-xs uppercase font-extrabold tracking-widest text-[#86EFAC] block mb-1">🌾 Harvest</span>
+        <span className="font-black text-4xl sm:text-5xl text-white tracking-tight leading-none drop-shadow-lg">{formattedWeight}</span>
       </div>
 
       {/* Center-Screen Floating Indicators */}
