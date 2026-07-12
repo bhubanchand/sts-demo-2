@@ -4,7 +4,16 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Leaf, Shield, LineChart, Users, Satellite, Smartphone } from "lucide-react";
 
-const SLIDES = [
+interface SlideNode {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  image: string;
+  color: string;
+}
+
+const SLIDES: SlideNode[] = [
   {
     id: "traceability",
     title: "Traceability Graph",
@@ -62,6 +71,7 @@ export function ExpandingSlideshow() {
     <div className="flex flex-col md:flex-row gap-4 w-full h-[1050px] md:h-[600px] max-w-[1400px] mx-auto px-4 sm:px-8 py-16 snap-center">
       {SLIDES.map((slide) => {
         const isActive = activeSlide === slide.id;
+        const Icon = slide.icon;
 
         return (
           <motion.div
@@ -80,7 +90,7 @@ export function ExpandingSlideshow() {
             transition={{ type: "spring", stiffness: 220, damping: 24 }}
             className="relative rounded-[2rem] overflow-hidden cursor-pointer group bg-[#EAF5EE] border border-[#0B3D2E]/8 w-full md:w-auto min-h-[76px] md:min-h-0 min-w-0 md:min-w-[80px]"
           >
-            {/* Background Image */}
+            {/* Background Image - Rich, clear presentation */}
             <motion.div 
                className="absolute inset-0 w-full h-full"
                animate={{ scale: isActive ? 1.05 : 1 }}
@@ -89,70 +99,68 @@ export function ExpandingSlideshow() {
                <img 
                  src={slide.image} 
                  alt={slide.title} 
-                 className="w-full h-full object-cover opacity-25 group-hover:opacity-40 transition-opacity"
+                 className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-300"
                />
-               {/* Light Green Overlay */}
-               <div className={`absolute inset-0 transition-opacity duration-300 ${isActive ? 'bg-gradient-to-t from-[#EAF5EE]/95 via-[#EAF5EE]/65 to-[#EAF5EE]/20' : 'bg-[#EAF5EE]/80'}`}></div>
+               {/* Soft overlay gradient to ensure high clarity at top and text readability at bottom */}
+               <div className={`absolute inset-0 transition-opacity duration-300 ${isActive ? 'bg-gradient-to-t from-black/25 to-transparent' : 'bg-[#EAF5EE]/20'}`}></div>
             </motion.div>
 
-            {/* Content Container */}
-            <div className={`absolute inset-0 flex flex-col ${
-              isActive 
-                ? 'p-5 lg:p-6 justify-between' 
-                : 'p-3.5 lg:p-6 justify-center'
-            }`}>
-              
-              {/* Icon & Title Wrapper */}
-              <div className={`flex items-center gap-4 ${
-                isActive ? 'flex-row mb-4' : 'flex-row md:flex-col md:mb-8'
-              }`}>
-                <div className={`w-11 h-11 lg:w-12 lg:h-12 rounded-full ${slide.color} flex items-center justify-center text-white shrink-0 shadow-md z-10`}>
-                  <slide.icon className="w-5 h-5 lg:w-6 lg:h-6" />
-                </div>
-                
-                {isActive ? (
-                   // Expanded Title
-                   <motion.h3 
-                     layout="position"
-                     className="text-2xl lg:text-3xl font-black text-[#0B3D2E] z-10"
-                   >
-                     {slide.title}
-                   </motion.h3>
-                ) : (
-                   // Collapsed Title
-                   <>
-                     {/* Desktop Vertical Title */}
-                     <h3 className="hidden md:block text-xl font-bold text-[#0B3D2E] whitespace-nowrap z-10 opacity-75 tracking-widest" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
-                       {slide.title}
-                     </h3>
-                     {/* Mobile Horizontal Title */}
-                     <h3 className="block md:hidden text-lg font-bold text-[#0B3D2E] whitespace-nowrap z-10 opacity-75">
-                       {slide.title}
-                     </h3>
-                   </>
-                )}
-              </div>
-
-              {/* Expanded Description */}
-              <AnimatePresence mode="wait">
-                {isActive && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden z-10"
-                  >
-                    <p className="text-[#1F5946] text-sm lg:text-base mb-4 lg:mb-6 max-w-md leading-relaxed font-semibold">
+            {/* Separated Content Blocks to prevent Layout Text Jiggling */}
+            <AnimatePresence mode="wait">
+              {isActive ? (
+                /* ── EXPANDED PANEL LAYOUT (Fades in cleanly without jiggling layout width) ── */
+                <motion.div 
+                  key="expanded"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-[#0B3D2E]/10 p-5 lg:p-6 z-20 flex flex-col justify-between h-[180px] select-none"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`w-12 h-12 rounded-full ${slide.color} flex items-center justify-center text-white shadow-md shrink-0`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-xl lg:text-2xl font-black text-[#0B3D2E] tracking-tight">
+                      {slide.title}
+                    </h3>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mt-2">
+                    <p className="text-[#1F5946] text-xs lg:text-sm leading-relaxed max-w-xl font-semibold">
                       {slide.description}
                     </p>
-                    <button className="flex items-center gap-2 text-[#0B3D2E] font-bold hover:gap-4 hover:text-[#1F7A53] transition-all uppercase tracking-wider text-xs lg:text-sm">
-                      Explore Solution <ArrowRight className="w-4 h-4 lg:w-5 lg:h-5 text-[#1F7A53]" />
+                    <button className="flex items-center gap-2 text-[#0B3D2E] font-bold hover:gap-3 hover:text-[#1F7A53] transition-all uppercase tracking-wider text-xs lg:text-sm whitespace-nowrap shrink-0">
+                      Explore Solution <ArrowRight className="w-4 h-4 text-[#1F7A53]" />
                     </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                  </div>
+                </motion.div>
+              ) : (
+                /* ── COLLAPSED VERTICAL TAB LAYOUT (Fades in when inactive) ── */
+                <motion.div 
+                  key="collapsed"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute inset-0 flex flex-col items-center justify-center p-4 z-10 bg-black/[0.04] select-none"
+                >
+                  <div className={`w-11 h-11 rounded-full ${slide.color} flex items-center justify-center text-white mb-6 shadow-md shrink-0`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  
+                  {/* Desktop Vertical Title */}
+                  <h3 className="hidden md:block text-[11px] font-extrabold text-[#0B3D2E] whitespace-nowrap z-10 tracking-widest uppercase bg-white/90 border border-[#0B3D2E]/10 py-4 px-2.5 rounded-full backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)]" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+                    {slide.title}
+                  </h3>
+                  
+                  {/* Mobile Horizontal Title */}
+                  <h3 className="block md:hidden text-xs font-extrabold text-[#0B3D2E] whitespace-nowrap z-10 tracking-widest uppercase bg-white/90 border border-[#0B3D2E]/10 py-1.5 px-3.5 rounded-full backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                    {slide.title}
+                  </h3>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
           </motion.div>
         );
       })}
