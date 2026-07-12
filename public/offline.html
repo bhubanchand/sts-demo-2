@@ -31,35 +31,46 @@
       display: block;
       z-index: 0;
     }
-    /* HUD UI elements */
-    .hud-left {
+    /* HUD UI elements - WCAG AA Contrast Compliant */
+    .hud-left-panel {
       position: absolute;
       top: 32px;
       left: 32px;
       z-index: 10;
       pointer-events: none;
       text-align: left;
+      background: rgba(11, 61, 46, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+      max-w: 360px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
-    .hud-left h2 {
+    .hud-left-panel h2 {
       font-weight: 900;
       font-size: 24px;
-      color: #0B3D2E;
+      color: #FFFFFF;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      line-height: 1;
     }
-    .hud-left h3 {
+    .hud-left-panel h3 {
       font-weight: 800;
-      font-size: 13px;
-      color: #1F7A53;
+      font-size: 14px;
+      color: #86EFAC;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-top: 4px;
+      letter-spacing: 0.08em;
+      margin-top: 6px;
+      line-height: 1.2;
     }
-    .hud-left p {
+    .hud-left-panel p {
       font-weight: 600;
-      font-size: 10px;
-      color: rgba(31, 89, 70, 0.7);
-      margin-top: 4px;
+      font-size: 11px;
+      color: #E6FDF0;
+      margin-top: 6px;
+      line-height: 1.4;
     }
     .hud-right {
       position: absolute;
@@ -71,7 +82,7 @@
     }
     .hud-right .label {
       font-weight: 800;
-      font-size: 10px;
+      font-size: 11px;
       color: #1F7A53;
       text-transform: uppercase;
       letter-spacing: 0.15em;
@@ -80,10 +91,11 @@
     }
     .hud-right .score {
       font-weight: 900;
-      font-size: 24px;
+      font-size: 30px;
       color: #0B3D2E;
+      line-height: 1;
     }
-    .hud-bottom {
+    .hud-bottom-pill {
       position: absolute;
       bottom: 32px;
       left: 50%;
@@ -91,35 +103,40 @@
       z-index: 10;
       pointer-events: none;
       text-align: center;
-      font-weight: 800;
-      font-size: 10px;
-      color: #1F7A53;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
-    /* Achievement Banner */
-    .achievement-banner {
-      position: absolute;
-      top: 110px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 20;
-      pointer-events: none;
-      background: rgba(11, 61, 70, 0.9);
+      background: #0B3D2E;
       color: #FFF;
       font-weight: 800;
       font-size: 12px;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      padding: 10px 20px;
+      letter-spacing: 0.15em;
+      padding: 12px 24px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translate(-50%, 0); }
+      50% { transform: translate(-50%, -8px); }
+    }
+    /* Achievement Banner */
+    .achievement-banner {
+      position: absolute;
+      top: 136px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      pointer-events: none;
+      background: rgba(11, 61, 46, 0.95);
+      color: #FFF;
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 10px 22px;
       border-radius: 9999px;
       border: 1px solid rgba(83, 215, 105, 0.3);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       opacity: 0;
@@ -149,7 +166,7 @@
       pointer-events: auto;
     }
     .card {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       border: 1px solid #FFF;
       padding: 40px;
       border-radius: 32px;
@@ -208,7 +225,7 @@
     }
     .score-summary strong {
       font-weight: 900;
-      font-size: 16px;
+      font-size: 18px;
       color: #0B3D2E;
     }
     .btn {
@@ -279,7 +296,7 @@
   <canvas id="gameCanvas"></canvas>
 
   <!-- HUD overlay -->
-  <div class="hud-left">
+  <div class="hud-left-panel">
     <h2>You're Offline</h2>
     <h3>Connection lost.</h3>
     <p>While we reconnect, help deliver today's harvest.</p>
@@ -290,7 +307,7 @@
     <span class="score" id="scoreVal">0</span>
   </div>
 
-  <div class="hud-bottom">
+  <div class="hud-bottom-pill">
     Press Space or Tap to Jump
   </div>
 
@@ -350,10 +367,10 @@
     let scoreHarvestVal = 0;
     let highScore = 0;
     let lastAchievementDistance = 0;
-    let gameSpeed = 5;
+    let gameSpeed = 5.2;
     let cameraShake = 0;
     let cycleTimer = 0;
-    let activeWeather = "sun"; // sun, sunset, night, rain
+    let activeWeather = "sun";
 
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
@@ -372,15 +389,15 @@
       groundY = height * 0.72;
     });
 
-    // Characters & Arrays
+    // 200% Increased Tractor Size (110x88)
     const tractor = {
       x: width * 0.12,
       y: 0,
-      width: 60,
-      height: 48,
+      width: 110,
+      height: 88,
       vy: 0,
-      gravity: 0.65,
-      jumpStrength: -13.5,
+      gravity: 0.72,
+      jumpStrength: -15.5,
       isJumping: false,
       wheelAngle: 0,
       vibrationOffset: 0,
@@ -392,33 +409,33 @@
     let collectibles = [];
     let particles = [];
 
-    // Background decoration coordinates
+    // Background decoration coordinates (Pastel & Desaturated)
     const clouds = [
-      { x: 100, y: height * 0.15, size: 50 },
-      { x: width * 0.5, y: height * 0.08, size: 70 },
-      { x: width * 0.8, y: height * 0.2, size: 45 }
+      { x: 100, y: height * 0.12, size: 60 },
+      { x: width * 0.45, y: height * 0.08, size: 85 },
+      { x: width * 0.8, y: height * 0.18, size: 50 }
     ];
 
     const distantMountains = [
-      { x: 0, w: width * 0.6, h: height * 0.28 },
-      { x: width * 0.4, w: width * 0.7, h: height * 0.32 },
-      { x: width * 0.8, w: width * 0.5, h: height * 0.24 }
+      { x: 0, w: width * 0.6, h: height * 0.24 },
+      { x: width * 0.35, w: width * 0.7, h: height * 0.28 },
+      { x: width * 0.75, w: width * 0.5, h: height * 0.2 }
     ];
 
     const midgroundHills = [
-      { x: 0, w: width * 0.4, h: height * 0.15, color: "#D1EAD8" },
-      { x: width * 0.3, w: width * 0.5, h: height * 0.18, color: "#C6E4CD" },
-      { x: width * 0.7, w: width * 0.4, h: height * 0.14, color: "#D1EAD8" }
+      { x: 0, w: width * 0.4, h: height * 0.12, color: "rgba(209, 234, 216, 0.3)" },
+      { x: width * 0.28, w: width * 0.5, h: height * 0.14, color: "rgba(198, 228, 205, 0.3)" },
+      { x: width * 0.68, w: width * 0.4, h: height * 0.11, color: "rgba(209, 234, 216, 0.3)" }
     ];
 
     const windmills = [
-      { x: width * 0.25, rot: 0, size: 40 },
-      { x: width * 0.75, rot: 1.5, size: 30 }
+      { x: width * 0.22, rot: 0, size: 35 },
+      { x: width * 0.78, rot: 1.5, size: 25 }
     ];
 
     const silos = [
-      { x: width * 0.45, w: 32, h: 70 },
-      { x: width * 0.9, w: 26, h: 55 }
+      { x: width * 0.42, w: 28, h: 60 },
+      { x: width * 0.88, w: 22, h: 48 }
     ];
 
     // Trigger Achievements
@@ -433,33 +450,52 @@
     // Particles Spawning
     const spawnSmoke = () => {
       particles.push({
-        x: tractor.x + 12,
-        y: tractor.y + 4,
-        vx: -gameSpeed * 0.3 + (Math.random() - 0.5) * 0.5,
-        vy: -1 - Math.random() * 1.5,
-        size: 3 + Math.random() * 5,
-        color: activeWeather === "night" ? "rgba(100, 100, 110, 0.25)" : "rgba(80, 80, 80, 0.18)",
-        alpha: 0.7,
+        x: tractor.x + 20,
+        y: tractor.y + 10,
+        vx: -gameSpeed * 0.25 + (Math.random() - 0.5) * 0.5,
+        vy: -1.2 - Math.random() * 1.5,
+        size: 5 + Math.random() * 8,
+        color: activeWeather === "night" ? "rgba(100, 100, 110, 0.3)" : "rgba(120, 130, 125, 0.25)",
+        alpha: 0.65,
         life: 0,
-        maxLife: 40 + Math.random() * 20
+        maxLife: 45 + Math.random() * 20,
+        type: "smoke"
       });
     };
 
     const spawnLandingDust = () => {
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 20; i++) {
         particles.push({
-          x: tractor.x + tractor.width * 0.5 + (Math.random() - 0.5) * 20,
+          x: tractor.x + tractor.width * 0.5 + (Math.random() - 0.5) * 40,
           y: groundY,
-          vx: -gameSpeed * 0.5 + (Math.random() - 0.5) * 4,
-          vy: -Math.random() * 4,
-          size: 2 + Math.random() * 4,
-          color: "rgba(139, 90, 43, 0.45)",
-          alpha: 0.8,
+          vx: -gameSpeed * 0.45 + (Math.random() - 0.5) * 6,
+          vy: -1.5 - Math.random() * 4,
+          size: 3 + Math.random() * 6,
+          color: "rgba(167, 133, 100, 0.55)",
+          alpha: 0.85,
           life: 0,
-          maxLife: 30 + Math.random() * 20
+          maxLife: 35 + Math.random() * 20,
+          type: "dust"
         });
       }
-      cameraShake = 5;
+      cameraShake = 7;
+    };
+
+    const spawnSparkles = (x, y, color) => {
+      for (let i = 0; i < 6; i++) {
+        particles.push({
+          x,
+          y,
+          vx: (Math.random() - 0.5) * 3,
+          vy: (Math.random() - 0.5) * 3,
+          size: 2 + Math.random() * 3,
+          color,
+          alpha: 1.0,
+          life: 0,
+          maxLife: 20 + Math.random() * 10,
+          type: "sparkle"
+        });
+      }
     };
 
     const triggerJump = () => {
@@ -476,7 +512,7 @@
       scoreDistance = 0;
       scoreHarvestVal = 0;
       scoreVal.textContent = "0";
-      gameSpeed = 5;
+      gameSpeed = 5.2;
       tractor.y = groundY - tractor.height;
       tractor.vy = 0;
       tractor.isJumping = false;
@@ -488,7 +524,6 @@
 
     // Click/Touch Actions
     document.body.addEventListener("click", (e) => {
-      // Don't trigger jump if clicking overlay buttons
       if (e.target.closest(".card") || e.target.closest(".online-toast")) return;
       if (gameState === "idle" || gameState === "gameover") {
         restartGame();
@@ -524,7 +559,7 @@
     // ── GAME LOOP ──
     const update = () => {
       cycleTimer++;
-      if (cycleTimer > 900) {
+      if (cycleTimer > 950) {
         cycleTimer = 0;
         const weathers = ["sun", "sunset", "night", "rain"];
         const currentIdx = weathers.indexOf(activeWeather);
@@ -536,54 +571,50 @@
         const shakeX = (Math.random() - 0.5) * cameraShake;
         const shakeY = (Math.random() - 0.5) * cameraShake;
         ctx.translate(shakeX, shakeY);
-        cameraShake *= 0.9;
+        cameraShake *= 0.88;
         if (cameraShake < 0.1) cameraShake = 0;
       }
 
       // Draw Sky
       let skyGrad = ctx.createLinearGradient(0, 0, 0, height);
       if (activeWeather === "sun") {
-        skyGrad.addColorStop(0, "#BAE6FD");
+        skyGrad.addColorStop(0, "#E0F2FE");
         skyGrad.addColorStop(1, "#F0FDFA");
       } else if (activeWeather === "sunset") {
-        skyGrad.addColorStop(0, "#FDBA74");
-        skyGrad.addColorStop(1, "#FDF2F8");
+        skyGrad.addColorStop(0, "#FFEDD5");
+        skyGrad.addColorStop(1, "#FAF5FF");
       } else if (activeWeather === "night") {
         skyGrad.addColorStop(0, "#0F172A");
         skyGrad.addColorStop(1, "#1E293B");
       } else if (activeWeather === "rain") {
-        skyGrad.addColorStop(0, "#9CA3AF");
-        skyGrad.addColorStop(1, "#E5E7EB");
+        skyGrad.addColorStop(0, "#D1D5DB");
+        skyGrad.addColorStop(1, "#F3F4F6");
       }
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // Night moon and stars
+      // Night moon
       if (activeWeather === "night") {
-        ctx.fillStyle = "#FFF";
-        for (let i = 0; i < 20; i++) {
-          const starX = (Math.sin(i * 123.4) * 0.5 + 0.5) * width;
-          const starY = (Math.cos(i * 987.6) * 0.5 + 0.5) * (height * 0.4);
-          ctx.globalAlpha = 0.4;
-          ctx.fillRect(starX, starY, 2, 2);
-        }
-        ctx.globalAlpha = 1.0;
-        
-        ctx.fillStyle = "#FEF08A";
+        ctx.fillStyle = "rgba(254, 240, 138, 0.4)";
         ctx.beginPath();
-        ctx.arc(width - 120, 80, 24, 0, Math.PI * 2);
+        ctx.arc(width - 120, 80, 20, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = skyGrad;
         ctx.beginPath();
-        ctx.arc(width - 132, 74, 24, 0, Math.PI * 2);
+        ctx.arc(width - 130, 75, 20, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (activeWeather === "sunset") {
+        ctx.fillStyle = "rgba(245, 158, 11, 0.35)";
+        ctx.beginPath();
+        ctx.arc(width * 0.4, groundY - 10, 40, 0, Math.PI * 2);
         ctx.fill();
       }
 
       // Parallax Distant Mountains
-      ctx.fillStyle = activeWeather === "night" ? "#1E293B" : "#B2DCC0";
+      ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.15)" : "rgba(178, 220, 192, 0.18)";
       distantMountains.forEach((mtn) => {
         if (gameState === "playing") {
-          mtn.x -= gameSpeed * 0.04;
+          mtn.x -= gameSpeed * 0.035;
           if (mtn.x + mtn.w < 0) mtn.x = width;
         }
         ctx.beginPath();
@@ -597,32 +628,32 @@
       // Parallax Midground Hills
       midgroundHills.forEach((hill) => {
         if (gameState === "playing") {
-          hill.x -= gameSpeed * 0.12;
+          hill.x -= gameSpeed * 0.1;
           if (hill.x + hill.w < 0) hill.x = width;
         }
-        ctx.fillStyle = activeWeather === "night" ? "#0F172A" : hill.color;
+        ctx.fillStyle = activeWeather === "night" ? "rgba(15, 23, 42, 0.12)" : hill.color;
         ctx.beginPath();
         ctx.ellipse(hill.x + hill.w * 0.5, groundY, hill.w * 0.6, hill.h * 1.5, 0, Math.PI, 0);
         ctx.fill();
       });
 
       // Windmills
-      ctx.strokeStyle = activeWeather === "night" ? "rgba(255,255,255,0.06)" : "#789B85";
-      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = activeWeather === "night" ? "rgba(255,255,255,0.03)" : "rgba(120, 155, 133, 0.25)";
+      ctx.lineWidth = 2;
       windmills.forEach((wm) => {
         if (gameState === "playing") {
-          wm.x -= gameSpeed * 0.12;
+          wm.x -= gameSpeed * 0.1;
           if (wm.x < -80) wm.x = width + 80;
         }
         ctx.beginPath();
         ctx.moveTo(wm.x, groundY);
-        ctx.lineTo(wm.x - 5, groundY - wm.size * 1.4);
-        ctx.lineTo(wm.x + 5, groundY - wm.size * 1.4);
+        ctx.lineTo(wm.x - 4, groundY - wm.size * 1.4);
+        ctx.lineTo(wm.x + 4, groundY - wm.size * 1.4);
         ctx.closePath();
-        ctx.fillStyle = activeWeather === "night" ? "#1E293B" : "#A6C7B3";
+        ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(166, 199, 179, 0.25)";
         ctx.fill();
 
-        wm.rot += 0.015;
+        wm.rot += 0.012;
         ctx.save();
         ctx.translate(wm.x, groundY - wm.size * 1.4);
         ctx.rotate(wm.rot);
@@ -630,8 +661,8 @@
           ctx.rotate((Math.PI * 2) / 3);
           ctx.beginPath();
           ctx.moveTo(0, 0);
-          ctx.lineTo(-4, -wm.size);
-          ctx.lineTo(4, -wm.size);
+          ctx.lineTo(-3, -wm.size);
+          ctx.lineTo(3, -wm.size);
           ctx.closePath();
           ctx.stroke();
         }
@@ -641,10 +672,10 @@
       // Silos
       silos.forEach((silo) => {
         if (gameState === "playing") {
-          silo.x -= gameSpeed * 0.12;
+          silo.x -= gameSpeed * 0.1;
           if (silo.x < -80) silo.x = width + 80;
         }
-        ctx.fillStyle = activeWeather === "night" ? "#1E293B" : "#B1D5BE";
+        ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(177, 213, 190, 0.25)";
         ctx.fillRect(silo.x, groundY - silo.h, silo.w, silo.h);
         ctx.beginPath();
         ctx.arc(silo.x + silo.w * 0.5, groundY - silo.h, silo.w * 0.5, Math.PI, 0);
@@ -652,11 +683,11 @@
       });
 
       // Ground Field
-      ctx.fillStyle = activeWeather === "night" ? "#062C21" : "#EAF5EE";
+      ctx.fillStyle = activeWeather === "night" ? "#041B14" : "#EAF5EE";
       ctx.fillRect(0, groundY, width, height - groundY);
 
       // Crop row lines
-      ctx.strokeStyle = activeWeather === "night" ? "rgba(255,255,255,0.03)" : "rgba(31,89,70,0.06)";
+      ctx.strokeStyle = activeWeather === "night" ? "rgba(255,255,255,0.03)" : "rgba(11, 61, 46, 0.04)";
       ctx.lineWidth = 4;
       let fieldOffset = (gameState === "playing") ? -(scoreDistance * 1.2) % 60 : 0;
       for (let x = fieldOffset; x < width; x += 60) {
@@ -666,9 +697,11 @@
         ctx.stroke();
       }
 
-      // Tractor Track Path
-      ctx.fillStyle = activeWeather === "night" ? "#041B14" : "#DCEFE4";
-      ctx.fillRect(0, groundY, width, 55);
+      // Tractor Track Path (Road)
+      ctx.fillStyle = activeWeather === "night" ? "#020D09" : "#C9DFC8";
+      ctx.fillRect(0, groundY, width, 95);
+      ctx.fillStyle = activeWeather === "night" ? "#010705" : "#ACD0AA";
+      ctx.fillRect(0, groundY + 95, width, 14);
 
       // Game updates
       if (gameState === "playing") {
@@ -706,7 +739,7 @@
         }
 
         tractor.wheelAngle += gameSpeed * 0.05;
-        tractor.vibrationOffset = Math.sin(Date.now() * 0.08) * 0.45;
+        tractor.vibrationOffset = Math.sin(Date.now() * 0.08) * 0.65;
 
         tractor.smokeCooldown++;
         if (tractor.smokeCooldown > 7) {
@@ -714,44 +747,44 @@
           spawnSmoke();
         }
 
-        // Spawns obstacles
-        if (Math.random() < 0.015 && obstacles.length < 3) {
-          const obsTypes = ["fence", "rock", "haybale"];
+        // Spawns obstacles (matte dark)
+        if (Math.random() < 0.014 && obstacles.length < 3) {
+          const obsTypes = ["fence", "rock", "haybale", "stump"];
           const selected = obsTypes[Math.floor(Math.random() * obsTypes.length)];
-          const obstacleW = selected === "haybale" ? 28 : 22;
-          const obstacleH = selected === "haybale" ? 28 : 20;
+          const obstacleW = selected === "haybale" ? 36 : selected === "stump" ? 28 : 24;
+          const obstacleH = selected === "haybale" ? 36 : selected === "stump" ? 32 : 24;
 
           const lastObs = obstacles[obstacles.length - 1];
-          if (!lastObs || lastObs.x < width - 250) {
+          if (!lastObs || lastObs.x < width - 280) {
             obstacles.push({
               x: width + 20,
               y: groundY - obstacleH,
               width: obstacleW,
               height: obstacleH,
               type: selected,
-              color: selected === "rock" ? "#9CA3AF" : selected === "haybale" ? "#EAB308" : "#EF4444",
+              color: selected === "rock" ? "#374151" : selected === "haybale" ? "#CA8A04" : "#78350F",
               passed: false
             });
           }
         }
 
-        // Spawns Crop Collectibles
+        // Spawns Crop Collectibles (glowing bright)
         if (Math.random() < 0.02 && collectibles.length < 4) {
           const cropTypes = ["wheat", "coffee", "cotton", "drone"];
           const selected = cropTypes[Math.floor(Math.random() * cropTypes.length)];
-          const collectY = groundY - 45 - Math.random() * 45;
+          const collectY = groundY - 60 - Math.random() * 55;
 
           const lastColl = collectibles[collectibles.length - 1];
-          if (!lastColl || lastColl.x < width - 150) {
+          if (!lastColl || lastColl.x < width - 180) {
             collectibles.push({
               x: width + 20,
               y: collectY,
-              width: 16,
-              height: 16,
+              width: 22,
+              height: 22,
               type: selected,
-              color: selected === "wheat" ? "#F59E0B" : selected === "coffee" ? "#B45309" : selected === "cotton" ? "#F3F4F6" : "#10B981",
+              color: selected === "wheat" ? "#FBBF24" : selected === "coffee" ? "#EF4444" : selected === "cotton" ? "#FFFFFF" : "#53D769",
               collected: false,
-              pulse: 0
+              pulse: Math.random() * 10
             });
           }
         }
@@ -767,6 +800,10 @@
 
         ctx.save();
         ctx.globalAlpha = p.alpha;
+        if (p.type === "sparkle") {
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = p.color;
+        }
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -778,19 +815,7 @@
         }
       }
 
-      // Fireflies at night
-      if (activeWeather === "night") {
-        ctx.fillStyle = "rgba(134, 239, 172, 0.4)";
-        for (let i = 0; i < 10; i++) {
-          const ffX = (Math.cos(Date.now() * 0.001 + i * 2) * 0.5 + 0.5) * width;
-          const ffY = groundY - 10 - (Math.sin(Date.now() * 0.002 + i) * 0.5 + 0.5) * 80;
-          ctx.beginPath();
-          ctx.arc(ffX, ffY, 2.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      // Rain streaks
+      // Rain / Fireflies
       if (activeWeather === "rain") {
         ctx.strokeStyle = "rgba(156, 163, 175, 0.22)";
         ctx.lineWidth = 1.2;
@@ -802,91 +827,186 @@
           ctx.lineTo(rx - 8, ry + 24);
           ctx.stroke();
         }
+      } else if (activeWeather === "night") {
+        ctx.fillStyle = "rgba(134, 239, 172, 0.4)";
+        for (let i = 0; i < 10; i++) {
+          const ffX = (Math.cos(Date.now() * 0.001 + i * 2) * 0.5 + 0.5) * width;
+          const ffY = groundY - 10 - (Math.sin(Date.now() * 0.002 + i) * 0.5 + 0.5) * 80;
+          ctx.beginPath();
+          ctx.arc(ffX, ffY, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
-      // Draw Tractor
-      const curY = tractor.y + (gameState === "playing" ? tractor.vibrationOffset : 0);
-      ctx.fillStyle = "#0B3D2E";
-      ctx.fillRect(tractor.x + 12, curY + 12, 34, 20);
-      ctx.fillRect(tractor.x + 26, curY + 2, 18, 14);
-      ctx.fillStyle = "#86EFAC";
-      ctx.fillRect(tractor.x + 29, curY + 4, 12, 10);
-      ctx.fillStyle = "#1F7A53";
-      ctx.fillRect(tractor.x + 5, curY + 18, 9, 14);
+      // Ground shadow
+      ctx.save();
+      const shadowScale = Math.max(0.2, 1 - (groundY - curY - tractor.height) * 0.005);
+      ctx.fillStyle = "rgba(11, 61, 46, 0.2)";
+      ctx.beginPath();
+      ctx.ellipse(tractor.x + tractor.width * 0.5, groundY, 40 * shadowScale, 6 * shadowScale, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
 
-      // Exhaust
-      ctx.strokeStyle = "#4B5563";
+      // Draw clay-style tractor chassis
+      const curY = tractor.y + (gameState === "playing" ? tractor.vibrationOffset : 0);
+      ctx.save();
+      if (tractor.isJumping) {
+        ctx.translate(tractor.x + tractor.width * 0.5, curY + tractor.height * 0.5);
+        ctx.rotate(tractor.vy * 0.018);
+        ctx.translate(-(tractor.x + tractor.width * 0.5), -(curY + tractor.height * 0.5));
+      }
+
+      let bodyGrad = ctx.createRadialGradient(
+        tractor.x + 60, curY + 20, 10,
+        tractor.x + 60, curY + 30, 40
+      );
+      bodyGrad.addColorStop(0, "#1F7A53");
+      bodyGrad.addColorStop(1, "#0B3D2E");
+      
+      ctx.fillStyle = bodyGrad;
+      ctx.beginPath();
+      ctx.roundRect(tractor.x + 24, curY + 24, 68, 38, 12);
+      ctx.roundRect(tractor.x + 50, curY + 4, 38, 28, 8);
+      ctx.fill();
+
+      // Window gloss
+      let winGrad = ctx.createLinearGradient(tractor.x + 55, curY + 8, tractor.x + 82, curY + 26);
+      winGrad.addColorStop(0, "#E0F2FE");
+      winGrad.addColorStop(1, "#86EFAC");
+      ctx.fillStyle = winGrad;
+      ctx.beginPath();
+      ctx.roundRect(tractor.x + 54, curY + 8, 30, 20, 4);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.6)";
       ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(tractor.x + 9, curY + 18);
-      ctx.lineTo(tractor.x + 9, curY + 4);
-      ctx.lineTo(tractor.x + 13, curY + 4);
+      ctx.moveTo(tractor.x + 58, curY + 10);
+      ctx.lineTo(tractor.x + 72, curY + 24);
       ctx.stroke();
+
+      // nose
+      ctx.fillStyle = bodyGrad;
+      ctx.beginPath();
+      ctx.roundRect(tractor.x + 10, curY + 32, 20, 28, 8);
+      ctx.fill();
+      ctx.fillStyle = "#1F2937";
+      ctx.fillRect(tractor.x + 12, curY + 38, 4, 18);
+
+      // exhaust
+      ctx.fillStyle = "#4B5563";
+      ctx.fillRect(tractor.x + 18, curY + 8, 6, 26);
 
       // Wheels
       ctx.save();
-      ctx.translate(tractor.x + 36, curY + 30);
+      ctx.translate(tractor.x + 76, curY + 62);
       ctx.rotate(tractor.wheelAngle);
-      ctx.fillStyle = "#1F5946";
+      let tyreGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 24);
+      tyreGrad.addColorStop(0, "#1F2937");
+      tyreGrad.addColorStop(1, "#111827");
+      ctx.fillStyle = tyreGrad;
       ctx.beginPath();
-      ctx.arc(0, 0, 11, 0, Math.PI * 2);
+      ctx.arc(0, 0, 24, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "#FFF";
-      ctx.lineWidth = 2.5;
+      ctx.fillStyle = "#FBBF24";
       ctx.beginPath();
-      ctx.moveTo(-11, 0); ctx.lineTo(11, 0);
-      ctx.moveTo(0, -11); ctx.lineTo(0, 11);
+      ctx.arc(0, 0, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#D97706";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let s = 0; s < 4; s++) {
+        ctx.rotate(Math.PI / 2);
+        ctx.moveTo(4, 0);
+        ctx.lineTo(22, 0);
+      }
       ctx.stroke();
       ctx.restore();
 
       ctx.save();
-      ctx.translate(tractor.x + 11, curY + 33);
+      ctx.translate(tractor.x + 24, curY + 68);
       ctx.rotate(tractor.wheelAngle * 1.3);
-      ctx.fillStyle = "#1F5946";
+      ctx.fillStyle = tyreGrad;
       ctx.beginPath();
-      ctx.arc(0, 0, 7.5, 0, Math.PI * 2);
+      ctx.arc(0, 0, 17, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "#FFF";
-      ctx.lineWidth = 1.8;
+      ctx.fillStyle = "#FBBF24";
       ctx.beginPath();
-      ctx.moveTo(-7.5, 0); ctx.lineTo(7.5, 0);
-      ctx.moveTo(0, -7.5); ctx.lineTo(0, 7.5);
+      ctx.arc(0, 0, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#D97706";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let s = 0; s < 4; s++) {
+        ctx.rotate(Math.PI / 2);
+        ctx.moveTo(3, 0);
+        ctx.lineTo(15, 0);
+      }
       ctx.stroke();
       ctx.restore();
 
-      // Draw & Check Obstacles
+      ctx.restore(); // restore tilt
+
+      // Dust trails
+      if (gameState === "playing" && !tractor.isJumping) {
+        if (Math.random() < 0.25) {
+          particles.push({
+            x: tractor.x + 12,
+            y: groundY,
+            vx: -gameSpeed * 0.45 + (Math.random() - 0.5) * 2,
+            vy: -0.5 - Math.random() * 1.5,
+            size: 2.5 + Math.random() * 4,
+            color: "rgba(167, 133, 100, 0.4)",
+            alpha: 0.6,
+            life: 0,
+            maxLife: 25 + Math.random() * 15,
+            type: "dust"
+          });
+        }
+      }
+
+      // Draw Matte Obstacles
       for (let i = obstacles.length - 1; i >= 0; i--) {
         const obs = obstacles[i];
         if (gameState === "playing") obs.x -= gameSpeed;
 
-        ctx.fillStyle = activeWeather === "night" ? "#0F172A" : obs.color;
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+        ctx.beginPath();
+        ctx.ellipse(obs.x + obs.width * 0.5, groundY, obs.width * 0.6, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = obs.color;
         if (obs.type === "rock") {
           ctx.beginPath();
           ctx.moveTo(obs.x, groundY);
-          ctx.lineTo(obs.x + obs.width * 0.3, groundY - obs.height);
-          ctx.lineTo(obs.x + obs.width * 0.7, groundY - obs.height * 0.9);
+          ctx.lineTo(obs.x + obs.width * 0.25, groundY - obs.height);
+          ctx.lineTo(obs.x + obs.width * 0.6, groundY - obs.height * 0.85);
+          ctx.lineTo(obs.x + obs.width * 0.8, groundY - obs.height * 0.95);
           ctx.lineTo(obs.x + obs.width, groundY);
           ctx.closePath();
           ctx.fill();
         } else if (obs.type === "fence") {
-          ctx.strokeStyle = activeWeather === "night" ? "#1E293B" : "#B45309";
-          ctx.lineWidth = 3;
+          ctx.strokeStyle = "#451A03";
+          ctx.lineWidth = 4.5;
           ctx.beginPath();
           ctx.moveTo(obs.x, groundY);
           ctx.lineTo(obs.x + obs.width, groundY - obs.height);
           ctx.stroke();
-        } else {
+        } else if (obs.type === "haybale") {
           ctx.beginPath();
           ctx.arc(obs.x + obs.width * 0.5, groundY - obs.height * 0.5, obs.width * 0.5, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.beginPath();
+          ctx.roundRect(obs.x, groundY - obs.height, obs.width, obs.height, [2, 2, 0, 0]);
           ctx.fill();
         }
 
         // Collision Check
         if (
-          tractor.x + 4 < obs.x + obs.width &&
-          tractor.x + tractor.width - 4 > obs.x &&
-          tractor.y + 4 < groundY &&
-          tractor.y + tractor.height - 2 > groundY - obs.height
+          tractor.x + 6 < obs.x + obs.width &&
+          tractor.x + tractor.width - 8 > obs.x &&
+          tractor.y + 6 < groundY &&
+          tractor.y + tractor.height - 4 > groundY - obs.height
         ) {
           gameState = "gameover";
           finalScoreVal.textContent = scoreHarvestVal.toString();
@@ -897,7 +1017,7 @@
           }
         }
 
-        if (obs.x < -80) obstacles.splice(i, 1);
+        if (obs.x < -100) obstacles.splice(i, 1);
       }
 
       // Draw Collectibles
@@ -905,32 +1025,41 @@
         const coll = collectibles[i];
         if (gameState === "playing") coll.x -= gameSpeed;
 
-        coll.pulse += 0.08;
-        const scaleOffset = Math.sin(coll.pulse) * 2;
+        coll.pulse += 0.06;
+        const scaleOffset = Math.sin(coll.pulse) * 4;
 
         if (!coll.collected) {
-          ctx.save();
-          if (coll.type === "drone") {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = "#53D769";
+          if (gameState === "playing" && Math.random() < 0.05) {
+            spawnSparkles(coll.x, coll.y + scaleOffset, coll.color);
           }
+
+          ctx.save();
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = coll.color;
           ctx.fillStyle = coll.color;
+          
           if (coll.type === "wheat") {
             ctx.beginPath();
-            ctx.ellipse(coll.x, coll.y + scaleOffset, 5, 8, 0.2, 0, Math.PI * 2);
+            ctx.ellipse(coll.x, coll.y + scaleOffset, 7, 12, 0.25, 0, Math.PI * 2);
             ctx.fill();
           } else if (coll.type === "coffee") {
             ctx.beginPath();
-            ctx.arc(coll.x, coll.y + scaleOffset, 7, 0, Math.PI * 2);
+            ctx.arc(coll.x, coll.y + scaleOffset, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#FFF";
+            ctx.beginPath();
+            ctx.arc(coll.x - 3, coll.y + scaleOffset - 3, 2.5, 0, Math.PI * 2);
             ctx.fill();
           } else if (coll.type === "cotton") {
             ctx.beginPath();
-            ctx.arc(coll.x - 3, coll.y + scaleOffset, 5, 0, Math.PI * 2);
-            ctx.arc(coll.x + 3, coll.y + scaleOffset, 5, 0, Math.PI * 2);
-            ctx.arc(coll.x, coll.y - 3 + scaleOffset, 5, 0, Math.PI * 2);
+            ctx.arc(coll.x - 5, coll.y + scaleOffset, 7, 0, Math.PI * 2);
+            ctx.arc(coll.x + 5, coll.y + scaleOffset, 7, 0, Math.PI * 2);
+            ctx.arc(coll.x, coll.y - 5 + scaleOffset, 7, 0, Math.PI * 2);
             ctx.fill();
           } else {
-            ctx.fillRect(coll.x - 8, coll.y + scaleOffset - 2, 16, 4);
+            ctx.beginPath();
+            ctx.roundRect(coll.x - 8, coll.y + scaleOffset - 8, 16, 16, 4);
+            ctx.fill();
           }
           ctx.restore();
 
@@ -944,20 +1073,7 @@
             coll.collected = true;
             scoreHarvestVal += coll.type === "drone" ? 50 : 15;
             scoreVal.textContent = scoreHarvestVal.toString();
-            // sparks
-            for (let s = 0; s < 6; s++) {
-              particles.push({
-                x: coll.x,
-                y: coll.y,
-                vx: (Math.random() - 0.5) * 6,
-                vy: (Math.random() - 0.5) * 6,
-                size: 2,
-                color: coll.color,
-                alpha: 1.0,
-                life: 0,
-                maxLife: 20
-              });
-            }
+            spawnSparkles(coll.x, coll.y + scaleOffset, coll.color);
           }
         }
 
