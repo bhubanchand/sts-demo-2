@@ -34,23 +34,21 @@
     /* HUD UI elements - WCAG AA Contrast Compliant, safe offset from header */
     .hud-left-panel {
       position: absolute;
-      top: 100px;
+      top: 140px;
       left: 48px;
       z-index: 10;
       pointer-events: none;
       text-align: left;
-      background: rgba(11, 61, 46, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 24px;
+      background: #0B3D2E;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 32px;
       border-radius: 16px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
-      max-w: 360px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      max-w: 420px;
     }
     .hud-left-panel h2 {
       font-weight: 900;
-      font-size: 26px;
+      font-size: 42px;
       color: #FFFFFF;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -58,23 +56,23 @@
     }
     .hud-left-panel h3 {
       font-weight: 800;
-      font-size: 14px;
+      font-size: 18px;
       color: #86EFAC;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-top: 8px;
+      margin-top: 12px;
       line-height: 1.2;
     }
     .hud-left-panel p {
       font-weight: 600;
-      font-size: 12px;
-      color: #E6FDF0;
-      margin-top: 8px;
+      font-size: 14px;
+      color: #FFFFFF;
+      margin-top: 10px;
       line-height: 1.4;
     }
     .hud-right {
       position: absolute;
-      top: 100px;
+      top: 140px;
       right: 48px;
       z-index: 10;
       pointer-events: none;
@@ -91,7 +89,7 @@
     }
     .hud-right .score {
       font-weight: 900;
-      font-size: 36px;
+      font-size: 48px;
       color: #0B3D2E;
       line-height: 1;
     }
@@ -942,7 +940,7 @@
           const hoverOffset = Math.sin(item.pulse) * 5 * scale;
           ctx.save();
           ctx.translate(rx, ry - 55 * scale + hoverOffset);
-          ctx.scale(scale * 3.8, scale * 3.8); // 3.8x larger crops for perfect visibility
+          ctx.scale(scale * 5.2, scale * 5.2); // 5.2x larger crops for perfect visibility
 
           ctx.shadowBlur = 18;
           ctx.fillStyle = "#F59E0B";

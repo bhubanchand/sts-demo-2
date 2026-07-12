@@ -629,7 +629,7 @@ export function AgriGame({ mode }: AgriGameProps) {
           const hoverOffset = Math.sin(item.pulse) * 5 * scale;
           ctx.save();
           ctx.translate(rx, ry - 55 * scale + hoverOffset); // float slightly higher
-          ctx.scale(scale * 3.8, scale * 3.8); // 3.8x larger crops for perfect visibility
+          ctx.scale(scale * 5.2, scale * 5.2); // 5.2x larger crops for perfect visibility
 
           ctx.shadowBlur = 18;
           ctx.fillStyle = "#F59E0B";
@@ -874,21 +874,21 @@ export function AgriGame({ mode }: AgriGameProps) {
           HUD UI OVERLAYS (WCAG AA Contrast Compliant, 100px Safe Offset)
           ═══════════════════════════════════════ */}
       
-      {/* Top-Left: Translucent dark-green glass panel offset below MegaMenu */}
-      <div className="absolute top-[100px] left-12 z-10 bg-[#0B3D2E]/95 border border-white/10 p-6 rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.22)] max-w-sm text-left pointer-events-none select-none backdrop-blur-md">
-        <span className="font-black text-3xl uppercase tracking-widest text-white block leading-none">
+      {/* Top-Left: Solid dark-green panel offset below MegaMenu */}
+      <div className="absolute top-[140px] left-12 sm:left-16 z-10 bg-[#0B3D2E] border border-white/20 p-8 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] max-w-md text-left pointer-events-none select-none">
+        <span className="font-black text-5xl uppercase tracking-widest text-white block leading-none">
           {headingInfo.title}
         </span>
-        <h1 className="font-extrabold text-sm tracking-wider uppercase text-[#86EFAC] mt-2.5 leading-snug">
+        <h1 className="font-black text-lg tracking-wider uppercase text-[#86EFAC] mt-3 leading-snug">
           {headingInfo.subtitle}
         </h1>
-        <p className="text-xs text-[#E6FDF0] mt-2 font-medium leading-relaxed">
+        <p className="text-sm text-white mt-2.5 font-semibold leading-relaxed">
           {headingInfo.desc}
         </p>
       </div>
 
       {/* Top-Right: Harvest score box offset below MegaMenu */}
-      <div className="absolute top-[100px] right-12 z-10 pointer-events-none text-right font-black text-4xl text-[#0B3D2E] tracking-tight">
+      <div className="absolute top-[140px] right-12 sm:right-16 z-10 pointer-events-none text-right font-black text-5xl text-[#0B3D2E] tracking-tight">
         <span className="text-xs uppercase font-extrabold tracking-widest text-[#1F7A53] block mb-0.5">🌾 Harvest</span>
         {formattedWeight}
       </div>
