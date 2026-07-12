@@ -78,7 +78,7 @@ export function ExpandingSlideshow() {
               flex: isActive ? 5 : 1,
             }}
             transition={{ type: "spring", stiffness: 220, damping: 24 }}
-            className="relative rounded-[2rem] overflow-hidden cursor-pointer group bg-gray-900 w-full md:w-auto min-h-[76px] md:min-h-0 min-w-0 md:min-w-[80px]"
+            className="relative rounded-[2rem] overflow-hidden cursor-pointer group bg-[#EAF5EE] border border-[#0B3D2E]/8 w-full md:w-auto min-h-[76px] md:min-h-0 min-w-0 md:min-w-[80px]"
           >
             {/* Background Image */}
             <motion.div 
@@ -89,10 +89,10 @@ export function ExpandingSlideshow() {
                <img 
                  src={slide.image} 
                  alt={slide.title} 
-                 className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                 className="w-full h-full object-cover opacity-25 group-hover:opacity-40 transition-opacity"
                />
-               {/* Dark Overlay */}
-               <div className={`absolute inset-0 transition-opacity duration-300 ${isActive ? 'bg-gradient-to-t from-black/90 via-black/40 to-transparent' : 'bg-black/70'}`}></div>
+               {/* Light Green Overlay */}
+               <div className={`absolute inset-0 transition-opacity duration-300 ${isActive ? 'bg-gradient-to-t from-[#EAF5EE]/95 via-[#EAF5EE]/65 to-[#EAF5EE]/20' : 'bg-[#EAF5EE]/80'}`}></div>
             </motion.div>
 
             {/* Content Container */}
@@ -106,7 +106,7 @@ export function ExpandingSlideshow() {
               <div className={`flex items-center gap-4 ${
                 isActive ? 'flex-row mb-4' : 'flex-row md:flex-col md:mb-8'
               }`}>
-                <div className={`w-11 h-11 lg:w-12 lg:h-12 rounded-full ${slide.color} flex items-center justify-center text-white shrink-0 shadow-lg z-10`}>
+                <div className={`w-11 h-11 lg:w-12 lg:h-12 rounded-full ${slide.color} flex items-center justify-center text-white shrink-0 shadow-md z-10`}>
                   <slide.icon className="w-5 h-5 lg:w-6 lg:h-6" />
                 </div>
                 
@@ -114,7 +114,7 @@ export function ExpandingSlideshow() {
                    // Expanded Title
                    <motion.h3 
                      layout="position"
-                     className="text-2xl lg:text-3xl font-bold text-white z-10"
+                     className="text-2xl lg:text-3xl font-black text-[#0B3D2E] z-10"
                    >
                      {slide.title}
                    </motion.h3>
@@ -122,11 +122,11 @@ export function ExpandingSlideshow() {
                    // Collapsed Title
                    <>
                      {/* Desktop Vertical Title */}
-                     <h3 className="hidden md:block text-xl font-bold text-white whitespace-nowrap z-10 opacity-70 tracking-widest" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+                     <h3 className="hidden md:block text-xl font-bold text-[#0B3D2E] whitespace-nowrap z-10 opacity-75 tracking-widest" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
                        {slide.title}
                      </h3>
                      {/* Mobile Horizontal Title */}
-                     <h3 className="block md:hidden text-lg font-bold text-white whitespace-nowrap z-10 opacity-70">
+                     <h3 className="block md:hidden text-lg font-bold text-[#0B3D2E] whitespace-nowrap z-10 opacity-75">
                        {slide.title}
                      </h3>
                    </>
@@ -143,11 +143,11 @@ export function ExpandingSlideshow() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden z-10"
                   >
-                    <p className="text-gray-200 text-sm lg:text-base mb-4 lg:mb-6 max-w-md leading-relaxed">
+                    <p className="text-[#1F5946] text-sm lg:text-base mb-4 lg:mb-6 max-w-md leading-relaxed font-semibold">
                       {slide.description}
                     </p>
-                    <button className="flex items-center gap-2 text-white font-bold hover:gap-4 hover:text-[#53D769] transition-all uppercase tracking-wider text-xs lg:text-sm">
-                      Explore Solution <ArrowRight className="w-4 h-4 lg:w-5 lg:h-5 text-[#53D769]" />
+                    <button className="flex items-center gap-2 text-[#0B3D2E] font-bold hover:gap-4 hover:text-[#1F7A53] transition-all uppercase tracking-wider text-xs lg:text-sm">
+                      Explore Solution <ArrowRight className="w-4 h-4 lg:w-5 lg:h-5 text-[#1F7A53]" />
                     </button>
                   </motion.div>
                 )}
