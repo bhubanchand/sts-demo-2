@@ -33,63 +33,63 @@ function Counter({ from, to, suffix, decimals = 0 }: { from: number, to: number,
 
 export function StatsBanner() {
   return (
-    <div className="bg-[#164E33] text-white py-6 border-y border-[#1b5e3e] relative overflow-hidden snap-center">
+    <div className="bg-[#EAF5EE] text-[#0B3D2E] py-6 border-y border-[#0B3D2E]/10 relative overflow-hidden snap-center">
       {/* Subtle glowing ambient spots for visual interest */}
-      <div className="absolute w-[300px] h-[100px] -left-10 top-0 bg-[#53D769]/10 rounded-full blur-[80px] pointer-events-none" />
-      <div className="absolute w-[300px] h-[100px] -right-10 bottom-0 bg-[#53D769]/10 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute w-[300px] h-[100px] -left-10 top-0 bg-[#53D769]/5 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute w-[300px] h-[100px] -right-10 bottom-0 bg-[#53D769]/5 rounded-full blur-[80px] pointer-events-none" />
       
       <div className="max-w-[1280px] mx-auto px-6 sm:px-8 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           
           {/* Country Card */}
-          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.08] rounded-2xl transition-all duration-300">
-            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0 shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
-              <Globe2 className="w-5 h-5 text-[#86EFAC] opacity-90" />
+          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/60 hover:bg-white/80 border border-[#0B3D2E]/8 rounded-2xl transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.01)]">
+            <div className="w-10 h-10 rounded-full bg-[#0B3D2E]/5 flex items-center justify-center border border-[#0B3D2E]/10 shrink-0 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
+              <Globe2 className="w-5 h-5 text-[#1F7A53]" />
             </div>
             <div>
-              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-200 tracking-tight leading-none">
+              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0B3D2E] tracking-tight leading-none">
                  <Counter from={0} to={38} suffix="+" />
               </h4>
-              <p className="text-emerald-100/80 font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Countries</p>
+              <p className="text-[#1F7A53] font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Countries</p>
             </div>
           </div>
           
           {/* Farmers Card */}
-          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.08] rounded-2xl transition-all duration-300">
-            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0 shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
-              <Users2 className="w-5 h-5 text-[#86EFAC] opacity-90" />
+          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/60 hover:bg-white/80 border border-[#0B3D2E]/8 rounded-2xl transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.01)]">
+            <div className="w-10 h-10 rounded-full bg-[#0B3D2E]/5 flex items-center justify-center border border-[#0B3D2E]/10 shrink-0 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
+              <Users2 className="w-5 h-5 text-[#1F7A53]" />
             </div>
             <div>
-              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-200 tracking-tight leading-none">
+              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0B3D2E] tracking-tight leading-none">
                  <Counter from={0} to={2.5} decimals={1} suffix="M" />
               </h4>
-              <p className="text-emerald-100/80 font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Farmers Empowered</p>
+              <p className="text-[#1F7A53] font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Farmers Empowered</p>
             </div>
           </div>
           
           {/* Hectares Card */}
-          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.08] rounded-2xl transition-all duration-300">
-            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0 shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
-              <Map className="w-5 h-5 text-[#86EFAC] opacity-90" />
+          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/60 hover:bg-white/80 border border-[#0B3D2E]/8 rounded-2xl transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.01)]">
+            <div className="w-10 h-10 rounded-full bg-[#0B3D2E]/5 flex items-center justify-center border border-[#0B3D2E]/10 shrink-0 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
+              <Map className="w-5 h-5 text-[#1F7A53]" />
             </div>
             <div>
-              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-200 tracking-tight leading-none">
+              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0B3D2E] tracking-tight leading-none">
                  <Counter from={0} to={3} suffix="M+" />
               </h4>
-              <p className="text-emerald-100/80 font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Hectares Mapped</p>
+              <p className="text-[#1F7A53] font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Hectares Mapped</p>
             </div>
           </div>
           
           {/* Data Points Card */}
-          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.08] rounded-2xl transition-all duration-300">
-            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0 shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
-              <Database className="w-5 h-5 text-[#86EFAC] opacity-90" />
+          <div className="flex items-center gap-4 py-2.5 px-4 bg-white/60 hover:bg-white/80 border border-[#0B3D2E]/8 rounded-2xl transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.01)]">
+            <div className="w-10 h-10 rounded-full bg-[#0B3D2E]/5 flex items-center justify-center border border-[#0B3D2E]/10 shrink-0 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
+              <Database className="w-5 h-5 text-[#1F7A53]" />
             </div>
             <div>
-              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-200 tracking-tight leading-none">
+              <h4 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0B3D2E] tracking-tight leading-none">
                  <Counter from={0} to={1} suffix="B+" />
               </h4>
-              <p className="text-emerald-100/80 font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Data Points Logged</p>
+              <p className="text-[#1F7A53] font-bold tracking-widest uppercase text-[10px] md:text-xs mt-1.5">Data Points Logged</p>
             </div>
           </div>
           
