@@ -146,6 +146,27 @@
       opacity: 1;
       transform: translate(-50%, 0);
     }
+    /* Floating crop text (+25 kg) */
+    .floating-text-item {
+      position: absolute;
+      z-index: 20;
+      transform: translateX(-50%);
+      font-weight: 900;
+      font-size: 14px;
+      color: #10B981;
+      background: #FFFFFF;
+      border: 1px solid rgba(11, 61, 46, 0.1);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      pointer-events: none;
+      animation: fadeUpOut 1.5s forwards;
+    }
+    @keyframes fadeUpOut {
+      0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+      50% { opacity: 1; transform: translate(-50%, -30px) scale(1.1); }
+      100% { opacity: 0; transform: translate(-50%, -60px) scale(1); }
+    }
     /* Glassmorphic Overlay Box */
     .overlay-container {
       position: absolute;
@@ -303,8 +324,8 @@
   </div>
 
   <div class="hud-right">
-    <span class="label">Harvest Score</span>
-    <span class="score" id="scoreVal">0</span>
+    <span class="label">🌾 Harvest</span>
+    <span class="score" id="scoreVal">0 kg</span>
   </div>
 
   <div class="hud-bottom-pill">
@@ -320,8 +341,8 @@
   <div class="overlay-container show" id="startOverlay">
     <div class="card">
       <span class="category">SourceTrace</span>
-      <h2>Tractor Supply Dash</h2>
-      <p>Help our tractor jump obstacles, collect crops, and restore connected digital networks across the supply chain!</p>
+      <h2>Tractor Delivery Run</h2>
+      <p>Navigate the farm road. Jump over spreadsheets, mud, and fences to collect the harvest and digitize the first mile!</p>
       <button class="btn btn-primary" id="btnStart">Start Harvest Run</button>
     </div>
   </div>
@@ -334,7 +355,7 @@
       <p>Silos or spreadsheets crashed the first mile.</p>
       <div class="score-summary">
         <span>Final Harvest:</span>
-        <strong id="finalScoreVal">0</strong>
+        <strong id="finalScoreVal">0 kg</strong>
       </div>
       <button class="btn btn-primary" id="btnPlayAgain">Play Again</button>
       <button class="btn btn-secondary" id="btnReturnHome">Return Home</button>
@@ -367,18 +388,19 @@
     let scoreHarvestVal = 0;
     let highScore = 0;
     let lastAchievementDistance = 0;
-    let gameSpeed = 5.2;
+    let gameSpeed = 0.009;
     let cameraShake = 0;
     let cycleTimer = 0;
     let activeWeather = "sun";
 
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
-    let groundY = height * 0.72;
+    let horizonY = height * 0.45;
+    let groundY = height;
 
     // Load Highscore
     try {
-      const saved = localStorage.getItem("sourcetrace_tractor_dino_highscore");
+      const saved = localStorage.getItem("sourcetrace_tractor_weight_highscore");
       if (saved) highScore = parseInt(saved, 10);
     } catch(e) {}
 
@@ -386,116 +408,106 @@
     window.addEventListener("resize", () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      groundY = height * 0.72;
+      horizonY = height * 0.45;
+      groundY = height;
     });
 
-    // 200% Increased Tractor Size (110x88)
+    // 200% Increased Tractor Size (140x110 behind-view)
     const tractor = {
-      x: width * 0.12,
-      y: 0,
-      width: 110,
-      height: 88,
+      x: width / 2,
+      y: height * 0.88,
+      width: 140,
+      height: 110,
+      yOffset: 0,
       vy: 0,
-      gravity: 0.72,
-      jumpStrength: -15.5,
+      gravity: 0.7,
+      jumpStrength: -15,
       isJumping: false,
-      wheelAngle: 0,
-      vibrationOffset: 0,
-      smokeCooldown: 0
+      vibration: 0,
+      wheelRot: 0
     };
-    tractor.y = groundY - tractor.height;
 
-    let obstacles = [];
-    let collectibles = [];
+    let roadItems = [];
     let particles = [];
+    let roadDashes = [0, 0.25, 0.5, 0.75];
 
     // Background decoration coordinates (Pastel & Desaturated)
     const clouds = [
-      { x: 100, y: height * 0.12, size: 60 },
-      { x: width * 0.45, y: height * 0.08, size: 85 },
-      { x: width * 0.8, y: height * 0.18, size: 50 }
+      { x: width * 0.15, y: height * 0.12, size: 60 },
+      { x: width * 0.55, y: height * 0.08, size: 85 },
+      { x: width * 0.85, y: height * 0.16, size: 50 }
     ];
 
-    const distantMountains = [
-      { x: 0, w: width * 0.6, h: height * 0.24 },
-      { x: width * 0.35, w: width * 0.7, h: height * 0.28 },
-      { x: width * 0.75, w: width * 0.5, h: height * 0.2 }
+    const mountains = [
+      { x: width * 0.1, w: width * 0.4, h: height * 0.18 },
+      { x: width * 0.45, w: width * 0.5, h: height * 0.22 },
+      { x: width * 0.75, w: width * 0.35, h: height * 0.15 }
     ];
 
-    const midgroundHills = [
-      { x: 0, w: width * 0.4, h: height * 0.12, color: "rgba(209, 234, 216, 0.3)" },
-      { x: width * 0.28, w: width * 0.5, h: height * 0.14, color: "rgba(198, 228, 205, 0.3)" },
-      { x: width * 0.68, w: width * 0.4, h: height * 0.11, color: "rgba(209, 234, 216, 0.3)" }
+    const sceneryItems = [
+      { z: 0.1, side: "left", type: "tree", rot: 0 },
+      { z: 0.3, side: "right", type: "windmill", rot: 0 },
+      { z: 0.5, side: "left", type: "tree", rot: 0 },
+      { z: 0.7, side: "right", type: "tree", rot: 0 },
+      { z: 0.9, side: "left", type: "windmill", rot: 1 }
     ];
 
-    const windmills = [
-      { x: width * 0.22, rot: 0, size: 35 },
-      { x: width * 0.78, rot: 1.5, size: 25 }
-    ];
+    // Spawning control
+    let spawnTimer = 0;
 
-    const silos = [
-      { x: width * 0.42, w: 28, h: 60 },
-      { x: width * 0.88, w: 22, h: 48 }
-    ];
-
-    // Trigger Achievements
     const showAchievement = (text) => {
-      achievementAlert.textContent = "🌾 " + text;
+      achievementAlert.textContent = "✔ " + text;
       achievementAlert.classList.add("show");
       setTimeout(() => {
         achievementAlert.classList.remove("show");
       }, 3000);
     };
 
-    // Particles Spawning
-    const spawnSmoke = () => {
-      particles.push({
-        x: tractor.x + 20,
-        y: tractor.y + 10,
-        vx: -gameSpeed * 0.25 + (Math.random() - 0.5) * 0.5,
-        vy: -1.2 - Math.random() * 1.5,
-        size: 5 + Math.random() * 8,
-        color: activeWeather === "night" ? "rgba(100, 100, 110, 0.3)" : "rgba(120, 130, 125, 0.25)",
-        alpha: 0.65,
-        life: 0,
-        maxLife: 45 + Math.random() * 20,
-        type: "smoke"
-      });
+    const spawnSparks = (x, y, color) => {
+      for (let i = 0; i < 8; i++) {
+        particles.push({
+          x,
+          y,
+          vx: (Math.random() - 0.5) * 5,
+          vy: (Math.random() - 0.5) * 5,
+          size: 2 + Math.random() * 3,
+          color,
+          alpha: 1.0,
+          life: 0,
+          maxLife: 20 + Math.random() * 15
+        });
+      }
     };
 
     const spawnLandingDust = () => {
       for (let i = 0; i < 20; i++) {
         particles.push({
-          x: tractor.x + tractor.width * 0.5 + (Math.random() - 0.5) * 40,
-          y: groundY,
-          vx: -gameSpeed * 0.45 + (Math.random() - 0.5) * 6,
-          vy: -1.5 - Math.random() * 4,
+          x: width / 2 + (Math.random() - 0.5) * 60,
+          y: tractor.y + 10,
+          vx: (Math.random() - 0.5) * 6,
+          vy: -1 - Math.random() * 3,
           size: 3 + Math.random() * 6,
-          color: "rgba(167, 133, 100, 0.55)",
-          alpha: 0.85,
+          color: "rgba(167, 133, 100, 0.4)",
+          alpha: 0.8,
           life: 0,
-          maxLife: 35 + Math.random() * 20,
-          type: "dust"
+          maxLife: 25 + Math.random() * 15
         });
       }
-      cameraShake = 7;
+      cameraShake = 8;
     };
 
-    const spawnSparkles = (x, y, color) => {
-      for (let i = 0; i < 6; i++) {
-        particles.push({
-          x,
-          y,
-          vx: (Math.random() - 0.5) * 3,
-          vy: (Math.random() - 0.5) * 3,
-          size: 2 + Math.random() * 3,
-          color,
-          alpha: 1.0,
-          life: 0,
-          maxLife: 20 + Math.random() * 10,
-          type: "sparkle"
-        });
-      }
+    const formatWeight = (w) => {
+      return w >= 1000 ? `${(w / 1000).toFixed(1)} Tons` : `${w} kg`;
+    };
+
+    const triggerFloatingText = (text, rx, ry) => {
+      const div = document.createElement("div");
+      div.className = "floating-text-item";
+      div.textContent = text;
+      div.style.left = rx + "px";
+      div.style.top = ry + "px";
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 1500);
     };
 
     const triggerJump = () => {
@@ -506,14 +518,13 @@
     };
 
     const restartGame = () => {
-      obstacles = [];
-      collectibles = [];
+      roadItems = [];
       particles = [];
-      scoreDistance = 0;
+      distanceTraveled = 0;
       scoreHarvestVal = 0;
-      scoreVal.textContent = "0";
-      gameSpeed = 5.2;
-      tractor.y = groundY - tractor.height;
+      scoreVal.textContent = "0 kg";
+      gameSpeed = 0.009;
+      tractor.yOffset = 0;
       tractor.vy = 0;
       tractor.isJumping = false;
       
@@ -522,7 +533,7 @@
       gameState = "playing";
     };
 
-    // Click/Touch Actions
+    // Events
     document.body.addEventListener("click", (e) => {
       if (e.target.closest(".card") || e.target.closest(".online-toast")) return;
       if (gameState === "idle" || gameState === "gameover") {
@@ -576,161 +587,187 @@
       }
 
       // Draw Sky
-      let skyGrad = ctx.createLinearGradient(0, 0, 0, height);
+      let skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
       if (activeWeather === "sun") {
-        skyGrad.addColorStop(0, "#E0F2FE");
-        skyGrad.addColorStop(1, "#F0FDFA");
+        skyGrad.addColorStop(0, "#BAE6FD");
+        skyGrad.addColorStop(1, "#E0F2FE");
       } else if (activeWeather === "sunset") {
-        skyGrad.addColorStop(0, "#FFEDD5");
-        skyGrad.addColorStop(1, "#FAF5FF");
+        skyGrad.addColorStop(0, "#FDBA74");
+        skyGrad.addColorStop(1, "#FFEDD5");
       } else if (activeWeather === "night") {
         skyGrad.addColorStop(0, "#0F172A");
         skyGrad.addColorStop(1, "#1E293B");
       } else if (activeWeather === "rain") {
-        skyGrad.addColorStop(0, "#D1D5DB");
-        skyGrad.addColorStop(1, "#F3F4F6");
+        skyGrad.addColorStop(0, "#9CA3AF");
+        skyGrad.addColorStop(1, "#D1D5DB");
       }
       ctx.fillStyle = skyGrad;
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(0, 0, width, horizonY);
 
-      // Night moon
       if (activeWeather === "night") {
         ctx.fillStyle = "rgba(254, 240, 138, 0.4)";
         ctx.beginPath();
-        ctx.arc(width - 120, 80, 20, 0, Math.PI * 2);
+        ctx.arc(width - 120, 70, 20, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = skyGrad;
         ctx.beginPath();
-        ctx.arc(width - 130, 75, 20, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (activeWeather === "sunset") {
-        ctx.fillStyle = "rgba(245, 158, 11, 0.35)";
-        ctx.beginPath();
-        ctx.arc(width * 0.4, groundY - 10, 40, 0, Math.PI * 2);
+        ctx.arc(width - 130, 65, 20, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Parallax Distant Mountains
-      ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.15)" : "rgba(178, 220, 192, 0.18)";
-      distantMountains.forEach((mtn) => {
-        if (gameState === "playing") {
-          mtn.x -= gameSpeed * 0.035;
-          if (mtn.x + mtn.w < 0) mtn.x = width;
-        }
+      // Mountains
+      ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(178, 220, 192, 0.15)";
+      mountains.forEach((mtn) => {
         ctx.beginPath();
-        ctx.moveTo(mtn.x, groundY);
-        ctx.lineTo(mtn.x + mtn.w * 0.5, groundY - mtn.h);
-        ctx.lineTo(mtn.x + mtn.w, groundY);
+        ctx.moveTo(mtn.x, horizonY);
+        ctx.lineTo(mtn.x + mtn.w * 0.5, horizonY - mtn.h);
+        ctx.lineTo(mtn.x + mtn.w, horizonY);
         ctx.closePath();
-        ctx.fill();
-      });
-
-      // Parallax Midground Hills
-      midgroundHills.forEach((hill) => {
-        if (gameState === "playing") {
-          hill.x -= gameSpeed * 0.1;
-          if (hill.x + hill.w < 0) hill.x = width;
-        }
-        ctx.fillStyle = activeWeather === "night" ? "rgba(15, 23, 42, 0.12)" : hill.color;
-        ctx.beginPath();
-        ctx.ellipse(hill.x + hill.w * 0.5, groundY, hill.w * 0.6, hill.h * 1.5, 0, Math.PI, 0);
-        ctx.fill();
-      });
-
-      // Windmills
-      ctx.strokeStyle = activeWeather === "night" ? "rgba(255,255,255,0.03)" : "rgba(120, 155, 133, 0.25)";
-      ctx.lineWidth = 2;
-      windmills.forEach((wm) => {
-        if (gameState === "playing") {
-          wm.x -= gameSpeed * 0.1;
-          if (wm.x < -80) wm.x = width + 80;
-        }
-        ctx.beginPath();
-        ctx.moveTo(wm.x, groundY);
-        ctx.lineTo(wm.x - 4, groundY - wm.size * 1.4);
-        ctx.lineTo(wm.x + 4, groundY - wm.size * 1.4);
-        ctx.closePath();
-        ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(166, 199, 179, 0.25)";
-        ctx.fill();
-
-        wm.rot += 0.012;
-        ctx.save();
-        ctx.translate(wm.x, groundY - wm.size * 1.4);
-        ctx.rotate(wm.rot);
-        for (let b = 0; b < 3; b++) {
-          ctx.rotate((Math.PI * 2) / 3);
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          ctx.lineTo(-3, -wm.size);
-          ctx.lineTo(3, -wm.size);
-          ctx.closePath();
-          ctx.stroke();
-        }
-        ctx.restore();
-      });
-
-      // Silos
-      silos.forEach((silo) => {
-        if (gameState === "playing") {
-          silo.x -= gameSpeed * 0.1;
-          if (silo.x < -80) silo.x = width + 80;
-        }
-        ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(177, 213, 190, 0.25)";
-        ctx.fillRect(silo.x, groundY - silo.h, silo.w, silo.h);
-        ctx.beginPath();
-        ctx.arc(silo.x + silo.w * 0.5, groundY - silo.h, silo.w * 0.5, Math.PI, 0);
         ctx.fill();
       });
 
       // Ground Field
-      ctx.fillStyle = activeWeather === "night" ? "#041B14" : "#EAF5EE";
-      ctx.fillRect(0, groundY, width, height - groundY);
+      ctx.fillStyle = activeWeather === "night" ? "#041C15" : "#EAF5EE";
+      ctx.fillRect(0, horizonY, width, height - horizonY);
 
-      // Crop row lines
-      ctx.strokeStyle = activeWeather === "night" ? "rgba(255,255,255,0.03)" : "rgba(11, 61, 46, 0.04)";
+      // Vanishing Road
+      const roadStartWidth = 24;
+      const roadEndWidth = width * 0.72;
+      const leftHorizonX = width / 2 - roadStartWidth / 2;
+      const rightHorizonX = width / 2 + roadStartWidth / 2;
+      const leftBottomX = width / 2 - roadEndWidth / 2;
+      const rightBottomX = width / 2 + roadEndWidth / 2;
+
+      ctx.fillStyle = activeWeather === "night" ? "#020D09" : "#C6DCBA";
+      ctx.beginPath();
+      ctx.moveTo(leftHorizonX, horizonY);
+      ctx.lineTo(rightHorizonX, horizonY);
+      ctx.lineTo(rightBottomX, height);
+      ctx.lineTo(leftBottomX, height);
+      ctx.closePath();
+      ctx.fill();
+
+      // Road grass borders
+      ctx.strokeStyle = activeWeather === "night" ? "#052E20" : "#A1C6A0";
       ctx.lineWidth = 4;
-      let fieldOffset = (gameState === "playing") ? -(scoreDistance * 1.2) % 60 : 0;
-      for (let x = fieldOffset; x < width; x += 60) {
-        ctx.beginPath();
-        ctx.moveTo(x, groundY);
-        ctx.lineTo(x - 200, height);
-        ctx.stroke();
-      }
+      ctx.beginPath();
+      ctx.moveTo(leftHorizonX, horizonY);
+      ctx.lineTo(leftBottomX, height);
+      ctx.moveTo(rightHorizonX, horizonY);
+      ctx.lineTo(rightBottomX, height);
+      ctx.stroke();
 
-      // Tractor Track Path (Road)
-      ctx.fillStyle = activeWeather === "night" ? "#020D09" : "#C9DFC8";
-      ctx.fillRect(0, groundY, width, 95);
-      ctx.fillStyle = activeWeather === "night" ? "#010705" : "#ACD0AA";
-      ctx.fillRect(0, groundY + 95, width, 14);
-
-      // Game updates
+      // Road dashes
       if (gameState === "playing") {
-        scoreDistance += 0.25;
+        for (let i = 0; i < roadDashes.length; i++) {
+          roadDashes[i] += gameSpeed * 1.5;
+          if (roadDashes[i] >= 1.0) roadDashes[i] = 0;
+        }
+      }
+      ctx.strokeStyle = activeWeather === "night" ? "rgba(11,61,46,0.2)" : "rgba(31,89,70,0.08)";
+      roadDashes.forEach((z) => {
+        const ry = horizonY + z * (height - horizonY);
+        const rw = roadStartWidth * (1 - z) + roadEndWidth * z;
+        ctx.lineWidth = 1 + z * 8;
+        ctx.beginPath();
+        ctx.moveTo(width / 2 - rw / 2, ry);
+        ctx.lineTo(width / 2 + rw / 2, ry);
+        ctx.stroke();
+      });
 
-        // Achievements triggers
-        const milestoneCheck = Math.floor(scoreDistance);
-        if (milestoneCheck > 0 && milestoneCheck % 200 === 0 && milestoneCheck !== lastAchievementDistance) {
-          lastAchievementDistance = milestoneCheck;
-          const achievements = [
-            "10 Farms Digitized",
-            "500 Hectares Mapped",
-            "Supply Chain Restored",
-            "Farmer Income Increased",
-            "Carbon Data Verified",
-            "Compliance Achieved",
-            "Export Approved",
-            "Harvest Traced Successfully"
-          ];
-          const textIdx = Math.floor(milestoneCheck / 200) - 1;
-          showAchievement(achievements[textIdx % achievements.length]);
+      // Scenery Parallax
+      sceneryItems.forEach((item) => {
+        if (gameState === "playing") {
+          item.z += gameSpeed;
+          if (item.z >= 1.0) {
+            item.z = 0.05;
+            item.side = Math.random() > 0.5 ? "left" : "right";
+            item.type = Math.random() > 0.5 ? "windmill" : "tree";
+          }
+        }
+
+        const scale = Math.pow(item.z, 2);
+        const ry = horizonY + item.z * (height - horizonY);
+        const rw = roadStartWidth * (1 - item.z) + roadEndWidth * item.z;
+        const sideMultiplier = item.side === "left" ? -1 : 1;
+        const rx = width / 2 + sideMultiplier * (rw / 2 + 50 * scale * (width * 0.002));
+
+        ctx.save();
+        ctx.translate(rx, ry);
+        ctx.scale(scale * 1.5, scale * 1.5);
+
+        ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(120, 155, 133, 0.25)";
+        if (item.type === "tree") {
+          ctx.beginPath();
+          ctx.moveTo(0, -40);
+          ctx.lineTo(-12, -15);
+          ctx.lineTo(12, -15);
+          ctx.closePath();
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(0, -25);
+          ctx.lineTo(-18, 5);
+          ctx.lineTo(18, 5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillRect(-2.5, 5, 5, 8);
+        } else if (item.type === "windmill") {
+          ctx.fillRect(-2, -35, 4, 35);
+          item.rot += 0.015;
+          ctx.save();
+          ctx.translate(0, -35);
+          ctx.rotate(item.rot);
+          ctx.strokeStyle = activeWeather === "night" ? "rgba(255,255,255,0.03)" : "rgba(120, 155, 133, 0.2)";
+          ctx.lineWidth = 1.5;
+          for (let b = 0; b < 3; b++) {
+            ctx.rotate((Math.PI * 2) / 3);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -18);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+        ctx.restore();
+      });
+
+      // Spawning updates
+      if (gameState === "playing") {
+        distanceTraveled += 0.25;
+
+        spawnTimer++;
+        if (spawnTimer > 75) {
+          spawnTimer = 0;
+          const isCrop = Math.random() > 0.4;
+          if (isCrop) {
+            const cropTypes = ["wheat", "coffee", "tomato", "cotton"];
+            roadItems.push({
+              z: 0.05,
+              type: "crop",
+              subType: cropTypes[Math.floor(Math.random() * cropTypes.length)],
+              xOffset: (Math.random() - 0.5) * 0.4,
+              collected: false,
+              pulse: Math.random() * 5
+            });
+          } else {
+            const obstacleTypes = ["rock", "haybale", "stump", "cow"];
+            roadItems.push({
+              z: 0.05,
+              type: "obstacle",
+              subType: obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)],
+              xOffset: 0,
+              collected: false,
+              pulse: 0
+            });
+          }
         }
 
         // Tractor Physics
         tractor.vy += tractor.gravity;
-        tractor.y += tractor.vy;
+        tractor.yOffset -= tractor.vy;
 
-        if (tractor.y >= groundY - tractor.height) {
-          tractor.y = groundY - tractor.height;
+        if (tractor.yOffset <= 0) {
+          tractor.yOffset = 0;
           tractor.vy = 0;
           if (tractor.isJumping) {
             tractor.isJumping = false;
@@ -738,57 +775,175 @@
           }
         }
 
-        tractor.wheelAngle += gameSpeed * 0.05;
-        tractor.vibrationOffset = Math.sin(Date.now() * 0.08) * 0.65;
+        tractor.wheelRot += gameSpeed * 8;
+        tractor.vibration = Math.sin(Date.now() * 0.08) * 0.8;
+      }
 
-        tractor.smokeCooldown++;
-        if (tractor.smokeCooldown > 7) {
-          tractor.smokeCooldown = 0;
-          spawnSmoke();
+      // Scenery updates & draw
+      for (let i = roadItems.length - 1; i >= 0; i--) {
+        const item = roadItems[i];
+        if (gameState === "playing") item.z += gameSpeed;
+
+        const scale = Math.pow(item.z, 2.5);
+        const ry = horizonY + item.z * (height - horizonY);
+        const rw = roadStartWidth * (1 - item.z) + roadEndWidth * item.z;
+        const rx = width / 2 + item.xOffset * scale * (width * 0.25);
+
+        if (item.z >= 1.05) {
+          roadItems.splice(i, 1);
+          continue;
         }
 
-        // Spawns obstacles (matte dark)
-        if (Math.random() < 0.014 && obstacles.length < 3) {
-          const obsTypes = ["fence", "rock", "haybale", "stump"];
-          const selected = obsTypes[Math.floor(Math.random() * obsTypes.length)];
-          const obstacleW = selected === "haybale" ? 36 : selected === "stump" ? 28 : 24;
-          const obstacleH = selected === "haybale" ? 36 : selected === "stump" ? 32 : 24;
-
-          const lastObs = obstacles[obstacles.length - 1];
-          if (!lastObs || lastObs.x < width - 280) {
-            obstacles.push({
-              x: width + 20,
-              y: groundY - obstacleH,
-              width: obstacleW,
-              height: obstacleH,
-              type: selected,
-              color: selected === "rock" ? "#374151" : selected === "haybale" ? "#CA8A04" : "#78350F",
-              passed: false
-            });
+        // Collision Check
+        if (item.z >= 0.80 && item.z <= 0.90) {
+          if (item.type === "obstacle") {
+            const obsHeightMap = { rock: 35, haybale: 45, stump: 38, cow: 55 };
+            const obstacleHeight = obsHeightMap[item.subType] || 40;
+            
+            if (tractor.yOffset < obstacleHeight - 10) {
+              gameState = "gameover";
+              finalScoreVal.textContent = formatWeight(scoreHarvestVal);
+              gameOverOverlay.classList.add("show");
+              if (scoreHarvestVal > highScore) {
+                highScore = scoreHarvestVal;
+                try { localStorage.setItem("sourcetrace_tractor_weight_highscore", highScore.toString()); } catch(e) {}
+              }
+            }
+          } else if (item.type === "crop" && !item.collected) {
+            item.collected = true;
+            const rewardMap = { wheat: 25, coffee: 15, tomato: 35, cotton: 40 };
+            const weightReward = rewardMap[item.subType] || 20;
+            scoreHarvestVal += weightReward;
+            scoreVal.textContent = formatWeight(scoreHarvestVal);
+            
+            spawnSparks(rx, ry - 30 * scale, item.subType === "wheat" ? "#FBBF24" : item.subType === "coffee" ? "#EF4444" : "#10B981");
+            triggerFloatingText(`+${weightReward} kg ${item.subType.toUpperCase()}`, rx, ry - 40);
           }
         }
 
-        // Spawns Crop Collectibles (glowing bright)
-        if (Math.random() < 0.02 && collectibles.length < 4) {
-          const cropTypes = ["wheat", "coffee", "cotton", "drone"];
-          const selected = cropTypes[Math.floor(Math.random() * cropTypes.length)];
-          const collectY = groundY - 60 - Math.random() * 55;
+        // Render Road Item
+        if (item.type === "obstacle") {
+          ctx.save();
+          ctx.translate(rx, ry);
+          ctx.scale(scale * 2.2, scale * 2.2);
 
-          const lastColl = collectibles[collectibles.length - 1];
-          if (!lastColl || lastColl.x < width - 180) {
-            collectibles.push({
-              x: width + 20,
-              y: collectY,
-              width: 22,
-              height: 22,
-              type: selected,
-              color: selected === "wheat" ? "#FBBF24" : selected === "coffee" ? "#EF4444" : selected === "cotton" ? "#FFFFFF" : "#53D769",
-              collected: false,
-              pulse: Math.random() * 10
-            });
+          ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
+          ctx.beginPath();
+          ctx.ellipse(0, 0, 15, 4, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = item.color;
+          if (item.subType === "rock") {
+            ctx.fillStyle = "#374151";
+            ctx.beginPath();
+            ctx.moveTo(-12, 0);
+            ctx.lineTo(-8, -16);
+            ctx.lineTo(6, -14);
+            ctx.lineTo(12, 0);
+            ctx.closePath();
+            ctx.fill();
+          } else if (item.subType === "haybale") {
+            ctx.fillStyle = "#B45309";
+            ctx.beginPath();
+            ctx.ellipse(0, -10, 12, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (item.subType === "stump") {
+            ctx.fillStyle = "#451A03";
+            ctx.fillRect(-8, -15, 16, 15);
+          } else if (item.subType === "cow") {
+            ctx.fillStyle = "#F3F4F6";
+            ctx.beginPath();
+            ctx.roundRect(-14, -18, 28, 18, 4);
+            ctx.fill();
           }
+          ctx.restore();
+        } else if (item.type === "crop" && !item.collected) {
+          const hoverOffset = Math.sin(item.pulse) * 5 * scale;
+          ctx.save();
+          ctx.translate(rx, ry - 35 * scale + hoverOffset);
+          ctx.scale(scale * 2.2, scale * 2.2);
+
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = item.subType === "wheat" ? "#F59E0B" : item.subType === "coffee" ? "#EF4444" : "#10B981";
+          ctx.fillStyle = item.color;
+
+          if (item.subType === "wheat") {
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 6, 12, 0.1, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (item.subType === "coffee") {
+            ctx.beginPath();
+            ctx.arc(-4, 2, 6, 0, Math.PI * 2);
+            ctx.arc(4, 0, 6, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (item.subType === "tomato") {
+            ctx.beginPath();
+            ctx.arc(0, 0, 9, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (item.subType === "cotton") {
+            ctx.beginPath();
+            ctx.arc(-4, 0, 6, 0, Math.PI * 2);
+            ctx.arc(4, 0, 6, 0, Math.PI * 2);
+            ctx.arc(0, -4, 6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
         }
       }
+
+      // Draw Behind View Tractor
+      const tractorBounce = gameState === "playing" ? tractor.vibration : 0;
+      const curY = tractor.y - tractor.yOffset + tractorBounce;
+
+      ctx.save();
+      ctx.translate(tractor.x, curY);
+
+      // Mudguards
+      ctx.fillStyle = "#0B3D2E";
+      ctx.beginPath();
+      ctx.roundRect(-66, -18, 22, 16, 5);
+      ctx.roundRect(44, -18, 22, 16, 5);
+      ctx.fill();
+
+      // Tyres
+      ctx.fillStyle = "#1F2937";
+      ctx.beginPath();
+      ctx.roundRect(-64, -2, 18, 42, 6);
+      ctx.roundRect(46, -2, 18, 42, 6);
+      ctx.fill();
+      
+      // Rims
+      ctx.fillStyle = "#FBBF24";
+      ctx.beginPath();
+      ctx.arc(-55, 18, 10, 0, Math.PI * 2);
+      ctx.arc(55, 18, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Chassis
+      ctx.fillStyle = "#0B3D2E";
+      ctx.beginPath();
+      ctx.roundRect(-42, -6, 84, 34, 8);
+      ctx.fill();
+
+      // Cabin
+      ctx.beginPath();
+      ctx.roundRect(-30, -56, 60, 52, [12, 12, 4, 4]);
+      ctx.fill();
+
+      // Window
+      let windowGrad = ctx.createLinearGradient(-22, -48, 22, -18);
+      windowGrad.addColorStop(0, "#E0F2FE");
+      windowGrad.addColorStop(1, "#86EFAC");
+      ctx.fillStyle = windowGrad;
+      ctx.beginPath();
+      ctx.roundRect(-22, -48, 44, 28, 6);
+      ctx.fill();
+
+      // Exhaust
+      ctx.fillStyle = "#4B5563";
+      ctx.fillRect(-38, -48, 5, 42);
+
+      ctx.restore();
 
       // Draw Particles
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -800,284 +955,13 @@
 
         ctx.save();
         ctx.globalAlpha = p.alpha;
-        if (p.type === "sparkle") {
-          ctx.shadowBlur = 8;
-          ctx.shadowColor = p.color;
-        }
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
 
-        if (p.life >= p.maxLife) {
-          particles.splice(i, 1);
-        }
-      }
-
-      // Rain / Fireflies
-      if (activeWeather === "rain") {
-        ctx.strokeStyle = "rgba(156, 163, 175, 0.22)";
-        ctx.lineWidth = 1.2;
-        for (let i = 0; i < 25; i++) {
-          const rx = (Math.sin(i * 45) * 0.5 + 0.5) * width;
-          const ry = ((Date.now() * 0.015 + i * 20) % height);
-          ctx.beginPath();
-          ctx.moveTo(rx, ry);
-          ctx.lineTo(rx - 8, ry + 24);
-          ctx.stroke();
-        }
-      } else if (activeWeather === "night") {
-        ctx.fillStyle = "rgba(134, 239, 172, 0.4)";
-        for (let i = 0; i < 10; i++) {
-          const ffX = (Math.cos(Date.now() * 0.001 + i * 2) * 0.5 + 0.5) * width;
-          const ffY = groundY - 10 - (Math.sin(Date.now() * 0.002 + i) * 0.5 + 0.5) * 80;
-          ctx.beginPath();
-          ctx.arc(ffX, ffY, 2.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      // Ground shadow
-      ctx.save();
-      const shadowScale = Math.max(0.2, 1 - (groundY - curY - tractor.height) * 0.005);
-      ctx.fillStyle = "rgba(11, 61, 46, 0.2)";
-      ctx.beginPath();
-      ctx.ellipse(tractor.x + tractor.width * 0.5, groundY, 40 * shadowScale, 6 * shadowScale, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      // Draw clay-style tractor chassis
-      const curY = tractor.y + (gameState === "playing" ? tractor.vibrationOffset : 0);
-      ctx.save();
-      if (tractor.isJumping) {
-        ctx.translate(tractor.x + tractor.width * 0.5, curY + tractor.height * 0.5);
-        ctx.rotate(tractor.vy * 0.018);
-        ctx.translate(-(tractor.x + tractor.width * 0.5), -(curY + tractor.height * 0.5));
-      }
-
-      let bodyGrad = ctx.createRadialGradient(
-        tractor.x + 60, curY + 20, 10,
-        tractor.x + 60, curY + 30, 40
-      );
-      bodyGrad.addColorStop(0, "#1F7A53");
-      bodyGrad.addColorStop(1, "#0B3D2E");
-      
-      ctx.fillStyle = bodyGrad;
-      ctx.beginPath();
-      ctx.roundRect(tractor.x + 24, curY + 24, 68, 38, 12);
-      ctx.roundRect(tractor.x + 50, curY + 4, 38, 28, 8);
-      ctx.fill();
-
-      // Window gloss
-      let winGrad = ctx.createLinearGradient(tractor.x + 55, curY + 8, tractor.x + 82, curY + 26);
-      winGrad.addColorStop(0, "#E0F2FE");
-      winGrad.addColorStop(1, "#86EFAC");
-      ctx.fillStyle = winGrad;
-      ctx.beginPath();
-      ctx.roundRect(tractor.x + 54, curY + 8, 30, 20, 4);
-      ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,0.6)";
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(tractor.x + 58, curY + 10);
-      ctx.lineTo(tractor.x + 72, curY + 24);
-      ctx.stroke();
-
-      // nose
-      ctx.fillStyle = bodyGrad;
-      ctx.beginPath();
-      ctx.roundRect(tractor.x + 10, curY + 32, 20, 28, 8);
-      ctx.fill();
-      ctx.fillStyle = "#1F2937";
-      ctx.fillRect(tractor.x + 12, curY + 38, 4, 18);
-
-      // exhaust
-      ctx.fillStyle = "#4B5563";
-      ctx.fillRect(tractor.x + 18, curY + 8, 6, 26);
-
-      // Wheels
-      ctx.save();
-      ctx.translate(tractor.x + 76, curY + 62);
-      ctx.rotate(tractor.wheelAngle);
-      let tyreGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 24);
-      tyreGrad.addColorStop(0, "#1F2937");
-      tyreGrad.addColorStop(1, "#111827");
-      ctx.fillStyle = tyreGrad;
-      ctx.beginPath();
-      ctx.arc(0, 0, 24, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#FBBF24";
-      ctx.beginPath();
-      ctx.arc(0, 0, 10, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = "#D97706";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      for (let s = 0; s < 4; s++) {
-        ctx.rotate(Math.PI / 2);
-        ctx.moveTo(4, 0);
-        ctx.lineTo(22, 0);
-      }
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.save();
-      ctx.translate(tractor.x + 24, curY + 68);
-      ctx.rotate(tractor.wheelAngle * 1.3);
-      ctx.fillStyle = tyreGrad;
-      ctx.beginPath();
-      ctx.arc(0, 0, 17, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#FBBF24";
-      ctx.beginPath();
-      ctx.arc(0, 0, 7, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = "#D97706";
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      for (let s = 0; s < 4; s++) {
-        ctx.rotate(Math.PI / 2);
-        ctx.moveTo(3, 0);
-        ctx.lineTo(15, 0);
-      }
-      ctx.stroke();
-      ctx.restore();
-
-      ctx.restore(); // restore tilt
-
-      // Dust trails
-      if (gameState === "playing" && !tractor.isJumping) {
-        if (Math.random() < 0.25) {
-          particles.push({
-            x: tractor.x + 12,
-            y: groundY,
-            vx: -gameSpeed * 0.45 + (Math.random() - 0.5) * 2,
-            vy: -0.5 - Math.random() * 1.5,
-            size: 2.5 + Math.random() * 4,
-            color: "rgba(167, 133, 100, 0.4)",
-            alpha: 0.6,
-            life: 0,
-            maxLife: 25 + Math.random() * 15,
-            type: "dust"
-          });
-        }
-      }
-
-      // Draw Matte Obstacles
-      for (let i = obstacles.length - 1; i >= 0; i--) {
-        const obs = obstacles[i];
-        if (gameState === "playing") obs.x -= gameSpeed;
-
-        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
-        ctx.beginPath();
-        ctx.ellipse(obs.x + obs.width * 0.5, groundY, obs.width * 0.6, 5, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = obs.color;
-        if (obs.type === "rock") {
-          ctx.beginPath();
-          ctx.moveTo(obs.x, groundY);
-          ctx.lineTo(obs.x + obs.width * 0.25, groundY - obs.height);
-          ctx.lineTo(obs.x + obs.width * 0.6, groundY - obs.height * 0.85);
-          ctx.lineTo(obs.x + obs.width * 0.8, groundY - obs.height * 0.95);
-          ctx.lineTo(obs.x + obs.width, groundY);
-          ctx.closePath();
-          ctx.fill();
-        } else if (obs.type === "fence") {
-          ctx.strokeStyle = "#451A03";
-          ctx.lineWidth = 4.5;
-          ctx.beginPath();
-          ctx.moveTo(obs.x, groundY);
-          ctx.lineTo(obs.x + obs.width, groundY - obs.height);
-          ctx.stroke();
-        } else if (obs.type === "haybale") {
-          ctx.beginPath();
-          ctx.arc(obs.x + obs.width * 0.5, groundY - obs.height * 0.5, obs.width * 0.5, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          ctx.beginPath();
-          ctx.roundRect(obs.x, groundY - obs.height, obs.width, obs.height, [2, 2, 0, 0]);
-          ctx.fill();
-        }
-
-        // Collision Check
-        if (
-          tractor.x + 6 < obs.x + obs.width &&
-          tractor.x + tractor.width - 8 > obs.x &&
-          tractor.y + 6 < groundY &&
-          tractor.y + tractor.height - 4 > groundY - obs.height
-        ) {
-          gameState = "gameover";
-          finalScoreVal.textContent = scoreHarvestVal.toString();
-          gameOverOverlay.classList.add("show");
-          if (scoreHarvestVal > highScore) {
-            highScore = scoreHarvestVal;
-            try { localStorage.setItem("sourcetrace_tractor_dino_highscore", highScore.toString()); } catch(e) {}
-          }
-        }
-
-        if (obs.x < -100) obstacles.splice(i, 1);
-      }
-
-      // Draw Collectibles
-      for (let i = collectibles.length - 1; i >= 0; i--) {
-        const coll = collectibles[i];
-        if (gameState === "playing") coll.x -= gameSpeed;
-
-        coll.pulse += 0.06;
-        const scaleOffset = Math.sin(coll.pulse) * 4;
-
-        if (!coll.collected) {
-          if (gameState === "playing" && Math.random() < 0.05) {
-            spawnSparkles(coll.x, coll.y + scaleOffset, coll.color);
-          }
-
-          ctx.save();
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = coll.color;
-          ctx.fillStyle = coll.color;
-          
-          if (coll.type === "wheat") {
-            ctx.beginPath();
-            ctx.ellipse(coll.x, coll.y + scaleOffset, 7, 12, 0.25, 0, Math.PI * 2);
-            ctx.fill();
-          } else if (coll.type === "coffee") {
-            ctx.beginPath();
-            ctx.arc(coll.x, coll.y + scaleOffset, 10, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = "#FFF";
-            ctx.beginPath();
-            ctx.arc(coll.x - 3, coll.y + scaleOffset - 3, 2.5, 0, Math.PI * 2);
-            ctx.fill();
-          } else if (coll.type === "cotton") {
-            ctx.beginPath();
-            ctx.arc(coll.x - 5, coll.y + scaleOffset, 7, 0, Math.PI * 2);
-            ctx.arc(coll.x + 5, coll.y + scaleOffset, 7, 0, Math.PI * 2);
-            ctx.arc(coll.x, coll.y - 5 + scaleOffset, 7, 0, Math.PI * 2);
-            ctx.fill();
-          } else {
-            ctx.beginPath();
-            ctx.roundRect(coll.x - 8, coll.y + scaleOffset - 8, 16, 16, 4);
-            ctx.fill();
-          }
-          ctx.restore();
-
-          // Collision Check
-          if (
-            tractor.x < coll.x + coll.width &&
-            tractor.x + tractor.width > coll.x &&
-            tractor.y < coll.y + coll.height &&
-            tractor.y + tractor.height > coll.y
-          ) {
-            coll.collected = true;
-            scoreHarvestVal += coll.type === "drone" ? 50 : 15;
-            scoreVal.textContent = scoreHarvestVal.toString();
-            spawnSparkles(coll.x, coll.y + scaleOffset, coll.color);
-          }
-        }
-
-        if (coll.x < -80) collectibles.splice(i, 1);
+        if (p.life >= p.maxLife) particles.splice(i, 1);
       }
 
       ctx.restore();
