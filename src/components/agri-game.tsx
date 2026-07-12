@@ -549,6 +549,15 @@ export function AgriGame({ mode }: AgriGameProps) {
               ctx.lineTo(-3, 0);
               ctx.closePath();
               ctx.fill();
+
+              // Add crack details
+              ctx.strokeStyle = "#4A5568";
+              ctx.lineWidth = 1.5;
+              ctx.beginPath();
+              ctx.moveTo(-5, -12);
+              ctx.lineTo(-1, -6);
+              ctx.lineTo(2, -10);
+              ctx.stroke();
             } else if (item.subType === "haybale") {
               // Large gold/brown cylinder haybale
               ctx.fillStyle = "#B45309";
@@ -560,6 +569,12 @@ export function AgriGame({ mode }: AgriGameProps) {
               ctx.ellipse(0, -12, 11, 9, 0, 0, Math.PI * 2);
               ctx.fill();
               
+              // Twine wrapping bands
+              ctx.fillStyle = "#78350F";
+              ctx.fillRect(-7, -22, 2, 20);
+              ctx.fillRect(5, -22, 2, 20);
+
+              // Concentric spiral layers
               ctx.strokeStyle = "#78350F";
               ctx.lineWidth = 2.0;
               ctx.beginPath();
@@ -571,18 +586,39 @@ export function AgriGame({ mode }: AgriGameProps) {
               ctx.beginPath();
               ctx.roundRect(-16, -18, 32, 18, 4);
               ctx.fill();
+              
+              // Black patches
               ctx.fillStyle = "#111827";
               ctx.beginPath();
               ctx.arc(-8, -13, 5, 0, Math.PI * 2);
               ctx.arc(5, -11, 4, 0, Math.PI * 2);
               ctx.fill();
-              // head
+
+              // Hooves
+              ctx.fillRect(-12, 0, 4, 2);
+              ctx.fillRect(6, 0, 4, 2);
+
+              // Tail
+              ctx.strokeStyle = "#111827";
+              ctx.lineWidth = 1.5;
+              ctx.beginPath();
+              ctx.moveTo(-16, -10);
+              ctx.lineTo(-20, -2);
+              ctx.stroke();
+
+              // Head
               ctx.fillStyle = "#F3F4F6";
               ctx.beginPath();
               ctx.roundRect(8, -26, 10, 12, 3);
               ctx.fill();
               ctx.fillStyle = "#FCA5A5"; // pink nose
               ctx.fillRect(14, -20, 4, 6);
+
+              // Ears
+              ctx.beginPath();
+              ctx.arc(8, -26, 2, 0, Math.PI * 2);
+              ctx.arc(14, -26, 2, 0, Math.PI * 2);
+              ctx.fill();
             }
           }
           ctx.restore();
@@ -592,43 +628,98 @@ export function AgriGame({ mode }: AgriGameProps) {
              ═══════════════════════════════════════ */
           const hoverOffset = Math.sin(item.pulse) * 5 * scale;
           ctx.save();
-          ctx.translate(rx, ry - 45 * scale + hoverOffset);
-          ctx.scale(scale * 2.5, scale * 2.5); // 1.8-2x larger collectibles
+          ctx.translate(rx, ry - 55 * scale + hoverOffset); // float slightly higher
+          ctx.scale(scale * 3.8, scale * 3.8); // 3.8x larger crops for perfect visibility
 
           ctx.shadowBlur = 18;
           ctx.fillStyle = "#F59E0B";
 
           if (item.subType === "wheat") {
-            // Glowing golden wheat bundle
+            // Glowing golden wheat bundle fanned out (3 stalks)
             let cropGrad = ctx.createRadialGradient(0, -6, 2, 0, 0, 12);
             cropGrad.addColorStop(0, "#FDE047");
             cropGrad.addColorStop(1, "#D97706");
             ctx.fillStyle = cropGrad;
+
+            // Stalk 1 (left tilt)
+            ctx.save();
+            ctx.rotate(-0.25);
             ctx.beginPath();
-            ctx.ellipse(0, 0, 7, 13, 0.1, 0, Math.PI * 2);
+            ctx.ellipse(-3, -2, 3.5, 9, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = "#EF4444"; // ribbon
-            ctx.fillRect(-6, 2, 12, 2.5);
+            ctx.restore();
+
+            // Stalk 2 (vertical center)
+            ctx.beginPath();
+            ctx.ellipse(0, -1, 4, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Stalk 3 (right tilt)
+            ctx.save();
+            ctx.rotate(0.25);
+            ctx.beginPath();
+            ctx.ellipse(3, -2, 3.5, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Tied red ribbon in center
+            ctx.fillStyle = "#EF4444";
+            ctx.beginPath();
+            ctx.roundRect(-6, 2, 12, 3, 1);
+            ctx.fill();
           } else if (item.subType === "tomato") {
-            // Bright red glossy tomato
-            let tomGrad = ctx.createRadialGradient(-2, -3, 1, 0, 0, 9);
-            tomGrad.addColorStop(0, "#FCA5A5");
-            tomGrad.addColorStop(1, "#DC2626");
-            ctx.fillStyle = tomGrad;
+            // Basket of Tomatoes
+            // Woven wooden basket/crate in brown
+            ctx.fillStyle = "#78350F";
             ctx.beginPath();
-            ctx.arc(0, 0, 9, 0, Math.PI * 2);
+            ctx.roundRect(-9, 1, 18, 9, 2);
             ctx.fill();
+
+            // Basket highlights
+            ctx.strokeStyle = "#451A03";
+            ctx.lineWidth = 1.0;
+            ctx.beginPath();
+            ctx.moveTo(-9, 4); ctx.lineTo(9, 4);
+            ctx.moveTo(-3, 1); ctx.lineTo(-3, 10);
+            ctx.moveTo(3, 1); ctx.lineTo(3, 10);
+            ctx.stroke();
+
+            // 3 Glossy Tomatoes stacked inside
+            let tomGrad1 = ctx.createRadialGradient(-5, -4, 1, -3, -2, 5);
+            tomGrad1.addColorStop(0, "#FCA5A5");
+            tomGrad1.addColorStop(1, "#DC2626");
+            ctx.fillStyle = tomGrad1;
+            ctx.beginPath();
+            ctx.arc(-4, -1, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            let tomGrad2 = ctx.createRadialGradient(5, -4, 1, 3, -2, 5);
+            tomGrad2.addColorStop(0, "#FCA5A5");
+            tomGrad2.addColorStop(1, "#DC2626");
+            ctx.fillStyle = tomGrad2;
+            ctx.beginPath();
+            ctx.arc(4, -1, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            let tomGrad3 = ctx.createRadialGradient(0, -6, 1, 0, -4, 6);
+            tomGrad3.addColorStop(0, "#FCA5A5");
+            tomGrad3.addColorStop(1, "#DC2626");
+            ctx.fillStyle = tomGrad3;
+            ctx.beginPath();
+            ctx.arc(0, -3, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Shiny specular dots
             ctx.fillStyle = "#FFF";
             ctx.beginPath();
-            ctx.arc(-2, -3, 2, 0, Math.PI * 2);
+            ctx.arc(-5, -2, 1, 0, Math.PI * 2);
+            ctx.arc(3, -2, 1, 0, Math.PI * 2);
+            ctx.arc(-1, -4, 1.2, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = "#10B981"; // green leaf
-            ctx.beginPath();
-            ctx.moveTo(0, -9);
-            ctx.lineTo(-4, -12);
-            ctx.lineTo(4, -12);
-            ctx.closePath();
-            ctx.fill();
+
+            // Green leaf caps
+            ctx.fillStyle = "#10B981";
+            ctx.fillRect(-1.5, -9, 3, 2);
           }
           ctx.restore();
         }
