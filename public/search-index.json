@@ -1,122 +1,5 @@
 [
   {
-    "url": "/about",
-    "title": "About SourceTrace",
-    "metaDescription": "Learn about SourceTrace's mission to digitize agriculture, promote sustainable sourcing, and deliver supply chain visibility.",
-    "headings": [
-      "About SourceTrace",
-      "Under Construction",
-      "Drive predictable outcomes across your agricultural operations.",
-      "Join the Future of Sourcing",
-      "Products",
-      "Industry",
-      "Solutions",
-      "Quick Links"
-    ],
-    "bodyText": "Company About SourceTrace Under Construction Our developers are working their best to fix this and bring you the best possible experience. In the meantime, try helping our tractor navigate the supply chain hurdles below! Tractor Run Hectares Mapped: 0 Record: 0 Tractor Supply Dash Press Spacebar or Click to jump over spreadsheets & red tapes. Start Game Hint: Spacebar or Tap Jump. Avoid spreadsheets. Let's digitize the first mile! Back to Home",
-    "category": "Company",
-    "keywords": [
-      "about",
-      "sourcetrace",
-      "under",
-      "construction",
-      "drive",
-      "predictable",
-      "outcomes",
-      "across",
-      "your",
-      "agricultural",
-      "operations.",
-      "join",
-      "the",
-      "future",
-      "sourcing",
-      "products",
-      "industry",
-      "solutions",
-      "quick",
-      "links"
-    ]
-  },
-  {
-    "url": "/careers",
-    "title": "Careers at SourceTrace",
-    "metaDescription": "Explore career opportunities at SourceTrace and help build technology that creates sustainable agricultural supply chains globally.",
-    "headings": [
-      "Careers",
-      "Under Construction",
-      "Drive predictable outcomes across your agricultural operations.",
-      "Join the Future of Sourcing",
-      "Products",
-      "Industry",
-      "Solutions",
-      "Quick Links"
-    ],
-    "bodyText": "Company Careers Under Construction Our developers are working their best to fix this and bring you the best possible experience. In the meantime, try helping our tractor navigate the supply chain hurdles below! Tractor Run Hectares Mapped: 0 Record: 0 Tractor Supply Dash Press Spacebar or Click to jump over spreadsheets & red tapes. Start Game Hint: Spacebar or Tap Jump. Avoid spreadsheets. Let's digitize the first mile! Back to Home",
-    "category": "Company",
-    "keywords": [
-      "careers",
-      "sourcetrace",
-      "under",
-      "construction",
-      "drive",
-      "predictable",
-      "outcomes",
-      "across",
-      "your",
-      "agricultural",
-      "operations.",
-      "join",
-      "the",
-      "future",
-      "sourcing",
-      "products",
-      "industry",
-      "solutions",
-      "quick",
-      "links"
-    ]
-  },
-  {
-    "url": "/contact",
-    "title": "Connect With Us",
-    "metaDescription": "Get in touch with SourceTrace systems. Reach out to our global offices for support, partnership opportunities, or general queries.",
-    "headings": [
-      "Connect With Us",
-      "Under Construction",
-      "Drive predictable outcomes across your agricultural operations.",
-      "Join the Future of Sourcing",
-      "Products",
-      "Industry",
-      "Solutions",
-      "Quick Links"
-    ],
-    "bodyText": "Company Connect With Us Under Construction Our developers are working their best to fix this and bring you the best possible experience. In the meantime, try helping our tractor navigate the supply chain hurdles below! Tractor Run Hectares Mapped: 0 Record: 0 Tractor Supply Dash Press Spacebar or Click to jump over spreadsheets & red tapes. Start Game Hint: Spacebar or Tap Jump. Avoid spreadsheets. Let's digitize the first mile! Back to Home",
-    "category": "Company",
-    "keywords": [
-      "connect",
-      "with",
-      "under",
-      "construction",
-      "drive",
-      "predictable",
-      "outcomes",
-      "across",
-      "your",
-      "agricultural",
-      "operations.",
-      "join",
-      "the",
-      "future",
-      "sourcing",
-      "products",
-      "industry",
-      "solutions",
-      "quick",
-      "links"
-    ]
-  },
-  {
     "url": "/contact-sales",
     "title": "Contact Our Sales Team",
     "metaDescription": "Schedule a conversation with our enterprise sales team to discuss supply chain traceability, EUDR compliance, and sustainability solutions.",
@@ -188,6 +71,42 @@
       "quick",
       "links",
       "company"
+    ]
+  },
+  {
+    "url": "/about",
+    "title": "SourceTrace",
+    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "headings": [],
+    "bodyText": "",
+    "category": "Company",
+    "keywords": [
+      "sourcetrace",
+      "about"
+    ]
+  },
+  {
+    "url": "/careers",
+    "title": "SourceTrace",
+    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "headings": [],
+    "bodyText": "",
+    "category": "Company",
+    "keywords": [
+      "sourcetrace",
+      "careers"
+    ]
+  },
+  {
+    "url": "/contact",
+    "title": "SourceTrace",
+    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "headings": [],
+    "bodyText": "",
+    "category": "Company",
+    "keywords": [
+      "sourcetrace",
+      "contact"
     ]
   },
   {
@@ -1667,45 +1586,6 @@
     ]
   },
   {
-    "url": "/resources/blog",
-    "title": "Blog",
-    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
-    "headings": [
-      "Blog",
-      "Under Construction",
-      "Drive predictable outcomes across your agricultural operations.",
-      "Join the Future of Sourcing",
-      "Products",
-      "Industry",
-      "Solutions",
-      "Quick Links"
-    ],
-    "bodyText": "Resources Blog Under Construction Our developers are working their best to fix this and bring you the best possible experience. In the meantime, try helping our tractor navigate the supply chain hurdles below! Tractor Run Hectares Mapped: 0 Record: 0 Tractor Supply Dash Press Spacebar or Click to jump over spreadsheets & red tapes. Start Game Hint: Spacebar or Tap Jump. Avoid spreadsheets. Let's digitize the first mile! Back to Home",
-    "category": "Resources",
-    "keywords": [
-      "blog",
-      "under",
-      "construction",
-      "drive",
-      "predictable",
-      "outcomes",
-      "across",
-      "your",
-      "agricultural",
-      "operations.",
-      "join",
-      "the",
-      "future",
-      "sourcing",
-      "products",
-      "industry",
-      "solutions",
-      "quick",
-      "links",
-      "resources"
-    ]
-  },
-  {
     "url": "/docs",
     "title": "Developer Documentation & Guides",
     "metaDescription": "Access API references, authentication guides, integration instructions, and tutorials for the SourceTrace Traceability Platform.",
@@ -1786,81 +1666,42 @@
     ]
   },
   {
-    "url": "/resources/newsroom",
-    "title": "Newsroom",
+    "url": "/resources/blog",
+    "title": "SourceTrace",
     "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
-    "headings": [
-      "Newsroom",
-      "Under Construction",
-      "Drive predictable outcomes across your agricultural operations.",
-      "Join the Future of Sourcing",
-      "Products",
-      "Industry",
-      "Solutions",
-      "Quick Links"
-    ],
-    "bodyText": "Resources Newsroom Under Construction Our developers are working their best to fix this and bring you the best possible experience. In the meantime, try helping our tractor navigate the supply chain hurdles below! Tractor Run Hectares Mapped: 0 Record: 0 Tractor Supply Dash Press Spacebar or Click to jump over spreadsheets & red tapes. Start Game Hint: Spacebar or Tap Jump. Avoid spreadsheets. Let's digitize the first mile! Back to Home",
+    "headings": [],
+    "bodyText": "",
     "category": "Resources",
     "keywords": [
-      "newsroom",
-      "under",
-      "construction",
-      "drive",
-      "predictable",
-      "outcomes",
-      "across",
-      "your",
-      "agricultural",
-      "operations.",
-      "join",
-      "the",
-      "future",
-      "sourcing",
-      "products",
-      "industry",
-      "solutions",
-      "quick",
-      "links",
-      "resources"
+      "sourcetrace",
+      "resources",
+      "blog"
+    ]
+  },
+  {
+    "url": "/resources/newsroom",
+    "title": "SourceTrace",
+    "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
+    "headings": [],
+    "bodyText": "",
+    "category": "Resources",
+    "keywords": [
+      "sourcetrace",
+      "resources",
+      "newsroom"
     ]
   },
   {
     "url": "/resources/whitepapers",
-    "title": "White Papers",
+    "title": "SourceTrace",
     "metaDescription": "Visibility Creates Sustainable Supply Chains. Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
-    "headings": [
-      "White Papers",
-      "Under Construction",
-      "Drive predictable outcomes across your agricultural operations.",
-      "Join the Future of Sourcing",
-      "Products",
-      "Industry",
-      "Solutions",
-      "Quick Links"
-    ],
-    "bodyText": "Resources White Papers Under Construction Our developers are working their best to fix this and bring you the best possible experience. In the meantime, try helping our tractor navigate the supply chain hurdles below! Tractor Run Hectares Mapped: 0 Record: 0 Tractor Supply Dash Press Spacebar or Click to jump over spreadsheets & red tapes. Start Game Hint: Spacebar or Tap Jump. Avoid spreadsheets. Let's digitize the first mile! Back to Home",
+    "headings": [],
+    "bodyText": "",
     "category": "Resources",
     "keywords": [
-      "white",
-      "papers",
-      "under",
-      "construction",
-      "drive",
-      "predictable",
-      "outcomes",
-      "across",
-      "your",
-      "agricultural",
-      "operations.",
-      "join",
-      "the",
-      "future",
-      "sourcing",
-      "products",
-      "industry",
-      "solutions",
-      "quick",
-      "links"
+      "sourcetrace",
+      "resources",
+      "whitepapers"
     ]
   },
   {
