@@ -31,26 +31,26 @@
       display: block;
       z-index: 0;
     }
-    /* HUD UI elements - WCAG AA Contrast Compliant */
+    /* HUD UI elements - WCAG AA Contrast Compliant, safe offset from header */
     .hud-left-panel {
       position: absolute;
-      top: 32px;
-      left: 32px;
+      top: 100px;
+      left: 48px;
       z-index: 10;
       pointer-events: none;
       text-align: left;
-      background: rgba(11, 61, 46, 0.9);
+      background: rgba(11, 61, 46, 0.95);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 20px;
+      padding: 24px;
       border-radius: 16px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
       max-w: 360px;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
     .hud-left-panel h2 {
       font-weight: 900;
-      font-size: 24px;
+      font-size: 26px;
       color: #FFFFFF;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -62,27 +62,27 @@
       color: #86EFAC;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-top: 6px;
+      margin-top: 8px;
       line-height: 1.2;
     }
     .hud-left-panel p {
       font-weight: 600;
-      font-size: 11px;
+      font-size: 12px;
       color: #E6FDF0;
-      margin-top: 6px;
+      margin-top: 8px;
       line-height: 1.4;
     }
     .hud-right {
       position: absolute;
-      top: 32px;
-      right: 32px;
+      top: 100px;
+      right: 48px;
       z-index: 10;
       pointer-events: none;
       text-align: right;
     }
     .hud-right .label {
       font-weight: 800;
-      font-size: 11px;
+      font-size: 12px;
       color: #1F7A53;
       text-transform: uppercase;
       letter-spacing: 0.15em;
@@ -91,13 +91,13 @@
     }
     .hud-right .score {
       font-weight: 900;
-      font-size: 30px;
+      font-size: 36px;
       color: #0B3D2E;
       line-height: 1;
     }
     .hud-bottom-pill {
       position: absolute;
-      bottom: 32px;
+      bottom: 48px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
@@ -122,7 +122,7 @@
     /* Achievement Banner */
     .achievement-banner {
       position: absolute;
-      top: 136px;
+      top: 180px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 20;
@@ -152,7 +152,7 @@
       z-index: 20;
       transform: translateX(-50%);
       font-weight: 900;
-      font-size: 14px;
+      font-size: 16px;
       color: #10B981;
       background: #FFFFFF;
       border: 1px solid rgba(11, 61, 46, 0.1);
@@ -388,14 +388,18 @@
     let scoreHarvestVal = 0;
     let highScore = 0;
     let lastAchievementDistance = 0;
-    let gameSpeed = 0.009;
+    let gameSpeed = 0.011;
     let cameraShake = 0;
     let cycleTimer = 0;
     let activeWeather = "sun";
 
+    // Collision Freeze states
+    let freezeTimer = 0;
+    let collidedItemIdx = -1;
+
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
-    let horizonY = height * 0.45;
+    let horizonY = height * 0.22;
     let groundY = height;
 
     // Load Highscore
@@ -408,20 +412,20 @@
     window.addEventListener("resize", () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      horizonY = height * 0.45;
+      horizonY = height * 0.22;
       groundY = height;
     });
 
-    // 200% Increased Tractor Size (140x110 behind-view)
+    // 2.5x Zoomed Tractor (250x190)
     const tractor = {
       x: width / 2,
-      y: height * 0.88,
-      width: 140,
-      height: 110,
+      y: height * 0.76,
+      width: 250,
+      height: 190,
       yOffset: 0,
       vy: 0,
-      gravity: 0.7,
-      jumpStrength: -15,
+      gravity: 0.8,
+      jumpStrength: -18,
       isJumping: false,
       vibration: 0,
       wheelRot: 0
@@ -429,19 +433,19 @@
 
     let roadItems = [];
     let particles = [];
-    let roadDashes = [0, 0.25, 0.5, 0.75];
+    let roadDashes = [0, 0.2, 0.4, 0.6, 0.8];
 
     // Background decoration coordinates (Pastel & Desaturated)
     const clouds = [
-      { x: width * 0.15, y: height * 0.12, size: 60 },
-      { x: width * 0.55, y: height * 0.08, size: 85 },
-      { x: width * 0.85, y: height * 0.16, size: 50 }
+      { x: width * 0.15, y: horizonY * 0.3, size: 50 },
+      { x: width * 0.55, y: horizonY * 0.2, size: 70 },
+      { x: width * 0.85, y: horizonY * 0.4, size: 40 }
     ];
 
     const mountains = [
-      { x: width * 0.1, w: width * 0.4, h: height * 0.18 },
-      { x: width * 0.45, w: width * 0.5, h: height * 0.22 },
-      { x: width * 0.75, w: width * 0.35, h: height * 0.15 }
+      { x: width * 0.1, w: width * 0.4, h: horizonY * 0.8 },
+      { x: width * 0.45, w: width * 0.5, h: horizonY * 0.9 },
+      { x: width * 0.75, w: width * 0.35, h: horizonY * 0.7 }
     ];
 
     const sceneryItems = [
@@ -470,7 +474,7 @@
           y,
           vx: (Math.random() - 0.5) * 5,
           vy: (Math.random() - 0.5) * 5,
-          size: 2 + Math.random() * 3,
+          size: 2.5 + Math.random() * 4,
           color,
           alpha: 1.0,
           life: 0,
@@ -480,20 +484,20 @@
     };
 
     const spawnLandingDust = () => {
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 25; i++) {
         particles.push({
-          x: width / 2 + (Math.random() - 0.5) * 60,
-          y: tractor.y + 10,
-          vx: (Math.random() - 0.5) * 6,
-          vy: -1 - Math.random() * 3,
-          size: 3 + Math.random() * 6,
-          color: "rgba(167, 133, 100, 0.4)",
-          alpha: 0.8,
+          x: width / 2 + (Math.random() - 0.5) * 110,
+          y: tractor.y + 35,
+          vx: (Math.random() - 0.5) * 9,
+          vy: -1.5 - Math.random() * 4,
+          size: 4 + Math.random() * 8,
+          color: "rgba(167, 133, 100, 0.45)",
+          alpha: 0.85,
           life: 0,
-          maxLife: 25 + Math.random() * 15
+          maxLife: 25 + Math.random() * 20
         });
       }
-      cameraShake = 8;
+      cameraShake = 9;
     };
 
     const formatWeight = (w) => {
@@ -511,7 +515,7 @@
     };
 
     const triggerJump = () => {
-      if (gameState === "playing" && !tractor.isJumping) {
+      if (gameState === "playing" && !tractor.isJumping && freezeTimer === 0) {
         tractor.vy = tractor.jumpStrength;
         tractor.isJumping = true;
       }
@@ -522,8 +526,10 @@
       particles = [];
       distanceTraveled = 0;
       scoreHarvestVal = 0;
+      freezeTimer = 0;
+      collidedItemIdx = -1;
       scoreVal.textContent = "0 kg";
-      gameSpeed = 0.009;
+      gameSpeed = 0.011;
       tractor.yOffset = 0;
       tractor.vy = 0;
       tractor.isJumping = false;
@@ -604,17 +610,6 @@
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, width, horizonY);
 
-      if (activeWeather === "night") {
-        ctx.fillStyle = "rgba(254, 240, 138, 0.4)";
-        ctx.beginPath();
-        ctx.arc(width - 120, 70, 20, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = skyGrad;
-        ctx.beginPath();
-        ctx.arc(width - 130, 65, 20, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
       // Mountains
       ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(178, 220, 192, 0.15)";
       mountains.forEach((mtn) => {
@@ -631,8 +626,8 @@
       ctx.fillRect(0, horizonY, width, height - horizonY);
 
       // Vanishing Road
-      const roadStartWidth = 24;
-      const roadEndWidth = width * 0.72;
+      const roadStartWidth = 48;
+      const roadEndWidth = width * 0.95;
       const leftHorizonX = width / 2 - roadStartWidth / 2;
       const rightHorizonX = width / 2 + roadStartWidth / 2;
       const leftBottomX = width / 2 - roadEndWidth / 2;
@@ -649,7 +644,7 @@
 
       // Road grass borders
       ctx.strokeStyle = activeWeather === "night" ? "#052E20" : "#A1C6A0";
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 6;
       ctx.beginPath();
       ctx.moveTo(leftHorizonX, horizonY);
       ctx.lineTo(leftBottomX, height);
@@ -658,7 +653,7 @@
       ctx.stroke();
 
       // Road dashes
-      if (gameState === "playing") {
+      if (gameState === "playing" && freezeTimer === 0) {
         for (let i = 0; i < roadDashes.length; i++) {
           roadDashes[i] += gameSpeed * 1.5;
           if (roadDashes[i] >= 1.0) roadDashes[i] = 0;
@@ -668,7 +663,7 @@
       roadDashes.forEach((z) => {
         const ry = horizonY + z * (height - horizonY);
         const rw = roadStartWidth * (1 - z) + roadEndWidth * z;
-        ctx.lineWidth = 1 + z * 8;
+        ctx.lineWidth = 1.5 + z * 11;
         ctx.beginPath();
         ctx.moveTo(width / 2 - rw / 2, ry);
         ctx.lineTo(width / 2 + rw / 2, ry);
@@ -677,7 +672,7 @@
 
       // Scenery Parallax
       sceneryItems.forEach((item) => {
-        if (gameState === "playing") {
+        if (gameState === "playing" && freezeTimer === 0) {
           item.z += gameSpeed;
           if (item.z >= 1.0) {
             item.z = 0.05;
@@ -690,11 +685,11 @@
         const ry = horizonY + item.z * (height - horizonY);
         const rw = roadStartWidth * (1 - item.z) + roadEndWidth * item.z;
         const sideMultiplier = item.side === "left" ? -1 : 1;
-        const rx = width / 2 + sideMultiplier * (rw / 2 + 50 * scale * (width * 0.002));
+        const rx = width / 2 + sideMultiplier * (rw / 2 + 80 * scale * (width * 0.002));
 
         ctx.save();
         ctx.translate(rx, ry);
-        ctx.scale(scale * 1.5, scale * 1.5);
+        ctx.scale(scale * 2.0, scale * 2.0);
 
         ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(120, 155, 133, 0.25)";
         if (item.type === "tree") {
@@ -713,7 +708,7 @@
           ctx.fillRect(-2.5, 5, 5, 8);
         } else if (item.type === "windmill") {
           ctx.fillRect(-2, -35, 4, 35);
-          item.rot += 0.015;
+          item.rot += 0.012;
           ctx.save();
           ctx.translate(0, -35);
           ctx.rotate(item.rot);
@@ -732,25 +727,30 @@
       });
 
       // Spawning updates
-      if (gameState === "playing") {
+      if (gameState === "playing" && freezeTimer === 0) {
         distanceTraveled += 0.25;
 
+        let lastItemZ = 0;
+        if (roadItems.length > 0) {
+          lastItemZ = roadItems[roadItems.length - 1].z;
+        }
+
         spawnTimer++;
-        if (spawnTimer > 75) {
+        if (spawnTimer > 95 && lastItemZ > 0.48) {
           spawnTimer = 0;
-          const isCrop = Math.random() > 0.4;
+          const isCrop = Math.random() > 0.42;
           if (isCrop) {
-            const cropTypes = ["wheat", "coffee", "tomato", "cotton"];
+            const cropTypes = ["wheat", "tomato"];
             roadItems.push({
               z: 0.05,
               type: "crop",
               subType: cropTypes[Math.floor(Math.random() * cropTypes.length)],
-              xOffset: (Math.random() - 0.5) * 0.4,
+              xOffset: 0,
               collected: false,
               pulse: Math.random() * 5
             });
           } else {
-            const obstacleTypes = ["rock", "haybale", "stump", "cow"];
+            const obstacleTypes = ["rock", "haybale", "cow"];
             roadItems.push({
               z: 0.05,
               type: "obstacle",
@@ -775,19 +775,18 @@
           }
         }
 
-        tractor.wheelRot += gameSpeed * 8;
-        tractor.vibration = Math.sin(Date.now() * 0.08) * 0.8;
+        tractor.wheelRot += gameSpeed * 9;
+        tractor.vibration = Math.sin(Date.now() * 0.08) * 1.1;
       }
 
-      // Scenery updates & draw
+      // Draw Items
       for (let i = roadItems.length - 1; i >= 0; i--) {
         const item = roadItems[i];
-        if (gameState === "playing") item.z += gameSpeed;
+        if (gameState === "playing" && freezeTimer === 0) item.z += gameSpeed;
 
-        const scale = Math.pow(item.z, 2.5);
+        const scale = Math.pow(item.z, 2.3);
         const ry = horizonY + item.z * (height - horizonY);
-        const rw = roadStartWidth * (1 - item.z) + roadEndWidth * item.z;
-        const rx = width / 2 + item.xOffset * scale * (width * 0.25);
+        const rx = width / 2;
 
         if (item.z >= 1.05) {
           roadItems.splice(i, 1);
@@ -795,28 +794,38 @@
         }
 
         // Collision Check
-        if (item.z >= 0.80 && item.z <= 0.90) {
+        if (item.z >= 0.78 && item.z <= 0.88 && freezeTimer === 0) {
           if (item.type === "obstacle") {
-            const obsHeightMap = { rock: 35, haybale: 45, stump: 38, cow: 55 };
-            const obstacleHeight = obsHeightMap[item.subType] || 40;
+            const obsHeightMap = { rock: 65, haybale: 75, cow: 85 };
+            const obstacleHeight = obsHeightMap[item.subType] || 70;
             
-            if (tractor.yOffset < obstacleHeight - 10) {
-              gameState = "gameover";
-              finalScoreVal.textContent = formatWeight(scoreHarvestVal);
-              gameOverOverlay.classList.add("show");
-              if (scoreHarvestVal > highScore) {
-                highScore = scoreHarvestVal;
-                try { localStorage.setItem("sourcetrace_tractor_weight_highscore", highScore.toString()); } catch(e) {}
+            if (tractor.yOffset < obstacleHeight - 15) {
+              freezeTimer = 18;
+              collidedItemIdx = i;
+              cameraShake = 16;
+              
+              for (let d = 0; d < 30; d++) {
+                particles.push({
+                  x: rx + (Math.random() - 0.5) * 80,
+                  y: ry - 20,
+                  vx: (Math.random() - 0.5) * 12,
+                  vy: -2 - Math.random() * 6,
+                  size: 5 + Math.random() * 8,
+                  color: "rgba(180, 50, 50, 0.8)",
+                  alpha: 1.0,
+                  life: 0,
+                  maxLife: 30 + Math.random() * 15
+                });
               }
             }
           } else if (item.type === "crop" && !item.collected) {
             item.collected = true;
-            const rewardMap = { wheat: 25, coffee: 15, tomato: 35, cotton: 40 };
+            const rewardMap = { wheat: 25, tomato: 35 };
             const weightReward = rewardMap[item.subType] || 20;
             scoreHarvestVal += weightReward;
             scoreVal.textContent = formatWeight(scoreHarvestVal);
             
-            spawnSparks(rx, ry - 30 * scale, item.subType === "wheat" ? "#FBBF24" : item.subType === "coffee" ? "#EF4444" : "#10B981");
+            spawnSparks(rx, ry - 30 * scale, item.subType === "wheat" ? "#FBBF24" : "#EF4444");
             triggerFloatingText(`+${weightReward} kg ${item.subType.toUpperCase()}`, rx, ry - 40);
           }
         }
@@ -825,74 +834,83 @@
         if (item.type === "obstacle") {
           ctx.save();
           ctx.translate(rx, ry);
-          ctx.scale(scale * 2.2, scale * 2.2);
+          const isCollidedThis = (collidedItemIdx === i);
+          const finalScaleMultiplier = isCollidedThis ? scale * 3.8 : scale * 2.8;
+          ctx.scale(finalScaleMultiplier, finalScaleMultiplier);
 
-          ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
+          ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
           ctx.beginPath();
-          ctx.ellipse(0, 0, 15, 4, 0, 0, Math.PI * 2);
+          ctx.ellipse(0, 0, 16, 4.5, 0, 0, Math.PI * 2);
           ctx.fill();
 
-          ctx.fillStyle = item.color;
-          if (item.subType === "rock") {
-            ctx.fillStyle = "#374151";
+          if (isCollidedThis && Math.floor(Date.now() / 80) % 2 === 0) {
+            ctx.fillStyle = "#DC2626";
             ctx.beginPath();
-            ctx.moveTo(-12, 0);
-            ctx.lineTo(-8, -16);
-            ctx.lineTo(6, -14);
-            ctx.lineTo(12, 0);
-            ctx.closePath();
+            ctx.arc(0, -10, 15, 0, Math.PI * 2);
             ctx.fill();
-          } else if (item.subType === "haybale") {
-            ctx.fillStyle = "#B45309";
-            ctx.beginPath();
-            ctx.ellipse(0, -10, 12, 10, 0, 0, Math.PI * 2);
-            ctx.fill();
-          } else if (item.subType === "stump") {
-            ctx.fillStyle = "#451A03";
-            ctx.fillRect(-8, -15, 16, 15);
-          } else if (item.subType === "cow") {
-            ctx.fillStyle = "#F3F4F6";
-            ctx.beginPath();
-            ctx.roundRect(-14, -18, 28, 18, 4);
-            ctx.fill();
+          } else {
+            ctx.fillStyle = item.color;
+            if (item.subType === "rock") {
+              ctx.fillStyle = "#2D3748";
+              ctx.beginPath();
+              ctx.moveTo(-14, 0);
+              ctx.lineTo(-9, -18);
+              ctx.lineTo(8, -16);
+              ctx.lineTo(14, 0);
+              ctx.closePath();
+              ctx.fill();
+            } else if (item.subType === "haybale") {
+              ctx.fillStyle = "#B45309";
+              ctx.beginPath();
+              ctx.ellipse(0, -12, 14, 12, 0, 0, Math.PI * 2);
+              ctx.fill();
+            } else if (item.subType === "cow") {
+              ctx.fillStyle = "#F3F4F6";
+              ctx.beginPath();
+              ctx.roundRect(-16, -18, 32, 18, 4);
+              ctx.fill();
+            }
           }
           ctx.restore();
         } else if (item.type === "crop" && !item.collected) {
           const hoverOffset = Math.sin(item.pulse) * 5 * scale;
           ctx.save();
-          ctx.translate(rx, ry - 35 * scale + hoverOffset);
-          ctx.scale(scale * 2.2, scale * 2.2);
+          ctx.translate(rx, ry - 45 * scale + hoverOffset);
+          ctx.scale(scale * 2.5, scale * 2.5);
 
-          ctx.shadowBlur = 15;
-          ctx.shadowColor = item.subType === "wheat" ? "#F59E0B" : item.subType === "coffee" ? "#EF4444" : "#10B981";
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = item.subType === "wheat" ? "#F59E0B" : "#EF4444";
           ctx.fillStyle = item.color;
 
           if (item.subType === "wheat") {
             ctx.beginPath();
-            ctx.ellipse(0, 0, 6, 12, 0.1, 0, Math.PI * 2);
-            ctx.fill();
-          } else if (item.subType === "coffee") {
-            ctx.beginPath();
-            ctx.arc(-4, 2, 6, 0, Math.PI * 2);
-            ctx.arc(4, 0, 6, 0, Math.PI * 2);
+            ctx.ellipse(0, 0, 7, 13, 0.1, 0, Math.PI * 2);
             ctx.fill();
           } else if (item.subType === "tomato") {
             ctx.beginPath();
             ctx.arc(0, 0, 9, 0, Math.PI * 2);
-            ctx.fill();
-          } else if (item.subType === "cotton") {
-            ctx.beginPath();
-            ctx.arc(-4, 0, 6, 0, Math.PI * 2);
-            ctx.arc(4, 0, 6, 0, Math.PI * 2);
-            ctx.arc(0, -4, 6, 0, Math.PI * 2);
             ctx.fill();
           }
           ctx.restore();
         }
       }
 
-      // Draw Behind View Tractor
-      const tractorBounce = gameState === "playing" ? tractor.vibration : 0;
+      // Freeze frame countdown
+      if (freezeTimer > 0) {
+        freezeTimer--;
+        if (freezeTimer === 0) {
+          gameState = "gameover";
+          finalScoreVal.textContent = formatWeight(scoreHarvestVal);
+          gameOverOverlay.classList.add("show");
+          if (scoreHarvestVal > highScore) {
+            highScore = scoreHarvestVal;
+            try { localStorage.setItem("sourcetrace_tractor_weight_highscore", highScore.toString()); } catch(e) {}
+          }
+        }
+      }
+
+      // Draw Behind View Tractor (2.5x larger)
+      const tractorBounce = (gameState === "playing" && freezeTimer === 0) ? tractor.vibration : 0;
       const curY = tractor.y - tractor.yOffset + tractorBounce;
 
       ctx.save();
@@ -901,47 +919,47 @@
       // Mudguards
       ctx.fillStyle = "#0B3D2E";
       ctx.beginPath();
-      ctx.roundRect(-66, -18, 22, 16, 5);
-      ctx.roundRect(44, -18, 22, 16, 5);
+      ctx.roundRect(-102, -26, 32, 24, 6);
+      ctx.roundRect(70, -26, 32, 24, 6);
       ctx.fill();
 
       // Tyres
       ctx.fillStyle = "#1F2937";
       ctx.beginPath();
-      ctx.roundRect(-64, -2, 18, 42, 6);
-      ctx.roundRect(46, -2, 18, 42, 6);
+      ctx.roundRect(-100, -4, 26, 62, 8);
+      ctx.roundRect(74, -4, 26, 62, 8);
       ctx.fill();
       
       // Rims
       ctx.fillStyle = "#FBBF24";
       ctx.beginPath();
-      ctx.arc(-55, 18, 10, 0, Math.PI * 2);
-      ctx.arc(55, 18, 10, 0, Math.PI * 2);
+      ctx.arc(-87, 26, 14, 0, Math.PI * 2);
+      ctx.arc(87, 26, 14, 0, Math.PI * 2);
       ctx.fill();
 
       // Chassis
       ctx.fillStyle = "#0B3D2E";
       ctx.beginPath();
-      ctx.roundRect(-42, -6, 84, 34, 8);
+      ctx.roundRect(-66, -10, 132, 50, 10);
       ctx.fill();
 
       // Cabin
       ctx.beginPath();
-      ctx.roundRect(-30, -56, 60, 52, [12, 12, 4, 4]);
+      ctx.roundRect(-46, -82, 92, 78, [18, 18, 5, 5]);
       ctx.fill();
 
       // Window
-      let windowGrad = ctx.createLinearGradient(-22, -48, 22, -18);
+      let windowGrad = ctx.createLinearGradient(-34, -70, 34, -28);
       windowGrad.addColorStop(0, "#E0F2FE");
       windowGrad.addColorStop(1, "#86EFAC");
       ctx.fillStyle = windowGrad;
       ctx.beginPath();
-      ctx.roundRect(-22, -48, 44, 28, 6);
+      ctx.roundRect(-34, -70, 68, 42, 8);
       ctx.fill();
 
       // Exhaust
       ctx.fillStyle = "#4B5563";
-      ctx.fillRect(-38, -48, 5, 42);
+      ctx.fillRect(-58, -70, 7, 62);
 
       ctx.restore();
 

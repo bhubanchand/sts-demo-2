@@ -10,9 +10,9 @@ interface AgriGameProps {
 
 interface RoadElement {
   z: number; // 0 (horizon) to 1 (screen bottom)
-  type: "obstacle" | "crop" | "scenery";
+  type: "obstacle" | "crop";
   subType: string;
-  xOffset: number; // -1 (left road edge) to +1 (right road edge)
+  xOffset: number; // always 0 for center lane alignment
   collected: boolean;
   pulse: number;
 }
@@ -75,37 +75,41 @@ export function AgriGame({ mode }: AgriGameProps) {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Horizon Y coordinate (Road starts here)
-    let horizonY = height * 0.45;
+    // Zoomed Camera: Horizon Y sits higher, road takes up 78% of viewport
+    let horizonY = height * 0.22;
     let groundY = height;
 
     const handleResize = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      horizonY = height * 0.45;
+      horizonY = height * 0.22;
       groundY = height;
     };
     window.addEventListener("resize", handleResize);
 
     // Game variables
-    let gameSpeed = 0.009; // Scroll increment for Z axis
+    let gameSpeed = 0.011; // Slightly faster scroll
     let distanceTraveled = 0;
     let currentWeight = 0;
     let lastAchievementDistance = 0;
     let cameraShake = 0;
+
+    // Collision Freeze states
+    let freezeTimer = 0;
+    let collidedItemIdx = -1;
     let cycleTimer = 0;
     let activeWeather: "sun" | "sunset" | "night" | "rain" = "sun";
 
-    // 3D Tractor properties (Positioned bottom center looking down the road)
+    // Zoomed Camera: Tractor is 2.5x larger (from 110x88 to 260x208)
     const tractor = {
       x: width / 2,
-      y: height * 0.88,
-      width: 140, // Large, detailed 3D clay size
-      height: 110,
-      yOffset: 0, // Vertical offset from jumping
+      y: height * 0.76, // Sits prominently in foreground
+      width: 250,
+      height: 190,
+      yOffset: 0,
       vy: 0,
-      gravity: 0.7,
-      jumpStrength: -15,
+      gravity: 0.8,
+      jumpStrength: -18,
       isJumping: false,
       vibration: 0,
       wheelRot: 0
@@ -114,55 +118,54 @@ export function AgriGame({ mode }: AgriGameProps) {
     // Game elements moving down the road
     let roadItems: RoadElement[] = [];
     let particles: Particle[] = [];
-    let roadDashes: number[] = [0, 0.25, 0.5, 0.75]; // For road lines motion
+    let roadDashes: number[] = [0, 0.2, 0.4, 0.6, 0.8]; // For road lines motion
 
-    // Background decoration items
+    // Background decoration (Pastel & Desaturated)
     const clouds = [
-      { x: width * 0.15, y: height * 0.12, size: 60 },
-      { x: width * 0.55, y: height * 0.08, size: 85 },
-      { x: width * 0.85, y: height * 0.16, size: 50 }
+      { x: width * 0.15, y: horizonY * 0.3, size: 50 },
+      { x: width * 0.55, y: horizonY * 0.2, size: 70 },
+      { x: width * 0.85, y: horizonY * 0.4, size: 40 }
     ];
 
-    // Distant mountain coordinates (Muted, de-saturated)
     const mountains = [
-      { x: width * 0.1, w: width * 0.4, h: height * 0.18 },
-      { x: width * 0.45, w: width * 0.5, h: height * 0.22 },
-      { x: width * 0.75, w: width * 0.35, h: height * 0.15 }
+      { x: width * 0.1, w: width * 0.4, h: horizonY * 0.8 },
+      { x: width * 0.45, w: width * 0.5, h: horizonY * 0.9 },
+      { x: width * 0.75, w: width * 0.35, h: horizonY * 0.7 }
     ];
 
-    // Scenery assets on the sides of the road (Trees, windmills, sheds)
+    // Scenery assets on the sides of the road (Pastel, de-saturated silhouettes)
     interface SceneryItem {
       z: number;
       side: "left" | "right";
-      type: "tree" | "windmill" | "silo" | "building";
+      type: "tree" | "windmill";
       rot: number;
     }
     let sceneryItems: SceneryItem[] = [
       { z: 0.1, side: "left", type: "tree", rot: 0 },
       { z: 0.3, side: "right", type: "windmill", rot: 0 },
-      { z: 0.5, side: "left", type: "silo", rot: 0 },
+      { z: 0.5, side: "left", type: "tree", rot: 0 },
       { z: 0.7, side: "right", type: "tree", rot: 0 },
       { z: 0.9, side: "left", type: "windmill", rot: 1 }
     ];
 
-    // Spawning controls
+    // Spawning control - enforcing large distances between objects
     let spawnTimer = 0;
 
     const triggerJump = () => {
-      if (gameState === "playing" && !tractor.isJumping) {
+      if (gameState === "playing" && !tractor.isJumping && freezeTimer === 0) {
         tractor.vy = tractor.jumpStrength;
         tractor.isJumping = true;
       }
     };
 
     const spawnSparks = (x: number, y: number, color: string) => {
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 10; i++) {
         particles.push({
           x,
           y,
-          vx: (Math.random() - 0.5) * 5,
-          vy: (Math.random() - 0.5) * 5,
-          size: 2 + Math.random() * 3,
+          vx: (Math.random() - 0.5) * 6,
+          vy: (Math.random() - 0.5) * 6,
+          size: 2.5 + Math.random() * 4,
           color,
           alpha: 1.0,
           life: 0,
@@ -172,25 +175,25 @@ export function AgriGame({ mode }: AgriGameProps) {
     };
 
     const spawnLandingDust = () => {
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 25; i++) {
         particles.push({
-          x: width / 2 + (Math.random() - 0.5) * 60,
-          y: tractor.y + 10,
-          vx: (Math.random() - 0.5) * 6,
-          vy: -1 - Math.random() * 3,
-          size: 3 + Math.random() * 6,
-          color: "rgba(167, 133, 100, 0.4)",
-          alpha: 0.8,
+          x: width / 2 + (Math.random() - 0.5) * 110,
+          y: tractor.y + 35,
+          vx: (Math.random() - 0.5) * 9,
+          vy: -1.5 - Math.random() * 4,
+          size: 4 + Math.random() * 8,
+          color: "rgba(167, 133, 100, 0.45)",
+          alpha: 0.85,
           life: 0,
-          maxLife: 25 + Math.random() * 15
+          maxLife: 25 + Math.random() * 20
         });
       }
-      cameraShake = 8; // landing camera shake
+      cameraShake = 9;
     };
 
     const triggerFloatingText = (text: string) => {
       const id = Date.now() + Math.random();
-      setFloatingText((prev) => [...prev, { text, x: width / 2, y: tractor.y - 60, id }]);
+      setFloatingText((prev) => [...prev, { text, x: width / 2, y: tractor.y - 120, id }]);
       setTimeout(() => {
         setFloatingText((prev) => prev.filter((t) => t.id !== id));
       }, 1500);
@@ -201,8 +204,10 @@ export function AgriGame({ mode }: AgriGameProps) {
       particles = [];
       distanceTraveled = 0;
       currentWeight = 0;
+      freezeTimer = 0;
+      collidedItemIdx = -1;
       setHarvestWeight(0);
-      gameSpeed = 0.009;
+      gameSpeed = 0.011;
       tractor.yOffset = 0;
       tractor.vy = 0;
       tractor.isJumping = false;
@@ -227,7 +232,7 @@ export function AgriGame({ mode }: AgriGameProps) {
     const render = () => {
       if (!ctx || !canvas) return;
 
-      // ── TIME/WEATHER CYCLES ──
+      // ── WEATHER CYCLES ──
       cycleTimer++;
       if (cycleTimer > 950) {
         cycleTimer = 0;
@@ -264,19 +269,7 @@ export function AgriGame({ mode }: AgriGameProps) {
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, width, horizonY);
 
-      // Moon / Sun
-      if (activeWeather === "night") {
-        ctx.fillStyle = "rgba(254, 240, 138, 0.4)";
-        ctx.beginPath();
-        ctx.arc(width - 120, 70, 20, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = skyGrad;
-        ctx.beginPath();
-        ctx.arc(width - 130, 65, 20, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // ── PARALLAX LAYER 1: Distant Mountains ──
+      // Distant Mountains
       ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(178, 220, 192, 0.15)";
       mountains.forEach((mtn) => {
         ctx.beginPath();
@@ -291,10 +284,9 @@ export function AgriGame({ mode }: AgriGameProps) {
       ctx.fillStyle = activeWeather === "night" ? "#041C15" : "#EAF5EE";
       ctx.fillRect(0, horizonY, width, height - horizonY);
 
-      // ── ROAD RENDERING (VANISHING PERSPECTIVE ROAD) ──
-      // Trapezoid road geometry
-      const roadStartWidth = 24; // Width at vanishing point
-      const roadEndWidth = width * 0.72; // Width at bottom of screen
+      // ── ROAD RENDERING (Obvious gameplay lane, 78% of viewport) ──
+      const roadStartWidth = 48; // Wider vanishing point
+      const roadEndWidth = width * 0.95; // Wider screen bottom road
       
       const leftHorizonX = width / 2 - roadStartWidth / 2;
       const rightHorizonX = width / 2 + roadStartWidth / 2;
@@ -313,7 +305,7 @@ export function AgriGame({ mode }: AgriGameProps) {
 
       // Road grass borders (shading on edges)
       ctx.strokeStyle = activeWeather === "night" ? "#052E20" : "#A1C6A0";
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 6;
       ctx.beginPath();
       ctx.moveTo(leftHorizonX, horizonY);
       ctx.lineTo(leftBottomX, height);
@@ -322,7 +314,7 @@ export function AgriGame({ mode }: AgriGameProps) {
       ctx.stroke();
 
       // Road dashes / dirt ridges (pseudo-3D motion lines)
-      if (gameState === "playing") {
+      if (gameState === "playing" && freezeTimer === 0) {
         for (let i = 0; i < roadDashes.length; i++) {
           roadDashes[i] += gameSpeed * 1.5;
           if (roadDashes[i] >= 1.0) roadDashes[i] = 0;
@@ -330,11 +322,9 @@ export function AgriGame({ mode }: AgriGameProps) {
       }
       ctx.strokeStyle = activeWeather === "night" ? "rgba(11,61,46,0.2)" : "rgba(31,89,70,0.08)";
       roadDashes.forEach((z) => {
-        // Perspective Y
         const ry = horizonY + z * (height - horizonY);
-        // Perspective Width
         const rw = roadStartWidth * (1 - z) + roadEndWidth * z;
-        ctx.lineWidth = 1 + z * 8;
+        ctx.lineWidth = 1.5 + z * 11;
         ctx.beginPath();
         ctx.moveTo(width / 2 - rw / 2, ry);
         ctx.lineTo(width / 2 + rw / 2, ry);
@@ -343,7 +333,7 @@ export function AgriGame({ mode }: AgriGameProps) {
 
       // ── SCENERY ASSETS (Parallax trees, windmills scrolling past the road sides) ──
       sceneryItems.forEach((item) => {
-        if (gameState === "playing") {
+        if (gameState === "playing" && freezeTimer === 0) {
           item.z += gameSpeed;
           if (item.z >= 1.0) {
             item.z = 0.05;
@@ -352,43 +342,35 @@ export function AgriGame({ mode }: AgriGameProps) {
           }
         }
 
-        const scale = Math.pow(item.z, 2); // Exponential scaling for realistic 3D appearance
+        const scale = Math.pow(item.z, 2); 
         const ry = horizonY + item.z * (height - horizonY);
         const rw = roadStartWidth * (1 - item.z) + roadEndWidth * item.z;
-        
-        // Offset away from the road edges based on scale
         const sideMultiplier = item.side === "left" ? -1 : 1;
-        const rx = width / 2 + sideMultiplier * (rw / 2 + 50 * scale * (width * 0.002));
+        const rx = width / 2 + sideMultiplier * (rw / 2 + 80 * scale * (width * 0.002));
 
         ctx.save();
         ctx.translate(rx, ry);
-        ctx.scale(scale * 1.5, scale * 1.5);
+        ctx.scale(scale * 2.0, scale * 2.0); // 40-50% scale zoom
 
         // Muted de-saturated silhouettes of scenery
         ctx.fillStyle = activeWeather === "night" ? "rgba(30, 41, 59, 0.12)" : "rgba(120, 155, 133, 0.25)";
         if (item.type === "tree") {
-          // Rounded clay-like pine tree shape
           ctx.beginPath();
           ctx.moveTo(0, -40);
           ctx.lineTo(-12, -15);
           ctx.lineTo(12, -15);
           ctx.closePath();
           ctx.fill();
-          
           ctx.beginPath();
           ctx.moveTo(0, -25);
           ctx.lineTo(-18, 5);
           ctx.lineTo(18, 5);
           ctx.closePath();
           ctx.fill();
-          
-          // Trunk
           ctx.fillRect(-2.5, 5, 5, 8);
         } else if (item.type === "windmill") {
-          // Windmill
           ctx.fillRect(-2, -35, 4, 35);
-          
-          item.rot += 0.015;
+          item.rot += 0.012;
           ctx.save();
           ctx.translate(0, -35);
           ctx.rotate(item.rot);
@@ -406,32 +388,39 @@ export function AgriGame({ mode }: AgriGameProps) {
         ctx.restore();
       });
 
-      // ── GAME PLAYPHYSICS & GAMEPLAY SPAWNINGS ──
-      if (gameState === "playing") {
+      // ── GAME PLAY LOGIC & SPAWNINGS ──
+      if (gameState === "playing" && freezeTimer === 0) {
         distanceTraveled += 0.25;
 
-        // Spawning timer (Crops and Obstacles)
+        // Spawning timer (Enforcing large spacing - at least Z = 0.5 difference)
+        let lastItemZ = 0;
+        if (roadItems.length > 0) {
+          lastItemZ = roadItems[roadItems.length - 1].z;
+        }
+
         spawnTimer++;
-        if (spawnTimer > 75) {
+        if (spawnTimer > 95 && lastItemZ > 0.48) {
           spawnTimer = 0;
-          const isCrop = Math.random() > 0.4;
+          const isCrop = Math.random() > 0.42;
           if (isCrop) {
-            const cropTypes = ["wheat", "coffee", "tomato", "cotton"];
+            // Simplified: 2 Collectibles (Wheat, Tomato)
+            const cropTypes = ["wheat", "tomato"];
             roadItems.push({
               z: 0.05,
               type: "crop",
               subType: cropTypes[Math.floor(Math.random() * cropTypes.length)],
-              xOffset: (Math.random() - 0.5) * 0.4, // float near center lane
+              xOffset: 0,
               collected: false,
               pulse: Math.random() * 5
             });
           } else {
-            const obstacleTypes = ["rock", "haybale", "stump", "cow"];
+            // Simplified: 3 Obstacles (Rock, Haybale, Cow)
+            const obstacleTypes = ["rock", "haybale", "cow"];
             roadItems.push({
               z: 0.05,
               type: "obstacle",
               subType: obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)],
-              xOffset: 0, // Hazards always block the center lane!
+              xOffset: 0, 
               collected: false,
               pulse: 0
             });
@@ -452,21 +441,23 @@ export function AgriGame({ mode }: AgriGameProps) {
           }
         }
 
-        tractor.wheelRot += gameSpeed * 8;
-        tractor.vibration = Math.sin(Date.now() * 0.08) * 0.8;
+        tractor.wheelRot += gameSpeed * 9;
+        tractor.vibration = Math.sin(Date.now() * 0.08) * 1.1;
       }
 
       // ── UPDATE & DRAW GAMEPLAY ROAD ITEMS (Obstacles & Crops) ──
       for (let i = roadItems.length - 1; i >= 0; i--) {
         const item = roadItems[i];
-        if (gameState === "playing") {
+        
+        // Scroll items only when not frozen
+        if (gameState === "playing" && freezeTimer === 0) {
           item.z += gameSpeed;
         }
 
-        const scale = Math.pow(item.z, 2.5); // Fast scale up as it comes near
+        // Zoomed Camera scale parameters (2.5x larger assets)
+        const scale = Math.pow(item.z, 2.3); 
         const ry = horizonY + item.z * (height - horizonY);
-        const rw = roadStartWidth * (1 - item.z) + roadEndWidth * item.z;
-        const rx = width / 2 + item.xOffset * scale * (width * 0.25);
+        const rx = width / 2;
 
         // Remove offscreen
         if (item.z >= 1.05) {
@@ -474,29 +465,41 @@ export function AgriGame({ mode }: AgriGameProps) {
           continue;
         }
 
-        // ── TRACTOR COLLISION CHECK (At Z ≈ 0.82 to 0.90) ──
-        if (item.z >= 0.80 && item.z <= 0.90) {
+        // ── TRACTOR COLLISION CHECK (At Z ≈ 0.80 to 0.88) ──
+        if (item.z >= 0.78 && item.z <= 0.88 && freezeTimer === 0) {
           if (item.type === "obstacle") {
-            // Check if jumping (Jumping offset is > height of obstacle)
-            const obsHeightMap = { rock: 35, haybale: 45, stump: 38, cow: 55 };
-            const obstacleHeight = obsHeightMap[item.subType as keyof typeof obsHeightMap] || 40;
+            const obsHeightMap = { rock: 65, haybale: 75, cow: 85 };
+            const obstacleHeight = obsHeightMap[item.subType as keyof typeof obsHeightMap] || 70;
             
-            if (tractor.yOffset < obstacleHeight - 10) {
-              setGameState("gameover");
-              if (currentWeight > highScore) {
-                setHighScore(currentWeight);
-                localStorage.setItem("sourcetrace_tractor_weight_highscore", currentWeight.toString());
+            if (tractor.yOffset < obstacleHeight - 15) {
+              // COLLISION TRIGGERED! Start freeze frame animations
+              freezeTimer = 18; // ~300ms freeze
+              collidedItemIdx = i;
+              cameraShake = 16;  // Intense shake
+              
+              // Spawn impact dust
+              for (let d = 0; d < 30; d++) {
+                particles.push({
+                  x: rx + (Math.random() - 0.5) * 80,
+                  y: ry - 20,
+                  vx: (Math.random() - 0.5) * 12,
+                  vy: -2 - Math.random() * 6,
+                  size: 5 + Math.random() * 8,
+                  color: "rgba(180, 50, 50, 0.8)", // red impact sparks
+                  alpha: 1.0,
+                  life: 0,
+                  maxLife: 30 + Math.random() * 15
+                });
               }
             }
           } else if (item.type === "crop" && !item.collected) {
             item.collected = true;
-            const rewardMap = { wheat: 25, coffee: 15, tomato: 35, cotton: 40 };
+            const rewardMap = { wheat: 25, tomato: 35 };
             const weightReward = rewardMap[item.subType as keyof typeof rewardMap] || 20;
             currentWeight += weightReward;
             setHarvestWeight(currentWeight);
             
-            // Spark splash and floating text
-            spawnSparks(rx, ry - 30 * scale, item.subType === "wheat" ? "#FBBF24" : item.subType === "coffee" ? "#EF4444" : "#10B981");
+            spawnSparks(rx, ry - 30 * scale, item.subType === "wheat" ? "#FBBF24" : "#EF4444");
             triggerFloatingText(`+${weightReward} kg ${item.subType.toUpperCase()}`);
           }
         }
@@ -508,76 +511,79 @@ export function AgriGame({ mode }: AgriGameProps) {
              ═══════════════════════════════════════ */
           ctx.save();
           ctx.translate(rx, ry);
-          ctx.scale(scale * 2.2, scale * 2.2);
+          
+          // Collision impact enlargement + flash red
+          const isCollidedThis = (collidedItemIdx === i);
+          const finalScaleMultiplier = isCollidedThis ? scale * 3.8 : scale * 2.8; // 2-3x larger obstacles
+          ctx.scale(finalScaleMultiplier, finalScaleMultiplier);
 
-          // Ambient drop shadow beneath hazard
-          ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
+          // Shadow
+          ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
           ctx.beginPath();
-          ctx.ellipse(0, 0, 15, 4, 0, 0, Math.PI * 2);
+          ctx.ellipse(0, 0, 16, 4.5, 0, 0, Math.PI * 2);
           ctx.fill();
 
-          if (item.subType === "rock") {
-            // Faceted Dark Charcoal Matte Rock
+          if (isCollidedThis && Math.floor(Date.now() / 80) % 2 === 0) {
+            // Flash Solid Red on collision
+            ctx.fillStyle = "#DC2626";
+            ctx.beginPath();
+            ctx.arc(0, -10, 15, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
             ctx.fillStyle = "#374151";
-            ctx.beginPath();
-            ctx.moveTo(-12, 0);
-            ctx.lineTo(-8, -16);
-            ctx.lineTo(6, -14);
-            ctx.lineTo(12, 0);
-            ctx.closePath();
-            ctx.fill();
-            
-            ctx.fillStyle = "#1F2937"; // Shaded side
-            ctx.beginPath();
-            ctx.moveTo(-12, 0);
-            ctx.lineTo(-8, -16);
-            ctx.lineTo(-2, 0);
-            ctx.closePath();
-            ctx.fill();
-          } else if (item.subType === "haybale") {
-            // Matte cylindrical straw hay bale
-            ctx.fillStyle = "#B45309";
-            ctx.beginPath();
-            ctx.ellipse(0, -10, 12, 10, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = "#F59E0B";
-            ctx.beginPath();
-            ctx.ellipse(0, -10, 10, 8, 0, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.strokeStyle = "#78350F";
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.arc(0, -10, 5, 0, Math.PI * 1.5);
-            ctx.stroke();
-          } else if (item.subType === "stump") {
-            // Tree Stump
-            ctx.fillStyle = "#451A03";
-            ctx.fillRect(-8, -15, 16, 15);
-            ctx.fillStyle = "#FDBA74"; // wood core top
-            ctx.beginPath();
-            ctx.ellipse(0, -15, 8, 2.5, 0, 0, Math.PI * 2);
-            ctx.fill();
-          } else if (item.subType === "cow") {
-            // Grounded blocky clay cow shape
-            ctx.fillStyle = "#F3F4F6"; // White body
-            ctx.beginPath();
-            ctx.roundRect(-14, -18, 28, 18, 4);
-            ctx.fill();
-            // Black patches
-            ctx.fillStyle = "#111827";
-            ctx.beginPath();
-            ctx.arc(-8, -14, 5, 0, Math.PI * 2);
-            ctx.arc(4, -12, 4, 0, Math.PI * 2);
-            ctx.fill();
-            // Head
-            ctx.fillStyle = "#F3F4F6";
-            ctx.beginPath();
-            ctx.roundRect(8, -26, 10, 12, 3);
-            ctx.fill();
-            // snout
-            ctx.fillStyle = "#FCA5A5";
-            ctx.fillRect(14, -20, 4, 6);
+            if (item.subType === "rock") {
+              // Large heavy rock silhouette
+              ctx.fillStyle = "#2D3748";
+              ctx.beginPath();
+              ctx.moveTo(-14, 0);
+              ctx.lineTo(-9, -18);
+              ctx.lineTo(8, -16);
+              ctx.lineTo(14, 0);
+              ctx.closePath();
+              ctx.fill();
+              
+              ctx.fillStyle = "#1A202C"; // matte shaded side
+              ctx.beginPath();
+              ctx.moveTo(-14, 0);
+              ctx.lineTo(-9, -18);
+              ctx.lineTo(-3, 0);
+              ctx.closePath();
+              ctx.fill();
+            } else if (item.subType === "haybale") {
+              // Large gold/brown cylinder haybale
+              ctx.fillStyle = "#B45309";
+              ctx.beginPath();
+              ctx.ellipse(0, -12, 14, 12, 0, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.fillStyle = "#D97706";
+              ctx.beginPath();
+              ctx.ellipse(0, -12, 11, 9, 0, 0, Math.PI * 2);
+              ctx.fill();
+              
+              ctx.strokeStyle = "#78350F";
+              ctx.lineWidth = 2.0;
+              ctx.beginPath();
+              ctx.arc(0, -12, 5, 0, Math.PI * 1.5);
+              ctx.stroke();
+            } else if (item.subType === "cow") {
+              // Large blocky white cow with black patches
+              ctx.fillStyle = "#F3F4F6";
+              ctx.beginPath();
+              ctx.roundRect(-16, -18, 32, 18, 4);
+              ctx.fill();
+              ctx.fillStyle = "#111827";
+              ctx.beginPath();
+              ctx.arc(-8, -13, 5, 0, Math.PI * 2);
+              ctx.arc(5, -11, 4, 0, Math.PI * 2);
+              ctx.fill();
+              // head
+              ctx.fillStyle = "#F3F4F6";
+              ctx.beginPath();
+              ctx.roundRect(8, -26, 10, 12, 3);
+              ctx.fill();
+              ctx.fillStyle = "#FCA5A5"; // pink nose
+              ctx.fillRect(14, -20, 4, 6);
+            }
           }
           ctx.restore();
         } else if (item.type === "crop" && !item.collected) {
@@ -586,42 +592,25 @@ export function AgriGame({ mode }: AgriGameProps) {
              ═══════════════════════════════════════ */
           const hoverOffset = Math.sin(item.pulse) * 5 * scale;
           ctx.save();
-          ctx.translate(rx, ry - 35 * scale + hoverOffset);
-          ctx.scale(scale * 2.2, scale * 2.2);
+          ctx.translate(rx, ry - 45 * scale + hoverOffset);
+          ctx.scale(scale * 2.5, scale * 2.5); // 1.8-2x larger collectibles
 
-          // Glowing Outer Shadow Glow
-          ctx.shadowBlur = 15;
-          ctx.shadowColor = item.subType === "wheat" ? "#F59E0B" : item.subType === "coffee" ? "#EF4444" : "#10B981";
+          ctx.shadowBlur = 18;
+          ctx.fillStyle = "#F59E0B";
 
           if (item.subType === "wheat") {
-            // Golden Wheat bundle
+            // Glowing golden wheat bundle
             let cropGrad = ctx.createRadialGradient(0, -6, 2, 0, 0, 12);
             cropGrad.addColorStop(0, "#FDE047");
-            cropGrad.addColorStop(1, "#CA8A04");
+            cropGrad.addColorStop(1, "#D97706");
             ctx.fillStyle = cropGrad;
             ctx.beginPath();
-            ctx.ellipse(0, 0, 6, 12, 0.1, 0, Math.PI * 2);
+            ctx.ellipse(0, 0, 7, 13, 0.1, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = "#EF4444"; // red ribbon tie
-            ctx.fillRect(-6, 1, 12, 2.5);
-          } else if (item.subType === "coffee") {
-            // Glossy Coffee Cherries (Clay styled)
-            let redGrad = ctx.createRadialGradient(-3, -3, 1, 0, 0, 8);
-            redGrad.addColorStop(0, "#FCA5A5");
-            redGrad.addColorStop(1, "#B91C1C");
-            ctx.fillStyle = redGrad;
-            ctx.beginPath();
-            ctx.arc(-4, 2, 6, 0, Math.PI * 2);
-            ctx.arc(4, 0, 6, 0, Math.PI * 2);
-            ctx.fill();
-            // Specular highlights
-            ctx.fillStyle = "#FFF";
-            ctx.beginPath();
-            ctx.arc(-5, 0, 1.5, 0, Math.PI * 2);
-            ctx.arc(3, -2, 1.5, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fillStyle = "#EF4444"; // ribbon
+            ctx.fillRect(-6, 2, 12, 2.5);
           } else if (item.subType === "tomato") {
-            // Glossy bright clay Tomato
+            // Bright red glossy tomato
             let tomGrad = ctx.createRadialGradient(-2, -3, 1, 0, 0, 9);
             tomGrad.addColorStop(0, "#FCA5A5");
             tomGrad.addColorStop(1, "#DC2626");
@@ -629,36 +618,36 @@ export function AgriGame({ mode }: AgriGameProps) {
             ctx.beginPath();
             ctx.arc(0, 0, 9, 0, Math.PI * 2);
             ctx.fill();
-            // spec highlight
             ctx.fillStyle = "#FFF";
             ctx.beginPath();
             ctx.arc(-2, -3, 2, 0, Math.PI * 2);
             ctx.fill();
-            // green leaf cap
-            ctx.fillStyle = "#10B981";
+            ctx.fillStyle = "#10B981"; // green leaf
             ctx.beginPath();
             ctx.moveTo(0, -9);
             ctx.lineTo(-4, -12);
             ctx.lineTo(4, -12);
             ctx.closePath();
             ctx.fill();
-          } else if (item.subType === "cotton") {
-            // Fluffy white Cotton
-            ctx.fillStyle = "#FFF";
-            ctx.shadowColor = "#D1D5DB";
-            ctx.beginPath();
-            ctx.arc(-4, 0, 6, 0, Math.PI * 2);
-            ctx.arc(4, 0, 6, 0, Math.PI * 2);
-            ctx.arc(0, -4, 6, 0, Math.PI * 2);
-            ctx.fill();
           }
           ctx.restore();
         }
       }
 
-      // ── DRAW 3D BEHIND-VIEW CLAY TRACTOR (Gameplay Focus) ──
-      // Dynamic bouncing offset
-      const tractorBounce = gameState === "playing" ? tractor.vibration : 0;
+      // Freeze frame countdown
+      if (freezeTimer > 0) {
+        freezeTimer--;
+        if (freezeTimer === 0) {
+          setGameState("gameover");
+          if (currentWeight > highScore) {
+            setHighScore(currentWeight);
+            localStorage.setItem("sourcetrace_tractor_weight_highscore", currentWeight.toString());
+          }
+        }
+      }
+
+      // ── DRAW 3D BEHIND-VIEW CLAY TRACTOR (Gameplay Focus, 2.5x larger!) ──
+      const tractorBounce = (gameState === "playing" && freezeTimer === 0) ? tractor.vibration : 0;
       const curY = tractor.y - tractor.yOffset + tractorBounce;
 
       ctx.save();
@@ -668,67 +657,61 @@ export function AgriGame({ mode }: AgriGameProps) {
       // Tyre Mudguards (Forest Green rounded clay)
       ctx.fillStyle = "#0B3D2E";
       ctx.beginPath();
-      ctx.roundRect(-66, -18, 22, 16, 5); // left fender
-      ctx.roundRect(44, -18, 22, 16, 5);  // right fender
+      ctx.roundRect(-102, -26, 32, 24, 6); // left fender
+      ctx.roundRect(70, -26, 32, 24, 6);   // right fender
       ctx.fill();
 
       // Huge Clay tyres on left and right sides
       ctx.fillStyle = "#1F2937";
       ctx.beginPath();
-      ctx.roundRect(-64, -2, 18, 42, 6); // left wheel
-      ctx.roundRect(46, -2, 18, 42, 6);  // right wheel
+      ctx.roundRect(-100, -4, 26, 62, 8); // left wheel
+      ctx.roundRect(74, -4, 26, 62, 8);   // right wheel
       ctx.fill();
       
-      // Wheel rim yellow circles (spinning wheel lines)
+      // Wheel rim yellow hub caps
       ctx.fillStyle = "#FBBF24";
       ctx.beginPath();
-      ctx.arc(-55, 18, 10, 0, Math.PI * 2);
-      ctx.arc(55, 18, 10, 0, Math.PI * 2);
+      ctx.arc(-87, 26, 14, 0, Math.PI * 2);
+      ctx.arc(87, 26, 14, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "#D97706";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(-60, 18); ctx.lineTo(-50, 18);
-      ctx.moveTo(50, 18); ctx.lineTo(60, 18);
-      ctx.stroke();
 
       // Center chassis engine block
-      let clayChassis = ctx.createLinearGradient(0, -10, 0, 30);
+      let clayChassis = ctx.createLinearGradient(0, -10, 0, 40);
       clayChassis.addColorStop(0, "#1F7A53");
       clayChassis.addColorStop(1, "#0B3D2E");
       ctx.fillStyle = clayChassis;
       ctx.beginPath();
-      ctx.roundRect(-42, -6, 84, 34, 8);
+      ctx.roundRect(-66, -10, 132, 50, 10);
       ctx.fill();
 
       // Premium rounded cabin cabin back view
       ctx.fillStyle = clayChassis;
       ctx.beginPath();
-      ctx.roundRect(-30, -56, 60, 52, [12, 12, 4, 4]);
+      ctx.roundRect(-46, -82, 92, 78, [18, 18, 5, 5]);
       ctx.fill();
 
       // Big cabin rear glass window
-      let windowGrad = ctx.createLinearGradient(-22, -48, 22, -18);
+      let windowGrad = ctx.createLinearGradient(-34, -70, 34, -28);
       windowGrad.addColorStop(0, "#E0F2FE");
       windowGrad.addColorStop(1, "#86EFAC");
       ctx.fillStyle = windowGrad;
       ctx.beginPath();
-      ctx.roundRect(-22, -48, 44, 28, 6);
+      ctx.roundRect(-34, -70, 68, 42, 8);
       ctx.fill();
 
       // Window gloss line
       ctx.strokeStyle = "rgba(255, 255, 255, 0.55)";
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.moveTo(-14, -44);
-      ctx.lineTo(8, -22);
+      ctx.moveTo(-22, -64);
+      ctx.lineTo(12, -32);
       ctx.stroke();
 
-      // Exhaust pipe on the left side blowing smoke circles
+      // Exhaust pipe on the left side
       ctx.fillStyle = "#4B5563";
-      ctx.fillRect(-38, -48, 5, 42);
+      ctx.fillRect(-58, -70, 7, 62);
       ctx.fillStyle = "#1F2937";
-      ctx.fillRect(-39, -52, 7, 4);
+      ctx.fillRect(-60, -76, 11, 6);
 
       ctx.restore(); // restore behind-view translation
 
@@ -797,24 +780,24 @@ export function AgriGame({ mode }: AgriGameProps) {
       />
 
       {/* ═══════════════════════════════════════
-          HUD UI OVERLAYS (WCAG AA Contrast Compliant)
+          HUD UI OVERLAYS (WCAG AA Contrast Compliant, 100px Safe Offset)
           ═══════════════════════════════════════ */}
       
-      {/* Top-Left: Translucent dark-green glass panel */}
-      <div className="absolute top-8 left-8 z-10 bg-[#0B3D2E]/90 border border-white/10 p-5 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.18)] max-w-sm text-left pointer-events-none select-none backdrop-blur-md">
-        <span className="font-black text-2xl uppercase tracking-widest text-white block leading-none">
+      {/* Top-Left: Translucent dark-green glass panel offset below MegaMenu */}
+      <div className="absolute top-[100px] left-12 z-10 bg-[#0B3D2E]/95 border border-white/10 p-6 rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.22)] max-w-sm text-left pointer-events-none select-none backdrop-blur-md">
+        <span className="font-black text-3xl uppercase tracking-widest text-white block leading-none">
           {headingInfo.title}
         </span>
-        <h1 className="font-extrabold text-sm tracking-wider uppercase text-[#86EFAC] mt-1.5 leading-snug">
+        <h1 className="font-extrabold text-sm tracking-wider uppercase text-[#86EFAC] mt-2.5 leading-snug">
           {headingInfo.subtitle}
         </h1>
-        <p className="text-xs text-[#E6FDF0] mt-1.5 font-medium leading-relaxed">
+        <p className="text-xs text-[#E6FDF0] mt-2 font-medium leading-relaxed">
           {headingInfo.desc}
         </p>
       </div>
 
-      {/* Top-Right: Harvest score box */}
-      <div className="absolute top-8 right-8 z-10 pointer-events-none text-right font-black text-3xl text-[#0B3D2E] tracking-tight">
+      {/* Top-Right: Harvest score box offset below MegaMenu */}
+      <div className="absolute top-[100px] right-12 z-10 pointer-events-none text-right font-black text-4xl text-[#0B3D2E] tracking-tight">
         <span className="text-xs uppercase font-extrabold tracking-widest text-[#1F7A53] block mb-0.5">🌾 Harvest</span>
         {formattedWeight}
       </div>
@@ -824,7 +807,7 @@ export function AgriGame({ mode }: AgriGameProps) {
         <div 
           key={item.id}
           style={{ left: item.x, top: item.y }}
-          className="absolute z-20 -translate-x-1/2 font-black text-sm uppercase text-[#10B981] bg-white border border-[#0B3D2E]/10 py-1.5 px-3.5 rounded-full shadow-md animate-ping"
+          className="absolute z-20 -translate-x-1/2 font-black text-base uppercase text-[#10B981] bg-white border border-[#0B3D2E]/10 py-1.5 px-3.5 rounded-full shadow-md animate-ping"
         >
           {item.text}
         </div>
@@ -832,14 +815,14 @@ export function AgriGame({ mode }: AgriGameProps) {
 
       {/* Bottom-Center: Animated floating pill button */}
       {gameState === "playing" && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none bg-[#0B3D2E] text-white font-extrabold text-xs tracking-widest uppercase px-6 py-3 rounded-full border border-white/10 shadow-lg backdrop-blur-md animate-bounce">
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 pointer-events-none bg-[#0B3D2E] text-white font-extrabold text-xs tracking-widest uppercase px-6 py-3 rounded-full border border-white/10 shadow-lg backdrop-blur-md animate-bounce">
           Press Space or Tap to Jump
         </div>
       )}
 
       {/* Dynamic Achievement alerts */}
       {achievement && (
-        <div className="absolute top-36 left-1/2 -translate-x-1/2 z-20 pointer-events-none bg-[#0B3D2E]/90 text-white font-extrabold text-xs tracking-wider uppercase px-5 py-2.5 rounded-full border border-[#53D769]/30 shadow-lg backdrop-blur-md transition-all duration-300">
+        <div className="absolute top-44 left-1/2 -translate-x-1/2 z-20 pointer-events-none bg-[#0B3D2E]/90 text-white font-extrabold text-xs tracking-wider uppercase px-5 py-2.5 rounded-full border border-[#53D769]/30 shadow-lg backdrop-blur-md transition-all duration-300">
           ✔ {achievement}
         </div>
       )}
