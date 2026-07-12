@@ -1,13 +1,15 @@
+"use client";
+
 import Link from "next/link";
-import { Leaf } from "lucide-react";
+import { Leaf, ArrowRight, ShieldCheck, HelpCircle, Mail, MapPin, Globe } from "lucide-react";
 import { Button } from "./button";
 
 export function Footer() {
   return (
-    <footer className="relative bg-[#0B3D2E] text-white overflow-hidden mt-32">
+    <footer className="relative bg-[#0B3D2E] text-white overflow-hidden mt-32 border-t border-[#125c44]">
       {/* Cinematic Top Background */}
       <div 
-        className="absolute top-0 left-0 right-0 h-[600px] pointer-events-none"
+        className="absolute top-0 left-0 right-0 h-[500px] pointer-events-none z-0"
         style={{
           backgroundImage: 'url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
           backgroundSize: 'cover',
@@ -15,127 +17,230 @@ export function Footer() {
         }}
       >
          {/* Fade to dark green gradient */}
-         <div className="absolute inset-0 bg-gradient-to-b from-[#0B3D2E]/20 via-[#0B3D2E]/80 to-[#0B3D2E]"></div>
+         <div className="absolute inset-0 bg-gradient-to-b from-[#0B3D2E]/40 via-[#0B3D2E]/90 to-[#0B3D2E]"></div>
       </div>
 
+      {/* Dynamic Background SVG Watermark (Contour curves, geospatial lattices) */}
+      <div className="absolute inset-0 pointer-events-none z-[1] opacity-[0.025] text-white">
+        <svg className="w-full h-full" fill="none" stroke="currentColor" strokeWidth="1.2">
+          <circle cx="50%" cy="100%" r="350" strokeDasharray="4 8" />
+          <circle cx="50%" cy="100%" r="550" />
+          <circle cx="50%" cy="100%" r="750" strokeDasharray="8 8" />
+          <path d="M-100,380 C200,320 400,480 700,400 T1500,460" />
+          <path d="M-100,480 C200,420 400,580 700,500 T1500,560" strokeDasharray="3 6" />
+          <path d="M-100,580 C200,520 400,680 700,600 T1500,660" />
+          <line x1="5%" y1="5%" x2="95%" y2="95%" strokeDasharray="12 12" />
+          <line x1="95%" y1="5%" x2="5%" y2="95%" strokeDasharray="12 12" />
+        </svg>
+      </div>
 
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-8 pt-32 pb-12">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-8 pt-24 pb-12">
         
-        {/* Top Hero-ish Section */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-32">
-           <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              Drive predictable outcomes across your agricultural operations
-           </h2>
-           <div className="lg:pl-16">
-              <p className="text-gray-300 mb-6 text-lg">
-                 Transform your agri-business with SourceTrace&apos;s AI-powered solutions. Reach out to us today to accelerate growth and boost yields with data-driven insights.
-              </p>
-              <Link href="/contact-sales">
-                 <Button className="rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white border-none font-bold px-8">
-                    Contact Sales →
-                 </Button>
-              </Link>
-           </div>
+        {/* ═══════════════════════════════════════
+            TOP COLUMN: VALUE PROP & CTA
+            ═══════════════════════════════════════ */}
+        <div className="grid lg:grid-cols-12 gap-8 items-center pb-16 border-b border-white/10 mb-16">
+          <div className="lg:col-span-7">
+            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-black leading-tight tracking-tight text-white">
+              Drive predictable outcomes across your agricultural operations.
+            </h2>
+          </div>
+          <div className="lg:col-span-5 lg:pl-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            <p className="text-gray-300 text-sm leading-relaxed max-w-sm">
+              Transform your supply chain with real-time first-mile visibility, predictive yield analytics, and automated regulatory compliance tools.
+            </p>
+            <Link href="/contact-sales" className="shrink-0">
+              <Button className="rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white hover:text-[#0B3D2E] font-bold px-8 py-6 shadow-[0_4px_20px_rgba(83,215,105,0.25)] transition-all duration-300 hover:-translate-y-0.5 active:scale-95">
+                Contact Sales →
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {/* Newsletter Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between border-b border-white/10 pb-12 mb-16 gap-8">
-           <div className="flex items-center gap-4">
-              <h3 className="text-3xl font-bold">Join Our <span className="text-[#53D769]">Newsletter</span></h3>
-           </div>
-           <form className="flex w-full md:w-auto gap-4">
+        {/* ═══════════════════════════════════════
+            MIDDLE COLUMN: PREMIUM NEWSLETTER CARD
+            ═══════════════════════════════════════ */}
+        <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] backdrop-blur-md p-8 md:p-12 mb-20 shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#53D769]/10 rounded-full blur-[60px] pointer-events-none" />
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <span className="text-[#53D769] text-xs font-bold tracking-[0.2em] uppercase mb-2 block">Weekly Intel Digest</span>
+              <h3 className="text-2xl sm:text-3xl font-black text-white mb-2 tracking-tight">Join the Future of Sourcing</h3>
+              <p className="text-gray-300 text-sm leading-relaxed max-w-md">
+                Get expert analysis on global supply chain compliance, EUDR timelines, and agricultural AI diagnostics delivered to your inbox.
+              </p>
+            </div>
+            <form className="flex flex-col sm:flex-row gap-3 w-full max-w-md md:ml-auto">
               <input 
                 type="email" 
-                placeholder="Email" 
-                className="w-full md:w-80 bg-white rounded-full px-6 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#53D769]"
+                placeholder="Enter your business email" 
+                className="w-full bg-white/5 border border-white/15 rounded-full px-6 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#53D769] text-sm backdrop-blur-sm transition-all"
               />
-              <Button className="rounded-full bg-[#0ea5e9] text-white hover:bg-blue-400 border-none px-8 font-bold">
-                 Join Now
-              </Button>
-           </form>
+              <button 
+                type="submit"
+                className="shrink-0 h-[48px] px-8 rounded-full bg-[#53D769] text-[#0B3D2E] hover:bg-white hover:text-[#0B3D2E] font-bold text-sm shadow-[0_4px_20px_rgba(83,215,105,0.25)] transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+              >
+                Join Now
+              </button>
+            </form>
+          </div>
         </div>
 
-        {/* Links Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-12 mb-32">
+        {/* ═══════════════════════════════════════
+            MIDDLE ROW: NAVIGATION COLUMNS
+            ═══════════════════════════════════════ */}
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-12 mb-20">
           
-          {/* Logo & Certs */}
-          <div className="col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-8">
-              <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-12 object-contain brightness-0 invert" />
+          {/* Logo & Brand Statement Anchor */}
+          <div className="col-span-2 lg:col-span-2 flex flex-col justify-start">
+            <Link href="/" className="flex items-center gap-2 mb-4 shrink-0">
+              <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-10 object-contain brightness-0 invert" />
             </Link>
-            
-            <div className="flex items-center gap-4 border border-white/20 p-4 rounded-lg w-fit">
-               <div className="w-12 h-12 border-2 border-white rounded-full flex items-center justify-center font-bold text-xl">B</div>
-               <div className="text-xs text-gray-300 max-w-[120px]">
-                  This company meets high standards of social and environmental impact.
-               </div>
+            <p className="text-gray-300 text-[13px] leading-relaxed max-w-[240px] mb-6">
+              Sensing the first mile, securing the value chain. Enabling predictable agricultural supply chains globally.
+            </p>
+            {/* Social Links */}
+            <div className="flex gap-3">
+              {["linkedin", "twitter", "facebook"].map((social) => (
+                <a 
+                  key={social} 
+                  href={`https://${social}.com`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-[#53D769] hover:border-[#53D769] hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  <span className="text-xs font-bold uppercase tracking-tighter">{social[0]}</span>
+                </a>
+              ))}
             </div>
           </div>
 
+          {/* Column 1: Products */}
           <div>
-            <h4 className="font-bold text-white mb-6 text-lg">Products</h4>
-            <ul className="space-y-4 text-sm text-gray-300">
-              <li><Link href="/platform/traceability" className="hover:text-[#53D769] transition-colors flex items-center gap-2"><Leaf className="w-3 h-3 text-[#53D769]"/> Traceability Cloud</Link></li>
-              <li><Link href="/platform/mobile-app" className="hover:text-[#53D769] transition-colors flex items-center gap-2"><Leaf className="w-3 h-3 text-[#53D769]"/> Farmer Apps</Link></li>
-              <li><Link href="/platform/reporting-analytics" className="hover:text-[#53D769] transition-colors flex items-center gap-2"><Leaf className="w-3 h-3 text-[#53D769]"/> Data Hub</Link></li>
-              <li><Link href="/intelligence/ai-engine" className="hover:text-[#53D769] transition-colors flex items-center gap-2"><Leaf className="w-3 h-3 text-[#53D769]"/> Intelligence</Link></li>
+            <h4 className="font-extrabold text-[#53D769] tracking-wider uppercase text-xs mb-6 select-none">Products</h4>
+            <ul className="space-y-4 text-[13px] text-gray-300">
+              {["Traceability Cloud", "Farmer Apps", "Data Hub", "Intelligence"].map((item, idx) => {
+                const paths = ["/platform/traceability", "/platform/mobile-app", "/platform/reporting-analytics", "/intelligence/ai-engine"];
+                return (
+                  <li key={idx}>
+                    <Link href={paths[idx]} className="group flex items-center gap-2 hover:text-[#53D769] transition-all duration-300">
+                      <Leaf className="w-3 h-3 text-[#53D769] shrink-0" />
+                      <span className="group-hover:translate-x-1.5 transition-transform duration-300">{item}</span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
+
+          {/* Column 2: Industry */}
           <div>
-            <h4 className="font-bold text-white mb-6 text-lg">Industry</h4>
-            <ul className="space-y-4 text-sm text-gray-300">
-              <li><Link href="/CropInsights/coffee" className="hover:text-white transition-colors">Food Retail</Link></li>
-              <li><Link href="/CropInsights/cocoa" className="hover:text-white transition-colors">CPG/FMCG</Link></li>
-              <li><Link href="/CropInsights/seed-production" className="hover:text-white transition-colors">Seed Manufacturing</Link></li>
-              <li><Link href="/CropInsights" className="hover:text-white transition-colors">Development Agencies</Link></li>
-              <li><Link href="/CropInsights" className="hover:text-white transition-colors">Others</Link></li>
+            <h4 className="font-extrabold text-[#53D769] tracking-wider uppercase text-xs mb-6 select-none">Industry</h4>
+            <ul className="space-y-4 text-[13px] text-gray-300">
+              {["Food Retail", "CPG/FMCG", "Seed Manufacturing", "Development Agencies", "Others"].map((item, idx) => {
+                const paths = ["/CropInsights/coffee", "/CropInsights/cocoa", "/CropInsights/seed-production", "/CropInsights", "/CropInsights"];
+                return (
+                  <li key={idx}>
+                    <Link href={paths[idx]} className="group flex items-center hover:text-white transition-all duration-300">
+                      <span className="group-hover:translate-x-1.5 transition-transform duration-300">{item}</span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
+
+          {/* Column 3: Solutions */}
           <div>
-            <h4 className="font-bold text-white mb-6 text-lg">Solutions</h4>
-            <ul className="space-y-4 text-sm text-gray-300">
-              <li><Link href="/solutions/supply-chain-traceability" className="hover:text-white transition-colors">Digital Transformation</Link></li>
-              <li><Link href="/intelligence/ai-engine" className="hover:text-white transition-colors">AI Powered Intelligence</Link></li>
-              <li><Link href="/solutions/eudr-compliance" className="hover:text-white transition-colors">Food Supply Chain</Link></li>
-              <li><Link href="/solutions/sustainable-sourcing" className="hover:text-white transition-colors">Sustainable Agriculture</Link></li>
-              <li><Link href="/compliance/eudr" className="hover:text-white transition-colors">Compliance & Regulations</Link></li>
+            <h4 className="font-extrabold text-[#53D769] tracking-wider uppercase text-xs mb-6 select-none">Solutions</h4>
+            <ul className="space-y-4 text-[13px] text-gray-300">
+              {["Digital Transformation", "AI Sourcing Intel", "Food Supply Chain", "Sustainable Agriculture", "Compliance & Regs"].map((item, idx) => {
+                const paths = ["/solutions/supply-chain-traceability", "/intelligence/ai-engine", "/solutions/eudr-compliance", "/solutions/sustainable-sourcing", "/compliance/eudr"];
+                return (
+                  <li key={idx}>
+                    <Link href={paths[idx]} className="group flex items-center hover:text-white transition-all duration-300">
+                      <span className="group-hover:translate-x-1.5 transition-transform duration-300">{item}</span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
+
+          {/* Column 4: Quick Links */}
           <div>
-            <h4 className="font-bold text-white mb-6 text-lg">Quick Links</h4>
-            <ul className="space-y-4 text-sm text-gray-300">
-              <li><Link href="/company/about" className="hover:text-white transition-colors">About Us</Link></li>
-              <li><Link href="/customers/case-studies" className="hover:text-white transition-colors">Case Study</Link></li>
-              <li><Link href="/resources/glossary" className="hover:text-white transition-colors">Glossary</Link></li>
-              <li><Link href="/company/partners" className="hover:text-white transition-colors">Become a Partner</Link></li>
-              <li><Link href="/company/contact" className="hover:text-white transition-colors">Connect With Us</Link></li>
-              <li><Link href="/resources/newsroom" className="hover:text-white transition-colors">Newsroom</Link></li>
-              <li><Link href="/legal/privacy-policy" className="hover:text-white transition-colors">Legal & Compliance</Link></li>
+            <h4 className="font-extrabold text-[#53D769] tracking-wider uppercase text-xs mb-6 select-none">Quick Links</h4>
+            <ul className="space-y-4 text-[13px] text-gray-300">
+              {["About Us", "Case Study", "Glossary", "Become a Partner", "Connect With Us", "Newsroom"].map((item, idx) => {
+                const paths = ["/company/about", "/customers/case-studies", "/resources/glossary", "/company/partners", "/company/contact", "/resources/newsroom"];
+                return (
+                  <li key={idx}>
+                    <Link href={paths[idx]} className="group flex items-center hover:text-white transition-all duration-300">
+                      <span className="group-hover:translate-x-1.5 transition-transform duration-300">{item}</span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
+
         </div>
 
-        {/* Bottom Section with Giant Outline Text & Socials */}
-        <div className="relative flex flex-col items-end pt-8 w-full">
-           {/* Giant Background Text */}
-           <div 
-             className="absolute bottom-0 left-2 sm:left-6 text-[10vw] md:text-[14vw] lg:text-[16vw] xl:text-[18rem] font-black leading-none pointer-events-none select-none"
-             style={{
-               color: 'transparent',
-               WebkitTextStroke: '2px rgba(255,255,255,0.12)',
-               whiteSpace: 'nowrap',
-               transform: 'translateY(10%)'
-             }}
-           >
-              SourceTrace
-           </div>
+        {/* ═══════════════════════════════════════
+            TRUST & COMPLIANCE BADGES
+            ═══════════════════════════════════════ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-12 pb-12 border-t border-white/10 mb-8 z-10 relative">
+          
+          {/* Badge 1: B Corp */}
+          <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:bg-white/[0.04] transition-colors duration-300">
+            <div className="w-10 h-10 rounded-full bg-white/10 border border-white/15 flex items-center justify-center font-black text-lg text-[#53D769] shrink-0">B</div>
+            <div className="text-[11px] text-gray-300 leading-tight">
+              <span className="font-bold text-white block mb-0.5">Certified B Corp</span>
+              Meets high standards of social & environmental impact.
+            </div>
+          </div>
+          
+          {/* Badge 2: SOC2 Type II */}
+          <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:bg-white/[0.04] transition-colors duration-300">
+            <div className="w-10 h-10 rounded-full bg-white/10 border border-white/15 flex items-center justify-center font-bold text-xs text-[#53D769] shrink-0 tracking-tighter">SOC2</div>
+            <div className="text-[11px] text-gray-300 leading-tight">
+              <span className="font-bold text-white block mb-0.5">Enterprise Security</span>
+              SOC2 Type II audited data lake architecture.
+            </div>
+          </div>
+          
+          {/* Badge 3: EUDR Ready */}
+          <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:bg-white/[0.04] transition-colors duration-300">
+            <div className="w-10 h-10 rounded-full bg-white/10 border border-white/15 flex items-center justify-center font-bold text-xs text-[#53D769] shrink-0 tracking-tighter">EUDR</div>
+            <div className="text-[11px] text-gray-300 leading-tight">
+              <span className="font-bold text-white block mb-0.5">EUDR Aligned</span>
+              Zero-deforestation check tools built-in.
+            </div>
+          </div>
+          
+          {/* Badge 4: GDPR Safeguards */}
+          <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] p-4 rounded-2xl hover:bg-white/[0.04] transition-colors duration-300">
+            <div className="w-10 h-10 rounded-full bg-white/10 border border-white/15 flex items-center justify-center font-bold text-xs text-[#53D769] shrink-0 tracking-tighter">GDPR</div>
+            <div className="text-[11px] text-gray-300 leading-tight">
+              <span className="font-bold text-white block mb-0.5">Data Privacy Secured</span>
+              Strict grower profile consent safeguards.
+            </div>
+          </div>
+          
+        </div>
 
-           <div className="relative z-10 flex flex-col items-end gap-4">
-              <p className="text-xs text-gray-500 mt-12">
-                 &copy; {new Date().getFullYear()} SourceTrace Technology Solutions. All rights reserved.
-              </p>
-           </div>
+        {/* ═══════════════════════════════════════
+            CLEAN COPYRIGHT SECTION
+            ═══════════════════════════════════════ */}
+        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left z-10 relative">
+          <p className="text-xs text-gray-500">
+            &copy; {new Date().getFullYear()} SourceTrace Technology Solutions. All rights reserved.
+          </p>
+          <div className="flex gap-6 text-xs text-gray-500">
+            <Link href="/legal/privacy-policy" className="hover:text-[#53D769] transition-colors">Privacy Policy</Link>
+            <Link href="/legal/terms" className="hover:text-[#53D769] transition-colors">Terms of Service</Link>
+            <button className="hover:text-[#53D769] transition-colors">Cookie Settings</button>
+          </div>
         </div>
 
       </div>
