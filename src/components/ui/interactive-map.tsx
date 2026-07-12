@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { ComposableMap, Geographies, Geography } from "react-simple-maps";
+import { ComposableMap, Geographies, Geography, Marker, Line } from "react-simple-maps";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin } from "lucide-react";
+import { MapPin, Radio, Compass } from "lucide-react";
 
 // TopoJSON data for the world map
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -85,6 +85,24 @@ const COUNTRY_METRICS: Record<string, string> = {
   "Uganda": "200K Farmers Mapped"
 };
 
+// Supply chain nodes coordinates for route animation
+const MAP_MARKERS = [
+  { name: "New York Hub", coordinates: [-74.006, 40.7128], metric: "300+ Brands Integrated" },
+  { name: "Amsterdam Hub", coordinates: [4.9041, 52.3676], metric: "ESG Compliance Center" },
+  { name: "New Delhi Hub", coordinates: [77.209, 28.6139], metric: "4.5M Farmers Mapped" },
+  { name: "São Paulo Hub", coordinates: [-46.6333, -23.5505], metric: "2.4M Farmers Mapped" },
+  { name: "Accra Hub", coordinates: [-0.1869, 5.6037], metric: "1.1M Farmers Mapped" },
+  { name: "Nairobi Hub", coordinates: [36.8219, -1.2921], metric: "600K Farmers Mapped" },
+];
+
+const SUPPLY_ROUTES = [
+  { from: [-46.6333, -23.5505], to: [-74.006, 40.7128] }, // São Paulo to New York
+  { from: [-0.1869, 5.6037], to: [4.9041, 52.3676] },    // Accra to Amsterdam
+  { from: [36.8219, -1.2921], to: [4.9041, 52.3676] },    // Nairobi to Amsterdam
+  { from: [77.209, 28.6139], to: [4.9041, 52.3676] },    // New Delhi to Amsterdam
+  { from: [4.9041, 52.3676], to: [-74.006, 40.7128] },   // Amsterdam to New York
+];
+
 export function InteractiveMap() {
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
@@ -101,10 +119,36 @@ export function InteractiveMap() {
 
   return (
     <div className="w-full max-w-6xl mx-auto flex flex-col items-center mt-2 md:mt-10">
+      <style>{`
+        @keyframes route-flow {
+          to {
+            stroke-dashoffset: -20;
+          }
+        }
+        .route-line-anim {
+          stroke-dasharray: 6 4;
+          animation: route-flow 4s linear infinite;
+        }
+        @keyframes scan-radar {
+          0% { transform: scale(0.6); opacity: 0.8; }
+          100% { transform: scale(2.4); opacity: 0; }
+        }
+        .radar-sweep {
+          animation: scan-radar 2.5s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+        }
+      `}</style>
       
       {/* Map box */}
       <div className="relative w-full h-auto aspect-[800/380] md:h-[550px] bg-white rounded-none md:rounded-[40px] md:border md:border-gray-100 md:shadow-sm overflow-hidden flex items-center justify-center">
         
+        {/* Radar scanning indicator overlay */}
+        <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-emerald-50/60 border border-emerald-100 backdrop-blur-md px-3 py-1.5 rounded-full z-20 pointer-events-none select-none">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-widest flex items-center gap-1">
+            <Radio className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: "12s" }} /> Live Telemetry Feed
+          </span>
+        </div>
+
         {/* Tooltip Overlay */}
         <AnimatePresence>
           {hoveredCountry && (
@@ -197,17 +241,57 @@ export function InteractiveMap() {
                         strokeWidth: 0.5,
                         outline: "none",
                         cursor: isOperating ? "pointer" : "default"
-                      },
-                      pressed: {
-                        fill: isOperating ? "#0B3D2E" : "#e2e8f0",
-                        outline: "none",
-                      },
+                      }
                     }}
                   />
                 );
               })
             }
           </Geographies>
+
+          {/* Connected Flow Supply Chain Routes */}
+          {SUPPLY_ROUTES.map((route, i) => (
+            <Line
+              key={`route-${i}`}
+              from={route.from as [number, number]}
+              to={route.to as [number, number]}
+              stroke="#10b981"
+              strokeWidth={1.5}
+              strokeOpacity={0.4}
+              strokeDasharray="4 3"
+              className="route-line-anim"
+            />
+          ))}
+
+          {/* Interactive supply chain hubs with radar sweeps */}
+          {MAP_MARKERS.map((marker, i) => (
+            <Marker key={`marker-${i}`} coordinates={marker.coordinates as [number, number]}>
+              {/* Outer pulsing ring */}
+              <circle
+                r="8"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="1.5"
+                className="radar-sweep"
+                style={{ transformOrigin: "center" }}
+              />
+              {/* Core solid marker */}
+              <circle
+                r="3.5"
+                fill="#0B3D2E"
+                stroke="#ffffff"
+                strokeWidth="1"
+                className="cursor-pointer"
+                onMouseEnter={(e) => {
+                  setHoveredCountry(marker.name);
+                  setTooltipPos({ x: e.clientX, y: e.clientY });
+                }}
+                onMouseLeave={() => {
+                  setHoveredCountry(null);
+                }}
+              />
+            </Marker>
+          ))}
         </ComposableMap>
       </div>
     </div>

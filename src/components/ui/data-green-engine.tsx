@@ -684,7 +684,7 @@ export function DataGreenEngine() {
             </defs>
 
             {/* Faint wireframe network paths */}
-            {[...SEQ, ...HPATHS].map(q => (
+            {[...SEQ, ...HPATHS].filter((v, i, a) => a.findIndex(t => t.id === v.id) === i).map(q => (
               <path key={`g-${q.id}`} d={q.d} fill="none" stroke="rgba(16,185,129,0.035)" strokeWidth="3" />
             ))}
 

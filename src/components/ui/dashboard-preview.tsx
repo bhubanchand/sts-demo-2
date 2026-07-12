@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { 
   BarChart3, 
@@ -44,8 +44,55 @@ export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean 
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredPin, setHoveredPin] = useState<number | null>(null);
 
+  // Live platform updates
+  const [liveFarmers, setLiveFarmers] = useState(1245890);
+  const [liveCompliance, setLiveCompliance] = useState(98.4);
+  const [liveCarbon, setLiveCarbon] = useState(2410452);
+  const [bellWiggle, setBellWiggle] = useState(false);
+  const [alerts, setAlerts] = useState(NOTIFICATIONS);
+
+  useEffect(() => {
+    const farmersInterval = setInterval(() => {
+      setLiveFarmers(prev => prev + Math.floor(Math.random() * 2) + 1);
+    }, 4500);
+
+    const complianceInterval = setInterval(() => {
+      setLiveCompliance(prev => {
+        const delta = (Math.random() - 0.5) * 0.1;
+        const newVal = parseFloat((prev + delta).toFixed(2));
+        return newVal > 99.9 ? 99.9 : newVal < 97.0 ? 97.0 : newVal;
+      });
+    }, 9000);
+
+    const carbonInterval = setInterval(() => {
+      setLiveCarbon(prev => prev + Math.floor(Math.random() * 3) + 1);
+    }, 5500);
+
+    // Simulate an incoming live alert
+    const alertTimeout = setTimeout(() => {
+      const newAlert = {
+        id: 4,
+        title: "EUDR batch cleared",
+        desc: "Cooperative Delta passed due diligence",
+        time: "Just now",
+        type: "success",
+        icon: ShieldCheck
+      };
+      setAlerts(prev => [newAlert, ...prev]);
+      setBellWiggle(true);
+      setTimeout(() => setBellWiggle(false), 2000);
+    }, 14000);
+
+    return () => {
+      clearInterval(farmersInterval);
+      clearInterval(complianceInterval);
+      clearInterval(carbonInterval);
+      clearTimeout(alertTimeout);
+    };
+  }, []);
+
   // Filter alerts based on search
-  const filteredAlerts = NOTIFICATIONS.filter(n => n.title.toLowerCase().includes(searchQuery.toLowerCase()) || n.desc.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredAlerts = alerts.filter(n => n.title.toLowerCase().includes(searchQuery.toLowerCase()) || n.desc.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const renderOverview = () => (
     <motion.div
@@ -59,21 +106,28 @@ export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 shrink-0">
         <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
           <div className="text-gray-500 text-sm font-medium mb-1">Total Farmers Mapped</div>
-          <div className="text-3xl font-black text-gray-900 mb-3">1,245,890</div>
+          <div className="text-3xl font-black text-gray-900 mb-1">{liveFarmers.toLocaleString()}</div>
+          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" /> Live Tracking Active
+          </div>
           <div className="flex items-center gap-1 text-emerald-600 text-sm font-bold bg-emerald-50 w-fit px-2 py-1 rounded-md">
             <TrendingUp className="w-4 h-4" /> +12% this month
           </div>
         </div>
         <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
           <div className="text-gray-500 text-sm font-medium mb-1">EUDR Compliance Rate</div>
-          <div className="text-3xl font-black text-gray-900 mb-3">98.4%</div>
+          <div className="text-3xl font-black text-gray-900 mb-1">{liveCompliance}%</div>
+          <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">Automated Checks Ingestion</div>
           <div className="flex items-center gap-1 text-emerald-600 text-sm font-bold bg-emerald-50 w-fit px-2 py-1 rounded-md">
-            <ShieldCheck className="w-4 h-4" /> 450 plots cleared
+            <ShieldCheck className="w-4 h-4" /> Clear plot verification
           </div>
         </div>
         <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
           <div className="text-gray-500 text-sm font-medium mb-1">Carbon Sequestered</div>
-          <div className="text-3xl font-black text-gray-900 mb-3">2.4M Tons</div>
+          <div className="text-3xl font-black text-gray-900 mb-1">{(liveCarbon / 1000000).toFixed(4)}M T</div>
+          <div className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> {liveCarbon.toLocaleString()} Tons total
+          </div>
           <div className="flex items-center gap-1 text-emerald-600 text-sm font-bold bg-emerald-50 w-fit px-2 py-1 rounded-md">
             <Leaf className="w-4 h-4" /> Above SBTi target
           </div>
@@ -182,8 +236,16 @@ export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean 
             { step: "Export", desc: "Port of Abidjan", status: "pending", icon: Globe2 },
           ].map((node, i) => (
             <div key={i} className="flex flex-col items-center group cursor-pointer">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-transform group-hover:scale-110 shadow-md border-4 border-white ${node.status === 'completed' ? 'bg-emerald-500 text-white' : node.status === 'current' ? 'bg-white border-emerald-500 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
-                <node.icon className="w-5 h-5" />
+              <div className="relative">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-transform group-hover:scale-110 shadow-md border-4 border-white ${node.status === 'completed' ? 'bg-emerald-500 text-white' : node.status === 'current' ? 'bg-white border-emerald-500 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
+                  <node.icon className={`w-5 h-5 ${node.status === 'current' ? 'animate-pulse text-emerald-600' : ''}`} />
+                </div>
+                {node.status === 'current' && (
+                  <span className="absolute top-0 right-0 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  </span>
+                )}
               </div>
               <p className={`font-bold text-sm ${node.status === 'pending' ? 'text-gray-400' : 'text-gray-900'}`}>{node.step}</p>
               <p className="text-xs text-gray-500">{node.desc}</p>
@@ -437,8 +499,16 @@ export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean 
             { step: "Export (Port of Abidjan)", desc: "Pending", status: "pending", icon: Globe2 },
           ].map((node, i) => (
             <div key={i} className="flex items-center gap-3 relative">
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center shadow-sm border border-white z-10 shrink-0 ${node.status === 'completed' ? 'bg-emerald-500 text-white' : node.status === 'current' ? 'bg-white border-emerald-500 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
-                <node.icon className="w-3 h-3" />
+              <div className="relative shrink-0 z-10">
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center shadow-sm border border-white ${node.status === 'completed' ? 'bg-emerald-500 text-white' : node.status === 'current' ? 'bg-white border-emerald-500 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
+                  <node.icon className={`w-3 h-3 ${node.status === 'current' ? 'animate-pulse text-emerald-600' : ''}`} />
+                </div>
+                {node.status === 'current' && (
+                  <span className="absolute top-0 right-0 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <p className={`font-bold text-xs ${node.status === 'pending' ? 'text-gray-400' : 'text-gray-900'} truncate`}>{node.step}</p>
@@ -692,7 +762,12 @@ export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean 
                       className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => setShowNotifications(!showNotifications)}
                     >
-                      <Bell className="w-5 h-5" />
+                      <motion.div
+                        animate={bellWiggle ? { rotate: [0, -15, 15, -10, 10, -5, 5, 0], scale: [1, 1.1, 1.1, 1] } : { rotate: 0, scale: 1 }}
+                        transition={{ duration: 0.6 }}
+                      >
+                        <Bell className="w-5 h-5" />
+                      </motion.div>
                       <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500"></div>
                     </div>
                     
@@ -709,14 +784,14 @@ export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean 
                             <button className="text-gray-450 hover:text-gray-655" onClick={() => setShowNotifications(false)}><X className="w-4 h-4" /></button>
                           </div>
                           <div className="max-h-64 overflow-y-auto">
-                            {NOTIFICATIONS.map(alert => (
+                            {alerts.map(alert => (
                               <div key={alert.id} className="p-3 border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer flex gap-3">
                                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${alert.type === 'warning' ? 'bg-amber-50 text-amber-600' : alert.type === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
                                   <alert.icon className="w-4 h-4" />
                                 </div>
                                 <div>
                                   <p className="text-sm font-bold text-gray-900 leading-tight">{alert.title}</p>
-                                  <p className="text-xs text-gray-500 mt-0.5">{alert.time}</p>
+                                  <p className="text-xs text-gray-500 mt-0.5">{alert.desc} • {alert.time}</p>
                                 </div>
                               </div>
                             ))}
