@@ -4,6 +4,20 @@ import { StatsBanner } from "@/components/ui/stats-banner";
 import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
 import { Users, TrendingUp, HandHeart } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Farmer Livelihoods & Sourcing Equity Solutions | SourceTrace",
+  description: "Promote farmer financial health, verify living income benchmarks, and ensure direct premium payments at the agricultural first mile.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/solutions/farmer-livelihoods",
+  },
+  openGraph: {
+    title: "Farmer Livelihoods & Sourcing Equity Solutions | SourceTrace",
+    description: "Promote farmer financial health, verify living income benchmarks, and ensure direct premium payments at the agricultural first mile.",
+    url: "https://www.sourcetrace.com/solutions/farmer-livelihoods",
+  }
+};
 
 export default function FarmerLivelihoodsPage() {
   return (

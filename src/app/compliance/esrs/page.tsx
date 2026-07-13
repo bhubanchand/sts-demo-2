@@ -1,4 +1,18 @@
 import { CompliancePageLayout, CompliancePageData } from "@/components/compliance-page-layout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "ESRS E1 Climate & E4 Biodiversity Compliance | SourceTrace",
+  description: "Meet European Sustainability Reporting Standards (ESRS) requirements. Track carbon emissions and verify supply chain biodiversity protection.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/compliance/esrs",
+  },
+  openGraph: {
+    title: "ESRS E1 Climate & E4 Biodiversity Compliance | SourceTrace",
+    description: "Meet European Sustainability Reporting Standards (ESRS) requirements. Track carbon emissions and verify supply chain biodiversity protection.",
+    url: "https://www.sourcetrace.com/compliance/esrs",
+  }
+};
 
 const pageData: CompliancePageData = {
   category: "ESRS Compliance",

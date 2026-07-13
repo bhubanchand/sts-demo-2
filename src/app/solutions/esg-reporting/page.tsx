@@ -4,6 +4,20 @@ import { StatsBanner } from "@/components/ui/stats-banner";
 import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
 import { BarChart3, Download, Share2, CheckCircle2 } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "ESG Sourcing Data & Reporting Platform | SourceTrace",
+  description: "Track value chain environmental, social, and governance metrics for auditable compliance reporting.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/solutions/esg-reporting",
+  },
+  openGraph: {
+    title: "ESG Sourcing Data & Reporting Platform | SourceTrace",
+    description: "Track value chain environmental, social, and governance metrics for auditable compliance reporting.",
+    url: "https://www.sourcetrace.com/solutions/esg-reporting",
+  }
+};
 
 export default function ESGReportingPage() {
   return (

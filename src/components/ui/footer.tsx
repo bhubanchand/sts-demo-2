@@ -6,10 +6,10 @@ import { Button } from "./button";
 
 export function Footer() {
   return (
-    <footer className="relative bg-[#F4FAF6] text-[#0B3D2E] overflow-hidden mt-32 border-t border-[#0B3D2E]/10">
+    <footer className="relative bg-[#F4FAF6] text-[#0B3D2E] overflow-hidden mt-12 border-t border-[#0B3D2E]/10">
       {/* Cinematic Top Background */}
       <div 
-        className="absolute top-0 left-0 right-0 h-[500px] pointer-events-none z-0 opacity-25"
+        className="absolute top-0 left-0 right-0 h-[300px] pointer-events-none z-0 opacity-25"
         style={{
           backgroundImage: 'url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")',
           backgroundSize: 'cover',
@@ -34,12 +34,12 @@ export function Footer() {
         </svg>
       </div>
 
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-8 pt-24 pb-12">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-8 pt-10 pb-6">
         
         {/* ═══════════════════════════════════════
             TOP COLUMN: VALUE PROP & CTA
             ═══════════════════════════════════════ */}
-        <div className="grid lg:grid-cols-12 gap-8 items-center pb-16 border-b border-[#0B3D2E]/10 mb-16">
+        <div className="grid lg:grid-cols-12 gap-8 items-center pb-8 border-b border-[#0B3D2E]/10 mb-8">
           <div className="lg:col-span-7">
             <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-black leading-tight tracking-tight text-[#0B3D2E]">
               Drive predictable outcomes across your agricultural operations.
@@ -60,13 +60,13 @@ export function Footer() {
         {/* ═══════════════════════════════════════
             MIDDLE COLUMN: PREMIUM NEWSLETTER CARD
             ═══════════════════════════════════════ */}
-        <div className="relative overflow-hidden rounded-[32px] border border-[#0B3D2E]/10 bg-[#E2EFE7]/40 backdrop-blur-md p-8 md:p-12 mb-20 shadow-[0_12px_40px_rgba(0,77,38,0.02)]">
+        <div className="relative overflow-hidden rounded-[24px] border border-[#0B3D2E]/10 bg-[#E2EFE7]/40 backdrop-blur-md py-6 px-8 mb-10 shadow-[0_12px_40px_rgba(0,77,38,0.02)]">
           <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#53D769]/10 rounded-full blur-[60px] pointer-events-none" />
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <span className="text-[#1F7A53] text-xs font-bold tracking-[0.2em] uppercase mb-2 block">Weekly Intel Digest</span>
-              <h3 className="text-2xl sm:text-3xl font-black text-[#0B3D2E] mb-2 tracking-tight">Join the Future of Sourcing</h3>
-              <p className="text-[#1F5946] text-sm leading-relaxed max-w-md font-medium">
+              <span className="text-[#1F7A53] text-xs font-bold tracking-[0.2em] uppercase mb-1 block">Weekly Intel Digest</span>
+              <h3 className="text-xl sm:text-2xl font-black text-[#0B3D2E] mb-1 tracking-tight">Join the Future of Sourcing</h3>
+              <p className="text-[#1F5946] text-xs leading-relaxed max-w-md font-medium">
                 Get expert analysis on global supply chain compliance, EUDR timelines, and agricultural AI diagnostics delivered to your inbox.
               </p>
             </div>
@@ -74,11 +74,11 @@ export function Footer() {
               <input 
                 type="email" 
                 placeholder="Enter your business email" 
-                className="w-full bg-white border border-[#0B3D2E]/15 rounded-full px-6 py-4 text-[#0B3D2E] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#53D769] text-sm backdrop-blur-sm transition-all"
+                className="w-full bg-white border border-[#0B3D2E]/15 rounded-full px-5 py-3 text-[#0B3D2E] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#53D769] text-xs backdrop-blur-sm transition-all"
               />
               <button 
                 type="submit"
-                className="shrink-0 h-[48px] px-8 rounded-full bg-[#0B3D2E] text-white hover:bg-[#125c44] hover:text-white font-bold text-sm shadow-[0_4px_20px_rgba(11,61,46,0.15)] transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+                className="shrink-0 h-[42px] px-6 rounded-full bg-[#0B3D2E] text-white hover:bg-[#125c44] hover:text-white font-bold text-xs shadow-[0_4px_20px_rgba(11,61,46,0.15)] transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
               >
                 Join Now
               </button>
@@ -89,7 +89,7 @@ export function Footer() {
         {/* ═══════════════════════════════════════
             MIDDLE ROW: NAVIGATION COLUMNS
             ═══════════════════════════════════════ */}
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-12 mb-20">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-6 lg:gap-8 mb-10">
           
           {/* Logo & Brand Statement Anchor */}
           <div className="col-span-2 lg:col-span-2 flex flex-col justify-start">
@@ -189,39 +189,39 @@ export function Footer() {
         {/* ═══════════════════════════════════════
             TRUST & COMPLIANCE BADGES
             ═══════════════════════════════════════ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-12 pb-12 border-t border-[#0B3D2E]/10 mb-8 z-10 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 pb-6 border-t border-[#0B3D2E]/10 mb-4 z-10 relative">
           
           {/* Badge 1: B Corp */}
-          <div className="flex items-center gap-3 bg-[#E2EFE7]/30 border border-[#0B3D2E]/8 p-4 rounded-2xl hover:bg-[#E2EFE7]/50 transition-colors duration-300">
-            <div className="w-10 h-10 rounded-full bg-[#0B3D2E]/5 border border-[#0B3D2E]/10 flex items-center justify-center font-black text-lg text-[#1F7A53] shrink-0">B</div>
-            <div className="text-[11px] text-[#1F5946] leading-tight">
+          <div className="flex items-center gap-3 bg-[#E2EFE7]/30 border border-[#0B3D2E]/8 p-3 rounded-xl hover:bg-[#E2EFE7]/50 transition-colors duration-300">
+            <div className="w-8 h-8 rounded-full bg-[#0B3D2E]/5 border border-[#0B3D2E]/10 flex items-center justify-center font-black text-sm text-[#1F7A53] shrink-0">B</div>
+            <div className="text-[10px] text-[#1F5946] leading-tight">
               <span className="font-bold text-[#0B3D2E] block mb-0.5">Certified B Corp</span>
               Meets high standards of social & environmental impact.
             </div>
           </div>
           
           {/* Badge 2: SOC2 Type II */}
-          <div className="flex items-center gap-3 bg-[#E2EFE7]/30 border border-[#0B3D2E]/8 p-4 rounded-2xl hover:bg-[#E2EFE7]/50 transition-colors duration-300">
-            <div className="w-10 h-10 rounded-full bg-[#0B3D2E]/5 border border-[#0B3D2E]/10 flex items-center justify-center font-bold text-xs text-[#1F7A53] shrink-0 tracking-tighter">SOC2</div>
-            <div className="text-[11px] text-[#1F5946] leading-tight">
+          <div className="flex items-center gap-3 bg-[#E2EFE7]/30 border border-[#0B3D2E]/8 p-3 rounded-xl hover:bg-[#E2EFE7]/50 transition-colors duration-300">
+            <div className="w-8 h-8 rounded-full bg-[#0B3D2E]/5 border border-[#0B3D2E]/10 flex items-center justify-center font-bold text-[9px] text-[#1F7A53] shrink-0 tracking-tighter">SOC2</div>
+            <div className="text-[10px] text-[#1F5946] leading-tight">
               <span className="font-bold text-[#0B3D2E] block mb-0.5">Enterprise Security</span>
               SOC2 Type II audited data lake architecture.
             </div>
           </div>
           
           {/* Badge 3: EUDR Ready */}
-          <div className="flex items-center gap-3 bg-[#E2EFE7]/30 border border-[#0B3D2E]/8 p-4 rounded-2xl hover:bg-[#E2EFE7]/50 transition-colors duration-300">
-            <div className="w-10 h-10 rounded-full bg-[#0B3D2E]/5 border border-[#0B3D2E]/10 flex items-center justify-center font-bold text-xs text-[#1F7A53] shrink-0 tracking-tighter">EUDR</div>
-            <div className="text-[11px] text-[#1F5946] leading-tight">
+          <div className="flex items-center gap-3 bg-[#E2EFE7]/30 border border-[#0B3D2E]/8 p-3 rounded-xl hover:bg-[#E2EFE7]/50 transition-colors duration-300">
+            <div className="w-8 h-8 rounded-full bg-[#0B3D2E]/5 border border-[#0B3D2E]/10 flex items-center justify-center font-bold text-[9px] text-[#1F7A53] shrink-0 tracking-tighter">EUDR</div>
+            <div className="text-[10px] text-[#1F5946] leading-tight">
               <span className="font-bold text-[#0B3D2E] block mb-0.5">EUDR Aligned</span>
               Zero-deforestation check tools built-in.
             </div>
           </div>
           
           {/* Badge 4: GDPR Safeguards */}
-          <div className="flex items-center gap-3 bg-[#E2EFE7]/30 border border-[#0B3D2E]/8 p-4 rounded-2xl hover:bg-[#E2EFE7]/50 transition-colors duration-300">
-            <div className="w-10 h-10 rounded-full bg-[#0B3D2E]/5 border border-[#0B3D2E]/10 flex items-center justify-center font-bold text-xs text-[#1F7A53] shrink-0 tracking-tighter">GDPR</div>
-            <div className="text-[11px] text-[#1F5946] leading-tight">
+          <div className="flex items-center gap-3 bg-[#E2EFE7]/30 border border-[#0B3D2E]/8 p-3 rounded-xl hover:bg-[#E2EFE7]/50 transition-colors duration-300">
+            <div className="w-8 h-8 rounded-full bg-[#0B3D2E]/5 border border-[#0B3D2E]/10 flex items-center justify-center font-bold text-[9px] text-[#1F7A53] shrink-0 tracking-tighter">GDPR</div>
+            <div className="text-[10px] text-[#1F5946] leading-tight">
               <span className="font-bold text-[#0B3D2E] block mb-0.5">Data Privacy Secured</span>
               Strict grower profile consent safeguards.
             </div>
@@ -232,7 +232,7 @@ export function Footer() {
         {/* ═══════════════════════════════════════
             CLEAN COPYRIGHT SECTION
             ═══════════════════════════════════════ */}
-        <div className="pt-8 border-t border-[#0B3D2E]/8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left z-10 relative">
+        <div className="pt-4 border-t border-[#0B3D2E]/8 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left z-10 relative">
           <p className="text-xs text-[#1F5946]/70 font-medium">
             &copy; {new Date().getFullYear()} SourceTrace Technology Solutions. All rights reserved.
           </p>

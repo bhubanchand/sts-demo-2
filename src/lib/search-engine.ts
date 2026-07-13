@@ -2,7 +2,7 @@
 
 import Fuse, { type IFuseOptions } from "fuse.js";
 
-/* ── Types ────────────────────────────────────────────────── */
+/* === Types ================================================== */
 
 export interface SearchEntry {
   url: string;
@@ -24,7 +24,7 @@ export interface SearchResult {
   }>;
 }
 
-/* ── Synonym Map ──────────────────────────────────────────── */
+/* === Synonym Map ============================================ */
 
 const SYNONYMS: Record<string, string[]> = {
   gis: ["geospatial", "satellite", "mapping", "remote sensing"],
@@ -54,7 +54,7 @@ const SYNONYMS: Record<string, string[]> = {
   organic: ["certification", "natural", "non-gmo"],
 };
 
-/* ── Trending & Popular ───────────────────────────────────── */
+/* === Trending & Popular ===================================== */
 
 export const TRENDING_SEARCHES = [
   "EUDR Compliance",
@@ -69,7 +69,7 @@ export const POPULAR_PAGES: { title: string; href: string; category: string }[] 
   { title: "Traceability Cloud", href: "/platform/traceability", category: "Platform" },
   { title: "EUDR Compliance", href: "/solutions/eudr-compliance", category: "Solutions" },
   { title: "AI Engine", href: "/intelligence/ai-engine", category: "Intelligence" },
-  { title: "Coffee Insights", href: "/CropInsights/coffee", category: "Crop Insights" },
+  { title: "Commodity Intelligence Hub", href: "/CropInsights", category: "Commodity Hub" },
   { title: "About SourceTrace", href: "/about", category: "Company" },
   { title: "Contact Sales", href: "/contact-sales", category: "Company" },
 ];
@@ -77,11 +77,11 @@ export const POPULAR_PAGES: { title: string; href: string; category: string }[] 
 export const SUGGESTED_CATEGORIES = [
   { label: "Platform & Products", query: "platform" },
   { label: "Compliance & Regulations", query: "compliance" },
-  { label: "Crop Insights", query: "crop" },
+  { label: "Commodity Hub", query: "crop" },
   { label: "AI & Intelligence", query: "intelligence" },
 ];
 
-/* ── Recent Searches (localStorage) ───────────────────────── */
+/* === Recent Searches (localStorage) ========================= */
 
 const RECENT_KEY = "st_recent_searches";
 const MAX_RECENT = 5;
@@ -118,7 +118,7 @@ export function clearRecentSearches(): void {
   }
 }
 
-/* ── Search Engine ────────────────────────────────────────── */
+/* === Search Engine ========================================== */
 
 let cachedIndex: SearchEntry[] | null = null;
 let cachedFuse: Fuse<SearchEntry> | null = null;

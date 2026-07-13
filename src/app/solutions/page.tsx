@@ -2,6 +2,20 @@ import { TestimonialsCarousel } from "@/components/ui/testimonials-carousel";
 import { IntegrationsGrid } from "@/components/ui/integrations-grid";
 import { StatsBanner } from "@/components/ui/stats-banner";
 import { AnimatedText } from "@/components/ui/animated-text";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Agriculture & Supply Chain Solutions | SourceTrace",
+  description: "Explore SourceTrace's solutions for agricultural sustainability, EUDR compliance, ESG reporting, and smallholder management.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/solutions",
+  },
+  openGraph: {
+    title: "Agriculture & Supply Chain Solutions | SourceTrace",
+    description: "Explore SourceTrace's solutions for agricultural sustainability, EUDR compliance, ESG reporting, and smallholder management.",
+    url: "https://www.sourcetrace.com/solutions",
+  }
+};
 
 export default function SolutionsPage() {
   return (

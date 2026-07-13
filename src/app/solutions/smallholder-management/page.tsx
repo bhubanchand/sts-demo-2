@@ -4,6 +4,20 @@ import { StatsBanner } from "@/components/ui/stats-banner";
 import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
 import { Smartphone, WifiOff, Users2, Database } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Smallholder Farmer Management Solutions | SourceTrace",
+  description: "Connect and manage smallholder farming networks with offline mobile capability, digital identities, and direct payments.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/solutions/smallholder-management",
+  },
+  openGraph: {
+    title: "Smallholder Farmer Management Solutions | SourceTrace",
+    description: "Connect and manage smallholder farming networks with offline mobile capability, digital identities, and direct payments.",
+    url: "https://www.sourcetrace.com/solutions/smallholder-management",
+  }
+};
 
 export default function SmallholderManagementPage() {
   return (

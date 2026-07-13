@@ -1,4 +1,18 @@
 import { CompliancePageLayout, CompliancePageData } from "@/components/compliance-page-layout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "EUDR Sourcing Compliance & Regulations | SourceTrace",
+  description: "Verify that cocoa, coffee, palm oil, rubber, cattle, and soy imports are deforestation-free and compliant with EU Deforestation Regulation cut-off dates.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/compliance/eudr",
+  },
+  openGraph: {
+    title: "EUDR Sourcing Compliance & Regulations | SourceTrace",
+    description: "Verify that cocoa, coffee, palm oil, rubber, cattle, and soy imports are deforestation-free and compliant with EU Deforestation Regulation cut-off dates.",
+    url: "https://www.sourcetrace.com/compliance/eudr",
+  }
+};
 
 const pageData: CompliancePageData = {
   category: "EUDR Compliance",

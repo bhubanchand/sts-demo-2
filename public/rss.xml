@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>SourceTrace Insights</title>
+  <link>https://www.sourcetrace.com</link>
+  <description>Sustainable agriculture, first-mile traceability, and global compliance insights.</description>
+  <language>en-us</language>
+  <atom:link href="https://www.sourcetrace.com/rss.xml" rel="self" type="application/rss+xml" />
+  <item>
+    <title>Deforestation-Free Sourcing with EUDR Compliance</title>
+    <link>https://www.sourcetrace.com/compliance/eudr</link>
+    <description>How global organizations can prepare for the new EU Deforestation Regulation using first-mile farm polygon mapping.</description>
+    <pubDate>Mon, 13 Jul 2026 12:00:00 GMT</pubDate>
+    <guid>https://www.sourcetrace.com/compliance/eudr</guid>
+  </item>
+</channel>
+</rss>

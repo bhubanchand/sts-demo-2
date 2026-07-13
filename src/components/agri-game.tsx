@@ -22,7 +22,7 @@ import {
 import { searchPages, SearchResult } from "@/lib/search-engine";
 
 interface AgriGameProps {
-  mode: "404" | "offline" | "500";
+  mode: "404" | "offline" | "500" | "not-available";
 }
 
 const farmQuotes = [
@@ -108,20 +108,27 @@ export function AgriGame({ mode }: AgriGameProps) {
       desc: "Our systems are undergoing a quick digital refresh. They'll be back in a moment with brand new insights. Enjoy the peaceful view in the meantime.",
       statusText: "Partial Service Disruption",
       statusColor: "amber"
+    },
+    "not-available": {
+      badge: "Content in Preparation",
+      title: "Oops... this page content isn't available yet.",
+      desc: "The page you are looking for has been mapped in our ecosystem, but its detailed content is still being harvested by our product team. Stay tuned!",
+      statusText: "All Systems Operational",
+      statusColor: "emerald"
     }
   }[mode];
 
   return (
-    <div className="relative w-full min-h-[calc(100vh-5rem)] bg-[#EAF5EE] overflow-hidden flex flex-col justify-between pt-24 pb-12 font-sans select-none z-10">
+    <div className="relative w-full min-h-[calc(100vh-5rem)] bg-[#EAF5EE] overflow-hidden flex flex-col justify-between pt-20 pb-4 font-sans select-none z-10">
       
-      {/* ── BACKGROUND: Ambient rolling farmland landscape with GIS details ── */}
+      {/* === BACKGROUND: Ambient rolling farmland landscape with GIS details === */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Soft atmospheric gradient sky */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#BFE6D2]/60 via-[#EAF5EE] to-[#F4FAF6]" />
         
         {/* Glowing Sun */}
         <div className="absolute top-[5%] left-[25%] w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-[#FFF7ED] to-[#FEF3C7] opacity-50 blur-3xl" />
-
+        
         {/* GIS Lat/Lng Grid Overlay */}
         <svg className="absolute inset-0 w-full h-full opacity-[0.05] text-[#0B3D2E]" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
           <defs>
@@ -202,134 +209,170 @@ export function AgriGame({ mode }: AgriGameProps) {
         </svg>
       </div>
 
-      {/* ── CENTERPIECE: Elegant Glassmorphic Recovery Panel ── */}
-      <div className="relative z-10 w-full flex justify-center items-center my-auto px-4 py-4">
-        <div className="bg-white/70 backdrop-blur-xl border border-white/60 px-6 py-10 sm:p-12 rounded-[32px] shadow-[0_32px_80px_rgba(11,61,46,0.06)] max-w-xl w-full text-center transition-all duration-300 hover:shadow-[0_40px_96px_rgba(11,61,46,0.1)] relative">
+      {/* === CENTERPIECE: Elegant Glassmorphic Recovery Panel === */}
+      <div className="relative z-10 w-full flex justify-center items-center my-2 px-6 sm:px-8">
+        <div className="bg-white/70 backdrop-blur-xl border border-white/60 p-6 sm:p-8 rounded-[32px] shadow-[0_32px_80px_rgba(11,61,46,0.06)] max-w-5xl w-full text-left transition-all duration-300 hover:shadow-[0_40px_96px_rgba(11,61,46,0.1)] relative">
           
-          {/* Real-time systems status indicator pill inside card */}
-          <div className="absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1 bg-white/60 border border-[#0B3D2E]/5 rounded-full text-[10px] font-bold shadow-sm transition-all hover:bg-white">
-            <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
-              headingInfo.statusColor === "emerald" ? "bg-emerald-500" : 
-              headingInfo.statusColor === "amber" ? "bg-amber-500" : "bg-red-500"
-            }`} />
-            <span className="text-[#1F5946]">{headingInfo.statusText}</span>
-          </div>
-
-          {/* Animate-on-hover SourceTrace Leaf Emblem */}
-          <div className="flex justify-center mb-6 pt-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#0B3D2E] flex items-center justify-center text-white shadow-md shadow-[#0B3D2E]/10 group cursor-pointer transition-transform hover:scale-105 duration-300">
-              <Leaf className="w-6 h-6 text-[#86EFAC] transition-transform duration-500 group-hover:rotate-[30deg]" />
-            </div>
-          </div>
-
-          {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#0B3D2E]/5 border border-[#0B3D2E]/10 text-[#0B3D2E] rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-            {mode === "offline" ? <WifiOff className="w-3.5 h-3.5 text-[#10B981]" /> : <AlertCircle className="w-3.5 h-3.5 text-[#0B3D2E]" />}
-            {headingInfo.badge}
-          </div>
-
-          {/* Headline */}
-          <h2 className="text-xl sm:text-2xl font-black text-[#0B3D2E] tracking-tight leading-snug mb-4 px-2">
-            {headingInfo.title}
-          </h2>
-
-          {/* Conversational Copy */}
-          <p className="text-sm text-[#1F5946] font-medium leading-relaxed mb-6 max-w-md mx-auto px-2">
-            {headingInfo.desc}
-          </p>
-
-          {/* Smart Search Bar (Smoothly expands from max-w-md to max-w-lg on focus) */}
-          <div className={`relative mx-auto mb-8 transition-all duration-300 ${isFocused ? 'max-w-lg' : 'max-w-md'}`}>
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-[#1F5946]/70" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search products, industries, solutions, compliance..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-              onKeyDown={handleSearchKeyDown}
-              className="w-full pl-12 pr-4 py-3 bg-white/95 border border-[#0B3D2E]/10 focus:border-[#0B3D2E]/30 focus:ring-4 focus:ring-[#0B3D2E]/5 rounded-2xl text-sm font-semibold text-[#0B3D2E] placeholder-[#1F5946]/50 shadow-sm focus:outline-none transition-all duration-300"
-            />
-            {isSearching && (
-              <div className="absolute right-4 inset-y-0 flex items-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-[#0B3D2E] border-t-transparent" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left Content Column */}
+            <div className="lg:col-span-7 flex flex-col justify-center">
+              
+              {/* Systems Indicator Pill */}
+              <div className="inline-flex self-start items-center gap-1.5 px-3 py-1 bg-white/60 border border-[#0B3D2E]/5 rounded-full text-[10px] font-bold shadow-sm transition-all hover:bg-white mb-3">
+                <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                  headingInfo.statusColor === "emerald" ? "bg-emerald-500" : 
+                  headingInfo.statusColor === "amber" ? "bg-amber-500" : "bg-red-500"
+                }`} />
+                <span className="text-[#1F5946]">{headingInfo.statusText}</span>
               </div>
-            )}
 
-            {/* Live Search Results */}
-            {searchResults.length > 0 && (
-              <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl z-30 max-h-56 overflow-y-auto text-left py-2 border border-[#0B3D2E]/5">
-                <div className="px-4 py-1.5 text-[10px] font-bold text-[#1F7A53] uppercase tracking-wider border-b border-gray-50 mb-1">
-                  Matching Destinations
+              {/* Status Badge */}
+              <div className="inline-flex self-start items-center gap-2 px-3 py-1 bg-[#0B3D2E]/5 border border-[#0B3D2E]/10 text-[#0B3D2E] rounded-full text-[10px] font-bold uppercase tracking-widest mb-3">
+                {mode === "offline" ? <WifiOff className="w-3 h-3 text-[#10B981]" /> : <AlertCircle className="w-3 h-3 text-[#0B3D2E]" />}
+                {headingInfo.badge}
+              </div>
+
+              {/* Headline */}
+              <h2 className="text-xl sm:text-2xl font-black text-[#0B3D2E] tracking-tight leading-snug mb-3">
+                {headingInfo.title}
+              </h2>
+
+              {/* Conversational Copy */}
+              <p className="text-sm text-[#1F5946] font-medium leading-relaxed mb-4 max-w-lg">
+                {headingInfo.desc}
+              </p>
+
+              {/* Smart Search Bar */}
+              <div className={`relative mb-4 w-full max-w-md`}>
+                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-[#1F5946]/70" />
                 </div>
-                {searchResults.map((result) => (
-                  <Link 
-                    key={result.item.url} 
-                    href={result.item.url}
-                    className="flex items-center justify-between px-4 py-2.5 hover:bg-[#EAF5EE]/40 transition-colors group"
-                  >
-                    <div>
-                      <div className="text-sm font-bold text-[#0B3D2E]">{result.item.title}</div>
-                      <div className="text-[11px] text-[#1F5946]/75 line-clamp-1">{result.item.metaDescription}</div>
+                <input
+                  type="text"
+                  placeholder="Search products, industries, solutions, compliance..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+                  onKeyDown={handleSearchKeyDown}
+                  className="w-full pl-12 pr-4 py-2.5 bg-white/95 border border-[#0B3D2E]/10 focus:border-[#0B3D2E]/30 focus:ring-4 focus:ring-[#0B3D2E]/5 rounded-2xl text-sm font-semibold text-[#0B3D2E] placeholder-[#1F5946]/50 shadow-sm focus:outline-none transition-all duration-300"
+                />
+                {isSearching && (
+                  <div className="absolute right-4 inset-y-0 flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-[#0B3D2E] border-t-transparent" />
+                  </div>
+                )}
+
+                {/* Live Search Results */}
+                {searchResults.length > 0 && (
+                  <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl z-30 max-h-56 overflow-y-auto text-left py-2 border border-[#0B3D2E]/5">
+                    <div className="px-4 py-1.5 text-[10px] font-bold text-[#1F7A53] uppercase tracking-wider border-b border-gray-50 mb-1">
+                      Matching Destinations
                     </div>
-                    <ArrowRight className="w-4 h-4 text-[#1F7A53] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                  </Link>
-                ))}
+                    {searchResults.map((result) => (
+                      <Link 
+                        key={result.item.url} 
+                        href={result.item.url}
+                        className="flex items-center justify-between px-4 py-2.5 hover:bg-[#EAF5EE]/40 transition-colors group"
+                      >
+                        <div>
+                          <div className="text-sm font-bold text-[#0B3D2E]">{result.item.title}</div>
+                          <div className="text-[11px] text-[#1F5946]/75 line-clamp-1">{result.item.metaDescription}</div>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-[#1F7A53] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                      </Link>
+                    ))}
+                  </div>
+                )}
+                {searchQuery.trim() && !isSearching && searchResults.length === 0 && (
+                  <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl z-30 text-left py-4 px-4 text-xs font-semibold text-gray-400">
+                    No matching topics found in today's harvest.
+                  </div>
+                )}
               </div>
-            )}
-            {searchQuery.trim() && !isSearching && searchResults.length === 0 && (
-              <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl z-30 text-left py-4 px-4 text-xs font-semibold text-gray-400">
-                No matching topics found in today's harvest.
+
+              {/* Quick Actions */}
+              <div className="flex flex-wrap items-center gap-2.5 mb-4">
+                <Link href="/">
+                  <button className="flex items-center gap-1.5 h-10 px-5 rounded-full bg-[#0B3D2E] hover:bg-[#155a44] text-white font-bold text-[11px] uppercase tracking-wider transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-[#0B3D2E]/15 active:scale-95 shadow-sm">
+                    <Home className="w-3.5 h-3.5 text-[#86EFAC]" />
+                    Return Home
+                  </button>
+                </Link>
+                
+                <Link href="/solutions">
+                  <button className="flex items-center gap-1.5 h-10 px-5 rounded-full bg-white border border-[#0B3D2E]/10 hover:border-[#0B3D2E]/20 text-[#0B3D2E] font-bold text-[11px] uppercase tracking-wider transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 shadow-sm">
+                    <Compass className="w-3.5 h-3.5 text-[#1F7A53]" />
+                    Explore Solutions
+                  </button>
+                </Link>
+
+                <Link href="/contact">
+                  <button className="flex items-center gap-1.5 h-10 px-5 rounded-full bg-white border border-[#0B3D2E]/10 hover:border-[#0B3D2E]/20 text-[#0B3D2E] font-bold text-[11px] uppercase tracking-wider transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 shadow-sm">
+                    <Mail className="w-3.5 h-3.5 text-[#1F7A53]" />
+                    Contact Sales
+                  </button>
+                </Link>
               </div>
-            )}
-          </div>
 
-          {/* Quick Actions */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
-            <Link href="/">
-              <button className="flex items-center gap-2 h-11 px-6 rounded-full bg-[#0B3D2E] hover:bg-[#155a44] text-white font-bold text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-[#0B3D2E]/15 active:scale-95 shadow-sm">
-                <Home className="w-4 h-4 text-[#86EFAC]" />
-                Return Home
-              </button>
-            </Link>
-            
-            <Link href="/solutions">
-              <button className="flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-[#0B3D2E]/10 hover:border-[#0B3D2E]/20 text-[#0B3D2E] font-bold text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 shadow-sm">
-                <Compass className="w-4 h-4 text-[#1F7A53]" />
-                Explore Solutions
-              </button>
-            </Link>
+              {/* Rotating One-Liners */}
+              <div className="border-t border-[#0B3D2E]/5 pt-3">
+                <div className={`text-xs text-[#1F7A53] font-bold italic tracking-wide h-5 transition-all duration-300 ${fadeQuote ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1"}`}>
+                  “ {farmQuotes[quoteIndex]} ”
+                </div>
+              </div>
 
-            <Link href="/contact">
-              <button className="flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-[#0B3D2E]/10 hover:border-[#0B3D2E]/20 text-[#0B3D2E] font-bold text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 shadow-sm">
-                <Mail className="w-4 h-4 text-[#1F7A53]" />
-                Contact Sales
-              </button>
-            </Link>
-          </div>
-
-          {/* Rotating One-Liners */}
-          <div className="border-t border-[#0B3D2E]/5 pt-6">
-            <div className={`text-xs text-[#1F7A53] font-bold italic tracking-wide h-5 transition-all duration-300 ${fadeQuote ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1"}`}>
-              “ {farmQuotes[quoteIndex]} ”
             </div>
+
+            {/* Right Illustration Column */}
+            <div className="lg:col-span-5 hidden lg:flex items-center justify-center relative bg-gradient-to-br from-[#EAF5EE] to-[#BFE6D2]/40 rounded-2xl border border-[#0B3D2E]/5 p-6 h-[280px] overflow-hidden">
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500/20 to-transparent" />
+              
+              <svg className="w-full h-full text-[#0B3D2E]/8" viewBox="0 0 400 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Grid Overlay */}
+                <path d="M 0 40 L 400 40 M 0 80 L 400 80 M 0 120 L 400 120 M 0 160 L 400 160 M 0 200 L 400 200 M 40 0 L 40 240 M 80 0 L 80 240 M 120 0 L 120 240 M 160 0 L 160 240 M 200 0 L 200 240 M 240 0 L 240 240 M 280 0 L 280 240 M 320 0 L 320 240 M 360 0 L 360 240" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
+                
+                {/* Hills */}
+                <path d="M-50,200 C80,160 200,220 320,180 T500,200 L500,250 L-50,250 Z" fill="#1F7A53" fillOpacity="0.1" />
+                <path d="M-50,220 C120,180 280,240 400,200 L400,250 L-50,250 Z" fill="#1F7A53" fillOpacity="0.2" />
+
+                {/* Windmill */}
+                <line x1="300" y1="180" x2="300" y2="130" stroke="#0B3D2E" strokeWidth="1.5" strokeOpacity="0.5" />
+                <circle cx="300" cy="130" r="2" fill="#0B3D2E" />
+                
+                {/* Satellite Orbit */}
+                <path d="M 50 80 Q 200 20 350 80" fill="none" stroke="#1F7A53" strokeWidth="1" strokeDasharray="4,4" strokeOpacity="0.4" />
+                <circle cx="200" cy="50" r="4" fill="#10B981" />
+                
+                {/* Connection Lines */}
+                <line x1="200" y1="50" x2="160" y2="140" stroke="#10B981" strokeWidth="0.5" strokeDasharray="2,2" strokeOpacity="0.5" />
+                <line x1="200" y1="50" x2="240" y2="160" stroke="#10B981" strokeWidth="0.5" strokeDasharray="2,2" strokeOpacity="0.5" />
+
+                {/* Bounding box nodes */}
+                <rect x="140" y="130" width="40" height="30" rx="4" fill="none" stroke="#10B981" strokeWidth="1" strokeOpacity="0.6" />
+                <rect x="220" y="145" width="50" height="35" rx="4" fill="none" stroke="#10B981" strokeWidth="1" strokeOpacity="0.6" />
+              </svg>
+
+              {/* SourceTrace Leaf watermark */}
+              <div className="absolute w-24 h-24 text-[#0B3D2E]/5 -bottom-4 -right-4">
+                <Leaf className="w-full h-full" />
+              </div>
+            </div>
+
           </div>
 
         </div>
       </div>
 
-      {/* ── FOOTER: Trust Signals & Destinations Grid ── */}
-      <div className="relative z-10 w-full flex flex-col items-center gap-4 px-4">
+      {/* === FOOTER: Trust Signals & Destinations Grid === */}
+      <div className="relative z-10 w-full flex flex-col items-center gap-3 px-6 sm:px-8 mt-2">
         
         {/* Popular Destinations Grid (Focal point navigation) */}
-        <div className="w-full max-w-5xl grid grid-cols-2 md:grid-cols-6 gap-3">
+        <div className="w-full max-w-5xl grid grid-cols-2 md:grid-cols-6 gap-2.5">
           {[
             { title: "Platform", path: "/solutions/supply-chain-traceability", desc: "First-mile tracking", icon: Cpu },
             { title: "Intelligence", path: "/solutions/impact-measurement", desc: "Predictive nature metrics", icon: Activity },
-            { title: "Crop Insights", path: "/CropInsights/coffee", desc: "Farmland crop profiles", icon: Leaf },
+            { title: "Commodity Hub", path: "/CropInsights", desc: "Farmland crop profiles", icon: Leaf },
             { title: "Compliance", path: "/compliance/eudr", desc: "EUDR Deforestation & ESG", icon: ShieldCheck },
             { title: "Resources", path: "/case-studies", desc: "Whitepapers & cases", icon: FileText },
             { title: "Company", path: "/about", desc: "Our global mission", icon: Globe }
@@ -339,15 +382,15 @@ export function AgriGame({ mode }: AgriGameProps) {
               <Link 
                 key={dest.title} 
                 href={dest.path}
-                className="bg-white/40 hover:bg-white/95 border border-[#0B3D2E]/5 hover:border-[#0B3D2E]/15 rounded-2xl p-4 text-left transition-all hover:-translate-y-1 hover:shadow-md hover:shadow-[#059669]/5 group relative overflow-hidden"
+                className="bg-white/40 hover:bg-white/95 border border-[#0B3D2E]/5 hover:border-[#0B3D2E]/15 rounded-2xl p-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-sm hover:shadow-[#059669]/5 group relative overflow-hidden"
               >
                 {/* Subtle green glow on hover */}
                 <div className="absolute inset-0 bg-[#10B981]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative z-10">
-                  <div className="w-8 h-8 rounded-lg bg-[#0B3D2E]/5 flex items-center justify-center text-[#0B3D2E] mb-3 group-hover:bg-[#0B3D2E] group-hover:text-[#86EFAC] transition-all">
-                    <Icon className="w-4 h-4" />
+                  <div className="w-7 h-7 rounded-lg bg-[#0B3D2E]/5 flex items-center justify-center text-[#0B3D2E] mb-2 group-hover:bg-[#0B3D2E] group-hover:text-[#86EFAC] transition-all">
+                    <Icon className="w-3.5 h-3.5" />
                   </div>
-                  <div className="text-xs font-extrabold text-[#0B3D2E] mb-1">{dest.title}</div>
+                  <div className="text-xs font-extrabold text-[#0B3D2E] mb-0.5">{dest.title}</div>
                   <div className="text-[10px] text-[#1F5946]/75 font-semibold leading-normal">{dest.desc}</div>
                 </div>
               </Link>
@@ -356,24 +399,23 @@ export function AgriGame({ mode }: AgriGameProps) {
         </div>
 
         {/* Corporate Trust Indicators */}
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[10px] font-bold text-[#1F5946]/60 tracking-wider uppercase mt-6 mb-2">
-          <span className="flex items-center gap-1.5">
-            <Globe className="w-3.5 h-3.5 text-[#10B981]/70" />
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5 text-[9.5px] font-bold text-[#1F5946]/60 tracking-wider uppercase mt-4 mb-0">
+          <span className="flex items-center gap-1">
+            <Globe className="w-3 h-3 text-[#10B981]/70" />
             Trusted by global food companies
           </span>
           <span className="w-1 h-1 rounded-full bg-[#0B3D2E]/20" />
-          <span className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#10B981]/70" />
+          <span className="flex items-center gap-1">
+            <ShieldCheck className="w-3 h-3 text-[#10B981]/70" />
             Operating across millions of hectares
           </span>
           <span className="w-1 h-1 rounded-full bg-[#0B3D2E]/20" />
-          <span className="flex items-center gap-1.5">
-            <Cpu className="w-3.5 h-3.5 text-[#10B981]/70" />
+          <span className="flex items-center gap-1">
+            <Cpu className="w-3 h-3 text-[#10B981]/70" />
             Helping organizations build transparent supply chains
           </span>
         </div>
       </div>
-
     </div>
   );
 }

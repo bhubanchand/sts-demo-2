@@ -4,6 +4,20 @@ import { StatsBanner } from "@/components/ui/stats-banner";
 import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
 import { Clock, ShieldCheck, MapPin, Database, AlertCircle } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "EUDR Deforestation Sourcing Compliance Solution | SourceTrace",
+  description: "Ensure your agriculture supply chain is ready for the EU Deforestation Regulation (EUDR) with verified forest mapping and satellite monitoring.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/solutions/eudr-compliance",
+  },
+  openGraph: {
+    title: "EUDR Deforestation Sourcing Compliance Solution | SourceTrace",
+    description: "Ensure your agriculture supply chain is ready for the EU Deforestation Regulation (EUDR) with verified forest mapping and satellite monitoring.",
+    url: "https://www.sourcetrace.com/solutions/eudr-compliance",
+  }
+};
 
 export default function EUDRCompliancePage() {
   return (

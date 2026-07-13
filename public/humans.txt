@@ -1,0 +1,14 @@
+/* TEAM */
+Company: SourceTrace Systems
+Site: https://www.sourcetrace.com
+Location: Bangalore, India
+
+/* TECHNOLOGY */
+Framework: Next.js 16
+Language: TypeScript
+Styling: Tailwind CSS
+Hosting: Vercel
+CMS: Headless (Payload CMS)
+
+/* THANKS */
+All the farmers and agricultural communities worldwide.

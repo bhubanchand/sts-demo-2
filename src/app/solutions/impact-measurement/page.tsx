@@ -4,6 +4,20 @@ import { StatsBanner } from "@/components/ui/stats-banner";
 import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
 import { LineChart, Leaf, Droplets, Target } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sustainability Impact Measurement & Valuation | SourceTrace",
+  description: "Track and quantify the ROI of your environmental and social sustainability interventions with reliable field data.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/solutions/impact-measurement",
+  },
+  openGraph: {
+    title: "Sustainability Impact Measurement & Valuation | SourceTrace",
+    description: "Track and quantify the ROI of your environmental and social sustainability interventions with reliable field data.",
+    url: "https://www.sourcetrace.com/solutions/impact-measurement",
+  }
+};
 
 export default function ImpactMeasurementPage() {
   return (

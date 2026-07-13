@@ -1,4 +1,18 @@
 import { CompliancePageLayout, CompliancePageData } from "@/components/compliance-page-layout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "CBAM Carbon Border Tariffs Compliance | SourceTrace",
+  description: "Navigate the Carbon Border Adjustment Mechanism (CBAM) rules. Calculate, track, and verify embedded carbon emissions in agricultural imports.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/compliance/cbam",
+  },
+  openGraph: {
+    title: "CBAM Carbon Border Tariffs Compliance | SourceTrace",
+    description: "Navigate the Carbon Border Adjustment Mechanism (CBAM) rules. Calculate, track, and verify embedded carbon emissions in agricultural imports.",
+    url: "https://www.sourcetrace.com/compliance/cbam",
+  }
+};
 
 const pageData: CompliancePageData = {
   category: "CBAM Compliance",

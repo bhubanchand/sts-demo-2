@@ -43,12 +43,20 @@ export const metadata: Metadata = {
     description: "Connecting sourcing, sustainability, and smallholder impact through real-time traceability.",
     images: ["/icon.png"],
   },
+  verification: {
+    google: "google-site-verification-placeholder",
+    other: {
+      "msvalidate.01": "msvalidate-placeholder",
+    },
+  },
 };
 
 import { MegaMenu } from "@/components/ui/mega-menu";
 import { Footer } from "@/components/ui/footer";
 import { FloatingContact } from "@/components/ui/floating-contact";
 import { PwaProvider } from "@/components/pwa-provider";
+import { GoogleAnalytics } from "@/components/google-analytics";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 export default function RootLayout({
   children,
@@ -81,6 +89,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <GoogleAnalytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
@@ -97,6 +106,7 @@ export default function RootLayout({
           <PwaProvider>
             <MegaMenu />
             <FloatingContact />
+            <Breadcrumbs />
             {children}
             <Footer />
           </PwaProvider>

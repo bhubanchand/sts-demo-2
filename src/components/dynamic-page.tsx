@@ -1,4 +1,6 @@
-import { notFound } from "next/navigation";
+"use client";
+
+import { AgriGame } from "@/components/agri-game";
 
 interface DynamicPageProps {
   title: string;
@@ -6,7 +8,7 @@ interface DynamicPageProps {
 }
 
 export function DynamicPage({ title, category }: DynamicPageProps) {
-  // If the page has not been created with static content, automatically trigger the 404 error page
-  notFound();
-  return null;
+  // If the page content has not been built/created with static content yet, 
+  // render the beautiful, brand-aligned "not-available" recovery page.
+  return <AgriGame mode="not-available" />;
 }

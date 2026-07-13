@@ -1,0 +1,6 @@
+Contact: mailto:security@sourcetrace.com
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://www.sourcetrace.com/security.txt
+Acknowledgments: https://www.sourcetrace.com/legal/trust-center
+Policy: https://www.sourcetrace.com/legal/security

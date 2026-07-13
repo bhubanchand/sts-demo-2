@@ -1,4 +1,18 @@
 import { CompliancePageLayout, CompliancePageData } from "@/components/compliance-page-layout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "CSRD Double Materiality Compliance | SourceTrace",
+  description: "Navigate CSRD reporting for value chains. Map double materiality, carbon footprints, and Scope 3 supplier data with farm-level proof.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/compliance/csrd",
+  },
+  openGraph: {
+    title: "CSRD Double Materiality Compliance | SourceTrace",
+    description: "Navigate CSRD reporting for value chains. Map double materiality, carbon footprints, and Scope 3 supplier data with farm-level proof.",
+    url: "https://www.sourcetrace.com/compliance/csrd",
+  }
+};
 
 const pageData: CompliancePageData = {
   category: "CSRD Compliance",

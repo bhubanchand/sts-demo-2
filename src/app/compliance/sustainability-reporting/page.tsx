@@ -1,4 +1,18 @@
 import { CompliancePageLayout, CompliancePageData } from "@/components/compliance-page-layout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Agricultural Sustainability Sourcing Reporting Compliance | SourceTrace",
+  description: "Aggregate agricultural farm data, certification systems, and Scope 3 footprints into a single unified audit-ready reporting database.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/compliance/sustainability-reporting",
+  },
+  openGraph: {
+    title: "Agricultural Sustainability Sourcing Reporting Compliance | SourceTrace",
+    description: "Aggregate agricultural farm data, certification systems, and Scope 3 footprints into a single unified audit-ready reporting database.",
+    url: "https://www.sourcetrace.com/compliance/sustainability-reporting",
+  }
+};
 
 const pageData: CompliancePageData = {
   category: "Sustainability Compliance",

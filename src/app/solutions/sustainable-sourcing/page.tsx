@@ -4,6 +4,20 @@ import { StatsBanner } from "@/components/ui/stats-banner";
 import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
 import { Map, TreePine, Leaf, ShieldCheck, ArrowRight } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sustainable Sourcing & Agriculture Procurement | SourceTrace",
+  description: "Achieve carbon neutral supply chains with verified soil, water, forest protection, and regenerative agriculture programs.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/solutions/sustainable-sourcing",
+  },
+  openGraph: {
+    title: "Sustainable Sourcing & Agriculture Procurement | SourceTrace",
+    description: "Achieve carbon neutral supply chains with verified soil, water, forest protection, and regenerative agriculture programs.",
+    url: "https://www.sourcetrace.com/solutions/sustainable-sourcing",
+  }
+};
 
 export default function SustainableSourcingPage() {
   return (

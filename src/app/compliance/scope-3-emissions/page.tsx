@@ -1,4 +1,18 @@
 import { CompliancePageLayout, CompliancePageData } from "@/components/compliance-page-layout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Scope 3 Value Chain Emissions Sourcing Compliance | SourceTrace",
+  description: "Ditch generic greenhouse gas estimates. Trace Scope 3 emissions directly to supplier land plots with verified primary field data.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/compliance/scope-3-emissions",
+  },
+  openGraph: {
+    title: "Scope 3 Value Chain Emissions Sourcing Compliance | SourceTrace",
+    description: "Ditch generic greenhouse gas estimates. Trace Scope 3 emissions directly to supplier land plots with verified primary field data.",
+    url: "https://www.sourcetrace.com/compliance/scope-3-emissions",
+  }
+};
 
 const pageData: CompliancePageData = {
   category: "Scope 3 Compliance",

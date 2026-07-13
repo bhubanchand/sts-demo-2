@@ -4,6 +4,20 @@ import { StatsBanner } from "@/components/ui/stats-banner";
 import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
 import { Network, Database, Link as LinkIcon, Search } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Supply Chain Traceability & Visibility Solutions | SourceTrace",
+  description: "Gain complete transparency from agricultural source to retail store with real-time lot tracking and supply chain mapping.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/solutions/supply-chain-traceability",
+  },
+  openGraph: {
+    title: "Supply Chain Traceability & Visibility Solutions | SourceTrace",
+    description: "Gain complete transparency from agricultural source to retail store with real-time lot tracking and supply chain mapping.",
+    url: "https://www.sourcetrace.com/solutions/supply-chain-traceability",
+  }
+};
 
 export default function SupplyChainTraceabilityPage() {
   return (

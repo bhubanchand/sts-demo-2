@@ -4,6 +4,20 @@ import { StatsBanner } from "@/components/ui/stats-banner";
 import { AnimatedText } from "@/components/ui/animated-text";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, AlertTriangle, ShieldAlert, FileSignature } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Responsible & Ethical Procurement Solutions | SourceTrace",
+  description: "Embed human rights, fair labor practices, and deforestation-free standards into your supply chain procurement workflows.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/solutions/responsible-sourcing",
+  },
+  openGraph: {
+    title: "Responsible & Ethical Procurement Solutions | SourceTrace",
+    description: "Embed human rights, fair labor practices, and deforestation-free standards into your supply chain procurement workflows.",
+    url: "https://www.sourcetrace.com/solutions/responsible-sourcing",
+  }
+};
 
 export default function ResponsibleSourcingPage() {
   return (

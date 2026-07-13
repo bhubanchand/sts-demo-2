@@ -1,4 +1,18 @@
 import { CompliancePageLayout, CompliancePageData } from "@/components/compliance-page-layout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Mandatory Sourcing Compliance & Regulations | SourceTrace",
+  description: "Navigate global agricultural compliance mandates like EUDR, CSRD, and ESRS. Turn ESG audits into verified first-mile digital evidence.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/compliance",
+  },
+  openGraph: {
+    title: "Mandatory Sourcing Compliance & Regulations | SourceTrace",
+    description: "Navigate global agricultural compliance mandates like EUDR, CSRD, and ESRS. Turn ESG audits into verified first-mile digital evidence.",
+    url: "https://www.sourcetrace.com/compliance",
+  }
+};
 
 const pageData: CompliancePageData = {
   category: "Compliance Overview",

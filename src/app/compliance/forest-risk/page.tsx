@@ -1,4 +1,18 @@
 import { CompliancePageLayout, CompliancePageData } from "@/components/compliance-page-layout";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Forest Sourcing Risk Assessment Compliance | SourceTrace",
+  description: "Assess deforestation risk in value chains. Map sourcing footprint coordinates against global tropical forest loss zones for due diligence.",
+  alternates: {
+    canonical: "https://www.sourcetrace.com/compliance/forest-risk",
+  },
+  openGraph: {
+    title: "Forest Sourcing Risk Assessment Compliance | SourceTrace",
+    description: "Assess deforestation risk in value chains. Map sourcing footprint coordinates against global tropical forest loss zones for due diligence.",
+    url: "https://www.sourcetrace.com/compliance/forest-risk",
+  }
+};
 
 const pageData: CompliancePageData = {
   category: "Forest Risk Compliance",
