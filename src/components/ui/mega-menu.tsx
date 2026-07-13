@@ -498,9 +498,732 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
   );
 }
 
+interface LinkPreviewData {
+  title: string;
+  desc: string;
+  bullets: string[];
+  linkText: string;
+  link: string;
+}
+
+const LINK_PREVIEWS: Record<string, LinkPreviewData> = {
+  // PLATFORM -> Intelligence
+  "AI Engine": {
+    title: "AI Engine",
+    desc: "Predictive crop models and disease detection.",
+    bullets: [
+      "Real-time agronomic disease diagnoses",
+      "Predictive yield forecasting models",
+      "Automated growth stage alerts",
+      "Soil moisture telemetry analysis"
+    ],
+    linkText: "Explore AI Engine",
+    link: "/intelligence/ai-engine"
+  },
+  "Satellite Monitoring": {
+    title: "Satellite Monitoring",
+    desc: "Continuous crop health monitoring from orbit.",
+    bullets: [
+      "Daily NDVI crop vigor indexing",
+      "Deforestation polygon screening",
+      "Acreage expansion verification",
+      "Post-hazard damage assessments"
+    ],
+    linkText: "Explore Satellite Intel",
+    link: "/intelligence/satellite-monitoring"
+  },
+  "Geospatial Intelligence": {
+    title: "Geospatial Intelligence",
+    desc: "Interactive parcel mapping and spatial analytics.",
+    bullets: [
+      "Grower parcel boundary mapping",
+      "Spatial risk overlay matrices",
+      "Interactive regional dashboards",
+      "Dynamic field heatmapping"
+    ],
+    linkText: "Explore GIS Intel",
+    link: "/intelligence/geospatial-intelligence"
+  },
+  "Analytics Dashboard": {
+    title: "Analytics Dashboard",
+    desc: "Operational telemetry and executive KPIs.",
+    bullets: [
+      "Custom sourcing analytics panels",
+      "Unified operational dashboards",
+      "Exportable stakeholder reports",
+      "Carbon accounting integrations"
+    ],
+    linkText: "View Analytics",
+    link: "/intelligence/analytics-dashboard"
+  },
+  // PLATFORM -> Operations
+  "Workflow Automation": {
+    title: "Workflow Automation",
+    desc: "Automate outgrower operations and audits.",
+    bullets: [
+      "No-code field survey logic",
+      "Automated digital audit trails",
+      "Supervisor alert queues",
+      "Sourcing weight ticket logging"
+    ],
+    linkText: "Explore Workflows",
+    link: "/platform/operations/workflow-automation"
+  },
+  "Reporting": {
+    title: "Reporting Console",
+    desc: "Instant compliance and exportable logs.",
+    bullets: [
+      "One-click EUDR audit templates",
+      "Custom stakeholder disclosures",
+      "PDF and spreadsheet logging",
+      "Real-time alert summary logs"
+    ],
+    linkText: "View Reporting Tools",
+    link: "/platform/operations/reporting"
+  },
+  "Mobile Apps": {
+    title: "Mobile Field Apps",
+    desc: "Offline-first polygon gathering and outgrower profiling.",
+    bullets: [
+      "100% offline survey operations",
+      "GPS polygon boundary drawing",
+      "Multi-language field interface",
+      "Automatic data syncing protocols"
+    ],
+    linkText: "View Mobile Solutions",
+    link: "/platform/operations/mobile-apps"
+  },
+  "Document Management": {
+    title: "Document Cloud",
+    desc: "Secure compliance certificates and grower receipts.",
+    bullets: [
+      "Encrypted cloud document vault",
+      "Automated farmer receipt matching",
+      "Organic certificates cataloging",
+      "Third-party auditor portal"
+    ],
+    linkText: "Explore Documents",
+    link: "/platform/operations/document-management"
+  },
+  // PLATFORM -> Connectivity
+  "API Registry": {
+    title: "Platform APIs",
+    desc: "Connect sourcing data to any enterprise systems.",
+    bullets: [
+      "RESTful API endpoints",
+      "High-throughput payload streams",
+      "Webhooks for field transactions",
+      "Audited transaction histories"
+    ],
+    linkText: "View Developer Docs",
+    link: "/platform/connectivity/apis"
+  },
+  "Developer SDK": {
+    title: "Developer SDK",
+    desc: "Build custom outgrower integrations.",
+    bullets: [
+      "JavaScript, Python, and Go libraries",
+      "Pre-built GIS mapping widgets",
+      "Sample field survey templates",
+      "Developer staging environments"
+    ],
+    linkText: "Explore SDK Tools",
+    link: "/platform/connectivity/sdk"
+  },
+  "ERP Connectors": {
+    title: "ERP Integrations",
+    desc: "Sync transactions directly to SAP, NetSuite, or Dynamics.",
+    bullets: [
+      "Bi-directional payment syncs",
+      "Sourcing invoice generation",
+      "Automatic inventory updates",
+      "Supplier ledger reconciliations"
+    ],
+    linkText: "Explore ERP Connectors",
+    link: "/platform/connectivity/erp-connectors"
+  },
+  "GIS Integrations": {
+    title: "GIS Connections",
+    desc: "Overlay custom spatial databases.",
+    bullets: [
+      "Esri ArcGIS and QGIS compatibilities",
+      "Custom WMS and WFS map layers",
+      "Dynamic GeoJSON imports",
+      "Cadastral boundary alignments"
+    ],
+    linkText: "View GIS Connectors",
+    link: "/platform/connectivity/gis-integrations"
+  },
+  // PLATFORM -> Security
+  "Enterprise Security": {
+    title: "Enterprise Security",
+    desc: "SOC2 Type II data safeguards.",
+    bullets: [
+      "End-to-end data encryption",
+      "Single Sign-On (SSO) protocols",
+      "Granular role access filters",
+      "Continuous threat monitoring"
+    ],
+    linkText: "View Security Center",
+    link: "/platform/security/security"
+  },
+  "Data Privacy": {
+    title: "Grower Data Privacy",
+    desc: "GDPR outgrower consent management.",
+    bullets: [
+      "Grower profile consent forms",
+      "Encrypted PII data hashing",
+      "Automated profile deletions",
+      "Auditable privacy trails"
+    ],
+    linkText: "Read Privacy Details",
+    link: "/platform/security/privacy"
+  },
+  "Cloud Deployment": {
+    title: "Cloud Deployment",
+    desc: "SaaS or dedicated private cloud setups.",
+    bullets: [
+      "AWS, Azure, and GCP hosting options",
+      "Multi-tenant or single-tenant",
+      "99.99% uptime SLA guarantee",
+      "Geo-redundant DB replication"
+    ],
+    linkText: "Explore Deployments",
+    link: "/platform/security/deployment"
+  },
+  "Compliance Standards": {
+    title: "Compliance Standard Audits",
+    desc: "Traceability audit trails certified globally.",
+    bullets: [
+      "ISO 27001 data protection",
+      "Certified ESG metrics export",
+      "Audit-ready regulatory files",
+      "Global compliance standards check"
+    ],
+    linkText: "Explore Standards",
+    link: "/platform/security/compliance"
+  },
+  // PLATFORM -> Architecture
+  "Platform Overview": {
+    title: "Platform Overview",
+    desc: "Discover the unified agricultural first-mile stack.",
+    bullets: [
+      "GIS and IoT tracking systems",
+      "Interactive global outgrower maps",
+      "First-mile transaction ledger",
+      "Unified compliance portal"
+    ],
+    linkText: "Explore Platform",
+    link: "/platform"
+  },
+  "Infrastructure Map": {
+    title: "Infrastructure Map",
+    desc: "Our high-availability global cloud stack.",
+    bullets: [
+      "Edge caching in sourcing hubs",
+      "Serverless spatial calculation databases",
+      "Automated scaling protocols",
+      "Real-time database replication"
+    ],
+    linkText: "View Infrastructure",
+    link: "/platform/platform-architecture"
+  },
+  "Cloud Scalability": {
+    title: "Cloud Scalability",
+    desc: "Architected to scale to millions of farmers.",
+    bullets: [
+      "Dynamic load balancing",
+      "Distributed outgrower databases",
+      "Optimized offline data queues",
+      "Ultra-low latency edge servers"
+    ],
+    linkText: "Read Architecture Brief",
+    link: "/platform/platform-architecture"
+  },
+  // SOLUTIONS -> Grow
+  "Farm Management": {
+    title: "Farm Management",
+    desc: "Digitize growers and monitor yield.",
+    bullets: [
+      "Individual farmer profile directories",
+      "Geo-spatially mapped parcel grids",
+      "Sowing and harvest tracking",
+      "Dynamic input cost logs"
+    ],
+    linkText: "Explore Farm Mgmt",
+    link: "/solutions/agriculture/farm-management"
+  },
+  "Digital Advisory": {
+    title: "Digital Advisory",
+    desc: "Deliver personalized weather and pest advice.",
+    bullets: [
+      "Automated SMS weather alerts",
+      "Customized pest warning models",
+      "Sustainable fertilizer advice",
+      "Grower training feedback logs"
+    ],
+    linkText: "Explore Advisory",
+    link: "/solutions/agriculture/digital-advisory"
+  },
+  "Crop Monitoring": {
+    title: "Crop Monitoring",
+    desc: "Satellite NDVI crop performance screening.",
+    bullets: [
+      "Weekly satellite vegetation scans",
+      "Automated water stress mapping",
+      "Historical yield indexes",
+      "Extreme weather risk detection"
+    ],
+    linkText: "Explore Monitoring",
+    link: "/solutions/agriculture/crop-monitoring"
+  },
+  // SOLUTIONS -> Track
+  "Supply Chain Traceability": {
+    title: "Supply Chain Traceability",
+    desc: "Trace products from harvest to consumer.",
+    bullets: [
+      "Bag-level barcode scanning",
+      "First-mile scale integration",
+      "Interactive route maps",
+      "Digital custody chains"
+    ],
+    linkText: "Explore Traceability",
+    link: "/solutions/traceability/supply-chain-traceability"
+  },
+  "Digital Product Passport": {
+    title: "Digital Product Passport",
+    desc: "Prepare for upcoming EU transparency regulations.",
+    bullets: [
+      "EU DPP data schema matching",
+      "Traceability ledger hashes",
+      "Deforestation compliance codes",
+      "Carbon footprints disclosure"
+    ],
+    linkText: "Read DPP Passport Details",
+    link: "/solutions/traceability/digital-product-passport"
+  },
+  "QR Consumer Transparency": {
+    title: "QR Transparency",
+    desc: "Engage retail customers with farm origins.",
+    bullets: [
+      "Scannable QR codes on packs",
+      "Farmer storytelling profiles",
+      "Interactive sourcing maps",
+      "Verified compliance statements"
+    ],
+    linkText: "Explore QR Trust",
+    link: "/solutions/traceability/qr-consumer-transparency"
+  },
+  // SOLUTIONS -> Protect
+  "EUDR Deforestation": {
+    title: "EUDR Deforestation",
+    desc: "Automated deforestation checks for EU compliance.",
+    bullets: [
+      "1-click polygon overlay audits",
+      "Interactive country risk flags",
+      "Smallholder polygon imports",
+      "Due Diligence Statement files"
+    ],
+    linkText: "Explore EUDR Tool",
+    link: "/compliance/eudr"
+  },
+  "Carbon Monitoring": {
+    title: "Carbon Monitoring",
+    desc: "Verify carbon offsets and inset parameters.",
+    bullets: [
+      "Regenerative agriculture carbon tracking",
+      "Soil organic carbon data logs",
+      "Satellite carbon sequestration maps",
+      "Scope 3 emissions accounting"
+    ],
+    linkText: "Explore Carbon Monitoring",
+    link: "/solutions/sustainability/carbon-monitoring"
+  },
+  "ESG Reporting": {
+    title: "ESG Reporting",
+    desc: "Unified sustainability metrics dashboard.",
+    bullets: [
+      "GRI and CSRD schema compliance",
+      "Outgrower payment parity audits",
+      "Water footprint logging",
+      "Exportable stakeholder matrices"
+    ],
+    linkText: "View ESG Solutions",
+    link: "/solutions/sustainability/esg-reporting"
+  },
+  "Regenerative Agriculture": {
+    title: "Regenerative Agriculture",
+    desc: "Verify soil health and cover crop compliance.",
+    bullets: [
+      "No-till verification mapping",
+      "Cover crop satellite validation",
+      "Biodiversity index monitoring",
+      "Premium price payout matching"
+    ],
+    linkText: "Explore Regenerative Ag",
+    link: "/solutions/sustainability/regenerative-agriculture"
+  },
+  // SOLUTIONS -> Scale
+  "Sourcing Marketplace": {
+    title: "Sourcing Marketplace",
+    desc: "Procure directly from verified cooperatives.",
+    bullets: [
+      "Verified digital crop catalogs",
+      "Cooperative seller listings",
+      "Direct trading portals",
+      "Sourcing quality verification reports"
+    ],
+    linkText: "Explore Marketplace",
+    link: "/solutions/supply-chain/marketplace"
+  },
+  "Farmer Payments": {
+    title: "Farmer Payments",
+    desc: "Direct digital payout models to growers.",
+    bullets: [
+      "Direct mobile money integrations",
+      "Fair Trade premium logging",
+      "Transaction receipt catalogs",
+      "Instant field scales verification"
+    ],
+    linkText: "Explore Payments",
+    link: "/solutions/finance/farmer-payments"
+  },
+  "Direct Procurement": {
+    title: "Direct Procurement",
+    desc: "Streamline field purchases and contracts.",
+    bullets: [
+      "Field contract digital signing",
+      "Scale weighbridge integrations",
+      "Instant invoice calculations",
+      "Automatic supplier ledgers"
+    ],
+    linkText: "Explore Procurement",
+    link: "/solutions/supply-chain/procurement"
+  },
+  // CUSTOMERS
+  "Agribusiness": {
+    title: "Agribusinesses",
+    desc: "Scale outgrower networks with transparent tools.",
+    bullets: [
+      "Map thousands of smallholder grids",
+      "Automated digital audit logs",
+      "Optimize supply logistics routes",
+      "Track compliance certificates"
+    ],
+    linkText: "View Agribusiness Solutions",
+    link: "/customers/agribusiness"
+  },
+  "Food Brands": {
+    title: "Global Food Brands",
+    desc: "Mitigate supply chain reputational risks.",
+    bullets: [
+      "100% first-mile cargo tracking",
+      "EUDR deforestation screening",
+      "Consumer trust transparency codes",
+      "Global ESG audits support"
+    ],
+    linkText: "View Brand Solutions",
+    link: "/customers/food-brands"
+  },
+  "Governments": {
+    title: "Governments & Agencies",
+    desc: "Build national registry databases for crop assets.",
+    bullets: [
+      "National farmer registry maps",
+      "Agricultural land use surveys",
+      "EUDR compliance support systems",
+      "Outgrower subsidy payouts sync"
+    ],
+    linkText: "View Government Solutions",
+    link: "/customers/governments"
+  },
+  "NGOs": {
+    title: "NGOs & Foundations",
+    desc: "Verify sustainability impact KPIs.",
+    bullets: [
+      "Smallholder farmer income tracking",
+      "Local forest boundary screening",
+      "Educational training program logs",
+      "Impact validation dashboards"
+    ],
+    linkText: "View NGO Solutions",
+    link: "/customers/ngos"
+  },
+  "Financial Institutions": {
+    title: "Financial Institutions",
+    desc: "Deliver credit score options to growers.",
+    bullets: [
+      "Sourcing history credit scores",
+      "Automatic loan payments syncs",
+      "Crop yield risk valuations",
+      "Interactive crop insurance links"
+    ],
+    linkText: "View Financial Solutions",
+    link: "/customers/financial-institutions"
+  },
+  "Certification Bodies": {
+    title: "Certification Bodies",
+    desc: "Audit certification standards faster.",
+    bullets: [
+      "Digital organic receipt trails",
+      "Rainforest Alliance standards overlay",
+      "Secure auditable polygon files",
+      "Direct auditor cloud vaults"
+    ],
+    linkText: "View Certification Solutions",
+    link: "/customers/certification-bodies"
+  },
+  // PARTNERS
+  "Technology Partners": {
+    title: "Technology Partners",
+    desc: "Integrate specialized IoT devices and sensors.",
+    bullets: [
+      "Sensors and weather stations APIs",
+      "GIS spatial analytical layers",
+      "Automated serverless payload streams",
+      "Verified vendor program access"
+    ],
+    linkText: "Learn about Tech Partners",
+    link: "/partners/technology-partners"
+  },
+  "Implementation Partners": {
+    title: "Implementation Partners",
+    desc: "Deploy SourceTrace software in sourcing countries.",
+    bullets: [
+      "Technical integration manuals",
+      "Local setup support resources",
+      "System integration checklists",
+      "Dedicated account team access"
+    ],
+    linkText: "Learn about Implementation",
+    link: "/partners/channel-partners"
+  },
+  "Consulting Partners": {
+    title: "Consulting Partners",
+    desc: "Deliver regulatory compliance audits.",
+    bullets: [
+      "EUDR compliance review formats",
+      "ESG reporting guidelines",
+      "Carbon accounting frameworks",
+      "Auditor tool dashboard reviews"
+    ],
+    linkText: "Learn about Consulting",
+    link: "/partners/consulting-partners"
+  },
+  "Marketplace": {
+    title: "Partner Marketplace",
+    desc: "Browse third-party plugin components.",
+    bullets: [
+      "Weather forecast connectors",
+      "GIS file converting widgets",
+      "Custom payment portal modules",
+      "Certified grow tools catalog"
+    ],
+    linkText: "Visit Marketplace",
+    link: "/partners/marketplace"
+  },
+  "Partner Portal": {
+    title: "Partner Portal",
+    desc: "Secure co-sell registry and portal credentials.",
+    bullets: [
+      "Lead generation registry forms",
+      "Joint client case templates",
+      "Direct communication dashboards",
+      "Commission logs overview"
+    ],
+    linkText: "Access Portal",
+    link: "/partners/partner-portal"
+  },
+  "Become a Partner": {
+    title: "Become a Partner",
+    desc: "Join our global sourcing software alliance.",
+    bullets: [
+      "Priority customer lead share",
+      "Sales tool and demo sandbox access",
+      "Co-marketing webinar schedules",
+      "Technical support certifications"
+    ],
+    linkText: "Register as Partner",
+    link: "/partners/become-a-partner"
+  },
+  // RESOURCES
+  "Blog Insights": {
+    title: "Blog Insights",
+    desc: "Our latest updates on agronomic compliance.",
+    bullets: [
+      "EUDR compliance timeline reviews",
+      "Smallholder farmer tech briefings",
+      "GIS spatial calculation updates",
+      "New carbon farming features"
+    ],
+    linkText: "Read Blog",
+    link: "/resources/blog"
+  },
+  "Whitepapers": {
+    title: "Whitepapers Library",
+    desc: "Deep research papers on first-mile tracking.",
+    bullets: [
+      "Polygon data formatting guides",
+      "CSRD ESG disclosure standards",
+      "Smallholder privacy consent rules",
+      "Blockchain ledger security reviews"
+    ],
+    linkText: "Download Whitepapers",
+    link: "/resources/whitepapers"
+  },
+  "Market Reports": {
+    title: "Market Reports",
+    desc: "Sourcing risk maps for core crops.",
+    bullets: [
+      "West Africa cocoa compliance charts",
+      "Southeast Asia palm oil forest audits",
+      "East Africa coffee weather outlooks",
+      "South America soy parcel mappings"
+    ],
+    linkText: "Explore Reports",
+    link: "/resources/reports"
+  },
+  "Policy Guides": {
+    title: "Regulatory Policy Guides",
+    desc: "Interactive checklists for upcoming laws.",
+    bullets: [
+      "EU Deforestation Regulation rules",
+      "Corporate Sustainability reports checklist",
+      "German Supply Chain Act steps",
+      "US Lacey Act timber checks"
+    ],
+    linkText: "Explore Guides",
+    link: "/resources/guides"
+  },
+  "API Documentation": {
+    title: "API Documentation",
+    desc: "Comprehensive REST API endpoint directories.",
+    bullets: [
+      "Farmer registry payload formats",
+      "Weighbridge webhook specifications",
+      "Spatial GeoJSON payload schemas",
+      "Authentication and token rules"
+    ],
+    linkText: "Read API Docs",
+    link: "/resources/api-docs"
+  },
+  "Webinars": {
+    title: "Sourcing Webinars",
+    desc: "Expert panel discussions on supply chain trust.",
+    bullets: [
+      "Auditor polygon checks step-by-steps",
+      "Agri-lending credit scoring reviews",
+      "Outgrower digital money rollouts",
+      "Customer case study deep-dives"
+    ],
+    linkText: "Watch Webinars",
+    link: "/resources/webinars"
+  },
+  "Video Tutorials": {
+    title: "Video Tutorials",
+    desc: "Step-by-step videos for setup.",
+    bullets: [
+      "Mobile outgrower survey builder walk",
+      "Polygon GIS import setup steps",
+      "Connecting weighbridge API scales",
+      "ESG disclosure sheet exports"
+    ],
+    linkText: "Watch Videos",
+    link: "/resources/videos"
+  },
+  "Frequently Asked FAQs": {
+    title: "Support FAQs",
+    desc: "Frequently asked questions from developers and auditors.",
+    bullets: [
+      "Offline mobile data storage limits",
+      "Polygon coordinate formats accepted",
+      "Data privacy grower deletion rules",
+      "ERP connection timing queries"
+    ],
+    linkText: "View FAQs",
+    link: "/resources/faqs"
+  },
+  // COMPANY
+  "About SourceTrace": {
+    title: "About SourceTrace",
+    desc: "Our mission to bring transparency to the first-mile.",
+    bullets: [
+      "B Corp Impact certified metrics",
+      "Operating across 37 global nations",
+      "Outgrower software market leader",
+      "ESG and carbon audit alignment"
+    ],
+    linkText: "Read Our Story",
+    link: "/about"
+  },
+  "Leadership": {
+    title: "Executive Leadership",
+    desc: "Meet our global executive team.",
+    bullets: [
+      "Agriculture technology specialists",
+      "Outgrower software engineers",
+      "ESG policy consulting advisors",
+      "Global scaling project leaders"
+    ],
+    linkText: "Meet the Team",
+    link: "/company/meet-the-team"
+  },
+  "Global Presence": {
+    title: "Global Presence",
+    desc: "Our offices in core sourcing regions.",
+    bullets: [
+      "Bhubaneswar, India tech center",
+      "Nairobi, Kenya regional center",
+      "New York, USA corporate office",
+      "Abidjan, Ivory Coast field hub"
+    ],
+    linkText: "View Offices",
+    link: "/company/global-offices"
+  },
+  "Careers": {
+    title: "Careers at SourceTrace",
+    desc: "Join us in digitizing agricultural supply chains.",
+    bullets: [
+      "Remote-first global developer teams",
+      "Competitive compensation & health benefits",
+      "Sabbatical carbon offset programs",
+      "Active open-source community support"
+    ],
+    linkText: "View Open Roles",
+    link: "/careers"
+  },
+  "News & Releases": {
+    title: "News & Releases",
+    desc: "Latest corporate announcements.",
+    bullets: [
+      "New satellite compliance features release",
+      "Joint cooperatives software pilots success",
+      "Corporate awards and B Corp ratings",
+      "Press kits and image assets"
+    ],
+    linkText: "Read Press Releases",
+    link: "/resources/newsroom"
+  },
+  "Contact Us": {
+    title: "Contact Us",
+    desc: "Get in touch with local support or sales.",
+    bullets: [
+      "24/7 technical customer support",
+      "Consultant scheduling request forms",
+      "Product demo setup appointments",
+      "Local field office phone numbers"
+    ],
+    linkText: "Contact Us",
+    link: "/contact"
+  }
+};
+
 function StandardDropdownContent({ menu, closeMenu }: { menu: any; closeMenu: () => void }) {
   const hero = MENU_HEROES[menu.id];
   const promo = MENU_PROMOS[menu.id];
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+
+  const currentPromo = (hoveredLink && LINK_PREVIEWS[hoveredLink]) || promo;
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 flex gap-12 text-[#0B3D2E]">
@@ -519,7 +1242,12 @@ function StandardDropdownContent({ menu, closeMenu }: { menu: any; closeMenu: ()
           {menu.items.map((link: NavigationLink, idx: number) => {
             const hasSubItems = !!link.subItems;
             return (
-              <div key={idx} className="group flex flex-col justify-between p-4 rounded-2xl bg-gray-50/50 hover:bg-gray-50 hover:shadow-sm transition-all min-h-[150px] border border-transparent hover:border-[#0B3D2E]/5">
+              <div 
+                key={idx} 
+                onMouseEnter={() => setHoveredLink(link.name)}
+                onMouseLeave={() => setHoveredLink(null)}
+                className="group flex flex-col justify-between p-4 rounded-2xl bg-gray-50/50 hover:bg-gray-50 hover:shadow-sm transition-all min-h-[150px] border border-transparent hover:border-[#0B3D2E]/5"
+              >
                 <div>
                   <Link
                     href={link.href}
@@ -537,6 +1265,8 @@ function StandardDropdownContent({ menu, closeMenu }: { menu: any; closeMenu: ()
                         key={sIdx}
                         href={sub.href}
                         onClick={closeMenu}
+                        onMouseEnter={() => setHoveredLink(sub.name)}
+                        onMouseLeave={() => setHoveredLink(link.name)}
                         className="text-xs font-bold text-gray-600 hover:text-[#0B3D2E] bg-white border border-gray-100 hover:border-emerald-600/30 px-3 py-1 rounded-md transition-all"
                       >
                         {sub.name}
@@ -560,33 +1290,44 @@ function StandardDropdownContent({ menu, closeMenu }: { menu: any; closeMenu: ()
         </div>
       </div>
 
-      {promo && (
+      {currentPromo && (
         <div className="w-[350px] shrink-0 border-l border-gray-100 pl-12 hidden xl:block">
-          <div className="bg-[#EAF5EE]/40 border border-[#0B3D2E]/5 rounded-3xl p-6 h-full flex flex-col justify-between relative overflow-hidden group">
-            <div className="absolute inset-0 bg-[#0B3D2E]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-            <div className="relative z-10">
-              <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-[0.2em] block mb-2">Featured</span>
-              <h4 className="text-xl font-black mb-2 text-[#0B3D2E] group-hover:text-emerald-800 transition-colors">{promo.title}</h4>
-              <p className="text-sm text-gray-500 leading-relaxed mb-6 font-medium">
-                {promo.desc}
-              </p>
-              <ul className="space-y-2 mb-6">
-                {promo.bullets.map((bullet, bIdx) => (
-                  <li key={bIdx} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <span className="w-4 h-4 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-[10px] shrink-0 font-bold">✓</span>
-                    {bullet}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <Link
-              href={promo.link}
-              onClick={closeMenu}
-              className="relative z-10 w-full py-3 text-center bg-[#0B3D2E] text-white hover:bg-[#1F7A53] font-bold text-sm rounded-xl transition-all shadow-md group-hover:shadow-lg active:scale-98"
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={hoveredLink || "default"}
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: 0.15 }}
+              className="bg-[#EAF5EE]/40 border border-[#0B3D2E]/5 rounded-3xl p-6 h-full flex flex-col justify-between relative overflow-hidden group"
             >
-              {promo.linkText} →
-            </Link>
-          </div>
+              <div className="absolute inset-0 bg-[#0B3D2E]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <div className="relative z-10">
+                <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-[0.2em] block mb-2">
+                  {hoveredLink ? "Preview" : "Featured"}
+                </span>
+                <h4 className="text-xl font-black mb-2 text-[#0B3D2E] group-hover:text-emerald-800 transition-colors">{currentPromo.title}</h4>
+                <p className="text-sm text-gray-500 leading-relaxed mb-6 font-medium">
+                  {currentPromo.desc}
+                </p>
+                <ul className="space-y-2 mb-6">
+                  {currentPromo.bullets.map((bullet, bIdx) => (
+                    <li key={bIdx} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                      <span className="w-4 h-4 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-[10px] shrink-0 font-bold">✓</span>
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <Link
+                href={currentPromo.link}
+                onClick={closeMenu}
+                className="relative z-10 w-full py-3 text-center bg-[#0B3D2E] text-white hover:bg-[#1F7A53] font-bold text-sm rounded-xl transition-all shadow-md group-hover:shadow-lg active:scale-98"
+              >
+                {currentPromo.linkText || "Explore"} →
+              </Link>
+            </motion.div>
+          </AnimatePresence>
         </div>
       )}
     </div>
