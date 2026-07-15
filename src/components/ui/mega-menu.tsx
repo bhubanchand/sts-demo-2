@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight, Zap, BarChart3, Globe, Lock, Sprout, Search } from "lucide-react";
 import { Button } from "./button";
@@ -1335,6 +1335,7 @@ function StandardDropdownContent({ menu, closeMenu }: { menu: any; closeMenu: ()
 }
 
 export function MegaMenu() {
+  const pathname = usePathname();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [currentLevel, setCurrentLevel] = useState<"root" | "submenu">("root");
@@ -1342,6 +1343,16 @@ export function MegaMenu() {
   const [direction, setDirection] = useState<number>(1);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+  };
 
   const openSearch = useCallback(() => {
     setIsSearchOpen(true);
@@ -1410,7 +1421,7 @@ export function MegaMenu() {
       <div className="max-w-[1400px] mx-auto px-6 sm:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2" onClick={() => { setActiveMenu(null); setIsMobileOpen(false); }}>
+            <Link href="/" className="flex items-center gap-2" onClick={(e) => { handleLogoClick(e); setActiveMenu(null); setIsMobileOpen(false); }}>
               <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-10 object-contain" />
             </Link>
           </div>
@@ -1512,7 +1523,7 @@ export function MegaMenu() {
           >
             {/* === Fixed Header === */}
             <div className="h-20 flex items-center justify-between px-6 flex-shrink-0 bg-white border-b border-gray-100 shadow-sm">
-              <Link href="/" className="flex items-center gap-2" onClick={closeMobile}>
+              <Link href="/" className="flex items-center gap-2" onClick={(e) => { handleLogoClick(e); closeMobile(); }}>
                 <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-10 object-contain" />
               </Link>
               <div className="flex items-center gap-1.5">
