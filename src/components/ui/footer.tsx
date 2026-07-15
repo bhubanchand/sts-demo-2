@@ -138,7 +138,7 @@ export function Footer() {
             <h4 className="font-extrabold text-[#1F7A53] tracking-wider uppercase text-xs mb-6 select-none">Industry</h4>
             <ul className="space-y-4 text-[13px] text-[#1F5946] font-medium">
               {["Food Retail", "CPG/FMCG", "Seed Manufacturing", "Development Agencies", "Others"].map((item, idx) => {
-                const paths = ["/CropInsights/coffee", "/CropInsights/cocoa", "/CropInsights/seed-production", "/CropInsights", "/CropInsights"];
+                const paths = ["/CommodityHub/coffee", "/CommodityHub/cocoa", "/CommodityHub/seed-production", "/CommodityHub", "/CommodityHub"];
                 return (
                   <li key={idx}>
                     <Link href={paths[idx]} className="group flex items-center hover:text-[#0B3D2E] transition-all duration-300">

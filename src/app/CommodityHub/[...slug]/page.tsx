@@ -10,12 +10,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${title} Sourcing & Traceability | SourceTrace`,
     description: `Track and verify your ${title} value chain. Real-time data from smallholder farms to global ports.`,
     alternates: {
-      canonical: `https://www.sourcetrace.com/CropInsights/${fullPath}`,
+      canonical: `https://www.sourcetrace.com/CommodityHub/${fullPath}`,
     }
   };
 }
 
-export default async function CropInsightsRoute({ params }: { params: Promise<{ slug: string[] }> }) {
+export default async function CommodityHubRoute({ params }: { params: Promise<{ slug: string[] }> }) {
   const { slug } = await params;
   const lastSlug = slug[slug.length - 1];
   return <DynamicPage title={lastSlug.replace(/-/g, " ")} category="Crop" />;

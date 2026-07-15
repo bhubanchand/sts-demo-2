@@ -69,7 +69,7 @@ export const POPULAR_PAGES: { title: string; href: string; category: string }[] 
   { title: "Traceability Cloud", href: "/platform/traceability", category: "Platform" },
   { title: "EUDR Compliance", href: "/solutions/eudr-compliance", category: "Solutions" },
   { title: "AI Engine", href: "/intelligence/ai-engine", category: "Intelligence" },
-  { title: "Commodity Intelligence Hub", href: "/CropInsights", category: "Commodity Hub" },
+  { title: "Commodity Intelligence Hub", href: "/CommodityHub", category: "Commodity Hub" },
   { title: "About SourceTrace", href: "/about", category: "Company" },
   { title: "Contact Sales", href: "/contact-sales", category: "Company" },
 ];

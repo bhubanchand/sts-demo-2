@@ -585,10 +585,10 @@ export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean 
         {!hideHeader && (
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">The Platform</span>
-            <h2 className="text-5xl md:text-6xl font-black text-[#0B3D2E] leading-tight mb-6 tracking-tighter">
+            <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-[#0B3D2E] leading-tight mb-6 tracking-tighter">
               Your supply chain at a glance.
             </h2>
-            <p className="text-xl text-gray-600 font-light">
+            <p className="text-base sm:text-xl text-gray-600 font-light">
               Actionable intelligence, real-time compliance tracking, and predictive ESG analytics, unified in one powerful interface. Try interacting with it below.
             </p>
           </div>
@@ -746,7 +746,7 @@ export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean 
           initial={{ opacity: 0, y: 50, scale: 0.95 }}
           animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.95 }}
           transition={{ duration: 0.5, delay: 0.2, type: "spring", stiffness: 200, damping: 25 }}
-          className="md:hidden w-full max-w-[340px] h-[680px] bg-slate-950 rounded-[3rem] border-[10px] border-slate-800 relative mx-auto overflow-hidden shadow-2xl flex flex-col text-left"
+          className="md:hidden w-full max-w-[340px] h-[560px] sm:h-[680px] bg-slate-950 rounded-[3rem] border-[10px] border-slate-800 relative mx-auto overflow-hidden shadow-2xl flex flex-col text-left"
         >
           {/* Glassy reflection sheen */}
           <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none z-30"></div>
@@ -781,7 +781,7 @@ export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean 
             
             <div className="flex items-center gap-2">
               <div 
-                className="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-600 relative cursor-pointer"
+                className="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-600 relative cursor-pointer"
                 onClick={() => setShowNotifications(!showNotifications)}
               >
                 <Bell className="w-4 h-4" />
@@ -801,7 +801,7 @@ export function DashboardPreview({ hideHeader = false }: { hideHeader?: boolean 
               >
                 <div className="p-3 border-b border-gray-50 bg-gray-50/50 font-bold text-xs text-gray-900 flex justify-between items-center">
                   Notifications
-                  <button className="text-gray-450 hover:text-gray-655" onClick={() => setShowNotifications(false)}><X className="w-3.5 h-3.5" /></button>
+                  <button className="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors" onClick={() => setShowNotifications(false)}><X className="w-4 h-4" /></button>
                 </div>
                 <div className="overflow-y-auto">
                   {NOTIFICATIONS.map(alert => (

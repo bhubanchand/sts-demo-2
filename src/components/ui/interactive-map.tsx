@@ -180,6 +180,16 @@ export function InteractiveMap() {
                     onMouseLeave={() => {
                        setHoveredCountry(null);
                     }}
+                    onClick={(e) => {
+                       if (isOperating) {
+                          if (hoveredCountry === countryName) {
+                             setHoveredCountry(null);
+                          } else {
+                             setHoveredCountry(countryName);
+                             setTooltipPos({ x: e.clientX, y: e.clientY });
+                          }
+                       }
+                    }}
                     style={{
                       default: {
                         fill: isSelected 

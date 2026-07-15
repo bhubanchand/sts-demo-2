@@ -22,7 +22,7 @@ export function Breadcrumbs() {
     if (lowercase === "csrd") return "CSRD";
     if (lowercase === "esrs") return "ESRS";
     if (lowercase === "cbam") return "CBAM";
-    if (lowercase === "cropinsights") return "Crop Insights";
+    if (lowercase === "commodityhub") return "Commodity Hub";
     if (lowercase === "esg-reporting") return "ESG Reporting";
     if (lowercase === "supply-chain-traceability") return "Supply Chain Traceability";
     if (lowercase === "smallholder-management") return "Smallholder Management";

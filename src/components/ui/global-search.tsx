@@ -32,7 +32,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; dot: string }>
   Platform: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
   Intelligence: { bg: "bg-indigo-50", text: "text-indigo-700", dot: "bg-indigo-500" },
   Solutions: { bg: "bg-cyan-50", text: "text-cyan-700", dot: "bg-cyan-500" },
-  "Crop Insights": { bg: "bg-green-50", text: "text-green-700", dot: "bg-green-500" },
+  "Commodity Hub": { bg: "bg-green-50", text: "text-green-700", dot: "bg-green-500" },
   Compliance: { bg: "bg-red-50", text: "text-red-700", dot: "bg-red-500" },
   Resources: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500" },
   Company: { bg: "bg-violet-50", text: "text-violet-700", dot: "bg-violet-500" },

@@ -646,7 +646,7 @@ export function DataGreenEngine() {
                   <div><h3 className="text-sm font-black text-[#004D26] uppercase tracking-wider">{curSlice.name}</h3>
                     <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-wider">{curSlice.metric}</span></div>
                 </div>
-                <button onClick={() => setSel(null)} className="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 active:scale-95"><X className="w-4 h-4" /></button>
+                <button onClick={() => setSel(null)} className="w-11 h-11 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 active:scale-95 transition-colors"><X className="w-5 h-5" /></button>
               </div>
               <p className="text-xs text-gray-500 font-medium leading-relaxed mb-4">{curSlice.shortDescription}</p>
               <div className="flex flex-col gap-1.5 mb-4">

@@ -144,12 +144,12 @@ const SOLUTIONS_LINKS: NavigationLink[] = [
 ];
 
 const INDUSTRIES_LINKS: NavigationLink[] = [
-  { name: "Coffee", href: "/CropInsights/coffee", desc: "Trace every bean from farm to cup." },
-  { name: "Rice", href: "/CropInsights/rice", desc: "Monitor rice cultivation with precision." },
-  { name: "Palm Oil", href: "/CropInsights/palm-oil", desc: "Deforestation-free palm oil supply chains." },
-  { name: "Cotton", href: "/CropInsights/cotton", desc: "Sustainable cotton sourcing and tracking." },
-  { name: "Tea", href: "/CropInsights/tea", desc: "Full visibility across tea supply networks." },
-  { name: "Cocoa", href: "/CropInsights/cocoa", desc: "Ensure ethical cocoa sourcing." },
+  { name: "Coffee", href: "/CommodityHub/coffee", desc: "Trace every bean from farm to cup." },
+  { name: "Rice", href: "/CommodityHub/rice", desc: "Monitor rice cultivation with precision." },
+  { name: "Palm Oil", href: "/CommodityHub/palm-oil", desc: "Deforestation-free palm oil supply chains." },
+  { name: "Cotton", href: "/CommodityHub/cotton", desc: "Sustainable cotton sourcing and tracking." },
+  { name: "Tea", href: "/CommodityHub/tea", desc: "Full visibility across tea supply networks." },
+  { name: "Cocoa", href: "/CommodityHub/cocoa", desc: "Ensure ethical cocoa sourcing." },
 ];
 
 const CUSTOMERS_LINKS: NavigationLink[] = [
@@ -335,32 +335,32 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (hubQuery.trim()) {
-      router.push(`/CropInsights?q=${encodeURIComponent(hubQuery.trim())}`);
+      router.push(`/CommodityHub?q=${encodeURIComponent(hubQuery.trim())}`);
       closeMenu();
     }
   };
 
   const categories = [
-    { label: "🌾 Cereals & Grains", href: "/CropInsights" },
-    { label: "☕ Beverage Crops", href: "/CropInsights" },
-    { label: "🌴 Oilseeds", href: "/CropInsights" },
-    { label: "🌶 Spices & Herbs", href: "/CropInsights" },
-    { label: "🍎 Fruits", href: "/CropInsights" },
-    { label: "🥕 Vegetables", href: "/CropInsights" },
-    { label: "🌳 Plantation Crops", href: "/CropInsights" },
-    { label: "🌲 Forestry", href: "/CropInsights" },
-    { label: "🐄 Livestock", href: "/CropInsights" },
-    { label: "🐟 Aquaculture", href: "/CropInsights" },
-    { label: "🌍 Multi Commodity", href: "/CropInsights" },
+    { label: "🌾 Cereals & Grains", href: "/CommodityHub" },
+    { label: "☕ Beverage Crops", href: "/CommodityHub" },
+    { label: "🌴 Oilseeds", href: "/CommodityHub" },
+    { label: "🌶 Spices & Herbs", href: "/CommodityHub" },
+    { label: "🍎 Fruits", href: "/CommodityHub" },
+    { label: "🥕 Vegetables", href: "/CommodityHub" },
+    { label: "🌳 Plantation Crops", href: "/CommodityHub" },
+    { label: "🌲 Forestry", href: "/CommodityHub" },
+    { label: "🐄 Livestock", href: "/CommodityHub" },
+    { label: "🐟 Aquaculture", href: "/CommodityHub" },
+    { label: "🌍 Multi Commodity", href: "/CommodityHub" },
   ];
 
   const popular = [
-    { name: "Coffee", href: "/CropInsights/coffee" },
-    { name: "Rice", href: "/CropInsights/rice" },
-    { name: "Palm Oil", href: "/CropInsights/palm-oil" },
-    { name: "Cotton", href: "/CropInsights/cotton" },
-    { name: "Tea", href: "/CropInsights/tea" },
-    { name: "Cocoa", href: "/CropInsights/cocoa" },
+    { name: "Coffee", href: "/CommodityHub/coffee" },
+    { name: "Rice", href: "/CommodityHub/rice" },
+    { name: "Palm Oil", href: "/CommodityHub/palm-oil" },
+    { name: "Cotton", href: "/CommodityHub/cotton" },
+    { name: "Tea", href: "/CommodityHub/tea" },
+    { name: "Cocoa", href: "/CommodityHub/cocoa" },
   ];
 
   return (
@@ -440,7 +440,7 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
 
         <div className="border-t border-gray-50 pt-4 flex items-center">
           <Link
-            href="/CropInsights"
+            href="/CommodityHub"
             onClick={closeMenu}
             className="inline-flex items-center gap-1.5 text-base font-extrabold text-[#1F7A53] hover:text-[#0B3D2E] group"
           >
@@ -486,7 +486,7 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
           </div>
 
           <Link
-            href="/CropInsights"
+            href="/CommodityHub"
             onClick={closeMenu}
             className="relative z-10 w-full py-3 text-center bg-white text-[#0B3D2E] hover:bg-[#86EFAC] hover:text-[#0B3D2E] font-bold text-sm rounded-xl transition-all shadow-md active:scale-98"
           >
@@ -1397,7 +1397,7 @@ export function MegaMenu() {
   const menuItems = [
     { id: "platform", label: "Platform", items: PLATFORM_LINKS, promo: MENU_PROMOS.platform },
     { id: "solutions", label: "Solutions", items: SOLUTIONS_LINKS, promo: MENU_PROMOS.solutions },
-    { id: "industries", label: "Commodity Hub", items: INDUSTRIES_LINKS, promo: { title: "Commodity Explorer", desc: "Compare 500+ global agricultural commodities.", link: "/CropInsights", image: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" } },
+    { id: "industries", label: "Commodity Hub", items: INDUSTRIES_LINKS, promo: { title: "Commodity Explorer", desc: "Compare 500+ global agricultural commodities.", link: "/CommodityHub", image: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" } },
     { id: "customers", label: "Customers", items: CUSTOMERS_LINKS, promo: MENU_PROMOS.customers },
     { id: "partners", label: "Partners", items: PARTNERS_LINKS, promo: MENU_PROMOS.partners },
     { id: "resources", label: "Resources", items: RESOURCES_LINKS, promo: MENU_PROMOS.resources },

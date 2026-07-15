@@ -4,12 +4,12 @@ export const metadata: Metadata = {
   title: "Cocoa Sourcing & Compliance Solutions | SourceTrace",
   description: "Leverage real-time traceability, polygon mapping, and EUDR compliance checkers for cocoa supply chains.",
   alternates: {
-    canonical: "https://www.sourcetrace.com/CropInsights/cocoa",
+    canonical: "https://www.sourcetrace.com/CommodityHub/cocoa",
   },
   openGraph: {
     title: "Cocoa Sourcing & Compliance Solutions | SourceTrace",
     description: "Leverage real-time traceability, polygon mapping, and EUDR compliance checkers for cocoa supply chains.",
-    url: "https://www.sourcetrace.com/CropInsights/cocoa",
+    url: "https://www.sourcetrace.com/CommodityHub/cocoa",
   }
 };
 

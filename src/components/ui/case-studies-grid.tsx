@@ -55,10 +55,10 @@ export function CaseStudiesGrid() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Proven Impact</span>
-          <h2 className="text-5xl md:text-6xl font-black text-[#0B3D2E] leading-tight mb-6 tracking-tighter">
+          <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-[#0B3D2E] leading-tight mb-6 tracking-tighter">
             Real stories. Real results.
           </h2>
-          <p className="text-xl text-gray-600 font-light">
+          <p className="text-base sm:text-xl text-gray-600 font-light">
             Discover how leading global brands use SourceTrace to transform their supply chains, ensure compliance, and empower farming communities.
           </p>
         </div>
@@ -72,7 +72,7 @@ export function CaseStudiesGrid() {
                 initial={{ opacity: 0, y: 50 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
                 transition={{ duration: 0.3, delay: index * 0.2 }}
-                className="group relative h-[500px] rounded-[40px] overflow-hidden cursor-pointer"
+                className="group relative h-[380px] md:h-[500px] rounded-[40px] overflow-hidden cursor-pointer"
               >
                 {/* Background Image */}
                 <div className="absolute inset-0">
@@ -93,7 +93,7 @@ export function CaseStudiesGrid() {
                   <h4 className="text-white/80 font-medium text-sm tracking-wider uppercase mb-2">
                     {study.company}
                   </h4>
-                  <h3 className="text-3xl font-bold text-white mb-6 leading-tight transform group-hover:-translate-y-2 transition-transform duration-300 delay-75">
+                  <h3 className="text-xl sm:text-3xl font-bold text-white mb-6 leading-tight transform group-hover:-translate-y-2 transition-transform duration-300 delay-75">
                     {study.title}
                   </h3>
 

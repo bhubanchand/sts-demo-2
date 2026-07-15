@@ -4,12 +4,12 @@ export const metadata: Metadata = {
   title: "Rice Traceability & Smallholder Management Solutions | SourceTrace",
   description: "Improve water efficiency, monitor methane emissions, and manage smallholder paddy networks with smart agritech tools.",
   alternates: {
-    canonical: "https://www.sourcetrace.com/CropInsights/rice",
+    canonical: "https://www.sourcetrace.com/CommodityHub/rice",
   },
   openGraph: {
     title: "Rice Traceability & Smallholder Management Solutions | SourceTrace",
     description: "Improve water efficiency, monitor methane emissions, and manage smallholder paddy networks with smart agritech tools.",
-    url: "https://www.sourcetrace.com/CropInsights/rice",
+    url: "https://www.sourcetrace.com/CommodityHub/rice",
   }
 };
 

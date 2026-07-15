@@ -1630,7 +1630,7 @@ export function CropPageLayout({ data }: CropPageLayoutProps) {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-xs font-semibold text-[#53D769] uppercase tracking-widest"
           >
             <Sprout className="w-4 h-4 text-[#53D769]" />
-            Crop Insights Solutions
+            Commodity Hub Solutions
           </motion.div>
 
           <motion.h1 

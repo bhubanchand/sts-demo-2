@@ -372,7 +372,7 @@ export function AgriGame({ mode }: AgriGameProps) {
           {[
             { title: "Platform", path: "/solutions/supply-chain-traceability", desc: "First-mile tracking", icon: Cpu },
             { title: "Intelligence", path: "/solutions/impact-measurement", desc: "Predictive nature metrics", icon: Activity },
-            { title: "Commodity Hub", path: "/CropInsights", desc: "Farmland crop profiles", icon: Leaf },
+            { title: "Commodity Hub", path: "/CommodityHub", desc: "Farmland crop profiles", icon: Leaf },
             { title: "Compliance", path: "/compliance/eudr", desc: "EUDR Deforestation & ESG", icon: ShieldCheck },
             { title: "Resources", path: "/case-studies", desc: "Whitepapers & cases", icon: FileText },
             { title: "Company", path: "/about", desc: "Our global mission", icon: Globe }

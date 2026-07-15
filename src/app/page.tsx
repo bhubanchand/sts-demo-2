@@ -50,17 +50,17 @@ function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, acti
     <div 
       ref={ref} 
       onClick={() => setActiveBlock(id)}
-      className={`cursor-pointer bg-white rounded-[40px] p-6 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 border relative overflow-hidden group ${
+      className={`cursor-pointer bg-white rounded-2xl sm:rounded-[40px] p-5 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 border relative overflow-hidden group ${
         isActive 
-          ? 'scale-105 shadow-[0_20px_40px_rgb(0,0,0,0.1)] border-emerald-500/30' 
-          : 'opacity-60 scale-95 border-gray-100'
+          ? 'lg:scale-105 scale-100 shadow-[0_20px_40px_rgb(0,0,0,0.1)] border-emerald-500/30' 
+          : 'opacity-60 lg:scale-95 scale-100 border-gray-100'
       }`}
     >
-      <div className={`w-16 h-16 ${bgClass} ${colorClass} rounded-2xl flex items-center justify-center mb-8 relative z-10`}>
-         <Icon className="w-8 h-8"/>
+      <div className={`w-12 h-12 sm:w-16 sm:h-16 ${bgClass} ${colorClass} rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-8 relative z-10`}>
+         <Icon className="w-6 h-6 sm:w-8 sm:h-8"/>
       </div>
-      <h3 className="text-3xl font-bold mb-4 text-gray-900 relative z-10">{title}</h3>
-      <p className="text-lg text-gray-600 leading-relaxed relative z-10">{text}</p>
+      <h3 className="text-xl sm:text-3xl font-bold mb-2 sm:mb-4 text-gray-900 relative z-10">{title}</h3>
+      <p className="text-base sm:text-lg text-gray-600 leading-relaxed relative z-10">{text}</p>
       <div className={`absolute top-0 right-0 w-32 h-32 ${bgClass} rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-300`}></div>
     </div>
   );
@@ -211,9 +211,11 @@ export default function Home() {
           loop 
           muted 
           playsInline 
-          className="absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
+          poster="/assets/hero-poster.jpg"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none hidden md:block"
           src="/assets/hero-background.mp4"
         />
+        <div className="absolute inset-0 w-full h-full bg-[#0B3D2E] md:hidden z-0" />
         
         {/* Dark overlay for readability */}
         <div className="absolute inset-0 bg-black/60 z-10 pointer-events-none"></div>
@@ -221,7 +223,7 @@ export default function Home() {
         {/* Left and Right navigation arrows - Centered vertically and inset responsively */}
         <button
           onClick={handlePrevSlide}
-          className="absolute left-4 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group cursor-pointer"
+          className="absolute left-4 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 hidden md:flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group cursor-pointer"
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-colors" />
@@ -229,7 +231,7 @@ export default function Home() {
         
         <button
           onClick={handleNextSlide}
-          className="absolute right-4 sm:right-6 md:right-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group cursor-pointer"
+          className="absolute right-4 sm:right-6 md:right-8 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 hidden md:flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 active:scale-95 backdrop-blur-md transition-all group cursor-pointer"
           aria-label="Next slide"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-colors" />
@@ -264,7 +266,7 @@ export default function Home() {
         </div>
 
         {/* Slide Content with AnimatePresence for smooth cross-fades */}
-        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-16 sm:px-24 lg:px-32 flex flex-col items-center justify-center text-center pt-28 pb-14 md:pt-36 md:pb-20 lg:pt-32 lg:pb-60">
+        <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 sm:px-12 lg:px-32 flex flex-col items-center justify-center text-center pt-16 pb-10 md:pt-36 md:pb-20 lg:pt-32 lg:pb-60">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={activeSlideIndex}
@@ -276,11 +278,11 @@ export default function Home() {
               transition={{ duration: 0.4, ease: "easeInOut" }}
               className="flex flex-col items-center justify-center max-w-4xl"
             >
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white leading-tight tracking-tighter mb-6">
+              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-white leading-tight tracking-tighter mb-6">
                 {HERO_SLIDES[activeSlideIndex].heading}
               </h1>
               
-              <p className="text-base sm:text-lg lg:text-xl text-gray-200/90 max-w-[90%] sm:max-w-3xl mx-auto leading-relaxed mb-8 md:mb-10 font-light">
+              <p className="text-sm sm:text-lg lg:text-xl text-gray-200/90 max-w-[90%] sm:max-w-3xl mx-auto leading-relaxed mb-8 md:mb-10 font-light">
                 {HERO_SLIDES[activeSlideIndex].subheading}
               </p>
               
@@ -346,15 +348,15 @@ export default function Home() {
       </section>
 
       {/* 3. The Global Challenge (Dynamic Scroll-Linked Image) */}
-      <section className="py-16 bg-white relative">
+      <section className="py-10 lg:py-16 bg-white relative">
          <div className="max-w-[1400px] mx-auto px-6 sm:px-8">
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
                {/* Left Column (Text Blocks) */}
                <div className="w-full lg:w-1/2 flex flex-col gap-12 relative z-10 py-8 lg:py-16">
                   <div className="mb-6 lg:mb-10">
                      <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">The Challenge</span>
-                     <h2 className="text-4xl sm:text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Supply chains are broken at the source.</h2>
-                     <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
+                     <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Supply chains are broken at the source.</h2>
+                     <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed">
                         Enterprises lack visibility into the &ldquo;first mile&rdquo; where raw materials are actually grown. This opacity leads to deforestation risks, human rights violations, and the inability to prove ESG claims.
                      </p>
                   </div>
@@ -378,7 +380,7 @@ export default function Home() {
                </div>
 
                {/* Right Column (Sticky Image Container) */}
-               <div className="w-full lg:w-1/2 lg:sticky lg:top-40 h-[350px] sm:h-[450px] lg:h-[600px] rounded-[30px] lg:rounded-[40px] overflow-hidden shadow-2xl relative self-start mt-6 lg:mt-16">
+               <div className="w-full lg:w-1/2 lg:sticky lg:top-40 h-[260px] sm:h-[400px] lg:h-[600px] rounded-2xl lg:rounded-[40px] overflow-hidden shadow-2xl relative self-start mt-6 lg:mt-16">
                   <AnimatePresence mode="wait">
                      <motion.img 
                         key={activeChallengeBlock}
@@ -430,8 +432,8 @@ export default function Home() {
          <div className="max-w-[1400px] mx-auto px-6 sm:px-8 w-full">
             <div className="text-center max-w-4xl mx-auto mb-16">
                <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">The Platform</span>
-               <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">One platform. End-to-end visibility.</h2>
-               <p className="text-xl text-gray-600">We replace fragmented spreadsheets and siloed apps with a single, unified data architecture that connects farmers to the enterprise.</p>
+               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">One platform. End-to-end visibility.</h2>
+               <p className="text-base sm:text-xl text-gray-600">We replace fragmented spreadsheets and siloed apps with a single, unified data architecture that connects farmers to the enterprise.</p>
             </div>
 
             <div className="w-full">
@@ -445,7 +447,7 @@ export default function Home() {
          <div className="max-w-[1400px] mx-auto text-center w-full">
             <div className="px-6 sm:px-8 mb-6">
                <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block">Global Impact</span>
-               <h2 className="text-4xl sm:text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Powering supply chains worldwide</h2>
+               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-6">Powering supply chains worldwide</h2>
             </div>
             
             <InteractiveMap />

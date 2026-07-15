@@ -102,7 +102,7 @@ export function TechStackGrid() {
           ═══════════════════════════════════════ */}
       <div className="text-center pb-0 px-6 z-10 relative">
         <span className="font-extrabold tracking-[0.25em] uppercase mb-4 block text-[#10b981] text-xs">Our Technology</span>
-        <h2 className="text-4xl md:text-5xl font-black leading-tight text-[#0b3d2e] tracking-tight mb-4">
+        <h2 className="text-2xl sm:text-4xl md:text-5xl font-black leading-tight text-[#0b3d2e] tracking-tight mb-4">
           Engineered for the First Mile.
         </h2>
         <p className="text-sm md:text-base text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
@@ -242,35 +242,27 @@ export function TechStackGrid() {
           </div>
         </div>
 
-        {/* ── MOBILE SWIPE PIPELINE (<768px: swipeable horizontal snap list) ── */}
-        <div className="block sm:hidden w-full overflow-x-auto scrollbar-none snap-x snap-mandatory">
-          <div className="flex gap-5 pb-4 px-2 w-[1120px]">
-            {TECHS.map((tech, idx) => {
-              const isH = hov === idx;
+        {/* ── MOBILE 2x4 GRID (<768px: 2 columns, 4 rows, all 8 visible immediately) ── */}
+        <div className="block sm:hidden w-full">
+          <div className="grid grid-cols-2 gap-4 px-2">
+            {TECHS.map((tech) => {
               const Icon = tech.icon;
 
               return (
                 <div
                   key={tech.id}
-                  onClick={() => setHov(hov === idx ? null : idx)}
-                  className="w-[124px] flex flex-col items-center text-center snap-center cursor-pointer"
+                  className="flex flex-col items-center text-center p-4 rounded-2xl border border-gray-100/80 bg-white/85 shadow-[0_4px_16px_rgba(0,0,0,0.015)] min-h-[145px] justify-center transition-all duration-300"
                 >
                   <div
-                    className={`w-20 h-20 rounded-full flex items-center justify-center border transition-all duration-300 ${isH ? "border-[#10b981] scale-105" : "border-gray-100"}`}
-                    style={{
-                      background: "rgba(255, 255, 255, 0.8)",
-                      boxShadow: isH ? `0 8px 24px rgba(0,0,0,0.05), 0 0 12px ${tech.glow}` : "none",
-                    }}
+                    className="w-12 h-12 rounded-full flex items-center justify-center border border-gray-100 bg-white shadow-sm mb-3 shrink-0"
                   >
-                    <Icon className={`w-7 h-7 ${tech.color}`} />
+                    <Icon className={`w-6 h-6 ${tech.color}`} />
                   </div>
-                  <div className="mt-3 w-full">
-                    <h4 className="text-[11px] font-black uppercase tracking-wider text-gray-800 leading-tight min-h-[32px] flex flex-col justify-center">
-                      <span className="block">{tech.title1}</span>
-                      <span className="block">{tech.title2}</span>
-                    </h4>
-                    <p className="text-[9px] text-gray-400 mt-2 leading-normal px-0.5">{tech.desc}</p>
-                  </div>
+                  <h4 className="text-[11px] font-black uppercase tracking-wider text-gray-800 leading-tight">
+                    <span className="block">{tech.title1}</span>
+                    <span className="block">{tech.title2}</span>
+                  </h4>
+                  <p className="text-[9px] text-gray-400 mt-1.5 leading-snug font-medium px-0.5">{tech.desc}</p>
                 </div>
               );
             })}

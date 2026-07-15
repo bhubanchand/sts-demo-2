@@ -43,10 +43,10 @@ export function SecurityCompliance() {
           {/* Text Content */}
           <div className="lg:w-1/2 text-center lg:text-left">
             <span className="text-[#1F7A53] font-bold tracking-widest uppercase mb-4 block text-sm">Bank-Grade Security</span>
-            <h2 className="text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-8 tracking-tight">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-[#0B3D2E] leading-tight mb-8 tracking-tight">
               Your data is secured by design.
             </h2>
-            <p className="text-lg text-[#1F5946] font-medium leading-relaxed mb-10">
+            <p className="text-base md:text-lg text-[#1F5946] font-medium leading-relaxed mb-10">
               We understand that supply chain data is your competitive advantage. SourceTrace employs military-grade encryption, role-based access control, and continuous security audits to keep your operations safe.
             </p>
             <div className="flex flex-wrap gap-4 justify-center lg:justify-start">

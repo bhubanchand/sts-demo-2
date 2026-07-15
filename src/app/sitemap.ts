@@ -20,20 +20,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === '' ? 1.0 : 0.8,
   }));
 
-  // Crop Insights routes
+  // Commodity Hub routes
   const cropRoutes = [
-    '/CropInsights/cocoa',
-    '/CropInsights/coffee',
-    '/CropInsights/cotton',
-    '/CropInsights/rice',
-    '/CropInsights/tea',
-    '/CropInsights/fruits-vegetables',
-    '/CropInsights/grains',
-    '/CropInsights/palm-oil',
-    '/CropInsights/rubber',
-    '/CropInsights/seed-production',
-    '/CropInsights/spices',
-    '/CropInsights/sugarcane',
+    '/CommodityHub/cocoa',
+    '/CommodityHub/coffee',
+    '/CommodityHub/cotton',
+    '/CommodityHub/rice',
+    '/CommodityHub/tea',
+    '/CommodityHub/fruits-vegetables',
+    '/CommodityHub/grains',
+    '/CommodityHub/palm-oil',
+    '/CommodityHub/rubber',
+    '/CommodityHub/seed-production',
+    '/CommodityHub/spices',
+    '/CommodityHub/sugarcane',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),

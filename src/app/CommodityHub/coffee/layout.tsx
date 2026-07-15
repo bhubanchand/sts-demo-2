@@ -4,12 +4,12 @@ export const metadata: Metadata = {
   title: "Coffee Sourcing & Traceability Solutions | SourceTrace",
   description: "Track coffee from smallholder cooperatives through wet mills to dry mills with secure mobile payment validation.",
   alternates: {
-    canonical: "https://www.sourcetrace.com/CropInsights/coffee",
+    canonical: "https://www.sourcetrace.com/CommodityHub/coffee",
   },
   openGraph: {
     title: "Coffee Sourcing & Traceability Solutions | SourceTrace",
     description: "Track coffee from smallholder cooperatives through wet mills to dry mills with secure mobile payment validation.",
-    url: "https://www.sourcetrace.com/CropInsights/coffee",
+    url: "https://www.sourcetrace.com/CommodityHub/coffee",
   }
 };
 
