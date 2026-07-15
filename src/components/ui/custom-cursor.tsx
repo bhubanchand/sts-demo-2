@@ -244,6 +244,7 @@ export function CustomCursor() {
           height: 20px;
           border: 1.5px solid rgba(83, 215, 105, 0.35); /* SourceTrace green */
           border-radius: 50%;
+          pointer-events: none;
           transition: 
             width 0.25s cubic-bezier(0.215, 0.61, 0.355, 1), 
             height 0.25s cubic-bezier(0.215, 0.61, 0.355, 1), 
@@ -272,11 +273,11 @@ export function CustomCursor() {
           min-width: 34px;
           padding: 0 14px;
           border-radius: 17px;
-          background-color: rgba(11, 61, 46, 0.95); /* Deep SourceTrace green */
-          border-color: rgba(83, 215, 105, 0.8);
+          background-color: rgba(220, 252, 231, 0.95); /* Lite green concept */
+          border-color: rgba(83, 215, 105, 0.7);
           box-shadow: 
-            0 10px 20px -5px rgba(11, 61, 46, 0.3), 
-            0 0 12px rgba(83, 215, 105, 0.2);
+            0 10px 20px -5px rgba(83, 215, 105, 0.25), 
+            0 0 12px rgba(83, 215, 105, 0.15);
           backdrop-filter: blur(4px);
         }
 
@@ -301,7 +302,7 @@ export function CustomCursor() {
         }
 
         .custom-cursor-text {
-          color: #ffffff;
+          color: #064e3b; /* Deep forest green for high contrast */
           font-family: var(--font-inter-tight), sans-serif;
           font-size: 9px;
           font-weight: 900;
