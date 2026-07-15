@@ -3,343 +3,234 @@
 import React, { useEffect, useRef, useState } from "react";
 
 export function CustomCursor() {
-  const [hoverLabel, setHoverLabel] = useState<string | null>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [isMagnetic, setIsMagnetic] = useState(false);
 
-  const ringWrapperRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLDivElement>(null);
-
-  // Position coordinates
-  const mouseCoords = useRef({ x: 0, y: 0 });
-  const ringCoords = useRef({ x: 0, y: 0 });
-  const dotCoords = useRef({ x: 0, y: 0 });
+  // Mouse positions
+  const mouseRef = useRef({ x: 0, y: 0 });
+  const cursorPositionRef = useRef({ x: 0, y: 0 });
+  const magneticOffsetRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    // 1. Accessibility Checks: Disable on touch devices and respect reduced motion
+    // 1. Detect mobile/touch devices
     const isTouchDevice =
       "ontouchstart" in window ||
       navigator.maxTouchPoints > 0 ||
       (window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
 
-    const prefersReducedMotion =
-      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (isTouchDevice || prefersReducedMotion) {
+    if (isTouchDevice) {
       return;
     }
 
-    setMounted(true);
+    // 2. Detect prefers-reduced-motion
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Add active class to body to hide default pointer
-    document.documentElement.classList.add("custom-cursor-active");
+    // Show custom cursor
+    setIsVisible(true);
 
-    // 2. Track mouse position
+    // Apply global stylesheet to hide default cursor, except for native inputs and drag states
+    const style = document.createElement("style");
+    style.id = "custom-cursor-styles";
+    style.innerHTML = `
+      body, html, a, button, [role="button"], .cursor-pointer {
+        cursor: none !important;
+      }
+      input, textarea, [contenteditable="true"], select, iframe, [data-native-cursor] {
+        cursor: auto !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    let activeMagneticElement: HTMLElement | null = null;
+
     const handleMouseMove = (e: MouseEvent) => {
-      mouseCoords.current.x = e.clientX;
-      mouseCoords.current.y = e.clientY;
-    };
+      mouseRef.current = { x: e.clientX, y: e.clientY };
 
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-
-    // 3. Animation loop (lerp)
-    let animationFrameId = 0;
-    const updateCursor = () => {
-      // Smooth interpolation factors
-      const ringLerpFactor = 0.15;
-      const dotLerpFactor = 0.45;
-
-      ringCoords.current.x += (mouseCoords.current.x - ringCoords.current.x) * ringLerpFactor;
-      ringCoords.current.y += (mouseCoords.current.y - ringCoords.current.y) * ringLerpFactor;
-
-      dotCoords.current.x += (mouseCoords.current.x - dotCoords.current.x) * dotLerpFactor;
-      dotCoords.current.y += (mouseCoords.current.y - dotCoords.current.y) * dotLerpFactor;
-
-      if (ringWrapperRef.current) {
-        ringWrapperRef.current.style.transform = `translate3d(${ringCoords.current.x}px, ${ringCoords.current.y}px, 0)`;
-      }
-
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${dotCoords.current.x}px, ${dotCoords.current.y}px, 0)`;
-      }
-
-      animationFrameId = requestAnimationFrame(updateCursor);
-    };
-
-    animationFrameId = requestAnimationFrame(updateCursor);
-
-    // 4. Context-Aware Hover State Detection
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
+      // Find element under cursor
+      const target = e.target as HTMLElement | null;
       if (!target) return;
 
-      // Find closest interactive element
-      const hoverable = target.closest<HTMLElement>("a, button, [data-cursor-label]");
-      if (!hoverable) {
-        setIsHovered(false);
-        setHoverLabel(null);
-        return;
-      }
+      // 3. Preserve native cursor states (I-beam, resize, etc.)
+      const computedStyle = window.getComputedStyle(target);
+      const cursorType = computedStyle.cursor;
 
-      setIsHovered(true);
+      const shouldHideCustom = [
+        "text",
+        "vertical-text",
+        "ns-resize",
+        "ew-resize",
+        "nesw-resize",
+        "nwse-resize",
+        "col-resize",
+        "row-resize",
+        "not-allowed",
+        "grab",
+        "grabbing",
+        "move",
+        "zoom-in",
+        "zoom-out",
+        "wait",
+        "progress",
+        "help",
+      ].includes(cursorType);
 
-      // Check explicit data-cursor-label first
-      const explicitLabel = hoverable.getAttribute("data-cursor-label");
-      if (explicitLabel) {
-        setHoverLabel(explicitLabel);
-        return;
-      }
-
-      // Auto-detect label based on path, content, or types
-      const href = hoverable.getAttribute("href") || "";
-      const text = (hoverable.textContent || "").toLowerCase();
-      const className = hoverable.className || "";
-
-      // AI Engine
-      if (
-        href.includes("/intelligence/ai-engine") ||
-        text.includes("ai engine") ||
-        text.includes("copilot") ||
-        className.includes("ai-")
-      ) {
-        setHoverLabel("AI");
-        return;
-      }
-
-      // Commodity Hub
-      if (href.includes("/CommodityHub") || text.includes("commodity hub") || text.includes("crop insights")) {
-        // Special case: Interactive Maps (if inside map sections of Commodity Hub)
-        if (text.includes("map") || className.includes("map")) {
-          setHoverLabel("MAP");
-          return;
+      if (shouldHideCustom) {
+        if (cursorRef.current) {
+          cursorRef.current.style.opacity = "0";
         }
-        setHoverLabel("EXPLORE");
-        return;
+        // Force native cursor to show on body
+        document.body.style.cursor = "auto";
+      } else {
+        if (cursorRef.current) {
+          cursorRef.current.style.opacity = "1";
+        }
+        document.body.style.cursor = "none";
       }
 
-      // Interactive Maps
-      if (text.includes("map") || className.includes("map") || href.includes("map") || hoverable.closest(".rsm-geography")) {
-        setHoverLabel("MAP");
-        return;
-      }
+      // 4. Hover states on interactive elements
+      const isInteractive =
+        target.closest("a") ||
+        target.closest("button") ||
+        target.closest('[role="button"]') ||
+        target.closest(".cursor-pointer") ||
+        ["select", "option"].includes(target.tagName.toLowerCase());
 
-      // Request Demo / Book / Contact Sales
-      if (
-        href.includes("/contact-sales") ||
-        text.includes("book demo") ||
-        text.includes("request demo") ||
-        text.includes("contact sales")
-      ) {
-        setHoverLabel("BOOK");
-        return;
-      }
+      setIsHovered(!!isInteractive);
 
-      // Videos / Media
-      if (
-        hoverable.tagName === "VIDEO" ||
-        text.includes("watch") ||
-        text.includes("play") ||
-        className.includes("play-btn")
-      ) {
-        setHoverLabel("PLAY");
-        return;
-      }
+      // 5. Magnetic attraction for primary CTA buttons
+      // Match classes typical of primary CTA buttons
+      const ctaBtn = target.closest(
+        'a[href*="/solutions"], button.bg-emerald-600, .bg-\\[\\#53D769\\], button.bg-emerald-500, a.bg-emerald-600, .btn-primary'
+      ) as HTMLElement | null;
 
-      // Case Studies
-      if (href.includes("/case-studies") || text.includes("case study") || text.includes("read case")) {
-        setHoverLabel("READ");
-        return;
-      }
+      if (ctaBtn) {
+        activeMagneticElement = ctaBtn;
+        setIsMagnetic(true);
 
-      // Contact / Support
-      if (href.includes("/contact") || href.includes("/support") || text.includes("talk to")) {
-        setHoverLabel("TALK");
-        return;
-      }
+        const rect = ctaBtn.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
 
-      // Standard generic hover (no text, just clean ring expansion)
-      setHoverLabel(null);
+        const distanceX = centerX - e.clientX;
+        const distanceY = centerY - e.clientY;
+
+        // Apply a small magnetic offset (max 3-5px)
+        const pullFactor = 0.15; // smooth pull intensity
+        const maxPull = 5; // maximum 5px pull
+
+        magneticOffsetRef.current = {
+          x: Math.min(Math.max(distanceX * pullFactor, -maxPull), maxPull),
+          y: Math.min(Math.max(distanceY * pullFactor, -maxPull), maxPull),
+        };
+      } else {
+        activeMagneticElement = null;
+        setIsMagnetic(false);
+        magneticOffsetRef.current = { x: 0, y: 0 };
+      }
     };
 
-    const handleMouseOut = () => {
-      setIsHovered(false);
-      setHoverLabel(null);
+    const handleMouseLeave = () => {
+      if (cursorRef.current) {
+        cursorRef.current.style.opacity = "0";
+      }
     };
 
-    document.body.addEventListener("mouseover", handleMouseOver);
-    document.body.addEventListener("mouseout", handleMouseOut);
-
-    // 5. Magnetic Button Effect (5-8px subtle pull)
-    const handleMagneticMove = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target) return;
-
-      const btn = target.closest<HTMLElement>("a, button, [data-magnetic]");
-      if (!btn) return;
-
-      const rect = btn.getBoundingClientRect();
-      const x = (e.clientX - rect.left - rect.width / 2) * 0.12;
-      const y = (e.clientY - rect.top - rect.height / 2) * 0.12;
-
-      // Clamp to max 7px
-      const clampX = Math.max(-7, Math.min(7, x));
-      const clampY = Math.max(-7, Math.min(7, y));
-
-      btn.style.transform = `translate3d(${clampX}px, ${clampY}px, 0)`;
-      btn.style.transition = "none";
+    const handleMouseEnter = () => {
+      if (cursorRef.current) {
+        cursorRef.current.style.opacity = "1";
+      }
     };
 
-    const handleMagneticLeave = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target) return;
+    window.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    document.addEventListener("mouseenter", handleMouseEnter);
 
-      const btn = target.closest<HTMLElement>("a, button, [data-magnetic]");
-      if (!btn) return;
+    // 6. 120fps Animation Loop for lag-free positioning
+    let animationFrameId: number;
 
-      btn.style.transform = "";
-      btn.style.transition = "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)";
+    const updateCursorPosition = () => {
+      const targetX = mouseRef.current.x + magneticOffsetRef.current.x;
+      const targetY = mouseRef.current.y + magneticOffsetRef.current.y;
+
+      if (prefersReducedMotion) {
+        cursorPositionRef.current = { x: targetX, y: targetY };
+      } else {
+        // Linear interpolation for smooth trailing
+        const ease = 0.22; // Quick, responsive follow
+        cursorPositionRef.current.x += (targetX - cursorPositionRef.current.x) * ease;
+        cursorPositionRef.current.y += (targetY - cursorPositionRef.current.y) * ease;
+      }
+
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${cursorPositionRef.current.x}px, ${cursorPositionRef.current.y}px, 0)`;
+      }
+
+      animationFrameId = requestAnimationFrame(updateCursorPosition);
     };
 
-    document.body.addEventListener("mousemove", handleMagneticMove);
-    document.body.addEventListener("mouseout", handleMagneticLeave);
+    updateCursorPosition();
 
     return () => {
-      document.documentElement.classList.remove("custom-cursor-active");
       window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("mouseenter", handleMouseEnter);
       cancelAnimationFrame(animationFrameId);
-      document.body.removeEventListener("mouseover", handleMouseOver);
-      document.body.removeEventListener("mouseout", handleMouseOut);
-      document.body.removeEventListener("mousemove", handleMagneticMove);
-      document.body.removeEventListener("mouseout", handleMagneticLeave);
+      const styleNode = document.getElementById("custom-cursor-styles");
+      if (styleNode) {
+        styleNode.remove();
+      }
     };
   }, []);
 
-  if (!mounted) return null;
+  if (!isVisible) return null;
 
   return (
-    <>
-      <style>{`
-        /* Hide standard cursor only on fine pointer (desktop) when JS cursor is active */
-        @media (pointer: fine) {
-          .custom-cursor-active,
-          .custom-cursor-active * {
-            cursor: none !important;
-          }
-        }
-
-        .custom-cursor-ring-wrapper {
-          position: fixed;
-          top: 0;
-          left: 0;
-          pointer-events: none;
-          z-index: 99999;
-          transform: translate3d(0, 0, 0);
-          will-change: transform;
-        }
-
-        .custom-cursor-ring {
-          position: absolute;
-          transform: translate(-50%, -50%);
-          width: 20px;
-          height: 20px;
-          border: 1.5px solid rgba(83, 215, 105, 0.35); /* SourceTrace green */
-          border-radius: 50%;
-          pointer-events: none;
-          transition: 
-            width 0.25s cubic-bezier(0.215, 0.61, 0.355, 1), 
-            height 0.25s cubic-bezier(0.215, 0.61, 0.355, 1), 
-            background-color 0.25s ease, 
-            border-color 0.25s ease, 
-            border-radius 0.25s ease,
-            box-shadow 0.25s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-sizing: border-box;
-          overflow: hidden;
-          background-color: transparent;
-        }
-
-        .custom-cursor-ring.is-hovered {
-          width: 28px;
-          height: 28px;
-          border-color: rgba(83, 215, 105, 0.6);
-          background-color: rgba(83, 215, 105, 0.05);
-        }
-
-        .custom-cursor-ring.has-label {
-          width: auto;
-          height: 34px;
-          min-width: 34px;
-          padding: 0 14px;
-          border-radius: 17px;
-          background-color: rgba(220, 252, 231, 0.95); /* Lite green concept */
-          border-color: rgba(83, 215, 105, 0.7);
-          box-shadow: 
-            0 10px 20px -5px rgba(83, 215, 105, 0.25), 
-            0 0 12px rgba(83, 215, 105, 0.15);
-          backdrop-filter: blur(4px);
-        }
-
-        .custom-cursor-dot {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 8px;
-          height: 8px;
-          background-color: #53D769; /* SourceTrace green dot */
-          border-radius: 50%;
-          pointer-events: none;
-          z-index: 100000;
-          transform: translate3d(-50%, -50%, 0);
-          will-change: transform;
-          transition: opacity 0.15s ease, transform 0.15s ease;
-        }
-
-        .custom-cursor-dot.is-hovered {
-          opacity: 0;
-          transform: translate3d(-50%, -50%, 0) scale(0);
-        }
-
-        .custom-cursor-text {
-          color: #064e3b; /* Deep forest green for high contrast */
-          font-family: var(--font-inter-tight), sans-serif;
-          font-size: 9px;
-          font-weight: 900;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          opacity: 0;
-          white-space: nowrap;
-          pointer-events: none;
-          display: none;
-        }
-
-        .custom-cursor-ring.has-label .custom-cursor-text {
-          display: block;
-          opacity: 1;
-          animation: cursorTextFadeIn 0.2s ease forwards;
-        }
-
-        @keyframes cursorTextFadeIn {
-          from { opacity: 0; transform: translateY(2px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
-
-      {/* Ring wrapper (positioned via lerp) */}
-      <div ref={ringWrapperRef} className="custom-cursor-ring-wrapper">
-        <div 
-          className={`custom-cursor-ring ${isHovered ? "is-hovered" : ""} ${hoverLabel ? "has-label" : ""}`}
-        >
-          <span className="custom-cursor-text">{hoverLabel}</span>
-        </div>
-      </div>
-
-      {/* Center dot (positioned via faster lerp) */}
-      <div 
-        ref={dotRef} 
-        className={`custom-cursor-dot ${isHovered ? "is-hovered" : ""}`}
+    <div
+      ref={cursorRef}
+      className="fixed top-0 left-0 w-8 h-8 pointer-events-none z-[9999] opacity-0 select-none will-change-transform"
+      style={{
+        transition: "opacity 0.2s ease, width 0.15s ease-out, height 0.15s ease-out",
+        transform: "translate3d(-100px, -100px, 0)",
+      }}
+    >
+      {/* Glow Effect on Hover */}
+      <div
+        className="absolute inset-0 rounded-full blur-[10px] -translate-x-[3px] -translate-y-[3px]"
+        style={{
+          width: "28px",
+          height: "28px",
+          backgroundColor: "#2E7D32",
+          opacity: isHovered ? 0.35 : 0,
+          transform: isHovered ? "scale(1.3)" : "scale(0.8)",
+          transition: "transform 150ms ease-out, opacity 150ms ease-out",
+        }}
       />
-    </>
+
+      {/* SVG Premium Native-like Cursor Pointer (macOS layout shape) */}
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{
+          filter: "drop-shadow(0px 2px 5px rgba(0, 0, 0, 0.25))",
+          transform: isHovered ? "scale(1.08)" : "scale(1)",
+          transition: "transform 150ms ease-out",
+        }}
+      >
+        {/* Precise Apple/Windows macOS style arrow pointer */}
+        <path
+          d="M4.5 3V20.12L9.21 15.41H16.29L4.5 3Z"
+          fill="white"
+          stroke="#2E7D32"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
   );
 }
