@@ -212,10 +212,9 @@ export default function Home() {
           muted 
           playsInline 
           poster="/assets/hero-poster.jpg"
-          className="absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none hidden md:block"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0 pointer-events-none"
           src="/assets/hero-background.mp4"
         />
-        <div className="absolute inset-0 w-full h-full bg-[#0B3D2E] md:hidden z-0" />
         
         {/* Dark overlay for readability */}
         <div className="absolute inset-0 bg-black/60 z-10 pointer-events-none"></div>
