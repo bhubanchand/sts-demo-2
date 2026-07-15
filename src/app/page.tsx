@@ -32,9 +32,12 @@ interface ChallengeBlockProps {
   bgClass: string;
   activeBlock: string;
   setActiveBlock: (id: string) => void;
+  image: string;
+  quote: string;
+  badgeText: string;
 }
 
-function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, activeBlock, setActiveBlock }: ChallengeBlockProps) {
+function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, activeBlock, setActiveBlock, image, quote, badgeText }: ChallengeBlockProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-40% 0px -40% 0px" });
 
@@ -61,6 +64,19 @@ function ChallengeBlock({ id, title, text, icon: Icon, colorClass, bgClass, acti
       </div>
       <h3 className="text-xl sm:text-3xl font-bold mb-2 sm:mb-4 text-gray-900 relative z-10">{title}</h3>
       <p className="text-base sm:text-lg text-gray-600 leading-relaxed relative z-10">{text}</p>
+      
+      {/* Mobile Card block (only visible below lg breakpoint) */}
+      <div className="lg:hidden mt-6 w-full h-[220px] sm:h-[300px] rounded-2xl overflow-hidden relative shadow-md">
+         <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover" />
+         <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D2E] via-[#0B3D2E]/25 to-transparent opacity-95"></div>
+         <div className="absolute bottom-4 left-4 right-4 bg-white/10 backdrop-blur-md border border-white/25 p-4 rounded-xl">
+            <p className="text-white text-xs font-bold leading-relaxed">{quote}</p>
+         </div>
+         <span className="absolute top-4 right-4 bg-white/95 text-[#0B3D2E] font-black text-[9px] uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
+            {badgeText}
+         </span>
+      </div>
+
       <div className={`absolute top-0 right-0 w-32 h-32 ${bgClass} rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-300`}></div>
     </div>
   );
@@ -81,7 +97,8 @@ const CHALLENGES = [
     colorClass: "text-red-600",
     bgClass: "bg-red-100",
     quote: `"EUDR and FSMA 204 require precise geocoordinates. The era of self-reported sustainability is over."`,
-    image: "/assets/esg-dashboard.png"
+    image: "/assets/esg-dashboard.png",
+    badgeText: "EUDR Compliance Active"
   },
   {
     id: "fragmented",
@@ -91,7 +108,8 @@ const CHALLENGES = [
     colorClass: "text-orange-600",
     bgClass: "bg-orange-100",
     quote: `"Without node-level visibility, discovering the true origin of your raw materials is impossible."`,
-    image: "/assets/traceability-diagram.png"
+    image: "/assets/traceability-diagram.png",
+    badgeText: "Traceability Mapped"
   },
   {
     id: "climate",
@@ -101,7 +119,8 @@ const CHALLENGES = [
     colorClass: "text-blue-600",
     bgClass: "bg-blue-100",
     quote: `"Hyper-local weather anomalies are creating supply shocks. You need predictive intelligence."`,
-    image: "/assets/ai-graph.png"
+    image: "/assets/ai-graph.png",
+    badgeText: "AI Risk Scoring"
   }
 ];
 
@@ -373,44 +392,54 @@ export default function Home() {
                            bgClass={item.bgClass} 
                            activeBlock={activeChallengeBlock}
                            setActiveBlock={setActiveChallengeBlock} 
+                           image={item.image}
+                           quote={item.quote}
+                           badgeText={item.badgeText}
                         />
                      ))}
                   </div>
                </div>
 
-               {/* Right Column (Sticky Image Container) */}
-               <div className="w-full lg:w-1/2 lg:sticky lg:top-40 h-[260px] sm:h-[400px] lg:h-[600px] rounded-2xl lg:rounded-[40px] overflow-hidden shadow-2xl relative self-start mt-6 lg:mt-16">
-                  <AnimatePresence mode="wait">
-                     <motion.img 
-                        key={activeChallengeBlock}
-                        src={CHALLENGE_IMAGES[activeChallengeBlock as keyof typeof CHALLENGE_IMAGES]}
-                        initial={{ opacity: 0, scale: 1.1 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.4, ease: "easeInOut" }}
-                        className="absolute inset-0 w-full h-full object-cover"
-                     />
-                  </AnimatePresence>
-                  
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D2E] via-[#0B3D2E]/20 to-transparent opacity-90"></div>
-                  
-                  {/* Dynamic caption overlay */}
-                  <div className="absolute bottom-6 left-6 right-6 lg:bottom-10 lg:left-10 lg:right-10">
-                     <AnimatePresence mode="wait">
-                        <motion.div 
-                           key={activeChallengeBlock}
-                           initial={{ opacity: 0, y: 20 }}
-                           animate={{ opacity: 1, y: 0 }}
-                           exit={{ opacity: 0, y: -20 }}
-                           transition={{ duration: 0.3, delay: 0.2 }}
-                           className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 lg:p-8 rounded-2xl lg:rounded-3xl"
+               {/* Right Column (Sticky Stack of 3 Cards - Desktop Only) */}
+               <div className="hidden lg:block w-full lg:w-1/2 lg:sticky lg:top-40 h-[600px] mt-16 self-start relative">
+                  {CHALLENGES.map((item) => {
+                     const isActive = activeChallengeBlock === item.id;
+                     return (
+                        <motion.div
+                           key={item.id}
+                           initial={false}
+                           animate={{
+                              opacity: isActive ? 1 : 0,
+                              scale: isActive ? 1 : 0.95,
+                              y: isActive ? 0 : 20,
+                              pointerEvents: isActive ? "auto" : "none"
+                           }}
+                           transition={{ duration: 0.45, ease: "easeOut" }}
+                           className="absolute inset-0 w-full h-full rounded-[40px] overflow-hidden shadow-2xl bg-[#0B3D2E]"
                         >
-                           <p className="text-white font-bold text-base lg:text-xl leading-relaxed">
-                              {CHALLENGES.find(c => c.id === activeChallengeBlock)?.quote}
-                           </p>
+                           <img 
+                              src={item.image} 
+                              alt={item.title} 
+                              className="absolute inset-0 w-full h-full object-cover"
+                           />
+                           <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D2E] via-[#0B3D2E]/25 to-transparent opacity-95"></div>
+                           
+                           {/* Premium Badge */}
+                           <span className="absolute top-6 right-6 bg-white/95 text-[#0B3D2E] font-black text-xs uppercase tracking-wider px-4 py-1.5 rounded-full shadow-md z-30">
+                              {item.badgeText}
+                           </span>
+
+                           {/* Dynamic caption overlay */}
+                           <div className="absolute bottom-10 left-10 right-10 z-30">
+                              <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-3xl">
+                                 <p className="text-white font-bold text-xl leading-relaxed">
+                                    {item.quote}
+                                 </p>
+                              </div>
+                           </div>
                         </motion.div>
-                     </AnimatePresence>
-                  </div>
+                     );
+                  })}
                </div>
             </div>
          </div>
