@@ -902,7 +902,7 @@ export function MegaMenu() {
             <GlobalSearch isSearchOpen={isSearchOpen} onSearchOpen={openSearch} onSearchClose={closeSearch} variant="mobile" />
             <button
               onClick={toggleMobileMenu}
-              className="relative w-10 h-10 flex items-center justify-center text-[#1d1d1f] focus:outline-none cursor-pointer"
+              className="relative w-10 h-10 flex items-center justify-center text-[#1d1d1f] focus:outline-none cursor-default"
               aria-label="Toggle menu"
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="overflow-visible">
@@ -985,7 +985,7 @@ export function MegaMenu() {
               {mobileNavStack.length > 1 ? (
                 <button
                   onClick={popMobileNav}
-                  className="flex items-center gap-0.5 text-[#1F7A53] text-sm cursor-pointer"
+                  className="flex items-center gap-0.5 text-[#1F7A53] text-sm cursor-default"
                 >
                   <ChevronLeft className="w-5 h-5" />
                   <span>{mobileNavStack[mobileNavStack.length - 2]?.title || "Back"}</span>
@@ -998,7 +998,7 @@ export function MegaMenu() {
 
               <button
                 onClick={closeMobile}
-                className="w-8 h-8 flex items-center justify-center text-[#86868b] hover:text-[#1d1d1f] transition-colors cursor-pointer"
+                className="w-8 h-8 flex items-center justify-center text-[#86868b] hover:text-[#1d1d1f] transition-colors cursor-default"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
@@ -1018,7 +1018,7 @@ export function MegaMenu() {
                         <button
                           key={item.id}
                           onClick={() => setTabletSelectedCategory(item.id)}
-                          className={`w-full text-left py-3 px-0 border-b border-black/[0.04] last:border-b-0 transition-colors duration-150 cursor-pointer ${
+                          className={`w-full text-left py-3 px-0 border-b border-black/[0.04] last:border-b-0 transition-colors duration-150 cursor-default ${
                             isSelected
                               ? "text-[#1F7A53] font-medium"
                               : "text-[#1d1d1f] hover:text-[#1F7A53]"
@@ -1131,7 +1131,7 @@ export function MegaMenu() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, delay: 0.03 + idx * 0.025, ease: [0.25, 0.1, 0.25, 1] }}
                             onClick={() => pushMobileNav({ type: "category", id: item.id, title: item.label })}
-                            className="w-full text-left py-3 border-b border-black/[0.04] last:border-b-0 cursor-pointer"
+                            className="w-full text-left py-3 border-b border-black/[0.04] last:border-b-0 cursor-default"
                           >
                             <span className="text-[28px] font-normal text-[#1d1d1f] leading-tight">
                               {item.label}
@@ -1189,7 +1189,7 @@ export function MegaMenu() {
                                 subGroupId: sol.name.toLowerCase(),
                                 title: sol.name,
                               })}
-                              className="w-full text-left py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between cursor-pointer"
+                              className="w-full text-left py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between cursor-default"
                             >
                               <div>
                                 <span className="text-[22px] font-normal text-[#1d1d1f] block">{sol.name}</span>
@@ -1243,7 +1243,7 @@ export function MegaMenu() {
                                 subGroupId: link.name.toLowerCase(),
                                 title: link.name,
                               })}
-                              className="w-full text-left py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between cursor-pointer"
+                              className="w-full text-left py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between cursor-default"
                             >
                               <div>
                                 <span className="text-[22px] font-normal text-[#1d1d1f] block">{link.name}</span>
