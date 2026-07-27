@@ -478,14 +478,14 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
   ];
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-6 flex gap-10 text-[#0B3D2E]">
-      {/* Left Panel (30%) */}
-      <div className="w-[30%] shrink-0 pr-8 border-r border-gray-100/80 flex flex-col justify-between">
+    <div className="max-w-[1400px] mx-auto px-6 py-5 flex gap-8 text-[#0B3D2E]">
+      {/* Left Panel (Reduced width ~260px) */}
+      <div className="w-[260px] shrink-0 pr-6 border-r border-gray-100/80 flex flex-col justify-between">
         <div>
-          <h3 className="text-2xl font-black text-[#0B3D2E] tracking-tight mb-2">
+          <h3 className="text-xl font-black text-[#0B3D2E] tracking-tight mb-1.5">
             Commodity Intelligence Hub
           </h3>
-          <p className="text-xs text-gray-500 font-medium leading-relaxed mb-6">
+          <p className="text-xs text-gray-500 font-medium leading-relaxed mb-5">
             Explore global agricultural commodities, regulations, sustainability frameworks, and market intelligence.
           </p>
         </div>
@@ -494,26 +494,26 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
         <Link
           href="/resources/reports"
           onClick={closeMenu}
-          className="group block p-4.5 rounded-2xl bg-[#EBF7F0]/60 hover:bg-[#EBF7F0] border border-[#8CCB9B]/30 hover:border-[#8CCB9B]/60 transition-all duration-200 shadow-sm"
+          className="group block p-4 rounded-2xl bg-[#EBF7F0]/60 hover:bg-[#EBF7F0] border border-[#8CCB9B]/30 hover:border-[#8CCB9B]/60 transition-all duration-150 shadow-sm"
         >
           <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-1">
             Featured Resource
           </span>
-          <h4 className="text-sm font-bold text-[#0B3D2E] leading-snug mb-1 group-hover:text-[#1F7A53] transition-colors">
+          <h4 className="text-xs font-bold text-[#0B3D2E] leading-snug mb-1 group-hover:text-[#1F7A53] transition-colors">
             2026 Global Coffee Outlook
           </h4>
-          <div className="inline-flex items-center gap-1 text-xs font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform mt-2">
+          <div className="inline-flex items-center gap-1 text-[11px] font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform mt-1.5">
             <span>Read Report</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-3 h-3" />
           </div>
         </Link>
       </div>
 
-      {/* Right Panel (70%) */}
-      <div className="flex-1 pl-2 flex flex-col gap-5 justify-between">
-        {/* Section 1: Browse by Category */}
+      {/* Right Panel (Flex-1) */}
+      <div className="flex-1 flex flex-col gap-4 justify-between">
+        {/* Section 1: Browse by Category (2-Column Grid) */}
         <div>
-          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-3 block">
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-2 block">
             Browse by Category
           </span>
           <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
@@ -524,7 +524,7 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
                   key={idx}
                   href={cat.href}
                   onClick={closeMenu}
-                  className="flex items-center gap-2.5 p-2 rounded-xl text-xs font-bold text-gray-700 hover:text-[#0B3D2E] hover:bg-[#EBF7F0]/60 transition-all duration-150 group"
+                  className="flex items-center gap-2.5 p-1.5 rounded-xl text-xs font-bold text-gray-700 hover:text-[#0B3D2E] hover:bg-[#EBF7F0]/60 transition-all duration-150 group"
                 >
                   <div className="w-7 h-7 rounded-lg bg-gray-100/80 group-hover:bg-[#8CCB9B]/20 flex items-center justify-center text-gray-500 group-hover:text-[#1F7A53] transition-colors shrink-0">
                     <Icon className="w-3.5 h-3.5 stroke-[2]" />
@@ -536,9 +536,9 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
           </div>
         </div>
 
-        {/* Section 2: Featured Commodities */}
-        <div className="pt-4 border-t border-gray-100/80">
-          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-2.5 block">
+        {/* Section 2: Featured Commodities (Compact Pills) */}
+        <div className="pt-3 border-t border-gray-100/80">
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-2 block">
             Featured Commodities
           </span>
           <div className="flex flex-wrap gap-2">
@@ -547,7 +547,7 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
                 key={idx}
                 href={com.href}
                 onClick={closeMenu}
-                className="px-3.5 py-1.5 rounded-full bg-gray-100/80 hover:bg-[#EBF7F0] text-gray-700 hover:text-[#0B3D2E] border border-gray-200/50 hover:border-[#8CCB9B]/50 text-xs font-semibold transition-all duration-150 hover:scale-[1.02] active:scale-95"
+                className="px-3 py-1 rounded-full bg-gray-100/80 hover:bg-[#EBF7F0] text-gray-700 hover:text-[#0B3D2E] border border-gray-200/50 hover:border-[#8CCB9B]/50 text-xs font-semibold transition-all duration-150 hover:scale-[1.02] active:scale-95"
               >
                 {com.name}
               </Link>
@@ -555,12 +555,12 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
           </div>
         </div>
 
-        {/* Section 3: Quick Access */}
-        <div className="pt-4 border-t border-gray-100/80">
-          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-2.5 block">
+        {/* Section 3: Quick Access (2-Column Grid aligned with Category grid) */}
+        <div className="pt-3 border-t border-gray-100/80">
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-2 block">
             Quick Access
           </span>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
             {quickAccessResources.map((res, idx) => {
               const ResIcon = res.icon;
               return (
@@ -568,9 +568,11 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
                   key={idx}
                   href={res.href}
                   onClick={closeMenu}
-                  className="flex items-center gap-2 p-2 rounded-xl text-xs font-bold text-gray-700 hover:text-[#0B3D2E] hover:bg-[#EBF7F0]/60 transition-all duration-150 group"
+                  className="flex items-center gap-2.5 p-1.5 rounded-xl text-xs font-bold text-gray-700 hover:text-[#0B3D2E] hover:bg-[#EBF7F0]/60 transition-all duration-150 group"
                 >
-                  <ResIcon className="w-3.5 h-3.5 text-[#1F7A53] shrink-0" />
+                  <div className="w-7 h-7 rounded-lg bg-gray-100/80 group-hover:bg-[#8CCB9B]/20 flex items-center justify-center text-gray-500 group-hover:text-[#1F7A53] transition-colors shrink-0">
+                    <ResIcon className="w-3.5 h-3.5 stroke-[2]" />
+                  </div>
                   <span className="truncate">{res.name}</span>
                 </Link>
               );
