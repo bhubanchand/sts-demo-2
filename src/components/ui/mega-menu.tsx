@@ -2087,6 +2087,146 @@ export function MegaMenu() {
                               );
                             })}
                           </div>
+                        ) : currentStep.id === "industries" ? (
+                          /* SPECIAL CASE: COMMODITY HUB MOBILE APPLE SETTINGS NAVIGATION */
+                          <div className="flex flex-col gap-5">
+                            <div>
+                              <h3 className="text-xl font-bold text-[#0B3D2E] tracking-tight mb-1">
+                                Commodity Intelligence Hub
+                              </h3>
+                              <p className="text-xs text-gray-500 font-medium leading-relaxed">
+                                Explore global agricultural commodities, regulations, sustainability frameworks and market intelligence.
+                              </p>
+                            </div>
+
+                            {/* Section 1: Browse by Category */}
+                            <div>
+                              <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-2 block">
+                                Browse by Category
+                              </span>
+                              <div className="flex flex-col gap-1.5">
+                                {[
+                                  { name: "Plantation Crops", icon: TreeDeciduous },
+                                  { name: "Cereals & Grains", icon: Wheat },
+                                  { name: "Oilseeds", icon: Droplets },
+                                  { name: "Fruits", icon: Apple },
+                                  { name: "Vegetables", icon: Carrot },
+                                  { name: "Spices & Herbs", icon: Sprout },
+                                  { name: "Forestry", icon: Trees },
+                                  { name: "Aquaculture", icon: Fish },
+                                  { name: "Livestock", icon: ShieldCheck },
+                                  { name: "Beverage Crops", icon: Coffee },
+                                ].map((cat, cIdx) => {
+                                  const CatIcon = cat.icon;
+                                  return (
+                                    <button
+                                      key={cIdx}
+                                      onClick={() =>
+                                        pushMobileNav({
+                                          type: "subGroup",
+                                          categoryId: "industries",
+                                          subGroupId: cat.name.toLowerCase(),
+                                          title: cat.name,
+                                        })
+                                      }
+                                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-white hover:bg-[#EBF7F0]/40 border border-gray-100 shadow-sm transition-all text-left cursor-pointer active:scale-[0.98]"
+                                    >
+                                      <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-xl bg-[#8CCB9B]/20 flex items-center justify-center text-[#1F7A53] shrink-0">
+                                          <CatIcon className="w-4 h-4 stroke-[2]" />
+                                        </div>
+                                        <span className="text-[14px] font-bold text-gray-900">{cat.name}</span>
+                                      </div>
+                                      <ChevronRight className="w-4 h-4 text-gray-300 shrink-0 stroke-[2.2]" />
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* Section 2: Featured Commodities */}
+                            <div className="pt-3 border-t border-gray-100">
+                              <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-2.5 block">
+                                Featured Commodities
+                              </span>
+                              <div className="flex flex-wrap gap-2">
+                                {[
+                                  { name: "Coffee", href: "/CommodityHub/coffee" },
+                                  { name: "Palm Oil", href: "/CommodityHub/palm-oil" },
+                                  { name: "Cocoa", href: "/CommodityHub/cocoa" },
+                                  { name: "Rice", href: "/CommodityHub/rice" },
+                                  { name: "Cotton", href: "/CommodityHub/cotton" },
+                                  { name: "Tea", href: "/CommodityHub/tea" },
+                                  { name: "Cashew", href: "/CommodityHub" },
+                                  { name: "Rubber", href: "/CommodityHub" },
+                                ].map((com, fIdx) => (
+                                  <Link
+                                    key={fIdx}
+                                    href={com.href}
+                                    onClick={closeMobile}
+                                    className="px-3.5 py-1.5 rounded-full bg-gray-100/80 hover:bg-[#EBF7F0] text-gray-800 hover:text-[#0B3D2E] border border-gray-200/50 hover:border-[#8CCB9B]/50 text-xs font-semibold transition-all duration-150 active:scale-95"
+                                  >
+                                    {com.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Section 3: Quick Access */}
+                            <div className="pt-3 border-t border-gray-100">
+                              <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-2 block">
+                                Quick Access
+                              </span>
+                              <div className="flex flex-col gap-1.5">
+                                {[
+                                  { name: "Commodity Explorer", href: "/CommodityHub", icon: Compass },
+                                  { name: "Country Profiles", href: "/company/global-offices", icon: Globe },
+                                  { name: "Regulations & Policies", href: "/resources/guides", icon: FileText },
+                                  { name: "Sustainability Standards", href: "/solutions/sustainability", icon: ShieldCheck },
+                                  { name: "Market Intelligence", href: "/resources/reports", icon: BarChart3 },
+                                  { name: "Satellite Insights", href: "/platform/intelligence", icon: Activity },
+                                  { name: "Risk Maps", href: "/intelligence/geospatial-intelligence", icon: MapPin },
+                                  { name: "Reports & Resources", href: "/resources/whitepapers", icon: BookOpen },
+                                ].map((res, qIdx) => {
+                                  const ResIcon = res.icon;
+                                  return (
+                                    <Link
+                                      key={qIdx}
+                                      href={res.href}
+                                      onClick={closeMobile}
+                                      className="flex items-center justify-between p-3 rounded-2xl bg-white hover:bg-[#EBF7F0]/40 border border-gray-100 shadow-sm transition-all active:scale-[0.98]"
+                                    >
+                                      <div className="flex items-center gap-3">
+                                        <ResIcon className="w-4 h-4 text-[#1F7A53] shrink-0" />
+                                        <span className="text-[14px] font-bold text-gray-800">{res.name}</span>
+                                      </div>
+                                      <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* Section 4: Featured Resource */}
+                            <div className="pt-3 border-t border-gray-100">
+                              <Link
+                                href="/resources/reports"
+                                onClick={closeMobile}
+                                className="group block p-4 rounded-2xl bg-[#EBF7F0]/60 hover:bg-[#EBF7F0] border border-[#8CCB9B]/30 hover:border-[#8CCB9B]/60 transition-all duration-200 shadow-sm active:scale-[0.98]"
+                              >
+                                <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-1">
+                                  Featured Resource
+                                </span>
+                                <h4 className="text-sm font-bold text-[#0B3D2E] leading-snug mb-1 group-hover:text-[#1F7A53] transition-colors">
+                                  2026 Global Coffee Outlook
+                                </h4>
+                                <div className="inline-flex items-center gap-1 text-xs font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform mt-2">
+                                  <span>Read Report</span>
+                                  <ArrowRight className="w-3.5 h-3.5" />
+                                </div>
+                              </Link>
+                            </div>
+                          </div>
                         ) : currentStep.id === "platform" || currentStep.id === "resources" ? (
                           /* Level 2 for Platform / Resources (Groups with subItems) */
                           <div className="flex flex-col gap-3">
@@ -2125,7 +2265,7 @@ export function MegaMenu() {
                             })}
                           </div>
                         ) : (
-                          /* Direct links for Commodity Hub, Customers, Partners, Company */
+                          /* Direct links for Customers, Partners, Company */
                           <div className="flex flex-col gap-2.5">
                             <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-2 mb-1 block">
                               {currentStep.title} Pages
@@ -2177,6 +2317,55 @@ export function MegaMenu() {
                             parentGroup = PLATFORM_LINKS.find((s) => s.name.toLowerCase() === currentStep.subGroupId);
                           } else if (currentStep.categoryId === "resources") {
                             parentGroup = RESOURCES_LINKS.find((s) => s.name.toLowerCase() === currentStep.subGroupId);
+                          } else if (currentStep.categoryId === "industries") {
+                            // Sub-group category selected under Commodity Hub on Mobile
+                            const catTitle = currentStep.title;
+                            const relatedLinks = INDUSTRIES_LINKS.filter((item) => {
+                              if (catTitle.includes("Beverage")) return ["Coffee", "Tea", "Cocoa"].includes(item.name);
+                              if (catTitle.includes("Cereals")) return ["Rice"].includes(item.name);
+                              if (catTitle.includes("Oilseeds")) return ["Palm Oil"].includes(item.name);
+                              if (catTitle.includes("Plantation") || catTitle.includes("Forestry")) return ["Cotton"].includes(item.name);
+                              return true;
+                            });
+
+                            return (
+                              <div className="flex flex-col gap-3">
+                                <Link
+                                  href="/CommodityHub"
+                                  onClick={closeMobile}
+                                  className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-[#0B3D2E] to-[#1F7A53] text-white shadow-md transition-all active:scale-[0.98]"
+                                >
+                                  <div>
+                                    <span className="text-[9px] font-bold text-[#53D769] uppercase tracking-widest block mb-0.5">
+                                      Overview
+                                    </span>
+                                    <span className="text-base font-bold block">{catTitle}</span>
+                                  </div>
+                                  <ArrowRight className="w-4 h-4 text-[#53D769]" />
+                                </Link>
+
+                                <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-2 mt-2 block">
+                                  {catTitle} Commodities
+                                </span>
+
+                                <div className="flex flex-col gap-2">
+                                  {relatedLinks.map((item, iIdx) => (
+                                    <Link
+                                      key={iIdx}
+                                      href={item.href}
+                                      onClick={closeMobile}
+                                      className="flex items-center justify-between p-3.5 rounded-2xl bg-white hover:bg-[#EBF7F0]/40 border border-gray-100 shadow-sm transition-all active:scale-[0.98]"
+                                    >
+                                      <div>
+                                        <span className="text-sm font-bold text-gray-800 block">{item.name}</span>
+                                        <span className="text-[11px] text-gray-500 block mt-0.5">{item.desc}</span>
+                                      </div>
+                                      <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            );
                           }
 
                           if (!parentGroup) return null;
