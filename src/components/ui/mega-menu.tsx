@@ -619,18 +619,25 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
 };
 
 
+
+
 /* ═══════════════════════════════════════════════════════════
    UNIFIED MEGA MENU CONTENT
-   Typography-first. Whitespace as hierarchy. No decoration.
+   Fixed grid. Staggered columns. Typography-first.
    ═══════════════════════════════════════════════════════════ */
 
 function UnifiedMegaMenuContent({ menuId, closeMenu }: { menuId: string; closeMenu: () => void }) {
   const data = UNIFIED_NAVIGATION_DATA[menuId] || UNIFIED_NAVIGATION_DATA.platform;
 
   return (
-    <div className="max-w-[980px] mx-auto px-6 py-10 flex gap-16 text-[#1d1d1f]">
-      {/* Left Column — 220px, no border */}
-      <div className="w-[220px] shrink-0 flex flex-col justify-between">
+    <div className="px-6 py-10 flex gap-16 text-[#1d1d1f] items-stretch" style={{ minHeight: '400px' }}>
+      {/* Left Column — Fixed 220px */}
+      <motion.div
+        className="w-[220px] shrink-0 flex flex-col justify-between"
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.02, ease: [0.25, 0.1, 0.25, 1] }}
+      >
         <div>
           <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-2 block">
             {data.label}
@@ -643,8 +650,8 @@ function UnifiedMegaMenuContent({ menuId, closeMenu }: { menuId: string; closeMe
           </p>
         </div>
 
-        {/* Featured — plain text, no card */}
-        <div className="mt-8">
+        {/* Featured — plain text, separated by subtle border */}
+        <div className="pt-6 mt-6 border-t border-black/[0.04]">
           <span className="text-[11px] font-semibold uppercase tracking-wide text-[#86868b] block mb-1.5">
             Featured
           </span>
@@ -660,12 +667,17 @@ function UnifiedMegaMenuContent({ menuId, closeMenu }: { menuId: string; closeMe
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200" />
           </Link>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Right Column — text-first navigation groups */}
-      <div className="flex-1 grid grid-cols-3 gap-12">
+      {/* Right Columns — Fixed 3-column grid with stagger */}
+      <div className="flex-1 grid grid-cols-3 gap-10">
         {data.groups.map((group, gIdx) => (
-          <div key={gIdx}>
+          <motion.div
+            key={gIdx}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.06 + gIdx * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
+          >
             <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-4 block">
               {group.title}
             </span>
@@ -688,7 +700,7 @@ function UnifiedMegaMenuContent({ menuId, closeMenu }: { menuId: string; closeMe
                 </Link>
               ))}
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
@@ -698,6 +710,7 @@ function UnifiedMegaMenuContent({ menuId, closeMenu }: { menuId: string; closeMe
 
 /* ═══════════════════════════════════════════════════════════
    MEGA MENU COMPONENT
+   Premium interactions. Stable layout. Fluid transitions.
    ═══════════════════════════════════════════════════════════ */
 
 export function MegaMenu() {
@@ -772,13 +785,26 @@ export function MegaMenu() {
     return () => { document.body.style.overflow = ""; };
   }, [isMobileOpen, isSearchOpen]);
 
+  /* Smart hover: instant switch, delayed close */
   const handleMouseEnter = (menu: string) => {
-    if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current);
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
+    }
     setActiveMenu(menu);
   };
 
   const handleMouseLeave = () => {
-    timeoutIdRef.current = setTimeout(() => setActiveMenu(null), 200);
+    timeoutIdRef.current = setTimeout(() => {
+      setActiveMenu(null);
+    }, 300);
+  };
+
+  const handleDropdownEnter = () => {
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
+    }
   };
 
   const closeMobile = useCallback(() => {
@@ -796,11 +822,36 @@ export function MegaMenu() {
     { id: "company", label: "Company", items: COMPANY_LINKS },
   ];
 
+  const closeMenu = useCallback(() => setActiveMenu(null), []);
+
   return (
     <>
-    {/* ─── DESKTOP HEADER ─── */}
+    {/* ─── BACKDROP: blurs page when mega menu is open ─── */}
+    <AnimatePresence>
+      {activeMenu && (
+        <motion.div
+          key="mega-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="fixed inset-0 hidden lg:block"
+          style={{
+            zIndex: 49,
+            top: '48px',
+            backgroundColor: 'rgba(255,255,255,0.4)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+          }}
+          onClick={closeMenu}
+        />
+      )}
+    </AnimatePresence>
+
+    {/* ─── DESKTOP NAVIGATION BAR ─── */}
     <nav
-      className="fixed top-0 left-0 right-0 z-50 bg-[rgba(255,255,255,0.92)] backdrop-blur-xl border-b border-black/[0.04]"
+      className="fixed top-0 left-0 right-0 bg-[rgba(255,255,255,0.92)] backdrop-blur-xl border-b border-black/[0.04]"
+      style={{ zIndex: 50 }}
       onMouseLeave={handleMouseLeave}
     >
       <div className="max-w-[980px] mx-auto px-6">
@@ -812,7 +863,7 @@ export function MegaMenu() {
             </Link>
           </div>
 
-          {/* Desktop Navigation Links */}
+          {/* Desktop Nav Items */}
           <div className={`hidden lg:flex items-center h-full transition-opacity duration-200 ${isSearchOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
             {menuItems.map((item) => (
               <div
@@ -821,7 +872,7 @@ export function MegaMenu() {
                 onMouseEnter={() => handleMouseEnter(item.id)}
               >
                 <button
-                  className={`px-3 py-1 text-xs transition-colors duration-150 whitespace-nowrap ${
+                  className={`px-3 py-1.5 text-xs transition-colors duration-200 whitespace-nowrap cursor-default ${
                     activeMenu === item.id
                       ? "text-[#1F7A53]"
                       : "text-[#1d1d1f] hover:text-[#1F7A53]"
@@ -872,18 +923,32 @@ export function MegaMenu() {
         </div>
       </div>
 
-      {/* ─── DESKTOP DROPDOWN ─── */}
+      {/* ─── DESKTOP MEGA MENU DROPDOWN ─── */}
+      {/* Fixed container. Stable dimensions. Content animates inside. */}
       <AnimatePresence>
         {activeMenu && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-0 right-0 bg-[rgba(255,255,255,0.98)] backdrop-blur-xl border-b border-black/[0.04] overflow-hidden hidden lg:block"
-            onMouseEnter={() => handleMouseEnter(activeMenu)}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            className="absolute left-0 right-0 bg-white border-b border-black/[0.04] shadow-[0_2px_20px_rgba(0,0,0,0.06)] hidden lg:block"
+            style={{ top: 'calc(100% - 1px)' }}
+            onMouseEnter={handleDropdownEnter}
           >
-            <UnifiedMegaMenuContent menuId={activeMenu} closeMenu={() => setActiveMenu(null)} />
+            <div className="max-w-[980px] mx-auto" style={{ minHeight: '400px' }}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeMenu}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
+                >
+                  <UnifiedMegaMenuContent menuId={activeMenu} closeMenu={closeMenu} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -891,7 +956,6 @@ export function MegaMenu() {
 
     {/* ═══════════════════════════════════════════════════════════
         MOBILE & TABLET NAVIGATION
-        Full-screen overlay. Typography-driven. No decoration.
        ═══════════════════════════════════════════════════════════ */}
     <AnimatePresence>
       {isMobileOpen && (
@@ -903,7 +967,7 @@ export function MegaMenu() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={closeMobile}
-            className="fixed inset-0 bg-black/30 lg:hidden"
+            className="fixed inset-0 bg-black/20 lg:hidden"
             style={{ zIndex: 9998 }}
           />
 
@@ -916,7 +980,7 @@ export function MegaMenu() {
             className="fixed inset-0 lg:hidden bg-white flex flex-col"
             style={{ zIndex: 9999 }}
           >
-            {/* ─── Header Bar ─── */}
+            {/* Header Bar */}
             <div className="h-[48px] flex items-center justify-between px-5 flex-shrink-0 border-b border-black/[0.04]">
               {mobileNavStack.length > 1 ? (
                 <button
@@ -941,9 +1005,9 @@ export function MegaMenu() {
               </button>
             </div>
 
-            {/* ─── Content Area ─── */}
+            {/* Content Area */}
             <>
-              {/* ── TABLET: Two-Pane Layout (768px - 1023px) ── */}
+              {/* ── TABLET: Two-Pane (768px–1023px) ── */}
               <div className="hidden md:flex lg:hidden flex-1 overflow-hidden">
                 {/* Left Sidebar */}
                 <div className="w-[240px] border-r border-black/[0.04] py-6 px-5 flex flex-col overflow-y-auto shrink-0">
@@ -967,78 +1031,84 @@ export function MegaMenu() {
                   </div>
 
                   <div className="mt-auto pt-6">
-                    <Link
-                      href="/contact-sales"
-                      onClick={closeMobile}
-                      className="text-sm text-[#1F7A53] hover:underline"
-                    >
+                    <Link href="/contact-sales" onClick={closeMobile} className="text-sm text-[#1F7A53] hover:underline">
                       Contact Sales →
                     </Link>
                   </div>
                 </div>
 
-                {/* Right Pane */}
+                {/* Right Pane — animated content swap */}
                 <div className="flex-1 py-8 px-8 overflow-y-auto">
-                  {(() => {
-                    const data = UNIFIED_NAVIGATION_DATA[tabletSelectedCategory] || UNIFIED_NAVIGATION_DATA.platform;
-                    return (
-                      <div>
-                        <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] block mb-2">
-                          {data.label}
-                        </span>
-                        <h3 className="text-2xl font-semibold text-[#1d1d1f] tracking-tight mb-1">
-                          {data.heading}
-                        </h3>
-                        <p className="text-sm text-[#86868b] mb-8">
-                          {data.description}
-                        </p>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={tabletSelectedCategory}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.18, ease: [0.25, 0.1, 0.25, 1] }}
+                    >
+                      {(() => {
+                        const data = UNIFIED_NAVIGATION_DATA[tabletSelectedCategory] || UNIFIED_NAVIGATION_DATA.platform;
+                        return (
+                          <div>
+                            <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] block mb-2">
+                              {data.label}
+                            </span>
+                            <h3 className="text-2xl font-semibold text-[#1d1d1f] tracking-tight mb-1">
+                              {data.heading}
+                            </h3>
+                            <p className="text-sm text-[#86868b] mb-8">
+                              {data.description}
+                            </p>
 
-                        <div className="grid grid-cols-2 gap-10">
-                          {data.groups.map((group, gIdx) => (
-                            <div key={gIdx}>
-                              <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-4 block">
-                                {group.title}
-                              </span>
-                              <div className="flex flex-col">
-                                {group.items.map((item, iIdx) => (
-                                  <Link
-                                    key={iIdx}
-                                    href={item.href}
-                                    onClick={closeMobile}
-                                    className="group py-2.5 border-b border-black/[0.04] last:border-b-0"
-                                  >
-                                    <span className="text-sm text-[#1d1d1f] group-hover:text-[#1F7A53] transition-colors duration-150">
-                                      {item.name}
-                                    </span>
-                                  </Link>
-                                ))}
-                              </div>
+                            <div className="grid grid-cols-2 gap-10">
+                              {data.groups.map((group, gIdx) => (
+                                <div key={gIdx}>
+                                  <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-4 block">
+                                    {group.title}
+                                  </span>
+                                  <div className="flex flex-col">
+                                    {group.items.map((item, iIdx) => (
+                                      <Link
+                                        key={iIdx}
+                                        href={item.href}
+                                        onClick={closeMobile}
+                                        className="group py-2.5 border-b border-black/[0.04] last:border-b-0"
+                                      >
+                                        <span className="text-sm text-[#1d1d1f] group-hover:text-[#1F7A53] transition-colors duration-150">
+                                          {item.name}
+                                        </span>
+                                      </Link>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
 
-                        {/* Featured */}
-                        <div className="mt-10 pt-6 border-t border-black/[0.04]">
-                          <span className="text-[11px] font-semibold uppercase tracking-wide text-[#86868b] block mb-1.5">
-                            Featured
-                          </span>
-                          <span className="text-sm text-[#1d1d1f] block mb-1">{data.featured.title}</span>
-                          <Link
-                            href={data.featured.link}
-                            onClick={closeMobile}
-                            className="inline-flex items-center gap-1 text-sm text-[#1F7A53] hover:underline"
-                          >
-                            <span>{data.featured.linkText}</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  })()}
+                            {/* Featured */}
+                            <div className="mt-10 pt-6 border-t border-black/[0.04]">
+                              <span className="text-[11px] font-semibold uppercase tracking-wide text-[#86868b] block mb-1.5">
+                                Featured
+                              </span>
+                              <span className="text-sm text-[#1d1d1f] block mb-1">{data.featured.title}</span>
+                              <Link
+                                href={data.featured.link}
+                                onClick={closeMobile}
+                                className="inline-flex items-center gap-1 text-sm text-[#1F7A53] hover:underline"
+                              >
+                                <span>{data.featured.linkText}</span>
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </Link>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               </div>
 
-              {/* ── MOBILE: Single-Pane Sliding Navigation (< 768px) ── */}
+              {/* ── MOBILE: Single-Pane Sliding (< 768px) ── */}
               <div className="block md:hidden flex-1 relative overflow-hidden">
                 <AnimatePresence mode="popLayout" custom={mobileSlideDir}>
                   {/* Level 1: Root */}
@@ -1050,32 +1120,36 @@ export function MegaMenu() {
                       initial="enter"
                       animate="center"
                       exit="exit"
-                      transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+                      transition={{ duration: 0.24, ease: [0.32, 0.72, 0, 1] }}
                       className="w-full h-full overflow-y-auto overscroll-contain px-6 pt-8 pb-10 flex flex-col justify-between"
                     >
                       <div className="flex flex-col gap-0">
-                        {menuItems.map((item) => (
-                          <button
+                        {menuItems.map((item, idx) => (
+                          <motion.button
                             key={item.id}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.03 + idx * 0.025, ease: [0.25, 0.1, 0.25, 1] }}
                             onClick={() => pushMobileNav({ type: "category", id: item.id, title: item.label })}
                             className="w-full text-left py-3 border-b border-black/[0.04] last:border-b-0 cursor-pointer"
                           >
                             <span className="text-[28px] font-normal text-[#1d1d1f] leading-tight">
                               {item.label}
                             </span>
-                          </button>
+                          </motion.button>
                         ))}
                       </div>
 
-                      <div className="mt-10">
-                        <Link
-                          href="/contact-sales"
-                          onClick={closeMobile}
-                          className="text-base text-[#1F7A53]"
-                        >
+                      <motion.div
+                        className="mt-10"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.25 }}
+                      >
+                        <Link href="/contact-sales" onClick={closeMobile} className="text-base text-[#1F7A53]">
                           Contact Sales →
                         </Link>
-                      </div>
+                      </motion.div>
                     </motion.div>
                   )}
 
@@ -1088,19 +1162,27 @@ export function MegaMenu() {
                       initial="enter"
                       animate="center"
                       exit="exit"
-                      transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+                      transition={{ duration: 0.24, ease: [0.32, 0.72, 0, 1] }}
                       className="w-full h-full overflow-y-auto overscroll-contain px-6 pt-6 pb-10"
                     >
-                      <h2 className="text-2xl font-semibold text-[#1d1d1f] mb-6">
+                      <motion.h2
+                        className="text-2xl font-semibold text-[#1d1d1f] mb-6"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25, delay: 0.04 }}
+                      >
                         {currentStep.title}
-                      </h2>
+                      </motion.h2>
 
                       {/* Solutions: show pillars */}
                       {currentStep.id === "solutions" ? (
                         <div className="flex flex-col">
                           {SOLUTIONS_LINKS.map((sol, idx) => (
-                            <button
+                            <motion.button
                               key={idx}
+                              initial={{ opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.25, delay: 0.06 + idx * 0.03 }}
                               onClick={() => pushMobileNav({
                                 type: "subGroup",
                                 categoryId: "solutions",
@@ -1110,22 +1192,23 @@ export function MegaMenu() {
                               className="w-full text-left py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between cursor-pointer"
                             >
                               <div>
-                                <span className="text-[22px] font-normal text-[#1d1d1f] block">
-                                  {sol.name}
-                                </span>
-                                <span className="text-sm text-[#86868b] mt-0.5 block">
-                                  {sol.desc}
-                                </span>
+                                <span className="text-[22px] font-normal text-[#1d1d1f] block">{sol.name}</span>
+                                <span className="text-sm text-[#86868b] mt-0.5 block">{sol.desc}</span>
                               </div>
                               <ChevronRight className="w-5 h-5 text-[#86868b] shrink-0 ml-4" />
-                            </button>
+                            </motion.button>
                           ))}
                         </div>
                       ) : currentStep.id === "industries" ? (
-                        /* Commodity Hub: show unified groups */
+                        /* Commodity Hub */
                         <div className="flex flex-col gap-8">
                           {UNIFIED_NAVIGATION_DATA.industries.groups.map((group, gIdx) => (
-                            <div key={gIdx}>
+                            <motion.div
+                              key={gIdx}
+                              initial={{ opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.25, delay: 0.06 + gIdx * 0.035 }}
+                            >
                               <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-3 block">
                                 {group.title}
                               </span>
@@ -1142,15 +1225,18 @@ export function MegaMenu() {
                                   </Link>
                                 ))}
                               </div>
-                            </div>
+                            </motion.div>
                           ))}
                         </div>
                       ) : currentStep.id === "platform" || currentStep.id === "resources" ? (
-                        /* Platform / Resources: show groups with sub-items */
+                        /* Platform / Resources */
                         <div className="flex flex-col">
                           {((currentStep.id === "platform" ? PLATFORM_LINKS : RESOURCES_LINKS) as NavigationLink[]).map((link, idx) => (
-                            <button
+                            <motion.button
                               key={idx}
+                              initial={{ opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.25, delay: 0.06 + idx * 0.03 }}
                               onClick={() => pushMobileNav({
                                 type: "subGroup",
                                 categoryId: currentStep.id,
@@ -1160,15 +1246,11 @@ export function MegaMenu() {
                               className="w-full text-left py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between cursor-pointer"
                             >
                               <div>
-                                <span className="text-[22px] font-normal text-[#1d1d1f] block">
-                                  {link.name}
-                                </span>
-                                <span className="text-sm text-[#86868b] mt-0.5 block">
-                                  {link.desc}
-                                </span>
+                                <span className="text-[22px] font-normal text-[#1d1d1f] block">{link.name}</span>
+                                <span className="text-sm text-[#86868b] mt-0.5 block">{link.desc}</span>
                               </div>
                               <ChevronRight className="w-5 h-5 text-[#86868b] shrink-0 ml-4" />
-                            </button>
+                            </motion.button>
                           ))}
                         </div>
                       ) : (
@@ -1178,22 +1260,24 @@ export function MegaMenu() {
                             const catObj = menuItems.find((m) => m.id === currentStep.id);
                             const links = catObj?.items || [];
                             return links.map((link: NavigationLink, idx: number) => (
-                              <Link
+                              <motion.div
                                 key={idx}
-                                href={link.href}
-                                onClick={closeMobile}
-                                className="py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between"
+                                initial={{ opacity: 0, y: 6 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.25, delay: 0.06 + idx * 0.03 }}
                               >
-                                <div>
-                                  <span className="text-base text-[#1d1d1f] block">
-                                    {link.name}
-                                  </span>
-                                  <span className="text-sm text-[#86868b] mt-0.5 block">
-                                    {link.desc}
-                                  </span>
-                                </div>
-                                <ChevronRight className="w-4 h-4 text-[#86868b] shrink-0 ml-4" />
-                              </Link>
+                                <Link
+                                  href={link.href}
+                                  onClick={closeMobile}
+                                  className="py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between block"
+                                >
+                                  <div>
+                                    <span className="text-base text-[#1d1d1f] block">{link.name}</span>
+                                    <span className="text-sm text-[#86868b] mt-0.5 block">{link.desc}</span>
+                                  </div>
+                                  <ChevronRight className="w-4 h-4 text-[#86868b] shrink-0 ml-4" />
+                                </Link>
+                              </motion.div>
                             ));
                           })()}
                         </div>
@@ -1210,7 +1294,7 @@ export function MegaMenu() {
                       initial="enter"
                       animate="center"
                       exit="exit"
-                      transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+                      transition={{ duration: 0.24, ease: [0.32, 0.72, 0, 1] }}
                       className="w-full h-full overflow-y-auto overscroll-contain px-6 pt-6 pb-10"
                     >
                       {(() => {
@@ -1227,33 +1311,50 @@ export function MegaMenu() {
 
                         return (
                           <div>
-                            <h2 className="text-xl font-semibold text-[#1d1d1f] mb-6">
+                            <motion.h2
+                              className="text-xl font-semibold text-[#1d1d1f] mb-6"
+                              initial={{ opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.25, delay: 0.04 }}
+                            >
                               {parentGroup.name}
-                            </h2>
+                            </motion.h2>
 
                             {/* Overview link */}
-                            <Link
-                              href={parentGroup.href}
-                              onClick={closeMobile}
-                              className="block py-4 border-b border-black/[0.04]"
+                            <motion.div
+                              initial={{ opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.25, delay: 0.06 }}
                             >
-                              <span className="text-base text-[#1F7A53]">
-                                {parentGroup.name} Overview →
-                              </span>
-                            </Link>
+                              <Link
+                                href={parentGroup.href}
+                                onClick={closeMobile}
+                                className="block py-4 border-b border-black/[0.04]"
+                              >
+                                <span className="text-base text-[#1F7A53]">
+                                  {parentGroup.name} Overview →
+                                </span>
+                              </Link>
+                            </motion.div>
 
                             {/* Sub-items */}
                             <div className="flex flex-col">
                               {parentGroup.subItems?.map((sub, sIdx) => (
-                                <Link
+                                <motion.div
                                   key={sIdx}
-                                  href={sub.href}
-                                  onClick={closeMobile}
-                                  className="py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between"
+                                  initial={{ opacity: 0, y: 6 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.25, delay: 0.08 + sIdx * 0.03 }}
                                 >
-                                  <span className="text-base text-[#1d1d1f]">{sub.name}</span>
-                                  <ChevronRight className="w-4 h-4 text-[#86868b] shrink-0" />
-                                </Link>
+                                  <Link
+                                    href={sub.href}
+                                    onClick={closeMobile}
+                                    className="py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between block"
+                                  >
+                                    <span className="text-base text-[#1d1d1f]">{sub.name}</span>
+                                    <ChevronRight className="w-4 h-4 text-[#86868b] shrink-0" />
+                                  </Link>
+                                </motion.div>
                               ))}
                             </div>
                           </div>
