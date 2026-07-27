@@ -4,30 +4,10 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, 
-  Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, 
-  ArrowRight, Menu, X, ArrowLeft, ChevronRight, ChevronLeft, Zap, 
-  BarChart3, Globe, Lock, Sprout, Search, Building, Check 
-} from "lucide-react";
+import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight, ChevronLeft, Zap, BarChart3, Globe, Lock, Sprout, Search } from "lucide-react";
 import { Button } from "./button";
 import { GlobalSearch } from "./global-search";
 
-/* === Slide variants with spring-like ease === */
-const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? "100%" : "-100%",
-    opacity: 0,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-  },
-  exit: (direction: number) => ({
-    x: direction < 0 ? "100%" : "-100%",
-    opacity: 0,
-  }),
-};
 
 /* Apple Settings-inspired Mobile Slide Variants (280ms) */
 const appleSlideVariants = {
@@ -41,6 +21,27 @@ const appleSlideVariants = {
   },
   exit: (direction: number) => ({
     x: direction < 0 ? "-100%" : "100%",
+    opacity: 0,
+  }),
+};
+
+type MobileNavStep =
+  | { type: "root"; title: string }
+  | { type: "category"; id: string; title: string }
+  | { type: "subGroup"; categoryId: string; subGroupId: string; title: string };
+
+/* === Slide variants with spring-like ease === */
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? "100%" : "-100%",
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? "100%" : "-100%",
     opacity: 0,
   }),
 };
@@ -235,7 +236,7 @@ const MOBILE_CATEGORY_META: Record<string, { icon: React.ComponentType<{ classNa
   customers:   { icon: Users,     color: "#F59E0B", gradient: "from-amber-500/10 to-yellow-500/10" },
   partners:    { icon: Globe,     color: "#EC4899", gradient: "from-pink-500/10 to-rose-500/10" },
   resources:   { icon: BookOpen,  color: "#D97706", gradient: "from-amber-500/10 to-yellow-500/10" },
-  company:     { icon: Building,  color: "#7C3AED", gradient: "from-violet-500/10 to-purple-500/10" },
+  company:     { icon: Globe,     color: "#7C3AED", gradient: "from-violet-500/10 to-purple-500/10" },
 };
 
 /* === Structured Heroes and Promos for Mega Menu v2.0 === */
@@ -272,38 +273,82 @@ const MENU_HEROES: Record<string, { label: string; title: string; desc: string }
   }
 };
 
-const MENU_PROMOS: Record<string, { title: string; desc: string; link: string; image: string }> = {
+const MENU_PROMOS: Record<string, { title: string; desc: string; bullets: string[]; linkText: string; link: string; image: string }> = {
   platform: {
-    title: "Next-Gen AI Diagnostics",
-    desc: "Discover how AI-powered satellite models detect crop diseases early.",
-    link: "/intelligence/ai-engine",
+    title: "Traceability Cloud",
+    desc: "Monitor every product from farm to consumer.",
+    bullets: [
+      "2M+ Farmers Registered",
+      "4M+ Hectares Monitored",
+      "AI-Powered Crop Yields",
+      "Real-time Satellite Layers"
+    ],
+    linkText: "Explore Platform",
+    link: "/platform",
     image: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   },
   solutions: {
-    title: "EUDR Deforestation Toolkit",
-    desc: "Get plot polygon verification and canopy risk alerts.",
-    link: "/compliance/eudr",
+    title: "Nestlé Sourcing Success",
+    desc: "How Nestlé tracked West African cocoa shipments for compliance.",
+    bullets: [
+      "120k Cocoa Farms Mapped",
+      "100% Deforestation Screened",
+      "Automated ESG Disclosures"
+    ],
+    linkText: "Read Customer Story",
+    link: "/case-studies",
     image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   },
   customers: {
-    title: "Global Enterprise Case Studies",
-    desc: "Read how Fortune 500 agribusinesses digitized 50k+ farms.",
-    link: "/customers/agribusiness",
-    image: "https://images.unsplash.com/photo-1595838788320-b08953f938d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+    title: "Bayer Agri-Finance",
+    desc: "Bayer leverages first-mile credit scoring to deliver micro-loans.",
+    bullets: [
+      "250k Smallholders Registered",
+      "98% Repayment Rates",
+      "Direct Digital Payouts"
+    ],
+    linkText: "View Success Stories",
+    link: "/case-studies",
+    image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   },
   partners: {
-    title: "Global Partner Ecosystem",
-    desc: "Join leading GIS, technology, and consulting advisors.",
+    title: "Alliance Ecosystem",
+    desc: "Co-innovating with top consulting and technology firms globally.",
+    bullets: [
+      "API integration tooling",
+      "Exclusive co-marketing benefits",
+      "Verified consultant directories"
+    ],
+    linkText: "Become a Partner",
     link: "/partners/become-a-partner",
     image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   },
+  resources: {
+    title: "EUDR Readiness Report",
+    desc: "Download our newest analysis detailing mapping standards.",
+    bullets: [
+      "EUDR Compliance Checklists",
+      "Smallholder Consent Guidelines",
+      "Deforestation Polygon Formats"
+    ],
+    linkText: "Download Report",
+    link: "/resources/whitepapers",
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+  },
   company: {
-    title: "Our Impact Mission",
-    desc: "Empowering smallholders and building resilient food systems.",
-    link: "/about",
-    image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+    title: "First-Mile Impact",
+    desc: "Delivering transparency and commercial value.",
+    bullets: [
+      "B Corp Impact Audited",
+      "37 Sourcing Countries Active",
+      "Local Teams in 8 Offices"
+    ],
+    linkText: "Contact Our Team",
+    link: "/contact",
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
   }
 };
+
 
 /* === Flattened Search Index for Instant Search Bar === */
 const ALL_SEARCHABLE_PAGES = [
@@ -395,7 +440,7 @@ const ALL_SEARCHABLE_PAGES = [
   { name: "Contact Us", href: "/contact", category: "Company", desc: "Get in touch with our team." },
 ];
 
-/* === Sub-menu renderers for Mega Menu v2.0 (Desktop) === */
+/* === Sub-menu renderers for Mega Menu v2.0 === */
 function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
   const [hubQuery, setHubQuery] = useState("");
   const router = useRouter();
@@ -416,203 +461,999 @@ function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
     { label: "🍎 Fruits", href: "/CommodityHub" },
     { label: "🥕 Vegetables", href: "/CommodityHub" },
     { label: "🌳 Plantation Crops", href: "/CommodityHub" },
+    { label: "🌲 Forestry", href: "/CommodityHub" },
+    { label: "🐄 Livestock", href: "/CommodityHub" },
+    { label: "🐟 Aquaculture", href: "/CommodityHub" },
+    { label: "🌍 Multi Commodity", href: "/CommodityHub" },
+  ];
+
+  const popular = [
+    { name: "Coffee", href: "/CommodityHub/coffee" },
+    { name: "Rice", href: "/CommodityHub/rice" },
+    { name: "Palm Oil", href: "/CommodityHub/palm-oil" },
+    { name: "Cotton", href: "/CommodityHub/cotton" },
+    { name: "Tea", href: "/CommodityHub/tea" },
+    { name: "Cocoa", href: "/CommodityHub/cocoa" },
   ];
 
   return (
-    <div className="grid grid-cols-12 gap-8">
-      <div className="col-span-5 flex flex-col justify-between">
-        <div>
-          <span className="text-[11px] font-extrabold tracking-[0.2em] text-[#1F7A53] uppercase mb-2 block">
-            Global Sourcing Index
-          </span>
-          <h3 className="text-2xl font-black text-[#0B3D2E] leading-tight mb-3">
-            Commodity Intelligence Hub
-          </h3>
-          <p className="text-xs text-gray-500 leading-relaxed font-medium mb-6">
-            Search 500+ agricultural supply chains. Verify first-mile origin, EUDR compliance, carbon footprints, and crop yield metrics across regions.
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 flex gap-12 text-[#0B3D2E]">
+      <div className="flex-1">
+        <div className="border-b border-gray-100 pb-4 mb-6">
+          <span className="text-[12px] font-bold text-emerald-600 uppercase tracking-widest block mb-1">Commodity Intelligence Hub</span>
+          <h3 className="text-3xl font-black mb-1">Global Commodity Explorer</h3>
+          <p className="text-base text-gray-500 max-w-2xl font-medium">
+            Explore more than 500 global commodities using AI-powered search and interactive filters.
           </p>
+        </div>
 
-          <form onSubmit={handleSearchSubmit} className="relative mb-6">
+        <form onSubmit={handleSearchSubmit} className="relative max-w-xl mb-6">
+          <div className="flex items-center bg-gray-50 border border-[#0B3D2E]/10 focus-within:border-emerald-600 rounded-full px-5 py-3 shadow-sm transition-all">
+            <Search className="w-5 h-5 text-gray-400 mr-2.5" />
             <input
               type="text"
+              placeholder="Search 500+ commodities (e.g. Coffee, Rice, Soy)..."
               value={hubQuery}
               onChange={(e) => setHubQuery(e.target.value)}
-              placeholder="Search cocoa, coffee, palm oil..."
-              className="w-full pl-4 pr-10 py-3 text-xs font-semibold bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#1F7A53] focus:bg-white transition-all text-gray-800 placeholder-gray-400"
+              className="w-full bg-transparent text-base focus:outline-none placeholder-gray-400 text-gray-800"
             />
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-[#0B3D2E] text-white flex items-center justify-center hover:bg-[#1F7A53] transition-colors"
-            >
-              <Search className="w-3.5 h-3.5" />
+            <button type="submit" className="text-sm bg-[#0B3D2E] text-white hover:bg-[#1F7A53] font-bold px-5 py-2 rounded-full transition-all">
+              Explore
             </button>
-          </form>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-[#0B3D2E] to-[#1F7A53] text-white relative overflow-hidden shadow-lg">
-          <div className="relative z-10">
-            <span className="text-[9px] font-bold text-[#53D769] uppercase tracking-widest block mb-1">
-              Live Database
-            </span>
-            <p className="text-sm font-bold leading-tight mb-2">
-              Over 2.4 Million Smallholder Plots Mapped
-            </p>
-            <Link
-              href="/CommodityHub"
-              onClick={closeMenu}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#53D769] hover:text-white transition-colors"
-            >
-              Explore Commodity Map <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
           </div>
-        </div>
-      </div>
-
-      <div className="col-span-7 border-l border-gray-100 pl-8">
-        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-4">
-          Key Commodity Sectors
-        </span>
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          {INDUSTRIES_LINKS.map((item, idx) => (
-            <Link
-              key={idx}
-              href={item.href}
-              onClick={closeMenu}
-              className="group p-3.5 rounded-xl border border-gray-100 hover:border-[#1F7A53]/30 hover:bg-[#EBF7F0]/40 transition-all flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-bold text-[#0B3D2E] group-hover:text-[#1F7A53] transition-colors">
-                    {item.name}
-                  </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#1F7A53] group-hover:translate-x-0.5 transition-all" />
-                </div>
-                <p className="text-[11px] text-gray-500 line-clamp-1">{item.desc}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-          <span className="text-xs text-gray-400 font-medium">Filter by category:</span>
-          <div className="flex flex-wrap gap-1.5">
-            {categories.slice(0, 4).map((cat, i) => (
-              <Link
-                key={i}
-                href={cat.href}
+          <div className="flex flex-wrap items-center gap-1.5 mt-2 px-1">
+            <span className="text-[12px] font-bold text-gray-400 uppercase mr-1">Examples:</span>
+            {popular.slice(0, 4).map((item) => (
+              <Link 
+                key={item.name}
+                href={item.href}
                 onClick={closeMenu}
-                className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-gray-50 text-gray-600 hover:bg-[#EBF7F0] hover:text-[#0B3D2E] transition-colors"
+                className="text-[12px] font-bold text-gray-600 hover:text-emerald-700 bg-gray-100 px-3 py-1 rounded-md hover:bg-emerald-50 transition-colors"
               >
-                {cat.label}
+                {item.name}
               </Link>
             ))}
           </div>
+        </form>
+
+        <div className="grid grid-cols-2 gap-8 mb-6 border-t border-gray-100 pt-6">
+          <div>
+            <h4 className="text-sm font-black uppercase text-gray-400 tracking-wider mb-3">Browse by Category</h4>
+            <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+              {categories.map((cat, idx) => (
+                <Link
+                  key={idx}
+                  href={cat.href}
+                  onClick={closeMenu}
+                  className="text-sm font-bold text-gray-600 hover:text-emerald-700 transition-colors py-0.5 flex items-center gap-1.5 hover:translate-x-0.5 transition-transform"
+                >
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-black uppercase text-gray-400 tracking-wider mb-3">Popular Commodities</h4>
+            <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+              {popular.map((item, idx) => (
+                <Link
+                  key={idx}
+                  href={item.href}
+                  onClick={closeMenu}
+                  className="text-sm font-bold text-gray-600 hover:text-emerald-700 transition-colors py-0.5 flex items-center gap-1.5 hover:translate-x-0.5 transition-transform"
+                >
+                  <Sprout className="w-4 h-4 text-emerald-600 shrink-0" />
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-50 pt-4 flex items-center">
+          <Link
+            href="/CommodityHub"
+            onClick={closeMenu}
+            className="inline-flex items-center gap-1.5 text-base font-extrabold text-[#1F7A53] hover:text-[#0B3D2E] group"
+          >
+            Explore All 500+ Commodities <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </div>
+
+      <div className="w-[350px] shrink-0 border-l border-gray-100 pl-12 hidden xl:block">
+        <div className="bg-gradient-to-br from-[#0B3D2E] to-[#1F7A53] p-6 rounded-3xl text-white h-full relative overflow-hidden flex flex-col justify-between shadow-lg group">
+          <div className="absolute inset-0 bg-[#86EFAC]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+          <div className="absolute inset-0 opacity-10 pointer-events-none">
+            <svg className="w-full h-full" viewBox="0 0 200 200" fill="currentColor">
+              <path d="M20,60 L60,40 L100,80 L80,120 L40,100 Z" />
+              <path d="M110,130 L160,110 L180,160 L140,170 Z" />
+              <circle cx="80" cy="80" r="15" stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="2,2" />
+              <circle cx="140" cy="140" r="10" stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="2,2" />
+            </svg>
+          </div>
+
+          <div className="relative z-10">
+            <span className="text-[11px] font-bold text-[#86EFAC] uppercase tracking-[0.2em] block mb-2">Interactive App</span>
+            <h4 className="text-2xl font-black mb-2">Commodity Explorer</h4>
+            <p className="text-sm text-gray-200 leading-relaxed mb-6 font-medium">
+              Explore 500+ commodities with satellite risk layers, regulation checks, and comparison matrices.
+            </p>
+
+            <ul className="space-y-2 mb-8">
+              {[
+                "AI Search",
+                "Country Filters",
+                "Regulation Filters",
+                "Sustainability Filters",
+                "Satellite Layers",
+                "Commodity Comparison"
+              ].map((bullet, bIdx) => (
+                <li key={bIdx} className="flex items-center gap-2 text-sm font-semibold text-gray-100">
+                  <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-[#86EFAC] flex items-center justify-center text-[10px] shrink-0 font-bold">✓</span>
+                  {bullet}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <Link
+            href="/CommodityHub"
+            onClick={closeMenu}
+            className="relative z-10 w-full py-3 text-center bg-white text-[#0B3D2E] hover:bg-[#86EFAC] hover:text-[#0B3D2E] font-bold text-sm rounded-xl transition-all shadow-md active:scale-98"
+          >
+            Launch Explorer →
+          </Link>
         </div>
       </div>
     </div>
   );
 }
+
+interface LinkPreviewData {
+  title: string;
+  desc: string;
+  bullets: string[];
+  linkText: string;
+  link: string;
+}
+
+const LINK_PREVIEWS: Record<string, LinkPreviewData> = {
+  // PLATFORM -> Intelligence
+  "AI Engine": {
+    title: "AI Engine",
+    desc: "Predictive crop models and disease detection.",
+    bullets: [
+      "Real-time agronomic disease diagnoses",
+      "Predictive yield forecasting models",
+      "Automated growth stage alerts",
+      "Soil moisture telemetry analysis"
+    ],
+    linkText: "Explore AI Engine",
+    link: "/intelligence/ai-engine"
+  },
+  "Satellite Monitoring": {
+    title: "Satellite Monitoring",
+    desc: "Continuous crop health monitoring from orbit.",
+    bullets: [
+      "Daily NDVI crop vigor indexing",
+      "Deforestation polygon screening",
+      "Acreage expansion verification",
+      "Post-hazard damage assessments"
+    ],
+    linkText: "Explore Satellite Intel",
+    link: "/intelligence/satellite-monitoring"
+  },
+  "Geospatial Intelligence": {
+    title: "Geospatial Intelligence",
+    desc: "Interactive parcel mapping and spatial analytics.",
+    bullets: [
+      "Grower parcel boundary mapping",
+      "Spatial risk overlay matrices",
+      "Interactive regional dashboards",
+      "Dynamic field heatmapping"
+    ],
+    linkText: "Explore GIS Intel",
+    link: "/intelligence/geospatial-intelligence"
+  },
+  "Analytics Dashboard": {
+    title: "Analytics Dashboard",
+    desc: "Operational telemetry and executive KPIs.",
+    bullets: [
+      "Custom sourcing analytics panels",
+      "Unified operational dashboards",
+      "Exportable stakeholder reports",
+      "Carbon accounting integrations"
+    ],
+    linkText: "View Analytics",
+    link: "/intelligence/analytics-dashboard"
+  },
+  // PLATFORM -> Operations
+  "Workflow Automation": {
+    title: "Workflow Automation",
+    desc: "Automate outgrower operations and audits.",
+    bullets: [
+      "No-code field survey logic",
+      "Automated digital audit trails",
+      "Supervisor alert queues",
+      "Sourcing weight ticket logging"
+    ],
+    linkText: "Explore Workflows",
+    link: "/platform/operations/workflow-automation"
+  },
+  "Reporting": {
+    title: "Reporting Console",
+    desc: "Instant compliance and exportable logs.",
+    bullets: [
+      "One-click EUDR audit templates",
+      "Custom stakeholder disclosures",
+      "PDF and spreadsheet logging",
+      "Real-time alert summary logs"
+    ],
+    linkText: "View Reporting Tools",
+    link: "/platform/operations/reporting"
+  },
+  "Mobile Apps": {
+    title: "Mobile Field Apps",
+    desc: "Offline-first polygon gathering and outgrower profiling.",
+    bullets: [
+      "100% offline survey operations",
+      "GPS polygon boundary drawing",
+      "Multi-language field interface",
+      "Automatic data syncing protocols"
+    ],
+    linkText: "View Mobile Solutions",
+    link: "/platform/operations/mobile-apps"
+  },
+  "Document Management": {
+    title: "Document Cloud",
+    desc: "Secure compliance certificates and grower receipts.",
+    bullets: [
+      "Encrypted cloud document vault",
+      "Automated farmer receipt matching",
+      "Organic certificates cataloging",
+      "Third-party auditor portal"
+    ],
+    linkText: "Explore Documents",
+    link: "/platform/operations/document-management"
+  },
+  // PLATFORM -> Connectivity
+  "API Registry": {
+    title: "Platform APIs",
+    desc: "Connect sourcing data to any enterprise systems.",
+    bullets: [
+      "RESTful API endpoints",
+      "High-throughput payload streams",
+      "Webhooks for field transactions",
+      "Audited transaction histories"
+    ],
+    linkText: "View Developer Docs",
+    link: "/platform/connectivity/apis"
+  },
+  "Developer SDK": {
+    title: "Developer SDK",
+    desc: "Build custom outgrower integrations.",
+    bullets: [
+      "JavaScript, Python, and Go libraries",
+      "Pre-built GIS mapping widgets",
+      "Sample field survey templates",
+      "Developer staging environments"
+    ],
+    linkText: "Explore SDK Tools",
+    link: "/platform/connectivity/sdk"
+  },
+  "ERP Connectors": {
+    title: "ERP Integrations",
+    desc: "Sync transactions directly to SAP, NetSuite, or Dynamics.",
+    bullets: [
+      "Bi-directional payment syncs",
+      "Sourcing invoice generation",
+      "Automatic inventory updates",
+      "Supplier ledger reconciliations"
+    ],
+    linkText: "Explore ERP Connectors",
+    link: "/platform/connectivity/erp-connectors"
+  },
+  "GIS Integrations": {
+    title: "GIS Connections",
+    desc: "Overlay custom spatial databases.",
+    bullets: [
+      "Esri ArcGIS and QGIS compatibilities",
+      "Custom WMS and WFS map layers",
+      "Dynamic GeoJSON imports",
+      "Cadastral boundary alignments"
+    ],
+    linkText: "View GIS Connectors",
+    link: "/platform/connectivity/gis-integrations"
+  },
+  // PLATFORM -> Security
+  "Enterprise Security": {
+    title: "Enterprise Security",
+    desc: "SOC2 Type II data safeguards.",
+    bullets: [
+      "End-to-end data encryption",
+      "Single Sign-On (SSO) protocols",
+      "Granular role access filters",
+      "Continuous threat monitoring"
+    ],
+    linkText: "View Security Center",
+    link: "/platform/security/security"
+  },
+  "Data Privacy": {
+    title: "Grower Data Privacy",
+    desc: "GDPR outgrower consent management.",
+    bullets: [
+      "Grower profile consent forms",
+      "Encrypted PII data hashing",
+      "Automated profile deletions",
+      "Auditable privacy trails"
+    ],
+    linkText: "Read Privacy Details",
+    link: "/platform/security/privacy"
+  },
+  "Cloud Deployment": {
+    title: "Cloud Deployment",
+    desc: "SaaS or dedicated private cloud setups.",
+    bullets: [
+      "AWS, Azure, and GCP hosting options",
+      "Multi-tenant or single-tenant",
+      "99.99% uptime SLA guarantee",
+      "Geo-redundant DB replication"
+    ],
+    linkText: "Explore Deployments",
+    link: "/platform/security/deployment"
+  },
+  "Compliance Standards": {
+    title: "Compliance Standard Audits",
+    desc: "Traceability audit trails certified globally.",
+    bullets: [
+      "ISO 27001 data protection",
+      "Certified ESG metrics export",
+      "Audit-ready regulatory files",
+      "Global compliance standards check"
+    ],
+    linkText: "Explore Standards",
+    link: "/platform/security/compliance"
+  },
+  // PLATFORM -> Architecture
+  "Platform Overview": {
+    title: "Platform Overview",
+    desc: "Discover the unified agricultural first-mile stack.",
+    bullets: [
+      "GIS and IoT tracking systems",
+      "Interactive global outgrower maps",
+      "First-mile transaction ledger",
+      "Unified compliance portal"
+    ],
+    linkText: "Explore Platform",
+    link: "/platform"
+  },
+  "Infrastructure Map": {
+    title: "Infrastructure Map",
+    desc: "Our high-availability global cloud stack.",
+    bullets: [
+      "Edge caching in sourcing hubs",
+      "Serverless spatial calculation databases",
+      "Automated scaling protocols",
+      "Real-time database replication"
+    ],
+    linkText: "View Infrastructure",
+    link: "/platform/platform-architecture"
+  },
+  "Cloud Scalability": {
+    title: "Cloud Scalability",
+    desc: "Architected to scale to millions of farmers.",
+    bullets: [
+      "Dynamic load balancing",
+      "Distributed outgrower databases",
+      "Optimized offline data queues",
+      "Ultra-low latency edge servers"
+    ],
+    linkText: "Read Architecture Brief",
+    link: "/platform/platform-architecture"
+  },
+  // SOLUTIONS -> Grow
+  "Farm Management": {
+    title: "Farm Management",
+    desc: "Digitize growers and monitor yield.",
+    bullets: [
+      "Individual farmer profile directories",
+      "Geo-spatially mapped parcel grids",
+      "Sowing and harvest tracking",
+      "Dynamic input cost logs"
+    ],
+    linkText: "Explore Farm Mgmt",
+    link: "/solutions/agriculture/farm-management"
+  },
+  "Digital Advisory": {
+    title: "Digital Advisory",
+    desc: "Deliver personalized weather and pest advice.",
+    bullets: [
+      "Automated SMS weather alerts",
+      "Customized pest warning models",
+      "Sustainable fertilizer advice",
+      "Grower training feedback logs"
+    ],
+    linkText: "Explore Advisory",
+    link: "/solutions/agriculture/digital-advisory"
+  },
+  "Crop Monitoring": {
+    title: "Crop Monitoring",
+    desc: "Satellite NDVI crop performance screening.",
+    bullets: [
+      "Weekly satellite vegetation scans",
+      "Automated water stress mapping",
+      "Historical yield indexes",
+      "Extreme weather risk detection"
+    ],
+    linkText: "Explore Monitoring",
+    link: "/solutions/agriculture/crop-monitoring"
+  },
+  // SOLUTIONS -> Track
+  "Supply Chain Traceability": {
+    title: "Supply Chain Traceability",
+    desc: "Trace products from harvest to consumer.",
+    bullets: [
+      "Bag-level barcode scanning",
+      "First-mile scale integration",
+      "Interactive route maps",
+      "Digital custody chains"
+    ],
+    linkText: "Explore Traceability",
+    link: "/solutions/traceability/supply-chain-traceability"
+  },
+  "Digital Product Passport": {
+    title: "Digital Product Passport",
+    desc: "Prepare for upcoming EU transparency regulations.",
+    bullets: [
+      "EU DPP data schema matching",
+      "Traceability ledger hashes",
+      "Deforestation compliance codes",
+      "Carbon footprints disclosure"
+    ],
+    linkText: "Read DPP Passport Details",
+    link: "/solutions/traceability/digital-product-passport"
+  },
+  "QR Consumer Transparency": {
+    title: "QR Transparency",
+    desc: "Engage retail customers with farm origins.",
+    bullets: [
+      "Scannable QR codes on packs",
+      "Farmer storytelling profiles",
+      "Interactive sourcing maps",
+      "Verified compliance statements"
+    ],
+    linkText: "Explore QR Trust",
+    link: "/solutions/traceability/qr-consumer-transparency"
+  },
+  // SOLUTIONS -> Protect
+  "EUDR Deforestation": {
+    title: "EUDR Deforestation",
+    desc: "Automated deforestation checks for EU compliance.",
+    bullets: [
+      "1-click polygon overlay audits",
+      "Interactive country risk flags",
+      "Smallholder polygon imports",
+      "Due Diligence Statement files"
+    ],
+    linkText: "Explore EUDR Tool",
+    link: "/compliance/eudr"
+  },
+  "Carbon Monitoring": {
+    title: "Carbon Monitoring",
+    desc: "Verify carbon offsets and inset parameters.",
+    bullets: [
+      "Regenerative agriculture carbon tracking",
+      "Soil organic carbon data logs",
+      "Satellite carbon sequestration maps",
+      "Scope 3 emissions accounting"
+    ],
+    linkText: "Explore Carbon Monitoring",
+    link: "/solutions/sustainability/carbon-monitoring"
+  },
+  "ESG Reporting": {
+    title: "ESG Reporting",
+    desc: "Unified sustainability metrics dashboard.",
+    bullets: [
+      "GRI and CSRD schema compliance",
+      "Outgrower payment parity audits",
+      "Water footprint logging",
+      "Exportable stakeholder matrices"
+    ],
+    linkText: "View ESG Solutions",
+    link: "/solutions/sustainability/esg-reporting"
+  },
+  "Regenerative Agriculture": {
+    title: "Regenerative Agriculture",
+    desc: "Verify soil health and cover crop compliance.",
+    bullets: [
+      "No-till verification mapping",
+      "Cover crop satellite validation",
+      "Biodiversity index monitoring",
+      "Premium price payout matching"
+    ],
+    linkText: "Explore Regenerative Ag",
+    link: "/solutions/sustainability/regenerative-agriculture"
+  },
+  // SOLUTIONS -> Scale
+  "Sourcing Marketplace": {
+    title: "Sourcing Marketplace",
+    desc: "Procure directly from verified cooperatives.",
+    bullets: [
+      "Verified digital crop catalogs",
+      "Cooperative seller listings",
+      "Direct trading portals",
+      "Sourcing quality verification reports"
+    ],
+    linkText: "Explore Marketplace",
+    link: "/solutions/supply-chain/marketplace"
+  },
+  "Farmer Payments": {
+    title: "Farmer Payments",
+    desc: "Direct digital payout models to growers.",
+    bullets: [
+      "Direct mobile money integrations",
+      "Fair Trade premium logging",
+      "Transaction receipt catalogs",
+      "Instant field scales verification"
+    ],
+    linkText: "Explore Payments",
+    link: "/solutions/finance/farmer-payments"
+  },
+  "Direct Procurement": {
+    title: "Direct Procurement",
+    desc: "Streamline field purchases and contracts.",
+    bullets: [
+      "Field contract digital signing",
+      "Scale weighbridge integrations",
+      "Instant invoice calculations",
+      "Automatic supplier ledgers"
+    ],
+    linkText: "Explore Procurement",
+    link: "/solutions/supply-chain/procurement"
+  },
+  // CUSTOMERS
+  "Agribusiness": {
+    title: "Agribusinesses",
+    desc: "Scale outgrower networks with transparent tools.",
+    bullets: [
+      "Map thousands of smallholder grids",
+      "Automated digital audit logs",
+      "Optimize supply logistics routes",
+      "Track compliance certificates"
+    ],
+    linkText: "View Agribusiness Solutions",
+    link: "/customers/agribusiness"
+  },
+  "Food Brands": {
+    title: "Global Food Brands",
+    desc: "Mitigate supply chain reputational risks.",
+    bullets: [
+      "100% first-mile cargo tracking",
+      "EUDR deforestation screening",
+      "Consumer trust transparency codes",
+      "Global ESG audits support"
+    ],
+    linkText: "View Brand Solutions",
+    link: "/customers/food-brands"
+  },
+  "Governments": {
+    title: "Governments & Agencies",
+    desc: "Build national registry databases for crop assets.",
+    bullets: [
+      "National farmer registry maps",
+      "Agricultural land use surveys",
+      "EUDR compliance support systems",
+      "Outgrower subsidy payouts sync"
+    ],
+    linkText: "View Government Solutions",
+    link: "/customers/governments"
+  },
+  "NGOs": {
+    title: "NGOs & Foundations",
+    desc: "Verify sustainability impact KPIs.",
+    bullets: [
+      "Smallholder farmer income tracking",
+      "Local forest boundary screening",
+      "Educational training program logs",
+      "Impact validation dashboards"
+    ],
+    linkText: "View NGO Solutions",
+    link: "/customers/ngos"
+  },
+  "Financial Institutions": {
+    title: "Financial Institutions",
+    desc: "Deliver credit score options to growers.",
+    bullets: [
+      "Sourcing history credit scores",
+      "Automatic loan payments syncs",
+      "Crop yield risk valuations",
+      "Interactive crop insurance links"
+    ],
+    linkText: "View Financial Solutions",
+    link: "/customers/financial-institutions"
+  },
+  "Certification Bodies": {
+    title: "Certification Bodies",
+    desc: "Audit certification standards faster.",
+    bullets: [
+      "Digital organic receipt trails",
+      "Rainforest Alliance standards overlay",
+      "Secure auditable polygon files",
+      "Direct auditor cloud vaults"
+    ],
+    linkText: "View Certification Solutions",
+    link: "/customers/certification-bodies"
+  },
+  // PARTNERS
+  "Technology Partners": {
+    title: "Technology Partners",
+    desc: "Integrate specialized IoT devices and sensors.",
+    bullets: [
+      "Sensors and weather stations APIs",
+      "GIS spatial analytical layers",
+      "Automated serverless payload streams",
+      "Verified vendor program access"
+    ],
+    linkText: "Learn about Tech Partners",
+    link: "/partners/technology-partners"
+  },
+  "Implementation Partners": {
+    title: "Implementation Partners",
+    desc: "Deploy SourceTrace software in sourcing countries.",
+    bullets: [
+      "Technical integration manuals",
+      "Local setup support resources",
+      "System integration checklists",
+      "Dedicated account team access"
+    ],
+    linkText: "Learn about Implementation",
+    link: "/partners/channel-partners"
+  },
+  "Consulting Partners": {
+    title: "Consulting Partners",
+    desc: "Deliver regulatory compliance audits.",
+    bullets: [
+      "EUDR compliance review formats",
+      "ESG reporting guidelines",
+      "Carbon accounting frameworks",
+      "Auditor tool dashboard reviews"
+    ],
+    linkText: "Learn about Consulting",
+    link: "/partners/consulting-partners"
+  },
+  "Marketplace": {
+    title: "Partner Marketplace",
+    desc: "Browse third-party plugin components.",
+    bullets: [
+      "Weather forecast connectors",
+      "GIS file converting widgets",
+      "Custom payment portal modules",
+      "Certified grow tools catalog"
+    ],
+    linkText: "Visit Marketplace",
+    link: "/partners/marketplace"
+  },
+  "Partner Portal": {
+    title: "Partner Portal",
+    desc: "Secure co-sell registry and portal credentials.",
+    bullets: [
+      "Lead generation registry forms",
+      "Joint client case templates",
+      "Direct communication dashboards",
+      "Commission logs overview"
+    ],
+    linkText: "Access Portal",
+    link: "/partners/partner-portal"
+  },
+  "Become a Partner": {
+    title: "Become a Partner",
+    desc: "Join our global sourcing software alliance.",
+    bullets: [
+      "Priority customer lead share",
+      "Sales tool and demo sandbox access",
+      "Co-marketing webinar schedules",
+      "Technical support certifications"
+    ],
+    linkText: "Register as Partner",
+    link: "/partners/become-a-partner"
+  },
+  // RESOURCES
+  "Blog Insights": {
+    title: "Blog Insights",
+    desc: "Our latest updates on agronomic compliance.",
+    bullets: [
+      "EUDR compliance timeline reviews",
+      "Smallholder farmer tech briefings",
+      "GIS spatial calculation updates",
+      "New carbon farming features"
+    ],
+    linkText: "Read Blog",
+    link: "/resources/blog"
+  },
+  "Whitepapers": {
+    title: "Whitepapers Library",
+    desc: "Deep research papers on first-mile tracking.",
+    bullets: [
+      "Polygon data formatting guides",
+      "CSRD ESG disclosure standards",
+      "Smallholder privacy consent rules",
+      "Blockchain ledger security reviews"
+    ],
+    linkText: "Download Whitepapers",
+    link: "/resources/whitepapers"
+  },
+  "Market Reports": {
+    title: "Market Reports",
+    desc: "Sourcing risk maps for core crops.",
+    bullets: [
+      "West Africa cocoa compliance charts",
+      "Southeast Asia palm oil forest audits",
+      "East Africa coffee weather outlooks",
+      "South America soy parcel mappings"
+    ],
+    linkText: "Explore Reports",
+    link: "/resources/reports"
+  },
+  "Policy Guides": {
+    title: "Regulatory Policy Guides",
+    desc: "Interactive checklists for upcoming laws.",
+    bullets: [
+      "EU Deforestation Regulation rules",
+      "Corporate Sustainability reports checklist",
+      "German Supply Chain Act steps",
+      "US Lacey Act timber checks"
+    ],
+    linkText: "Explore Guides",
+    link: "/resources/guides"
+  },
+  "API Documentation": {
+    title: "API Documentation",
+    desc: "Comprehensive REST API endpoint directories.",
+    bullets: [
+      "Farmer registry payload formats",
+      "Weighbridge webhook specifications",
+      "Spatial GeoJSON payload schemas",
+      "Authentication and token rules"
+    ],
+    linkText: "Read API Docs",
+    link: "/resources/api-docs"
+  },
+  "Webinars": {
+    title: "Sourcing Webinars",
+    desc: "Expert panel discussions on supply chain trust.",
+    bullets: [
+      "Auditor polygon checks step-by-steps",
+      "Agri-lending credit scoring reviews",
+      "Outgrower digital money rollouts",
+      "Customer case study deep-dives"
+    ],
+    linkText: "Watch Webinars",
+    link: "/resources/webinars"
+  },
+  "Video Tutorials": {
+    title: "Video Tutorials",
+    desc: "Step-by-step videos for setup.",
+    bullets: [
+      "Mobile outgrower survey builder walk",
+      "Polygon GIS import setup steps",
+      "Connecting weighbridge API scales",
+      "ESG disclosure sheet exports"
+    ],
+    linkText: "Watch Videos",
+    link: "/resources/videos"
+  },
+  "Frequently Asked FAQs": {
+    title: "Support FAQs",
+    desc: "Frequently asked questions from developers and auditors.",
+    bullets: [
+      "Offline mobile data storage limits",
+      "Polygon coordinate formats accepted",
+      "Data privacy grower deletion rules",
+      "ERP connection timing queries"
+    ],
+    linkText: "View FAQs",
+    link: "/resources/faqs"
+  },
+  // COMPANY
+  "About SourceTrace": {
+    title: "About SourceTrace",
+    desc: "Our mission to bring transparency to the first-mile.",
+    bullets: [
+      "B Corp Impact certified metrics",
+      "Operating across 37 global nations",
+      "Outgrower software market leader",
+      "ESG and carbon audit alignment"
+    ],
+    linkText: "Read Our Story",
+    link: "/about"
+  },
+  "Leadership": {
+    title: "Executive Leadership",
+    desc: "Meet our global executive team.",
+    bullets: [
+      "Agriculture technology specialists",
+      "Outgrower software engineers",
+      "ESG policy consulting advisors",
+      "Global scaling project leaders"
+    ],
+    linkText: "Meet the Team",
+    link: "/company/meet-the-team"
+  },
+  "Global Presence": {
+    title: "Global Presence",
+    desc: "Our offices in core sourcing regions.",
+    bullets: [
+      "Bhubaneswar, India tech center",
+      "Nairobi, Kenya regional center",
+      "New York, USA corporate office",
+      "Abidjan, Ivory Coast field hub"
+    ],
+    linkText: "View Offices",
+    link: "/company/global-offices"
+  },
+  "Careers": {
+    title: "Careers at SourceTrace",
+    desc: "Join us in digitizing agricultural supply chains.",
+    bullets: [
+      "Remote-first global developer teams",
+      "Competitive compensation & health benefits",
+      "Sabbatical carbon offset programs",
+      "Active open-source community support"
+    ],
+    linkText: "View Open Roles",
+    link: "/careers"
+  },
+  "News & Releases": {
+    title: "News & Releases",
+    desc: "Latest corporate announcements.",
+    bullets: [
+      "New satellite compliance features release",
+      "Joint cooperatives software pilots success",
+      "Corporate awards and B Corp ratings",
+      "Press kits and image assets"
+    ],
+    linkText: "Read Press Releases",
+    link: "/resources/newsroom"
+  },
+  "Contact Us": {
+    title: "Contact Us",
+    desc: "Get in touch with local support or sales.",
+    bullets: [
+      "24/7 technical customer support",
+      "Consultant scheduling request forms",
+      "Product demo setup appointments",
+      "Local field office phone numbers"
+    ],
+    linkText: "Contact Us",
+    link: "/contact"
+  }
+};
 
 function StandardDropdownContent({ menu, closeMenu }: { menu: any; closeMenu: () => void }) {
   const hero = MENU_HEROES[menu.id];
+  const promo = MENU_PROMOS[menu.id];
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+
+  const currentPromo = (hoveredLink && LINK_PREVIEWS[hoveredLink]) || promo;
 
   return (
-    <div className="grid grid-cols-12 gap-8">
-      <div className="col-span-4 flex flex-col justify-between border-r border-gray-100 pr-8">
-        <div>
-          {hero && (
-            <>
-              <span className="text-[11px] font-extrabold tracking-[0.2em] text-[#1F7A53] uppercase mb-2 block">
-                {hero.label}
-              </span>
-              <h3 className="text-2xl font-black text-[#0B3D2E] leading-tight mb-3">
-                {hero.title}
-              </h3>
-              <p className="text-xs text-gray-500 leading-relaxed font-medium mb-6">
-                {hero.desc}
-              </p>
-            </>
-          )}
-        </div>
-
-        {menu.promo && (
-          <Link
-            href={menu.promo.link}
-            onClick={closeMenu}
-            className="group block p-4 rounded-2xl bg-gradient-to-br from-[#0B3D2E] to-[#1F7A53] text-white relative overflow-hidden shadow-lg transition-transform hover:-translate-y-0.5"
-          >
-            <div className="relative z-10">
-              <span className="text-[9px] font-bold text-[#53D769] uppercase tracking-widest block mb-1">
-                Featured Focus
-              </span>
-              <h4 className="text-sm font-bold leading-snug mb-1">{menu.promo.title}</h4>
-              <p className="text-[11px] text-white/75 font-normal leading-normal mb-3">
-                {menu.promo.desc}
-              </p>
-              <span className="inline-flex items-center gap-1 text-xs font-bold text-[#53D769] group-hover:text-white transition-colors">
-                Learn More <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </div>
-          </Link>
+    <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 flex gap-12 text-[#0B3D2E]">
+      <div className="flex-1">
+        {hero && (
+          <div className="border-b border-gray-100 pb-4 mb-6">
+            <span className="text-[12px] font-bold text-emerald-600 uppercase tracking-widest block mb-1">{hero.label}</span>
+            <h3 className="text-3xl font-black mb-1">{hero.title}</h3>
+            <p className="text-base text-gray-500 max-w-3xl font-medium">
+              {hero.desc}
+            </p>
+          </div>
         )}
-      </div>
 
-      <div className="col-span-8">
-        <div className="grid grid-cols-2 gap-4">
-          {menu.items.map((item: NavigationLink, idx: number) => (
-            <div key={idx} className="group p-4 rounded-2xl border border-gray-100 hover:border-[#1F7A53]/30 hover:bg-[#EBF7F0]/30 transition-all">
-              <Link href={item.href} onClick={closeMenu} className="block mb-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    {item.icon && (
-                      <div className="w-8 h-8 rounded-xl bg-[#53D769]/15 flex items-center justify-center text-[#1F7A53] group-hover:bg-[#1F7A53] group-hover:text-white transition-colors">
-                        <item.icon className="w-4 h-4" />
-                      </div>
-                    )}
-                    <span className="text-base font-bold text-[#0B3D2E] group-hover:text-[#1F7A53] transition-colors">
-                      {item.name}
-                    </span>
+        <div className="grid grid-cols-3 gap-8">
+          {menu.items.map((link: NavigationLink, idx: number) => {
+            const hasSubItems = !!link.subItems;
+            return (
+              <div 
+                key={idx} 
+                onMouseEnter={() => setHoveredLink(link.name)}
+                onMouseLeave={() => setHoveredLink(null)}
+                className="group flex flex-col justify-between p-4 rounded-2xl bg-gray-50/50 hover:bg-gray-50 hover:shadow-sm transition-all min-h-[150px] border border-transparent hover:border-[#0B3D2E]/5"
+              >
+                <div>
+                  <Link
+                    href={link.href}
+                    onClick={closeMenu}
+                    className="font-bold text-base text-gray-900 group-hover:text-emerald-700 transition-colors block mb-1"
+                  >
+                    {link.name}
+                  </Link>
+                  <p className="text-sm text-gray-500 leading-snug line-clamp-2">{link.desc}</p>
+                </div>
+                {hasSubItems ? (
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {link.subItems!.slice(0, 3).map((sub, sIdx) => (
+                      <Link
+                        key={sIdx}
+                        href={sub.href}
+                        onClick={closeMenu}
+                        onMouseEnter={() => setHoveredLink(sub.name)}
+                        onMouseLeave={() => setHoveredLink(link.name)}
+                        className="text-xs font-bold text-gray-600 hover:text-[#0B3D2E] bg-white border border-gray-100 hover:border-emerald-600/30 px-3 py-1 rounded-md transition-all"
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#1F7A53] group-hover:translate-x-0.5 transition-all" />
-                </div>
-                <p className="text-xs text-gray-500 mt-1 font-medium leading-relaxed pl-10">
-                  {item.desc}
-                </p>
-              </Link>
-
-              {item.subItems && (
-                <div className="mt-3 pt-3 border-t border-gray-100/80 pl-10 grid grid-cols-2 gap-1.5">
-                  {item.subItems.map((sub, sIdx) => (
+                ) : (
+                  <div className="pt-2">
                     <Link
-                      key={sIdx}
-                      href={sub.href}
+                      href={link.href}
                       onClick={closeMenu}
-                      className="text-xs font-semibold text-gray-600 hover:text-[#1F7A53] transition-colors flex items-center gap-1.5 py-1"
+                      className="text-xs font-black text-emerald-600 hover:text-emerald-800 flex items-center gap-1 group"
                     >
-                      <span className="w-1 h-1 rounded-full bg-[#1F7A53]" />
-                      <span className="truncate">{sub.name}</span>
+                      Learn More <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                     </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
+
+      {currentPromo && (
+        <div className="w-[350px] shrink-0 border-l border-gray-100 pl-12 hidden xl:block">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={hoveredLink || "default"}
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: 0.15 }}
+              className="bg-[#EAF5EE]/40 border border-[#0B3D2E]/5 rounded-3xl p-6 h-full flex flex-col justify-between relative overflow-hidden group"
+            >
+              <div className="absolute inset-0 bg-[#0B3D2E]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <div className="relative z-10">
+                <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-[0.2em] block mb-2">
+                  {hoveredLink ? "Preview" : "Featured"}
+                </span>
+                <h4 className="text-xl font-black mb-2 text-[#0B3D2E] group-hover:text-emerald-800 transition-colors">{currentPromo.title}</h4>
+                <p className="text-sm text-gray-500 leading-relaxed mb-6 font-medium">
+                  {currentPromo.desc}
+                </p>
+                <ul className="space-y-2 mb-6">
+                  {currentPromo.bullets.map((bullet, bIdx) => (
+                    <li key={bIdx} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                      <span className="w-4 h-4 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-[10px] shrink-0 font-bold">✓</span>
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <Link
+                href={currentPromo.link}
+                onClick={closeMenu}
+                className="relative z-10 w-full py-3 text-center bg-[#0B3D2E] text-white hover:bg-[#1F7A53] font-bold text-sm rounded-xl transition-all shadow-md group-hover:shadow-lg active:scale-98"
+              >
+                {currentPromo.linkText || "Explore"} →
+              </Link>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 }
-
-/* === Mobile Navigation Step Definition === */
-type MobileNavStep =
-  | { type: "root"; title: string }
-  | { type: "category"; id: string; title: string }
-  | { type: "subGroup"; categoryId: string; subGroupId: string; title: string };
 
 export function MegaMenu() {
   const pathname = usePathname();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [currentLevel, setCurrentLevel] = useState<"root" | "submenu">("root");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [direction, setDirection] = useState<number>(1);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -644,6 +1485,18 @@ export function MegaMenu() {
     }
   };
 
+  const currentStep = mobileNavStack[mobileNavStack.length - 1];
+
+  const filteredSearchPages = mobileSearchQuery.trim()
+    ? ALL_SEARCHABLE_PAGES.filter(
+        (page) =>
+          page.name.toLowerCase().includes(mobileSearchQuery.toLowerCase()) ||
+          page.category.toLowerCase().includes(mobileSearchQuery.toLowerCase()) ||
+          page.desc.toLowerCase().includes(mobileSearchQuery.toLowerCase())
+      )
+    : [];
+
+
   const handleLogoClick = (e: React.MouseEvent) => {
     if (pathname === "/") {
       e.preventDefault();
@@ -657,11 +1510,8 @@ export function MegaMenu() {
   const openSearch = useCallback(() => {
     setIsSearchOpen(true);
     setActiveMenu(null);
-    if (isMobileOpen) {
-      setIsMobileOpen(false);
-      resetMobileNav();
-    }
-  }, [isMobileOpen, resetMobileNav]);
+    if (isMobileOpen) setIsMobileOpen(false);
+  }, [isMobileOpen]);
 
   const closeSearch = useCallback(() => {
     setIsSearchOpen(false);
@@ -672,16 +1522,12 @@ export function MegaMenu() {
       const next = !prev;
       if (next) {
         setActiveMenu(null);
+        setCurrentLevel("root");
         resetMobileNav();
       }
       return next;
     });
-  }, [resetMobileNav]);
-
-  const closeMobile = useCallback(() => {
-    setIsMobileOpen(false);
-    resetMobileNav();
-  }, [resetMobileNav]);
+  }, []);
 
   useEffect(() => {
     if (isMobileOpen || isSearchOpen) {
@@ -707,6 +1553,11 @@ export function MegaMenu() {
     }, 200);
   };
 
+  const closeMobile = useCallback(() => {
+    setIsMobileOpen(false);
+    resetMobileNav();
+  }, [resetMobileNav]);
+
   const menuItems = [
     { id: "platform", label: "Platform", items: PLATFORM_LINKS, promo: MENU_PROMOS.platform },
     { id: "solutions", label: "Solutions", items: SOLUTIONS_LINKS, promo: MENU_PROMOS.solutions },
@@ -716,19 +1567,6 @@ export function MegaMenu() {
     { id: "resources", label: "Resources", items: RESOURCES_LINKS, promo: MENU_PROMOS.resources },
     { id: "company", label: "Company", items: COMPANY_LINKS, promo: MENU_PROMOS.company },
   ];
-
-  /* Active step on mobile */
-  const currentStep = mobileNavStack[mobileNavStack.length - 1];
-
-  /* Filtered pages for top instant search bar */
-  const filteredSearchPages = mobileSearchQuery.trim()
-    ? ALL_SEARCHABLE_PAGES.filter(
-        (page) =>
-          page.name.toLowerCase().includes(mobileSearchQuery.toLowerCase()) ||
-          page.category.toLowerCase().includes(mobileSearchQuery.toLowerCase()) ||
-          page.desc.toLowerCase().includes(mobileSearchQuery.toLowerCase())
-      )
-    : [];
 
   return (
     <>
@@ -750,60 +1588,45 @@ export function MegaMenu() {
               >
                 <button className={`px-4 py-2 rounded-full text-base font-semibold transition-colors flex items-center gap-1 whitespace-nowrap ${activeMenu === item.id ? "bg-gray-100 text-[#0B3D2E]" : "text-gray-600 hover:text-[#0B3D2E]"}`}>
                   {item.label}
-                  <ChevronDown className={`w-4 h-4 transition-transform ${activeMenu === item.id ? "rotate-180 text-[#1F7A53]" : ""}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === item.id ? "rotate-180" : ""}`} />
                 </button>
               </div>
             ))}
           </div>
 
           <div className="hidden lg:flex items-center gap-3">
-            <button
-              onClick={openSearch}
-              className="w-10 h-10 rounded-full flex items-center justify-center text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors cursor-pointer"
-              aria-label="Search"
-            >
-              <Search className="w-5 h-5" />
-            </button>
-            <Link href="/contact-sales">
-              <Button className="rounded-full px-6 py-2.5 text-sm font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] transition-colors shadow-md">
-                Contact Sales
-              </Button>
+            <GlobalSearch isSearchOpen={isSearchOpen} onSearchOpen={openSearch} onSearchClose={closeSearch} variant="desktop" />
+            <Link href="/contact-sales" className={`transition-all duration-250 ${isSearchOpen ? "opacity-0 pointer-events-none w-0 overflow-hidden" : "opacity-100"}`}>
+              <Button size="sm" className="h-10 px-6 rounded-full font-semibold bg-[#0B3D2E] text-white hover:bg-[#1F7A53]">Contact Sales</Button>
             </Link>
           </div>
 
-          {/* Mobile & Tablet Hamburger Toggle */}
-          <div className="flex lg:hidden items-center gap-2">
+          <div className="flex lg:hidden items-center gap-1">
+            <GlobalSearch isSearchOpen={isSearchOpen} onSearchOpen={openSearch} onSearchClose={closeSearch} variant="mobile" />
             <button
               onClick={toggleMobileMenu}
-              className="w-11 h-11 rounded-xl flex items-center justify-center text-gray-700 hover:text-[#0B3D2E] bg-gray-50 hover:bg-gray-100 transition-all focus:outline-none cursor-pointer active:scale-95 border border-gray-100"
-              aria-label="Toggle Navigation Menu"
+              className="relative w-10 h-10 rounded-full flex items-center justify-center text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer active:scale-95"
+              aria-label="Toggle menu"
             >
-              {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="overflow-visible">
+                <line x1="2" y1="5" x2="18" y2="5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="origin-center transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ transform: isMobileOpen ? "translateY(5px) rotate(45deg)" : "translateY(0) rotate(0)", transformOrigin: "center" }} />
+                <line x1="2" y1="10" x2="18" y2="10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="transition-opacity duration-200" style={{ opacity: isMobileOpen ? 0 : 1 }} />
+                <line x1="2" y1="15" x2="18" y2="15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="origin-center transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ transform: isMobileOpen ? "translateY(-5px) rotate(-45deg)" : "translateY(0) rotate(0)", transformOrigin: "center" }} />
+              </svg>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Global Instant Search Overlay */}
-      <AnimatePresence>
-        {isSearchOpen && (
-          <GlobalSearch isSearchOpen={isSearchOpen} onSearchOpen={openSearch} onSearchClose={closeSearch} variant="desktop" />
-        )}
-      </AnimatePresence>
-
-      {/* Desktop Mega Menu Dropdown Panel */}
       <AnimatePresence>
         {activeMenu && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-            className="absolute top-full left-0 right-0 bg-white border-b border-gray-100 shadow-2xl overflow-hidden py-8 px-12 z-50 max-w-[1400px] mx-auto rounded-b-3xl"
-            onMouseEnter={() => {
-              if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current);
-            }}
-            onMouseLeave={handleMouseLeave}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute top-full left-0 right-0 bg-white border-b border-gray-100 shadow-2xl overflow-hidden hidden lg:block"
+            onMouseEnter={() => handleMouseEnter(activeMenu)}
           >
             {activeMenu === "industries" ? (
               <CommodityHubDropdownContent closeMenu={() => setActiveMenu(null)} />
