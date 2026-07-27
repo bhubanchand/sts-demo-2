@@ -7,7 +7,8 @@ import {
   Search, Sprout, Globe, Compass, ArrowRight, ShieldCheck, 
   Leaf, Info, Sparkles, Scale, RefreshCw, BarChart3, AlertTriangle, 
   MapPin, Cpu, Database, Network, ChevronRight, Droplet, Trees, 
-  Satellite, Coins, Gauge, Shield, FileText, CheckSquare, Utensils
+  Satellite, Coins, Gauge, Shield, FileText, CheckSquare, Utensils,
+  Wheat, Coffee, Droplets, Apple, TreeDeciduous, Fish
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
@@ -393,24 +394,27 @@ export function CommodityHubPage() {
               onWheel={(e) => { e.stopPropagation(); }}
             >
               {activeTab === "category" && [
-                { icon: "🌾", name: "Cereals", desc: "Wheat, Barley, Rice, Maize" },
-                { icon: "☕", name: "Beverage Crops", desc: "Coffee, Cocoa, Tea" },
-                { icon: "🌴", name: "Oilseeds", desc: "Palm Oil, Soybean, Sunflower" },
-                { icon: "🌶", name: "Spices", desc: "Vanilla, Saffron, Black Pepper" },
-                { icon: "🍎", name: "Fruits", desc: "Banana, Apples, Citrus" },
-                { icon: "🌳", name: "Plantation", desc: "Sugarcane, Rubber, Coconut" },
-                { icon: "🌲", name: "Forestry", desc: "Timber, Pulp, Paper" },
-                { icon: "🐄", name: "Livestock", desc: "Beef, Dairy, Poultry" },
-                { icon: "🐟", name: "Aquaculture", desc: "Shrimp, Salmon, Seaweed" },
+                { icon: Wheat, name: "Cereals", desc: "Wheat, Barley, Rice, Maize" },
+                { icon: Coffee, name: "Beverage Crops", desc: "Coffee, Cocoa, Tea" },
+                { icon: Droplets, name: "Oilseeds", desc: "Palm Oil, Soybean, Sunflower" },
+                { icon: Sprout, name: "Spices", desc: "Vanilla, Saffron, Black Pepper" },
+                { icon: Apple, name: "Fruits", desc: "Banana, Apples, Citrus" },
+                { icon: TreeDeciduous, name: "Plantation", desc: "Sugarcane, Rubber, Coconut" },
+                { icon: Trees, name: "Forestry", desc: "Timber, Pulp, Paper" },
+                { icon: ShieldCheck, name: "Livestock", desc: "Beef, Dairy, Poultry" },
+                { icon: Fish, name: "Aquaculture", desc: "Shrimp, Salmon, Seaweed" },
               ].map((item, idx) => {
                 const isSel = selectedCategory === item.name;
+                const Icon = item.icon;
                 return (
                   <button 
                     key={idx} 
                     onClick={() => setSelectedCategory(isSel ? null : item.name)}
                     className={`w-full text-left p-3 rounded-xl border transition-all duration-200 flex items-center gap-3 group active:scale-[0.99] ${isSel ? 'bg-emerald-50/60 border-emerald-600/30 text-emerald-900' : 'bg-white border-gray-100 hover:border-emerald-600/20 hover:bg-emerald-50/10'}`}
                   >
-                    <span className="text-xl w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">{item.icon}</span>
+                    <span className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform text-[#1F7A53]">
+                      <Icon className="w-4 h-4 stroke-[2]" />
+                    </span>
                     <div className="min-w-0 flex-1">
                       <div className="font-bold text-sm text-gray-800 group-hover:text-emerald-700 transition-colors">{item.name}</div>
                       <div className="text-[10px] text-gray-400 font-semibold group-hover:text-emerald-600/70 transition-colors truncate">{item.desc}</div>
