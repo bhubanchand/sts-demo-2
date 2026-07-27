@@ -4,13 +4,23 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight, MapPin, Compass, ShieldCheck, Fish, Trees, Carrot, Droplets, Wheat, TreeDeciduous, ChevronLeft, Zap, BarChart3, Globe, Lock, Sprout, Search, Apple, Coffee } from "lucide-react";
+import {
+  ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database,
+  Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap,
+  ArrowRight, Menu, X, ArrowLeft, ChevronRight, MapPin, Compass,
+  ShieldCheck, Fish, Trees, Carrot, Droplets, Wheat, TreeDeciduous,
+  ChevronLeft, Zap, BarChart3, Globe, Lock, Sprout, Search, Apple, Coffee
+} from "lucide-react";
 import { Button } from "./button";
 import { GlobalSearch } from "./global-search";
 
 
-/* Apple Settings-inspired Mobile Slide Variants (280ms) */
-const appleSlideVariants = {
+/* ═══════════════════════════════════════════════════════════
+   ANIMATION VARIANTS
+   Calm, intentional motion. No bounce, no spring, no scale.
+   ═══════════════════════════════════════════════════════════ */
+
+const mobileSlideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? "100%" : "-100%",
     opacity: 0,
@@ -30,21 +40,10 @@ type MobileNavStep =
   | { type: "category"; id: string; title: string }
   | { type: "subGroup"; categoryId: string; subGroupId: string; title: string };
 
-/* === Slide variants with spring-like ease === */
-const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? "100%" : "-100%",
-    opacity: 0,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-  },
-  exit: (direction: number) => ({
-    x: direction < 0 ? "100%" : "-100%",
-    opacity: 0,
-  }),
-};
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION DATA
+   ═══════════════════════════════════════════════════════════ */
 
 interface NavigationLink {
   name: string;
@@ -54,7 +53,6 @@ interface NavigationLink {
   subItems?: { name: string; href: string }[];
 }
 
-/* === Navigation Data v2.0 === */
 const PLATFORM_LINKS: NavigationLink[] = [
   {
     name: "Intelligence",
@@ -228,129 +226,8 @@ const COMPANY_LINKS: NavigationLink[] = [
   { name: "Contact Us", href: "/contact", desc: "Reach out for inquiries or support." },
 ];
 
-/* === Mobile category icons and accent colors === */
-const MOBILE_CATEGORY_META: Record<string, { icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>; color: string; gradient: string }> = {
-  platform:    { icon: Server,    color: "#1F7A53", gradient: "from-emerald-500/10 to-teal-500/10" },
-  solutions:   { icon: Target,    color: "#0891B2", gradient: "from-cyan-500/10 to-sky-500/10" },
-  industries:  { icon: Sprout,    color: "#059669", gradient: "from-green-500/10 to-emerald-500/10" },
-  customers:   { icon: Users,     color: "#F59E0B", gradient: "from-amber-500/10 to-yellow-500/10" },
-  partners:    { icon: Globe,     color: "#EC4899", gradient: "from-pink-500/10 to-rose-500/10" },
-  resources:   { icon: BookOpen,  color: "#D97706", gradient: "from-amber-500/10 to-yellow-500/10" },
-  company:     { icon: Globe,     color: "#7C3AED", gradient: "from-violet-500/10 to-purple-500/10" },
-};
 
-/* === Structured Heroes and Promos for Mega Menu v2.0 === */
-const MENU_HEROES: Record<string, { label: string; title: string; desc: string }> = {
-  platform: {
-    label: "Platform",
-    title: "Unified Agricultural Intelligence Platform",
-    desc: "Connect farms, supply chains, satellite intelligence, and AI in one enterprise platform."
-  },
-  solutions: {
-    label: "Solutions",
-    title: "Purpose-Built Agribusiness Solutions",
-    desc: "Achieve compliance, verify carbon neutrality, and build direct outgrower sourcing networks."
-  },
-  customers: {
-    label: "Customers",
-    title: "Trusted Across the Sourcing Ecosystem",
-    desc: "See how cooperatives, agribusinesses, global food brands, and certifiers use SourceTrace."
-  },
-  partners: {
-    label: "Partners",
-    title: "Collaborating for Sustainable Impact",
-    desc: "Connect, build, and deploy sustainability solutions through our global partner network."
-  },
-  resources: {
-    label: "Resources",
-    title: "Agricultural Intelligence Library",
-    desc: "Explore whitepapers, API documents, policy briefs, and developer tools."
-  },
-  company: {
-    label: "Company",
-    title: "Transforming the Sourcing First-Mile",
-    desc: "Learn about our vision, leadership team, and global footprint across sourcing regions."
-  }
-};
-
-const MENU_PROMOS: Record<string, { title: string; desc: string; bullets: string[]; linkText: string; link: string; image: string }> = {
-  platform: {
-    title: "Traceability Cloud",
-    desc: "Monitor every product from farm to consumer.",
-    bullets: [
-      "2M+ Farmers Registered",
-      "4M+ Hectares Monitored",
-      "AI-Powered Crop Yields",
-      "Real-time Satellite Layers"
-    ],
-    linkText: "Explore Platform",
-    link: "/platform",
-    image: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-  },
-  solutions: {
-    title: "Nestlé Sourcing Success",
-    desc: "How Nestlé tracked West African cocoa shipments for compliance.",
-    bullets: [
-      "120k Cocoa Farms Mapped",
-      "100% Deforestation Screened",
-      "Automated ESG Disclosures"
-    ],
-    linkText: "Read Customer Story",
-    link: "/case-studies",
-    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-  },
-  customers: {
-    title: "Bayer Agri-Finance",
-    desc: "Bayer leverages first-mile credit scoring to deliver micro-loans.",
-    bullets: [
-      "250k Smallholders Registered",
-      "98% Repayment Rates",
-      "Direct Digital Payouts"
-    ],
-    linkText: "View Success Stories",
-    link: "/case-studies",
-    image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-  },
-  partners: {
-    title: "Alliance Ecosystem",
-    desc: "Co-innovating with top consulting and technology firms globally.",
-    bullets: [
-      "API integration tooling",
-      "Exclusive co-marketing benefits",
-      "Verified consultant directories"
-    ],
-    linkText: "Become a Partner",
-    link: "/partners/become-a-partner",
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-  },
-  resources: {
-    title: "EUDR Readiness Report",
-    desc: "Download our newest analysis detailing mapping standards.",
-    bullets: [
-      "EUDR Compliance Checklists",
-      "Smallholder Consent Guidelines",
-      "Deforestation Polygon Formats"
-    ],
-    linkText: "Download Report",
-    link: "/resources/whitepapers",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-  },
-  company: {
-    title: "First-Mile Impact",
-    desc: "Delivering transparency and commercial value.",
-    bullets: [
-      "B Corp Impact Audited",
-      "37 Sourcing Countries Active",
-      "Local Teams in 8 Offices"
-    ],
-    linkText: "Contact Our Team",
-    link: "/contact",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-  }
-};
-
-
-/* === Flattened Search Index for Instant Search Bar === */
+/* === Flattened Search Index for GlobalSearch === */
 const ALL_SEARCHABLE_PAGES = [
   // Platform
   { name: "Platform Overview", href: "/platform", category: "Platform", desc: "Unified enterprise nature intelligence platform." },
@@ -375,7 +252,6 @@ const ALL_SEARCHABLE_PAGES = [
   { name: "Cloud Deployment", href: "/platform/security/deployment", category: "Platform", desc: "Dedicated single-tenant cloud option." },
   { name: "Compliance Standards", href: "/platform/security/compliance", category: "Platform", desc: "ISO 27001 & SOC 2 Type II certified." },
   { name: "Platform Architecture", href: "/platform/platform-architecture", category: "Platform", desc: "High-availability cloud stack." },
-
   // Solutions
   { name: "Grow Solutions Overview", href: "/solutions/agriculture", category: "Solutions › Grow", desc: "Optimize farm yield & agronomist advisory." },
   { name: "Farm Management", href: "/solutions/agriculture/farm-management", category: "Solutions › Grow", desc: "Digitize crop logs and yield estimations." },
@@ -394,7 +270,6 @@ const ALL_SEARCHABLE_PAGES = [
   { name: "Sourcing Marketplace", href: "/solutions/supply-chain/marketplace", category: "Solutions › Scale", desc: "Connect verified growers with enterprise buyers." },
   { name: "Farmer Payments", href: "/solutions/finance/farmer-payments", category: "Solutions › Scale", desc: "Instant mobile wallet disbursements & premiums." },
   { name: "Direct Procurement", href: "/solutions/supply-chain/procurement", category: "Solutions › Scale", desc: "Streamline raw material purchase orders." },
-
   // Commodity Hub
   { name: "Commodity Hub Overview", href: "/CommodityHub", category: "Commodity Hub", desc: "Explore 500+ global commodity supply chains." },
   { name: "Coffee Sourcing", href: "/CommodityHub/coffee", category: "Commodity Hub", desc: "Trace bean origin from smallholders to roasters." },
@@ -403,7 +278,6 @@ const ALL_SEARCHABLE_PAGES = [
   { name: "Cotton Sourcing", href: "/CommodityHub/cotton", category: "Commodity Hub", desc: "Organic & sustainable cotton supply chains." },
   { name: "Tea Sourcing", href: "/CommodityHub/tea", category: "Commodity Hub", desc: "Fair trade tea estate & smallholder mapping." },
   { name: "Cocoa Sourcing", href: "/CommodityHub/cocoa", category: "Commodity Hub", desc: "Prevent child labor & deforestation in cocoa." },
-
   // Customers
   { name: "Agribusinesses", href: "/customers/agribusiness", category: "Customers", desc: "Outgrower management & field tech." },
   { name: "Food & Beverage Brands", href: "/customers/food-brands", category: "Customers", desc: "Scope 3 & EUDR supply chain compliance." },
@@ -411,7 +285,6 @@ const ALL_SEARCHABLE_PAGES = [
   { name: "NGOs & Non-Profits", href: "/customers/ngos", category: "Customers", desc: "Socio-economic impact & livelihood tracking." },
   { name: "Financial Institutions", href: "/customers/financial-institutions", category: "Customers", desc: "Agri-credit scoring & crop insurance." },
   { name: "Certification Bodies", href: "/customers/certification-bodies", category: "Customers", desc: "Streamline third-party audit evidence." },
-
   // Partners
   { name: "Technology Partners", href: "/partners/technology-partners", category: "Partners", desc: "Integrate specialized IoT & GIS software." },
   { name: "Implementation Partners", href: "/partners/channel-partners", category: "Partners", desc: "Deploy SourceTrace in local sourcing hubs." },
@@ -419,7 +292,6 @@ const ALL_SEARCHABLE_PAGES = [
   { name: "Partner Marketplace", href: "/partners/marketplace", category: "Partners", desc: "Browse pre-built integrations and add-ons." },
   { name: "Partner Portal", href: "/partners/partner-portal", category: "Partners", desc: "Manage registered deals and co-selling." },
   { name: "Become a Partner", href: "/partners/become-a-partner", category: "Partners", desc: "Join SourceTrace's global partner ecosystem." },
-
   // Resources
   { name: "Resource Library", href: "/resources/blog", category: "Resources", desc: "Whitepapers, market briefs & guides." },
   { name: "Blog Insights", href: "/resources/blog", category: "Resources", desc: "Latest insights on ag-tech & sustainability." },
@@ -430,7 +302,6 @@ const ALL_SEARCHABLE_PAGES = [
   { name: "Webinars", href: "/resources/webinars", category: "Resources", desc: "Watch live & recorded industry sessions." },
   { name: "Video Tutorials", href: "/resources/videos", category: "Resources", desc: "Product walkthroughs and field guides." },
   { name: "FAQs", href: "/resources/faqs", category: "Resources", desc: "Common questions about SourceTrace platform." },
-
   // Company
   { name: "About SourceTrace", href: "/about", category: "Company", desc: "Our mission to digitize the agricultural first-mile." },
   { name: "Leadership Team", href: "/company/meet-the-team", category: "Company", desc: "Meet executive leaders and advisory board." },
@@ -440,7 +311,11 @@ const ALL_SEARCHABLE_PAGES = [
   { name: "Contact Us", href: "/contact", category: "Company", desc: "Get in touch with our team." },
 ];
 
-/* === UNIFIED NAVIGATION DESIGN SYSTEM (V3.0) === */
+
+/* ═══════════════════════════════════════════════════════════
+   UNIFIED NAVIGATION DATA
+   One data structure. Every menu uses the same shape.
+   ═══════════════════════════════════════════════════════════ */
 
 interface NavGroupItem {
   name: string;
@@ -461,7 +336,6 @@ interface MenuSystemData {
   groups: NavGroup[];
   featured: {
     title: string;
-    desc: string;
     linkText: string;
     link: string;
   };
@@ -475,7 +349,6 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
     description: "AI-powered diagnostics, satellite telemetry, field workflows, and enterprise ERP integrations.",
     featured: {
       title: "EUDR Deforestation Verifier",
-      desc: "Run automated satellite polygon geo-checks and generate Due Diligence Statements.",
       linkText: "Explore EUDR Tool",
       link: "/compliance/eudr",
     },
@@ -503,10 +376,10 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
         title: "Connectivity & Security",
         items: [
           { name: "API Registry", href: "/platform/connectivity/apis", desc: "RESTful high-throughput data streams" },
-          { name: "Developer SDK", href: "/platform/connectivity/sdk", desc: "JavaScript, Python, & Go integration libraries" },
+          { name: "Developer SDK", href: "/platform/connectivity/sdk", desc: "JavaScript, Python, & Go libraries" },
           { name: "ERP Connectors", href: "/platform/connectivity/erp-connectors", desc: "SAP, Oracle, & NetSuite connectors" },
           { name: "Enterprise Security", href: "/platform/security/security", desc: "SOC2 Type II & bank-grade encryption" },
-          { name: "Data Privacy Standards", href: "/platform/security/privacy", desc: "GDPR outgrower PII consent management" },
+          { name: "Data Privacy", href: "/platform/security/privacy", desc: "GDPR outgrower PII consent management" },
         ],
       },
     ],
@@ -518,13 +391,12 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
     description: "Digitize outgrower networks, verify carbon neutrality, and automate global ESG compliance.",
     featured: {
       title: "Nestlé Cocoa Traceability",
-      desc: "How Nestlé mapped 120k cocoa smallholder farms for EUDR regulatory compliance.",
       linkText: "Read Success Story",
       link: "/case-studies",
     },
     groups: [
       {
-        title: "Grow (Agriculture)",
+        title: "Grow",
         items: [
           { name: "Farm Management", href: "/solutions/agriculture/farm-management", desc: "Digitize crop logs & yield estimations" },
           { name: "Digital Advisory", href: "/solutions/agriculture/digital-advisory", desc: "Agronomic pest & weather alerts" },
@@ -532,7 +404,7 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
         ],
       },
       {
-        title: "Track (Traceability)",
+        title: "Track",
         items: [
           { name: "Supply Chain Traceability", href: "/solutions/traceability/supply-chain-traceability", desc: "First-mile to retail origin tracing" },
           { name: "Digital Product Passport", href: "/solutions/traceability/digital-product-passport", desc: "EU-compliant digital product passports" },
@@ -542,11 +414,11 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
       {
         title: "Protect & Scale",
         items: [
-          { name: "EUDR Deforestation", href: "/compliance/eudr", desc: "Satellite polygon screening against alerts" },
-          { name: "Carbon Monitoring", href: "/solutions/sustainability/carbon-monitoring", desc: "Soil carbon & biomass sequestration MRV" },
-          { name: "ESG Disclosures", href: "/solutions/sustainability/esg-reporting", desc: "CSRD & Scope 3 carbon disclosures" },
-          { name: "Sourcing Marketplace", href: "/solutions/supply-chain/marketplace", desc: "Connect verified growers with buyers" },
-          { name: "Farmer Payments", href: "/solutions/finance/farmer-payments", desc: "Direct mobile money payouts & premiums" },
+          { name: "EUDR Deforestation", href: "/compliance/eudr", desc: "Satellite polygon screening" },
+          { name: "Carbon Monitoring", href: "/solutions/sustainability/carbon-monitoring", desc: "Soil carbon & biomass MRV" },
+          { name: "ESG Disclosures", href: "/solutions/sustainability/esg-reporting", desc: "CSRD & Scope 3 disclosures" },
+          { name: "Sourcing Marketplace", href: "/solutions/supply-chain/marketplace", desc: "Connect growers with buyers" },
+          { name: "Farmer Payments", href: "/solutions/finance/farmer-payments", desc: "Direct mobile money payouts" },
         ],
       },
     ],
@@ -554,11 +426,10 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
   industries: {
     id: "industries",
     label: "Commodity Hub",
-    heading: "Commodity Intelligence Hub",
+    heading: "Commodity Intelligence",
     description: "Explore global agricultural commodities, regulations, sustainability frameworks, and market intelligence.",
     featured: {
       title: "2026 Global Coffee Outlook",
-      desc: "In-depth analysis on smallholder supply chain resilience and EUDR compliance rules.",
       linkText: "Read Report",
       link: "/resources/reports",
     },
@@ -569,31 +440,31 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
           { name: "Plantation Crops", href: "/CommodityHub", desc: "Sugarcane, Rubber, Coconut" },
           { name: "Cereals & Grains", href: "/CommodityHub", desc: "Wheat, Barley, Rice, Maize" },
           { name: "Oilseeds", href: "/CommodityHub", desc: "Palm Oil, Soybean, Sunflower" },
-          { name: "Fruits & Vegetables", href: "/CommodityHub", desc: "Banana, Citrus, Tropical Produce" },
-          { name: "Spices & Herbs", href: "/CommodityHub", desc: "Vanilla, Saffron, Black Pepper" },
+          { name: "Fruits & Vegetables", href: "/CommodityHub", desc: "Banana, Citrus, Tropical" },
+          { name: "Spices & Herbs", href: "/CommodityHub", desc: "Vanilla, Saffron, Pepper" },
           { name: "Beverage Crops", href: "/CommodityHub", desc: "Coffee, Cocoa, Tea" },
         ],
       },
       {
         title: "Featured Commodities",
         items: [
-          { name: "Coffee Sourcing", href: "/CommodityHub/coffee", desc: "Trace bean origin from farm to roaster" },
-          { name: "Palm Oil Traceability", href: "/CommodityHub/palm-oil", desc: "NDPE deforestation-free palm oil" },
-          { name: "Cocoa Sourcing", href: "/CommodityHub/cocoa", desc: "Child labor prevention & plot mapping" },
-          { name: "Rice Supply Chain", href: "/CommodityHub/rice", desc: "Paddy cultivation & water monitoring" },
-          { name: "Cotton Traceability", href: "/CommodityHub/cotton", desc: "Organic & sustainable cotton mapping" },
-          { name: "Tea Supply Chain", href: "/CommodityHub/tea", desc: "Fair trade estate & smallholder tracking" },
+          { name: "Coffee", href: "/CommodityHub/coffee", desc: "Farm to roaster traceability" },
+          { name: "Palm Oil", href: "/CommodityHub/palm-oil", desc: "NDPE deforestation-free" },
+          { name: "Cocoa", href: "/CommodityHub/cocoa", desc: "Child labor prevention" },
+          { name: "Rice", href: "/CommodityHub/rice", desc: "Paddy cultivation monitoring" },
+          { name: "Cotton", href: "/CommodityHub/cotton", desc: "Organic & sustainable" },
+          { name: "Tea", href: "/CommodityHub/tea", desc: "Fair trade tracking" },
         ],
       },
       {
-        title: "Quick Access Resources",
+        title: "Quick Access",
         items: [
-          { name: "Commodity Explorer", href: "/CommodityHub", desc: "Interactive global crop database" },
-          { name: "Country Profiles", href: "/company/global-offices", desc: "Sourcing country risk profiles" },
-          { name: "Regulations & Policies", href: "/resources/guides", desc: "EUDR, CSDDD, & CSRD guides" },
-          { name: "Sustainability Standards", href: "/solutions/sustainability", desc: "Organic & Fair Trade frameworks" },
-          { name: "Market Intelligence", href: "/resources/reports", desc: "Sourcing yield & price analytics" },
-          { name: "Satellite Risk Maps", href: "/intelligence/geospatial-intelligence", desc: "Deforestation & canopy risk overlays" },
+          { name: "Commodity Explorer", href: "/CommodityHub", desc: "Interactive crop database" },
+          { name: "Country Profiles", href: "/company/global-offices", desc: "Sourcing risk profiles" },
+          { name: "Regulations", href: "/resources/guides", desc: "EUDR, CSDDD, CSRD" },
+          { name: "Sustainability Standards", href: "/solutions/sustainability", desc: "Organic & Fair Trade" },
+          { name: "Market Intelligence", href: "/resources/reports", desc: "Yield & price analytics" },
+          { name: "Satellite Risk Maps", href: "/intelligence/geospatial-intelligence", desc: "Deforestation overlays" },
         ],
       },
     ],
@@ -602,35 +473,34 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
     id: "customers",
     label: "Customers",
     heading: "Trusted Ecosystem",
-    description: "See how cooperatives, agribusinesses, global food brands, and certifiers use SourceTrace.",
+    description: "See how cooperatives, agribusinesses, food brands, and certifiers use SourceTrace.",
     featured: {
-      title: "Bayer Agri-Finance Case",
-      desc: "Bayer leveraged first-mile credit scoring to deliver micro-loans to 250k smallholders.",
+      title: "Bayer Agri-Finance Case Study",
       linkText: "View Case Study",
       link: "/case-studies",
     },
     groups: [
       {
-        title: "Commercial Organizations",
+        title: "Commercial",
         items: [
           { name: "Agribusinesses", href: "/customers/agribusiness", desc: "Outgrower management & field tech" },
-          { name: "Food & Beverage Brands", href: "/customers/food-brands", desc: "Scope 3 & EUDR supply chain compliance" },
-          { name: "Commodity Exporters", href: "/customers/agribusiness", desc: "First-mile lot tracking & weighbridge logs" },
+          { name: "Food & Beverage Brands", href: "/customers/food-brands", desc: "Scope 3 & EUDR compliance" },
+          { name: "Commodity Exporters", href: "/customers/agribusiness", desc: "First-mile lot tracking" },
         ],
       },
       {
         title: "Public & Institutional",
         items: [
-          { name: "Governments & Ministries", href: "/customers/governments", desc: "National farmer registry digital mapping" },
-          { name: "NGOs & Non-Profits", href: "/customers/ngos", desc: "Socio-economic impact & livelihood tracking" },
-          { name: "Financial Institutions", href: "/customers/financial-institutions", desc: "Agri-credit scoring & crop insurance" },
+          { name: "Governments", href: "/customers/governments", desc: "National farmer registry mapping" },
+          { name: "NGOs & Non-Profits", href: "/customers/ngos", desc: "Impact & livelihood tracking" },
+          { name: "Financial Institutions", href: "/customers/financial-institutions", desc: "Agri-credit scoring" },
         ],
       },
       {
         title: "Audits & Standards",
         items: [
-          { name: "Certification Bodies", href: "/customers/certification-bodies", desc: "Streamline third-party audit evidence" },
-          { name: "Cooperative Associations", href: "/customers/agribusiness", desc: "Member registries & Fair Trade payouts" },
+          { name: "Certification Bodies", href: "/customers/certification-bodies", desc: "Third-party audit evidence" },
+          { name: "Cooperative Associations", href: "/customers/agribusiness", desc: "Member registries & payouts" },
         ],
       },
     ],
@@ -638,36 +508,35 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
   partners: {
     id: "partners",
     label: "Partners",
-    heading: "Sustainable Alliance Network",
-    description: "Connect, build, and deploy sustainability solutions through our global partner ecosystem.",
+    heading: "Partner Ecosystem",
+    description: "Connect, build, and deploy sustainability solutions through our global partner network.",
     featured: {
       title: "Alliance Partner Program",
-      desc: "Co-innovate with top consulting and technology firms globally to accelerate ESG readiness.",
       linkText: "Become a Partner",
       link: "/partners/become-a-partner",
     },
     groups: [
       {
-        title: "Partner Categories",
+        title: "Partner Types",
         items: [
-          { name: "Technology Partners", href: "/partners/technology-partners", desc: "Integrate specialized IoT & GIS software" },
-          { name: "Implementation Partners", href: "/partners/channel-partners", desc: "Deploy SourceTrace in local sourcing hubs" },
-          { name: "Consulting Partners", href: "/partners/consulting-partners", desc: "Advisory services for EUDR & ESG" },
+          { name: "Technology Partners", href: "/partners/technology-partners", desc: "IoT & GIS integrations" },
+          { name: "Implementation Partners", href: "/partners/channel-partners", desc: "Local sourcing deployments" },
+          { name: "Consulting Partners", href: "/partners/consulting-partners", desc: "EUDR & ESG advisory" },
         ],
       },
       {
-        title: "Marketplace & Programs",
+        title: "Programs",
         items: [
-          { name: "Partner Marketplace", href: "/partners/marketplace", desc: "Browse pre-built integrations and add-ons" },
-          { name: "Co-Sell Registry", href: "/partners/partner-portal", desc: "Register deals & joint client proposals" },
-          { name: "Partner Portal", href: "/partners/partner-portal", desc: "Access portal credentials & sandbox APIs" },
+          { name: "Partner Marketplace", href: "/partners/marketplace", desc: "Pre-built integrations" },
+          { name: "Co-Sell Registry", href: "/partners/partner-portal", desc: "Joint client proposals" },
+          { name: "Partner Portal", href: "/partners/partner-portal", desc: "Credentials & sandbox" },
         ],
       },
       {
-        title: "Join Ecosystem",
+        title: "Join",
         items: [
-          { name: "Become a Partner", href: "/partners/become-a-partner", desc: "Apply to join SourceTrace global alliance" },
-          { name: "Developer Network", href: "/platform/connectivity/sdk", desc: "SDK docs, webhooks, & API staging" },
+          { name: "Become a Partner", href: "/partners/become-a-partner", desc: "Apply to join our alliance" },
+          { name: "Developer Network", href: "/platform/connectivity/sdk", desc: "SDK docs & webhooks" },
         ],
       },
     ],
@@ -675,39 +544,37 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
   resources: {
     id: "resources",
     label: "Resources",
-    heading: "Agricultural Intelligence Library",
+    heading: "Intelligence Library",
     description: "Explore whitepapers, API documents, regulatory policy briefs, and developer tools.",
     featured: {
       title: "EUDR Compliance Guide",
-      desc: "Complete technical guide for smallholder polygon compliance and Due Diligence files.",
       linkText: "Download Guide",
       link: "/resources/whitepapers",
     },
     groups: [
       {
-        title: "Insights & Analysis",
+        title: "Insights",
         items: [
-          { name: "Resource Library", href: "/resources/blog", desc: "Latest agronomic & sustainability insights" },
-          { name: "Blog Insights", href: "/resources/blog", desc: "Articles on EUDR, AI, & field technology" },
-          { name: "Market Reports", href: "/resources/reports", desc: "Global commodity sourcing analysis" },
-          { name: "Sourcing Webinars", href: "/resources/webinars", desc: "Live & on-demand panel discussions" },
+          { name: "Blog", href: "/resources/blog", desc: "Agronomic & sustainability insights" },
+          { name: "Market Reports", href: "/resources/reports", desc: "Commodity sourcing analysis" },
+          { name: "Webinars", href: "/resources/webinars", desc: "Live & on-demand panels" },
+          { name: "Newsroom", href: "/resources/newsroom", desc: "Press & announcements" },
         ],
       },
       {
-        title: "Technical & Regulatory",
+        title: "Technical",
         items: [
-          { name: "Whitepapers Library", href: "/resources/whitepapers", desc: "In-depth technical & compliance papers" },
-          { name: "Regulatory Policy Guides", href: "/resources/guides", desc: "EUDR, CSDDD, & CSRD compliance steps" },
-          { name: "API Documentation", href: "/resources/api-docs", desc: "Developer API endpoints & payload reference" },
-          { name: "Video Tutorials", href: "/resources/videos", desc: "Product walkthroughs and field guides" },
+          { name: "Whitepapers", href: "/resources/whitepapers", desc: "Technical & compliance papers" },
+          { name: "Regulatory Guides", href: "/resources/guides", desc: "EUDR, CSDDD, CSRD" },
+          { name: "API Documentation", href: "/resources/api-docs", desc: "Endpoints & payload reference" },
+          { name: "Video Tutorials", href: "/resources/videos", desc: "Product walkthroughs" },
         ],
       },
       {
-        title: "Help & Support",
+        title: "Support",
         items: [
-          { name: "Platform FAQs", href: "/resources/faqs", desc: "Common questions about SourceTrace platform" },
-          { name: "Developer Support", href: "/platform/connectivity/apis", desc: "Technical API & integration assistance" },
-          { name: "Newsroom", href: "/resources/newsroom", desc: "Press releases and corporate announcements" },
+          { name: "FAQs", href: "/resources/faqs", desc: "Common questions" },
+          { name: "Developer Support", href: "/platform/connectivity/apis", desc: "API & integration help" },
         ],
       },
     ],
@@ -719,103 +586,102 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
     description: "Learn about our vision, leadership team, and global footprint across sourcing regions.",
     featured: {
       title: "First-Mile Impact Report",
-      desc: "Delivering transparency and commercial value to over 2 million smallholders globally.",
       linkText: "Contact Our Team",
       link: "/contact",
     },
     groups: [
       {
-        title: "About SourceTrace",
+        title: "About",
         items: [
-          { name: "About SourceTrace", href: "/about", desc: "Our mission to digitize agricultural supply chains" },
-          { name: "Leadership Team", href: "/company/meet-the-team", desc: "Meet executive leaders & agronomic advisors" },
-          { name: "Global Presence", href: "/company/global-offices", desc: "Offices in North America, Asia, & Africa" },
-          { name: "Newsroom & Press", href: "/resources/newsroom", desc: "Corporate announcements & press releases" },
+          { name: "About SourceTrace", href: "/about", desc: "Our mission & vision" },
+          { name: "Leadership Team", href: "/company/meet-the-team", desc: "Executive leaders & advisors" },
+          { name: "Global Presence", href: "/company/global-offices", desc: "Offices worldwide" },
+          { name: "Newsroom", href: "/resources/newsroom", desc: "Press releases" },
         ],
       },
       {
         title: "Careers & Impact",
         items: [
-          { name: "Careers", href: "/careers", desc: "Join our team in driving sustainable agriculture" },
-          { name: "B Corp Audit Status", href: "/about", desc: "Verified social & environmental performance" },
-          { name: "Sustainability Mission", href: "/solutions/sustainability", desc: "Empowering smallholder farm livelihoods" },
+          { name: "Careers", href: "/careers", desc: "Join our team" },
+          { name: "B Corp Status", href: "/about", desc: "Social & environmental impact" },
+          { name: "Sustainability", href: "/solutions/sustainability", desc: "Smallholder empowerment" },
         ],
       },
       {
-        title: "Get in Touch",
+        title: "Contact",
         items: [
-          { name: "Contact Us", href: "/contact", desc: "Get in touch with customer support or sales" },
-          { name: "Schedule a Demo", href: "/contact-sales", desc: "Book a personalized platform walkthrough" },
+          { name: "Contact Us", href: "/contact", desc: "Support or sales inquiries" },
+          { name: "Schedule a Demo", href: "/contact-sales", desc: "Personalized walkthrough" },
         ],
       },
     ],
   },
 };
 
+
+/* ═══════════════════════════════════════════════════════════
+   UNIFIED MEGA MENU CONTENT
+   Typography-first. Whitespace as hierarchy. No decoration.
+   ═══════════════════════════════════════════════════════════ */
+
 function UnifiedMegaMenuContent({ menuId, closeMenu }: { menuId: string; closeMenu: () => void }) {
   const data = UNIFIED_NAVIGATION_DATA[menuId] || UNIFIED_NAVIGATION_DATA.platform;
 
   return (
-    <div className="max-w-[1360px] mx-auto px-8 py-6 flex gap-10 text-[#0B3D2E]">
-      {/* Left Column (260px Fixed Width) */}
-      <div className="w-[260px] shrink-0 pr-8 border-r border-gray-100 flex flex-col justify-between">
+    <div className="max-w-[980px] mx-auto px-6 py-10 flex gap-16 text-[#1d1d1f]">
+      {/* Left Column — 220px, no border */}
+      <div className="w-[220px] shrink-0 flex flex-col justify-between">
         <div>
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F7A53] mb-1.5 block">
+          <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-2 block">
             {data.label}
           </span>
-          <h3 className="text-xl font-extrabold text-[#0B3D2E] tracking-tight mb-2">
+          <h3 className="text-2xl font-semibold text-[#1d1d1f] tracking-tight leading-tight mb-3">
             {data.heading}
           </h3>
-          <p className="text-xs text-gray-500 font-medium leading-relaxed mb-6">
+          <p className="text-sm text-[#86868b] font-normal leading-relaxed">
             {data.description}
           </p>
         </div>
 
-        {/* Unified Featured Resource Card */}
-        <Link
-          href={data.featured.link}
-          onClick={closeMenu}
-          className="group block p-4 rounded-xl bg-gray-50/80 hover:bg-[#EBF7F0] border border-gray-100/80 hover:border-[#8CCB9B]/40 transition-all duration-150 shadow-sm"
-        >
-          <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-1">
-            Featured Resource
+        {/* Featured — plain text, no card */}
+        <div className="mt-8">
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-[#86868b] block mb-1.5">
+            Featured
           </span>
-          <h4 className="text-xs font-bold text-[#0B3D2E] leading-snug mb-1 group-hover:text-[#1F7A53] transition-colors">
+          <span className="text-sm text-[#1d1d1f] block mb-1">
             {data.featured.title}
-          </h4>
-          <p className="text-[11px] text-gray-500 leading-normal line-clamp-2 mb-2">
-            {data.featured.desc}
-          </p>
-          <div className="inline-flex items-center gap-1 text-[11px] font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform">
+          </span>
+          <Link
+            href={data.featured.link}
+            onClick={closeMenu}
+            className="group inline-flex items-center gap-1 text-sm text-[#1F7A53] hover:underline"
+          >
             <span>{data.featured.linkText}</span>
-            <ArrowRight className="w-3 h-3" />
-          </div>
-        </Link>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-200" />
+          </Link>
+        </div>
       </div>
 
-      {/* Right Column (Organized Navigation Groups) */}
-      <div className="flex-1 grid grid-cols-3 gap-8">
+      {/* Right Column — text-first navigation groups */}
+      <div className="flex-1 grid grid-cols-3 gap-12">
         {data.groups.map((group, gIdx) => (
-          <div key={gIdx} className="flex flex-col">
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-3 block border-b border-gray-100 pb-2">
+          <div key={gIdx}>
+            <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-4 block">
               {group.title}
             </span>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-[2px]">
               {group.items.map((item, iIdx) => (
                 <Link
                   key={iIdx}
                   href={item.href}
                   onClick={closeMenu}
-                  className="group flex flex-col py-1.5 px-2.5 -mx-2.5 rounded-lg hover:bg-[#EBF7F0]/60 transition-colors"
+                  className="group block py-1.5"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gray-800 group-hover:text-[#0B3D2E] transition-colors">
-                      {item.name}
-                    </span>
-                    <ChevronRight className="w-3 h-3 text-gray-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-                  </div>
+                  <span className="text-sm text-[#1d1d1f] group-hover:text-[#1F7A53] transition-colors duration-150">
+                    {item.name}
+                  </span>
                   {item.desc && (
-                    <span className="text-[11px] text-gray-400 font-medium group-hover:text-gray-600 transition-colors mt-0.5 truncate">
+                    <span className="block text-xs text-[#86868b] opacity-0 group-hover:opacity-100 transition-opacity duration-150 mt-0.5">
                       {item.desc}
                     </span>
                   )}
@@ -829,30 +695,30 @@ function UnifiedMegaMenuContent({ menuId, closeMenu }: { menuId: string; closeMe
   );
 }
 
+
+/* ═══════════════════════════════════════════════════════════
+   MEGA MENU COMPONENT
+   ═══════════════════════════════════════════════════════════ */
+
 export function MegaMenu() {
   const pathname = usePathname();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [currentLevel, setCurrentLevel] = useState<"root" | "submenu">("root");
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [direction, setDirection] = useState<number>(1);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
 
-  /* Apple Settings Hierarchical Mobile Navigation States */
+  /* Mobile hierarchical navigation */
   const [mobileNavStack, setMobileNavStack] = useState<MobileNavStep[]>([
     { type: "root", title: "Menu" }
   ]);
   const [mobileSlideDir, setMobileSlideDir] = useState<number>(1);
-  const [mobileSearchQuery, setMobileSearchQuery] = useState("");
 
-  /* Tablet Split-Pane Selection State */
+  /* Tablet split-pane */
   const [tabletSelectedCategory, setTabletSelectedCategory] = useState("platform");
 
   const resetMobileNav = useCallback(() => {
     setMobileNavStack([{ type: "root", title: "Menu" }]);
     setMobileSlideDir(1);
-    setMobileSearchQuery("");
   }, []);
 
   const pushMobileNav = (step: MobileNavStep) => {
@@ -869,23 +735,10 @@ export function MegaMenu() {
 
   const currentStep = mobileNavStack[mobileNavStack.length - 1];
 
-  const filteredSearchPages = mobileSearchQuery.trim()
-    ? ALL_SEARCHABLE_PAGES.filter(
-        (page) =>
-          page.name.toLowerCase().includes(mobileSearchQuery.toLowerCase()) ||
-          page.category.toLowerCase().includes(mobileSearchQuery.toLowerCase()) ||
-          page.desc.toLowerCase().includes(mobileSearchQuery.toLowerCase())
-      )
-    : [];
-
-
   const handleLogoClick = (e: React.MouseEvent) => {
     if (pathname === "/") {
       e.preventDefault();
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -904,12 +757,11 @@ export function MegaMenu() {
       const next = !prev;
       if (next) {
         setActiveMenu(null);
-        setCurrentLevel("root");
         resetMobileNav();
       }
       return next;
     });
-  }, []);
+  }, [resetMobileNav]);
 
   useEffect(() => {
     if (isMobileOpen || isSearchOpen) {
@@ -917,22 +769,16 @@ export function MegaMenu() {
     } else {
       document.body.style.overflow = "";
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [isMobileOpen, isSearchOpen]);
 
   const handleMouseEnter = (menu: string) => {
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-    }
+    if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current);
     setActiveMenu(menu);
   };
 
   const handleMouseLeave = () => {
-    timeoutIdRef.current = setTimeout(() => {
-      setActiveMenu(null);
-    }, 200);
+    timeoutIdRef.current = setTimeout(() => setActiveMenu(null), 200);
   };
 
   const closeMobile = useCallback(() => {
@@ -941,73 +787,100 @@ export function MegaMenu() {
   }, [resetMobileNav]);
 
   const menuItems = [
-    { id: "platform", label: "Platform", items: PLATFORM_LINKS, promo: MENU_PROMOS.platform },
-    { id: "solutions", label: "Solutions", items: SOLUTIONS_LINKS, promo: MENU_PROMOS.solutions },
-    { id: "industries", label: "Commodity Hub", items: INDUSTRIES_LINKS, promo: { title: "Commodity Explorer", desc: "Compare 500+ global agricultural commodities.", link: "/CommodityHub", image: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" } },
-    { id: "customers", label: "Customers", items: CUSTOMERS_LINKS, promo: MENU_PROMOS.customers },
-    { id: "partners", label: "Partners", items: PARTNERS_LINKS, promo: MENU_PROMOS.partners },
-    { id: "resources", label: "Resources", items: RESOURCES_LINKS, promo: MENU_PROMOS.resources },
-    { id: "company", label: "Company", items: COMPANY_LINKS, promo: MENU_PROMOS.company },
+    { id: "platform", label: "Platform", items: PLATFORM_LINKS },
+    { id: "solutions", label: "Solutions", items: SOLUTIONS_LINKS },
+    { id: "industries", label: "Commodity Hub", items: INDUSTRIES_LINKS },
+    { id: "customers", label: "Customers", items: CUSTOMERS_LINKS },
+    { id: "partners", label: "Partners", items: PARTNERS_LINKS },
+    { id: "resources", label: "Resources", items: RESOURCES_LINKS },
+    { id: "company", label: "Company", items: COMPANY_LINKS },
   ];
 
   return (
     <>
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100 shadow-sm" onMouseLeave={handleMouseLeave}>
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-8">
-        <div className="flex items-center justify-between h-20">
+    {/* ─── DESKTOP HEADER ─── */}
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 bg-[rgba(255,255,255,0.92)] backdrop-blur-xl border-b border-black/[0.04]"
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className="max-w-[980px] mx-auto px-6">
+        <div className="flex items-center justify-between h-[48px]">
+          {/* Logo */}
           <div className="flex items-center flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2" onClick={(e) => { handleLogoClick(e); setActiveMenu(null); setIsMobileOpen(false); }}>
-              <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-10 object-contain" />
+            <Link href="/" className="flex items-center" onClick={(e) => { handleLogoClick(e); setActiveMenu(null); setIsMobileOpen(false); }}>
+              <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-7 object-contain" />
             </Link>
           </div>
 
-          <div className={`hidden lg:flex items-center h-full transition-all duration-250 ease-[cubic-bezier(0.32,0.72,0,1)] ${isSearchOpen ? "gap-0" : "gap-1"}`}>
+          {/* Desktop Navigation Links */}
+          <div className={`hidden lg:flex items-center h-full transition-opacity duration-200 ${isSearchOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
             {menuItems.map((item) => (
               <div
                 key={item.id}
-                className={`relative h-full flex items-center transition-all duration-250 ${isSearchOpen ? "opacity-0 pointer-events-none w-0 overflow-hidden" : "opacity-100"}`}
+                className="relative h-full flex items-center"
                 onMouseEnter={() => handleMouseEnter(item.id)}
               >
-                <button className={`px-4 py-2 rounded-full text-base font-semibold transition-colors flex items-center gap-1 whitespace-nowrap ${activeMenu === item.id ? "bg-gray-100 text-[#0B3D2E]" : "text-gray-600 hover:text-[#0B3D2E]"}`}>
+                <button
+                  className={`px-3 py-1 text-xs transition-colors duration-150 whitespace-nowrap ${
+                    activeMenu === item.id
+                      ? "text-[#1F7A53]"
+                      : "text-[#1d1d1f] hover:text-[#1F7A53]"
+                  }`}
+                >
                   {item.label}
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMenu === item.id ? "rotate-180" : ""}`} />
                 </button>
               </div>
             ))}
           </div>
 
+          {/* Right Actions */}
           <div className="hidden lg:flex items-center gap-3">
             <GlobalSearch isSearchOpen={isSearchOpen} onSearchOpen={openSearch} onSearchClose={closeSearch} variant="desktop" />
-            <Link href="/contact-sales" className={`transition-all duration-250 ${isSearchOpen ? "opacity-0 pointer-events-none w-0 overflow-hidden" : "opacity-100"}`}>
-              <Button size="sm" className="h-10 px-6 rounded-full font-semibold bg-[#0B3D2E] text-white hover:bg-[#1F7A53]">Contact Sales</Button>
+            <Link
+              href="/contact-sales"
+              className={`transition-opacity duration-200 ${isSearchOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+            >
+              <Button size="sm" className="h-7 px-4 rounded-full text-xs font-normal bg-[#0B3D2E] text-white hover:bg-[#1F7A53]">
+                Contact Sales
+              </Button>
             </Link>
           </div>
 
+          {/* Mobile Controls */}
           <div className="flex lg:hidden items-center gap-1">
             <GlobalSearch isSearchOpen={isSearchOpen} onSearchOpen={openSearch} onSearchClose={closeSearch} variant="mobile" />
             <button
               onClick={toggleMobileMenu}
-              className="relative w-10 h-10 rounded-full flex items-center justify-center text-gray-600 hover:text-[#0B3D2E] hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer active:scale-95"
+              className="relative w-10 h-10 flex items-center justify-center text-[#1d1d1f] focus:outline-none cursor-pointer"
               aria-label="Toggle menu"
             >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="overflow-visible">
-                <line x1="2" y1="5" x2="18" y2="5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="origin-center transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ transform: isMobileOpen ? "translateY(5px) rotate(45deg)" : "translateY(0) rotate(0)", transformOrigin: "center" }} />
-                <line x1="2" y1="10" x2="18" y2="10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="transition-opacity duration-200" style={{ opacity: isMobileOpen ? 0 : 1 }} />
-                <line x1="2" y1="15" x2="18" y2="15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="origin-center transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ transform: isMobileOpen ? "translateY(-5px) rotate(-45deg)" : "translateY(0) rotate(0)", transformOrigin: "center" }} />
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="overflow-visible">
+                <line x1="1" y1="5" x2="17" y2="5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+                  className="origin-center transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                  style={{ transform: isMobileOpen ? "translateY(4px) rotate(45deg)" : "translateY(0) rotate(0)", transformOrigin: "center" }}
+                />
+                <line x1="1" y1="9" x2="17" y2="9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+                  className="transition-opacity duration-200" style={{ opacity: isMobileOpen ? 0 : 1 }}
+                />
+                <line x1="1" y1="13" x2="17" y2="13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+                  className="origin-center transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                  style={{ transform: isMobileOpen ? "translateY(-4px) rotate(-45deg)" : "translateY(0) rotate(0)", transformOrigin: "center" }}
+                />
               </svg>
             </button>
           </div>
         </div>
       </div>
 
+      {/* ─── DESKTOP DROPDOWN ─── */}
       <AnimatePresence>
         {activeMenu && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-0 right-0 bg-white border-b border-gray-100 shadow-2xl overflow-hidden hidden lg:block"
+            className="absolute top-full left-0 right-0 bg-[rgba(255,255,255,0.98)] backdrop-blur-xl border-b border-black/[0.04] overflow-hidden hidden lg:block"
             onMouseEnter={() => handleMouseEnter(activeMenu)}
           >
             <UnifiedMegaMenuContent menuId={activeMenu} closeMenu={() => setActiveMenu(null)} />
@@ -1017,712 +890,380 @@ export function MegaMenu() {
     </nav>
 
     {/* ═══════════════════════════════════════════════════════════
-        APPLE SETTINGS-INSPIRED MOBILE & TABLET NAVIGATION DRAWER
-        Rendered OUTSIDE the <nav> to escape stacking context.
+        MOBILE & TABLET NAVIGATION
+        Full-screen overlay. Typography-driven. No decoration.
        ═══════════════════════════════════════════════════════════ */}
     <AnimatePresence>
       {isMobileOpen && (
         <>
-          {/* Dark Backdrop Overlay */}
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.3 }}
             onClick={closeMobile}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 bg-black/30 lg:hidden"
             style={{ zIndex: 9998 }}
           />
 
-          {/* Navigation Drawer Container */}
+          {/* Navigation Drawer */}
           <motion.div
-            initial={{ opacity: 0, y: -6, scale: 0.99 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.99 }}
-            transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed left-0 right-0 lg:hidden overflow-hidden bg-white shadow-2xl flex flex-col"
-            style={{
-              zIndex: 9999,
-              top: "0px",
-              height: "100dvh",
-              maxHeight: "100dvh",
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed inset-0 lg:hidden bg-white flex flex-col"
+            style={{ zIndex: 9999 }}
           >
-            {/* === Apple Header Bar === */}
-            <div className="h-16 sm:h-20 flex items-center justify-between px-4 sm:px-6 flex-shrink-0 bg-white border-b border-gray-100 shadow-sm relative z-20">
+            {/* ─── Header Bar ─── */}
+            <div className="h-[48px] flex items-center justify-between px-5 flex-shrink-0 border-b border-black/[0.04]">
               {mobileNavStack.length > 1 ? (
                 <button
                   onClick={popMobileNav}
-                  className="flex items-center gap-1 text-[#1F7A53] hover:text-[#0B3D2E] font-semibold text-[15px] cursor-pointer active:scale-95 transition-all py-2 pr-2"
+                  className="flex items-center gap-0.5 text-[#1F7A53] text-sm cursor-pointer"
                 >
-                  <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+                  <ChevronLeft className="w-5 h-5" />
                   <span>{mobileNavStack[mobileNavStack.length - 2]?.title || "Back"}</span>
                 </button>
               ) : (
-                <Link href="/" className="flex items-center gap-2" onClick={(e) => { handleLogoClick(e); closeMobile(); }}>
-                  <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-9 sm:h-10 object-contain" />
+                <Link href="/" className="flex items-center" onClick={(e) => { handleLogoClick(e); closeMobile(); }}>
+                  <img src="/sourcetrace-logo.png" alt="SourceTrace" className="h-7 object-contain" />
                 </Link>
               )}
 
-              {/* Panel Title in Center */}
-              {mobileNavStack.length > 1 && (
-                <span className="text-[15px] sm:text-[16px] font-bold text-gray-900 truncate max-w-[150px] sm:max-w-[220px] text-center">
-                  {currentStep.title}
-                </span>
-              )}
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={closeMobile}
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:text-[#0B3D2E] bg-gray-100/70 hover:bg-gray-100 transition-all focus:outline-none cursor-pointer active:scale-95"
-                  aria-label="Close navigation"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+              <button
+                onClick={closeMobile}
+                className="w-8 h-8 flex items-center justify-center text-[#86868b] hover:text-[#1d1d1f] transition-colors cursor-pointer"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            {/* === Instant Search Bar at Top of Navigation Body === */}
-            <div className="px-4 py-2.5 bg-white border-b border-gray-100 shrink-0 relative z-20">
-              <div className="relative flex items-center">
-                <Search className="w-4 h-4 text-gray-400 absolute left-3.5 pointer-events-none" />
-                <input
-                  type="text"
-                  value={mobileSearchQuery}
-                  onChange={(e) => setMobileSearchQuery(e.target.value)}
-                  placeholder="Search all pages, tools & solutions..."
-                  className="w-full pl-10 pr-9 py-2.5 bg-gray-100/80 hover:bg-gray-100 focus:bg-white text-sm text-gray-900 placeholder-gray-400 rounded-xl border border-transparent focus:border-[#8CCB9B] focus:ring-2 focus:ring-[#8CCB9B]/20 outline-none transition-all"
-                />
-                {mobileSearchQuery && (
-                  <button
-                    onClick={() => setMobileSearchQuery("")}
-                    aria-label="Clear search"
-                    className="absolute right-3 text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200/60"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* === Instant Search Results View === */}
-            {mobileSearchQuery.trim() !== "" ? (
-              <div className="flex-1 overflow-y-auto overscroll-contain bg-white p-4">
-                <div className="flex items-center justify-between px-1 mb-3">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                    {filteredSearchPages.length} {filteredSearchPages.length === 1 ? "Result" : "Results"} Found
-                  </span>
-                </div>
-                {filteredSearchPages.length > 0 ? (
-                  <div className="flex flex-col gap-2">
-                    {filteredSearchPages.map((item, idx) => (
-                      <Link
-                        key={idx}
-                        href={item.href}
-                        onClick={closeMobile}
-                        className="flex items-center gap-3 p-3.5 rounded-xl hover:bg-[#EBF7F0]/60 active:scale-[0.99] border border-gray-100 transition-all bg-white shadow-sm"
-                      >
-                        <div className="w-9 h-9 rounded-xl bg-[#8CCB9B]/20 flex items-center justify-center text-[#1F7A53] flex-shrink-0 font-bold text-xs">
-                          {item.name.substring(0, 2).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-[14px] font-bold text-gray-900 truncate">{item.name}</span>
-                            <span className="text-[9px] font-bold text-[#1F7A53] bg-[#EBF7F0] px-2 py-0.5 rounded-full shrink-0">
-                              {item.category}
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-500 truncate mt-0.5 font-medium">{item.desc}</p>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12 px-4">
-                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3 text-gray-400">
-                      <Search className="w-6 h-6" />
-                    </div>
-                    <p className="text-sm font-bold text-gray-700">No matching pages found</p>
-                    <p className="text-xs text-gray-400 mt-1">Try searching for coffee, EUDR, AI, or satellite...</p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <>
-                {/* ── TABLET TWO-PANE SPLIT LAYOUT (768px - 1023px) ── */}
-                <div className="hidden md:flex lg:hidden flex-1 overflow-hidden bg-white">
-                  {/* Left Sidebar Pane: Top-level Sections */}
-                  <div className="w-[280px] border-r border-gray-100 bg-gray-50/50 p-4 flex flex-col gap-1.5 overflow-y-auto shrink-0">
-                    <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-3 mb-2 block">
-                      Navigation Sections
-                    </span>
+            {/* ─── Content Area ─── */}
+            <>
+              {/* ── TABLET: Two-Pane Layout (768px - 1023px) ── */}
+              <div className="hidden md:flex lg:hidden flex-1 overflow-hidden">
+                {/* Left Sidebar */}
+                <div className="w-[240px] border-r border-black/[0.04] py-6 px-5 flex flex-col overflow-y-auto shrink-0">
+                  <div className="flex flex-col">
                     {menuItems.map((item) => {
                       const isSelected = tabletSelectedCategory === item.id;
-                      const meta = MOBILE_CATEGORY_META[item.id];
-                      const CategoryIcon = meta?.icon || ChevronRight;
-
                       return (
                         <button
                           key={item.id}
                           onClick={() => setTabletSelectedCategory(item.id)}
-                          className={`w-full flex items-center gap-3 py-3 px-3.5 rounded-xl text-left transition-all cursor-pointer ${
+                          className={`w-full text-left py-3 px-0 border-b border-black/[0.04] last:border-b-0 transition-colors duration-150 cursor-pointer ${
                             isSelected
-                              ? "bg-white shadow-sm text-[#0B3D2E] font-bold border-l-4 border-[#1F7A53] pl-2.5"
-                              : "text-gray-700 hover:bg-gray-100/70 font-medium"
+                              ? "text-[#1F7A53] font-medium"
+                              : "text-[#1d1d1f] hover:text-[#1F7A53]"
                           }`}
                         >
-                          <div
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                              isSelected ? "bg-[#8CCB9B]/25 text-[#1F7A53]" : "bg-gray-200/60 text-gray-500"
-                            }`}
-                          >
-                            <CategoryIcon className="w-4 h-4" />
-                          </div>
-                          <span className="text-[14px] flex-1 truncate">{item.label}</span>
-                          <ChevronRight
-                            className={`w-4 h-4 transition-transform ${
-                              isSelected ? "text-[#1F7A53] translate-x-0.5" : "text-gray-300"
-                            }`}
-                          />
+                          <span className="text-sm">{item.label}</span>
                         </button>
                       );
                     })}
-
-                    <div className="mt-auto pt-4 border-t border-gray-200/60">
-                      <Link
-                        href="/contact-sales"
-                        onClick={closeMobile}
-                        className="block w-full py-3 text-center text-xs font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-xl transition-colors shadow-md active:scale-95"
-                      >
-                        Contact Sales
-                      </Link>
-                    </div>
                   </div>
 
-                  {/* Right Pane: Unified Section Items Viewer */}
-                  <div className="flex-1 p-6 overflow-y-auto bg-white">
-                    {(() => {
-                      const data = UNIFIED_NAVIGATION_DATA[tabletSelectedCategory] || UNIFIED_NAVIGATION_DATA.platform;
-                      return (
-                        <div className="flex flex-col gap-6">
-                          <div className="border-b border-gray-100 pb-4">
-                            <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-1">
-                              {data.label}
-                            </span>
-                            <h3 className="text-2xl font-black text-[#0B3D2E]">{data.heading}</h3>
-                            <p className="text-xs text-gray-500 font-medium mt-1">{data.description}</p>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-6">
-                            {data.groups.map((group, gIdx) => (
-                              <div key={gIdx} className="flex flex-col">
-                                <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-3 block border-b border-gray-100 pb-2">
-                                  {group.title}
-                                </span>
-                                <div className="flex flex-col gap-1.5">
-                                  {group.items.map((item, iIdx) => (
-                                    <Link
-                                      key={iIdx}
-                                      href={item.href}
-                                      onClick={closeMobile}
-                                      className="group flex flex-col p-2.5 rounded-xl bg-white hover:bg-[#EBF7F0]/60 border border-gray-100 shadow-sm transition-all active:scale-[0.98]"
-                                    >
-                                      <div className="flex items-center justify-between">
-                                        <span className="text-xs font-bold text-gray-800 group-hover:text-[#0B3D2E]">
-                                          {item.name}
-                                        </span>
-                                        <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#1F7A53]" />
-                                      </div>
-                                      {item.desc && (
-                                        <span className="text-[11px] text-gray-500 font-medium mt-0.5 truncate">
-                                          {item.desc}
-                                        </span>
-                                      )}
-                                    </Link>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-
-                          <div className="pt-4 border-t border-gray-100">
-                            <Link
-                              href={data.featured.link}
-                              onClick={closeMobile}
-                              className="group flex items-center justify-between p-4 rounded-2xl bg-[#EBF7F0]/60 hover:bg-[#EBF7F0] border border-[#8CCB9B]/30 transition-all shadow-sm active:scale-[0.98]"
-                            >
-                              <div>
-                                <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-0.5">
-                                  Featured Resource
-                                </span>
-                                <h4 className="text-xs font-bold text-[#0B3D2E] group-hover:text-[#1F7A53] transition-colors">
-                                  {data.featured.title}
-                                </h4>
-                              </div>
-                              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform">
-                                <span>{data.featured.linkText}</span>
-                                <ArrowRight className="w-3.5 h-3.5" />
-                              </div>
-                            </Link>
-                          </div>
-                        </div>
-                      );
-                    })()}
+                  <div className="mt-auto pt-6">
+                    <Link
+                      href="/contact-sales"
+                      onClick={closeMobile}
+                      className="text-sm text-[#1F7A53] hover:underline"
+                    >
+                      Contact Sales →
+                    </Link>
                   </div>
                 </div>
 
-                {/* ── MOBILE SINGLE-PANE APPLE SLIDING NAVIGATION (< 768px: md:hidden) ── */}
-                <div className="block md:hidden flex-1 relative overflow-hidden bg-white">
-                  <AnimatePresence mode="popLayout" custom={mobileSlideDir}>
-                    {currentStep.type === "root" && (
-                      <motion.div
-                        key="root"
-                        custom={mobileSlideDir}
-                        variants={appleSlideVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-                        className="w-full h-full overflow-y-auto overscroll-contain px-4 pt-3 pb-8 flex flex-col justify-between"
-                      >
-                        {/* Level 1 Items: Platform, Solutions, Commodity Hub, Customers, Partners, Resources, Company */}
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-3 mb-1.5 block">
-                            Navigation Menu
-                          </span>
+                {/* Right Pane */}
+                <div className="flex-1 py-8 px-8 overflow-y-auto">
+                  {(() => {
+                    const data = UNIFIED_NAVIGATION_DATA[tabletSelectedCategory] || UNIFIED_NAVIGATION_DATA.platform;
+                    return (
+                      <div>
+                        <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] block mb-2">
+                          {data.label}
+                        </span>
+                        <h3 className="text-2xl font-semibold text-[#1d1d1f] tracking-tight mb-1">
+                          {data.heading}
+                        </h3>
+                        <p className="text-sm text-[#86868b] mb-8">
+                          {data.description}
+                        </p>
 
-                          {menuItems.map((item) => {
-                            const meta = MOBILE_CATEGORY_META[item.id];
-                            const CategoryIcon = meta?.icon || ChevronRight;
-
-                            return (
-                              <button
-                                key={item.id}
-                                onClick={() =>
-                                  pushMobileNav({
-                                    type: "category",
-                                    id: item.id,
-                                    title: item.label,
-                                  })
-                                }
-                                className="w-full flex items-center gap-3.5 py-3.5 px-3.5 rounded-2xl text-left bg-white hover:bg-gray-50 border border-gray-100 shadow-[0_1px_4px_rgba(0,0,0,0.02)] transition-all cursor-pointer active:scale-[0.98]"
-                              >
-                                <div
-                                  className={`w-10 h-10 rounded-xl bg-gradient-to-br ${meta?.gradient || "from-gray-100 to-gray-50"} flex items-center justify-center shrink-0`}
-                                >
-                                  <CategoryIcon className="w-[19px] h-[19px]" style={{ color: meta?.color || "#1F7A53" }} />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <span className="text-[15px] font-semibold text-gray-900 block leading-snug">
-                                    {item.label}
-                                  </span>
-                                  <span className="text-[11px] text-gray-400 font-medium truncate block mt-0.5">
-                                    {item.id === "solutions"
-                                      ? "Grow, Track, Protect, Scale"
-                                      : item.id === "platform"
-                                      ? "AI, Operations, Security & Arch"
-                                      : `${item.items.length} sections`}
-                                  </span>
-                                </div>
-                                <ChevronRight className="w-4 h-4 text-gray-300 shrink-0 stroke-[2.2]" />
-                              </button>
-                            );
-                          })}
+                        <div className="grid grid-cols-2 gap-10">
+                          {data.groups.map((group, gIdx) => (
+                            <div key={gIdx}>
+                              <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-4 block">
+                                {group.title}
+                              </span>
+                              <div className="flex flex-col">
+                                {group.items.map((item, iIdx) => (
+                                  <Link
+                                    key={iIdx}
+                                    href={item.href}
+                                    onClick={closeMobile}
+                                    className="group py-2.5 border-b border-black/[0.04] last:border-b-0"
+                                  >
+                                    <span className="text-sm text-[#1d1d1f] group-hover:text-[#1F7A53] transition-colors duration-150">
+                                      {item.name}
+                                    </span>
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
                         </div>
 
-                        {/* Bottom CTA Button */}
-                        <div className="mt-8 pt-4 border-t border-gray-100">
+                        {/* Featured */}
+                        <div className="mt-10 pt-6 border-t border-black/[0.04]">
+                          <span className="text-[11px] font-semibold uppercase tracking-wide text-[#86868b] block mb-1.5">
+                            Featured
+                          </span>
+                          <span className="text-sm text-[#1d1d1f] block mb-1">{data.featured.title}</span>
                           <Link
-                            href="/contact-sales"
+                            href={data.featured.link}
                             onClick={closeMobile}
-                            className="block w-full py-3.5 text-center text-[14px] font-bold bg-[#0B3D2E] text-white hover:bg-[#1F7A53] rounded-xl transition-colors shadow-lg active:scale-[0.98]"
+                            className="inline-flex items-center gap-1 text-sm text-[#1F7A53] hover:underline"
                           >
-                            Contact Sales
+                            <span>{data.featured.linkText}</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
                           </Link>
                         </div>
-                      </motion.div>
-                    )}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
 
-                    {/* Level 2: Category Panel */}
-                    {currentStep.type === "category" && (
-                      <motion.div
-                        key={`category-${currentStep.id}`}
-                        custom={mobileSlideDir}
-                        variants={appleSlideVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-                        className="w-full h-full overflow-y-auto overscroll-contain px-4 pt-3 pb-8"
-                      >
-                        {/* SPECIAL CASE: SOLUTIONS SCREEN -> ONLY GROW, TRACK, PROTECT, SCALE */}
-                        {currentStep.id === "solutions" ? (
-                          <div className="flex flex-col gap-3">
-                            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-2 mb-1 block">
-                              Select Solution Pillar
+              {/* ── MOBILE: Single-Pane Sliding Navigation (< 768px) ── */}
+              <div className="block md:hidden flex-1 relative overflow-hidden">
+                <AnimatePresence mode="popLayout" custom={mobileSlideDir}>
+                  {/* Level 1: Root */}
+                  {currentStep.type === "root" && (
+                    <motion.div
+                      key="root"
+                      custom={mobileSlideDir}
+                      variants={mobileSlideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+                      className="w-full h-full overflow-y-auto overscroll-contain px-6 pt-8 pb-10 flex flex-col justify-between"
+                    >
+                      <div className="flex flex-col gap-0">
+                        {menuItems.map((item) => (
+                          <button
+                            key={item.id}
+                            onClick={() => pushMobileNav({ type: "category", id: item.id, title: item.label })}
+                            className="w-full text-left py-3 border-b border-black/[0.04] last:border-b-0 cursor-pointer"
+                          >
+                            <span className="text-[28px] font-normal text-[#1d1d1f] leading-tight">
+                              {item.label}
                             </span>
+                          </button>
+                        ))}
+                      </div>
 
-                            {SOLUTIONS_LINKS.map((sol, solIdx) => {
-                              const SolIcon = sol.icon || Leaf;
-                              return (
-                                <button
-                                  key={solIdx}
-                                  onClick={() =>
-                                    pushMobileNav({
-                                      type: "subGroup",
-                                      categoryId: "solutions",
-                                      subGroupId: sol.name.toLowerCase(),
-                                      title: sol.name,
-                                    })
-                                  }
-                                  className="w-full flex items-center gap-4 p-4 rounded-2xl bg-white hover:bg-[#EBF7F0]/40 border border-gray-100 shadow-sm transition-all text-left cursor-pointer active:scale-[0.98]"
-                                >
-                                  <div className="w-12 h-12 rounded-xl bg-[#8CCB9B]/20 flex items-center justify-center text-[#1F7A53] shrink-0">
-                                    <SolIcon className="w-6 h-6" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <span className="text-[16px] font-bold text-[#0B3D2E] block">
-                                      {sol.name}
-                                    </span>
-                                    <span className="text-[12px] text-gray-500 font-medium block mt-0.5">
-                                      {sol.desc}
-                                    </span>
-                                  </div>
-                                  <ChevronRight className="w-5 h-5 text-gray-300 shrink-0 stroke-[2.2]" />
-                                </button>
-                              );
-                            })}
-                          </div>
-                        ) : currentStep.id === "industries" ? (
-                          /* SPECIAL CASE: COMMODITY HUB MOBILE APPLE SETTINGS NAVIGATION */
-                          <div className="flex flex-col gap-5">
-                            <div>
-                              <h3 className="text-xl font-bold text-[#0B3D2E] tracking-tight mb-1">
-                                Commodity Intelligence Hub
-                              </h3>
-                              <p className="text-xs text-gray-500 font-medium leading-relaxed">
-                                Explore global agricultural commodities, regulations, sustainability frameworks and market intelligence.
-                              </p>
-                            </div>
+                      <div className="mt-10">
+                        <Link
+                          href="/contact-sales"
+                          onClick={closeMobile}
+                          className="text-base text-[#1F7A53]"
+                        >
+                          Contact Sales →
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
 
-                            {/* Section 1: Browse by Category */}
-                            <div>
-                              <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-2 block">
-                                Browse by Category
-                              </span>
-                              <div className="flex flex-col gap-1.5">
-                                {[
-                                  { name: "Plantation Crops", icon: TreeDeciduous },
-                                  { name: "Cereals & Grains", icon: Wheat },
-                                  { name: "Oilseeds", icon: Droplets },
-                                  { name: "Fruits", icon: Apple },
-                                  { name: "Vegetables", icon: Carrot },
-                                  { name: "Spices & Herbs", icon: Sprout },
-                                  { name: "Forestry", icon: Trees },
-                                  { name: "Aquaculture", icon: Fish },
-                                  { name: "Livestock", icon: ShieldCheck },
-                                  { name: "Beverage Crops", icon: Coffee },
-                                ].map((cat, cIdx) => {
-                                  const CatIcon = cat.icon;
-                                  return (
-                                    <button
-                                      key={cIdx}
-                                      onClick={() =>
-                                        pushMobileNav({
-                                          type: "subGroup",
-                                          categoryId: "industries",
-                                          subGroupId: cat.name.toLowerCase(),
-                                          title: cat.name,
-                                        })
-                                      }
-                                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-white hover:bg-[#EBF7F0]/40 border border-gray-100 shadow-sm transition-all text-left cursor-pointer active:scale-[0.98]"
-                                    >
-                                      <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-xl bg-[#8CCB9B]/20 flex items-center justify-center text-[#1F7A53] shrink-0">
-                                          <CatIcon className="w-4 h-4 stroke-[2]" />
-                                        </div>
-                                        <span className="text-[14px] font-bold text-gray-900">{cat.name}</span>
-                                      </div>
-                                      <ChevronRight className="w-4 h-4 text-gray-300 shrink-0 stroke-[2.2]" />
-                                    </button>
-                                  );
-                                })}
+                  {/* Level 2: Category */}
+                  {currentStep.type === "category" && (
+                    <motion.div
+                      key={`category-${currentStep.id}`}
+                      custom={mobileSlideDir}
+                      variants={mobileSlideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+                      className="w-full h-full overflow-y-auto overscroll-contain px-6 pt-6 pb-10"
+                    >
+                      <h2 className="text-2xl font-semibold text-[#1d1d1f] mb-6">
+                        {currentStep.title}
+                      </h2>
+
+                      {/* Solutions: show pillars */}
+                      {currentStep.id === "solutions" ? (
+                        <div className="flex flex-col">
+                          {SOLUTIONS_LINKS.map((sol, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => pushMobileNav({
+                                type: "subGroup",
+                                categoryId: "solutions",
+                                subGroupId: sol.name.toLowerCase(),
+                                title: sol.name,
+                              })}
+                              className="w-full text-left py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between cursor-pointer"
+                            >
+                              <div>
+                                <span className="text-[22px] font-normal text-[#1d1d1f] block">
+                                  {sol.name}
+                                </span>
+                                <span className="text-sm text-[#86868b] mt-0.5 block">
+                                  {sol.desc}
+                                </span>
                               </div>
-                            </div>
-
-                            {/* Section 2: Featured Commodities */}
-                            <div className="pt-3 border-t border-gray-100">
-                              <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-2.5 block">
-                                Featured Commodities
+                              <ChevronRight className="w-5 h-5 text-[#86868b] shrink-0 ml-4" />
+                            </button>
+                          ))}
+                        </div>
+                      ) : currentStep.id === "industries" ? (
+                        /* Commodity Hub: show unified groups */
+                        <div className="flex flex-col gap-8">
+                          {UNIFIED_NAVIGATION_DATA.industries.groups.map((group, gIdx) => (
+                            <div key={gIdx}>
+                              <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-3 block">
+                                {group.title}
                               </span>
-                              <div className="flex flex-wrap gap-2">
-                                {[
-                                  { name: "Coffee", href: "/CommodityHub/coffee" },
-                                  { name: "Palm Oil", href: "/CommodityHub/palm-oil" },
-                                  { name: "Cocoa", href: "/CommodityHub/cocoa" },
-                                  { name: "Rice", href: "/CommodityHub/rice" },
-                                  { name: "Cotton", href: "/CommodityHub/cotton" },
-                                  { name: "Tea", href: "/CommodityHub/tea" },
-                                  { name: "Cashew", href: "/CommodityHub" },
-                                  { name: "Rubber", href: "/CommodityHub" },
-                                ].map((com, fIdx) => (
+                              <div className="flex flex-col">
+                                {group.items.map((item, iIdx) => (
                                   <Link
-                                    key={fIdx}
-                                    href={com.href}
+                                    key={iIdx}
+                                    href={item.href}
                                     onClick={closeMobile}
-                                    className="px-3.5 py-1.5 rounded-full bg-gray-100/80 hover:bg-[#EBF7F0] text-gray-800 hover:text-[#0B3D2E] border border-gray-200/50 hover:border-[#8CCB9B]/50 text-xs font-semibold transition-all duration-150 active:scale-95"
+                                    className="py-3 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between"
                                   >
-                                    {com.name}
+                                    <span className="text-base text-[#1d1d1f]">{item.name}</span>
+                                    <ChevronRight className="w-4 h-4 text-[#86868b] shrink-0" />
                                   </Link>
                                 ))}
                               </div>
                             </div>
-
-                            {/* Section 3: Quick Access */}
-                            <div className="pt-3 border-t border-gray-100">
-                              <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-2 block">
-                                Quick Access
-                              </span>
-                              <div className="flex flex-col gap-1.5">
-                                {[
-                                  { name: "Commodity Explorer", href: "/CommodityHub", icon: Compass },
-                                  { name: "Country Profiles", href: "/company/global-offices", icon: Globe },
-                                  { name: "Regulations & Policies", href: "/resources/guides", icon: FileText },
-                                  { name: "Sustainability Standards", href: "/solutions/sustainability", icon: ShieldCheck },
-                                  { name: "Market Intelligence", href: "/resources/reports", icon: BarChart3 },
-                                  { name: "Satellite Insights", href: "/platform/intelligence", icon: Activity },
-                                  { name: "Risk Maps", href: "/intelligence/geospatial-intelligence", icon: MapPin },
-                                  { name: "Reports & Resources", href: "/resources/whitepapers", icon: BookOpen },
-                                ].map((res, qIdx) => {
-                                  const ResIcon = res.icon;
-                                  return (
-                                    <Link
-                                      key={qIdx}
-                                      href={res.href}
-                                      onClick={closeMobile}
-                                      className="flex items-center justify-between p-3 rounded-2xl bg-white hover:bg-[#EBF7F0]/40 border border-gray-100 shadow-sm transition-all active:scale-[0.98]"
-                                    >
-                                      <div className="flex items-center gap-3">
-                                        <ResIcon className="w-4 h-4 text-[#1F7A53] shrink-0" />
-                                        <span className="text-[14px] font-bold text-gray-800">{res.name}</span>
-                                      </div>
-                                      <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
-                                    </Link>
-                                  );
-                                })}
-                              </div>
-                            </div>
-
-                            {/* Section 4: Featured Resource */}
-                            <div className="pt-3 border-t border-gray-100">
-                              <Link
-                                href="/resources/reports"
-                                onClick={closeMobile}
-                                className="group block p-4 rounded-2xl bg-[#EBF7F0]/60 hover:bg-[#EBF7F0] border border-[#8CCB9B]/30 hover:border-[#8CCB9B]/60 transition-all duration-200 shadow-sm active:scale-[0.98]"
-                              >
-                                <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-1">
-                                  Featured Resource
+                          ))}
+                        </div>
+                      ) : currentStep.id === "platform" || currentStep.id === "resources" ? (
+                        /* Platform / Resources: show groups with sub-items */
+                        <div className="flex flex-col">
+                          {((currentStep.id === "platform" ? PLATFORM_LINKS : RESOURCES_LINKS) as NavigationLink[]).map((link, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => pushMobileNav({
+                                type: "subGroup",
+                                categoryId: currentStep.id,
+                                subGroupId: link.name.toLowerCase(),
+                                title: link.name,
+                              })}
+                              className="w-full text-left py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between cursor-pointer"
+                            >
+                              <div>
+                                <span className="text-[22px] font-normal text-[#1d1d1f] block">
+                                  {link.name}
                                 </span>
-                                <h4 className="text-sm font-bold text-[#0B3D2E] leading-snug mb-1 group-hover:text-[#1F7A53] transition-colors">
-                                  2026 Global Coffee Outlook
-                                </h4>
-                                <div className="inline-flex items-center gap-1 text-xs font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform mt-2">
-                                  <span>Read Report</span>
-                                  <ArrowRight className="w-3.5 h-3.5" />
-                                </div>
-                              </Link>
-                            </div>
-                          </div>
-                        ) : currentStep.id === "platform" || currentStep.id === "resources" ? (
-                          /* Level 2 for Platform / Resources (Groups with subItems) */
-                          <div className="flex flex-col gap-3">
-                            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-2 mb-1 block">
-                              {currentStep.title} Sections
-                            </span>
-                            {((currentStep.id === "platform" ? PLATFORM_LINKS : RESOURCES_LINKS) as NavigationLink[]).map((link, lIdx) => {
-                              const Icon = link.icon || Server;
-                              return (
-                                <button
-                                  key={lIdx}
-                                  onClick={() =>
-                                    pushMobileNav({
-                                      type: "subGroup",
-                                      categoryId: currentStep.id,
-                                      subGroupId: link.name.toLowerCase(),
-                                      title: link.name,
-                                    })
-                                  }
-                                  className="w-full flex items-center gap-3.5 p-3.5 rounded-2xl bg-white hover:bg-gray-50 border border-gray-100 shadow-sm transition-all text-left cursor-pointer active:scale-[0.98]"
-                                >
-                                  <div className="w-10 h-10 rounded-xl bg-[#8CCB9B]/20 flex items-center justify-center text-[#1F7A53] shrink-0">
-                                    <Icon className="w-5 h-5" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <span className="text-[15px] font-bold text-gray-900 block">
-                                      {link.name}
-                                    </span>
-                                    <span className="text-[11px] text-gray-500 font-medium block mt-0.5">
-                                      {link.desc}
-                                    </span>
-                                  </div>
-                                  <ChevronRight className="w-4 h-4 text-gray-300 shrink-0 stroke-[2.2]" />
-                                </button>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          /* Direct links for Customers, Partners, Company */
-                          <div className="flex flex-col gap-2.5">
-                            <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-2 mb-1 block">
-                              {currentStep.title} Pages
-                            </span>
-                            {(() => {
-                              const catObj = menuItems.find((m) => m.id === currentStep.id);
-                              const links = catObj?.items || [];
-                              return links.map((link: NavigationLink, lIdx: number) => (
-                                <Link
-                                  key={lIdx}
-                                  href={link.href}
-                                  onClick={closeMobile}
-                                  className="flex items-center justify-between p-3.5 rounded-2xl bg-white hover:bg-[#EBF7F0]/40 border border-gray-100 shadow-sm transition-all active:scale-[0.98]"
-                                >
-                                  <div>
-                                    <span className="text-[14px] font-bold text-[#0B3D2E] block">
-                                      {link.name}
-                                    </span>
-                                    <span className="text-[11px] text-gray-500 font-medium block mt-0.5">
-                                      {link.desc}
-                                    </span>
-                                  </div>
-                                  <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
-                                </Link>
-                              ));
-                            })()}
-                          </div>
-                        )}
-                      </motion.div>
-                    )}
-
-                    {/* Level 3: Sub-Group Screen (e.g., Solutions -> Grow / Track / Protect / Scale) */}
-                    {currentStep.type === "subGroup" && (
-                      <motion.div
-                        key={`subGroup-${currentStep.subGroupId}`}
-                        custom={mobileSlideDir}
-                        variants={appleSlideVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-                        className="w-full h-full overflow-y-auto overscroll-contain px-4 pt-3 pb-8"
-                      >
-                        {(() => {
-                          let parentGroup: NavigationLink | undefined;
-                          if (currentStep.categoryId === "solutions") {
-                            parentGroup = SOLUTIONS_LINKS.find((s) => s.name.toLowerCase() === currentStep.subGroupId);
-                          } else if (currentStep.categoryId === "platform") {
-                            parentGroup = PLATFORM_LINKS.find((s) => s.name.toLowerCase() === currentStep.subGroupId);
-                          } else if (currentStep.categoryId === "resources") {
-                            parentGroup = RESOURCES_LINKS.find((s) => s.name.toLowerCase() === currentStep.subGroupId);
-                          } else if (currentStep.categoryId === "industries") {
-                            // Sub-group category selected under Commodity Hub on Mobile
-                            const catTitle = currentStep.title;
-                            const relatedLinks = INDUSTRIES_LINKS.filter((item) => {
-                              if (catTitle.includes("Beverage")) return ["Coffee", "Tea", "Cocoa"].includes(item.name);
-                              if (catTitle.includes("Cereals")) return ["Rice"].includes(item.name);
-                              if (catTitle.includes("Oilseeds")) return ["Palm Oil"].includes(item.name);
-                              if (catTitle.includes("Plantation") || catTitle.includes("Forestry")) return ["Cotton"].includes(item.name);
-                              return true;
-                            });
-
-                            return (
-                              <div className="flex flex-col gap-3">
-                                <Link
-                                  href="/CommodityHub"
-                                  onClick={closeMobile}
-                                  className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-[#0B3D2E] to-[#1F7A53] text-white shadow-md transition-all active:scale-[0.98]"
-                                >
-                                  <div>
-                                    <span className="text-[9px] font-bold text-[#53D769] uppercase tracking-widest block mb-0.5">
-                                      Overview
-                                    </span>
-                                    <span className="text-base font-bold block">{catTitle}</span>
-                                  </div>
-                                  <ArrowRight className="w-4 h-4 text-[#53D769]" />
-                                </Link>
-
-                                <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-2 mt-2 block">
-                                  {catTitle} Commodities
+                                <span className="text-sm text-[#86868b] mt-0.5 block">
+                                  {link.desc}
                                 </span>
-
-                                <div className="flex flex-col gap-2">
-                                  {relatedLinks.map((item, iIdx) => (
-                                    <Link
-                                      key={iIdx}
-                                      href={item.href}
-                                      onClick={closeMobile}
-                                      className="flex items-center justify-between p-3.5 rounded-2xl bg-white hover:bg-[#EBF7F0]/40 border border-gray-100 shadow-sm transition-all active:scale-[0.98]"
-                                    >
-                                      <div>
-                                        <span className="text-sm font-bold text-gray-800 block">{item.name}</span>
-                                        <span className="text-[11px] text-gray-500 block mt-0.5">{item.desc}</span>
-                                      </div>
-                                      <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
-                                    </Link>
-                                  ))}
-                                </div>
                               </div>
-                            );
-                          }
-
-                          if (!parentGroup) return null;
-
-                          return (
-                            <div className="flex flex-col gap-3">
-                              {/* Main Overview Link */}
+                              <ChevronRight className="w-5 h-5 text-[#86868b] shrink-0 ml-4" />
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        /* Direct links: Customers, Partners, Company */
+                        <div className="flex flex-col">
+                          {(() => {
+                            const catObj = menuItems.find((m) => m.id === currentStep.id);
+                            const links = catObj?.items || [];
+                            return links.map((link: NavigationLink, idx: number) => (
                               <Link
-                                href={parentGroup.href}
+                                key={idx}
+                                href={link.href}
                                 onClick={closeMobile}
-                                className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-[#0B3D2E] to-[#1F7A53] text-white shadow-md transition-all active:scale-[0.98]"
+                                className="py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between"
                               >
                                 <div>
-                                  <span className="text-[9px] font-bold text-[#53D769] uppercase tracking-widest block mb-0.5">
-                                    Overview
+                                  <span className="text-base text-[#1d1d1f] block">
+                                    {link.name}
                                   </span>
-                                  <span className="text-base font-bold block">{parentGroup.name} Solutions</span>
+                                  <span className="text-sm text-[#86868b] mt-0.5 block">
+                                    {link.desc}
+                                  </span>
                                 </div>
-                                <ArrowRight className="w-4 h-4 text-[#53D769]" />
+                                <ChevronRight className="w-4 h-4 text-[#86868b] shrink-0 ml-4" />
                               </Link>
+                            ));
+                          })()}
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
 
-                              <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-2 mt-2 block">
-                                Pages in {parentGroup.name}
+                  {/* Level 3: Sub-Group */}
+                  {currentStep.type === "subGroup" && (
+                    <motion.div
+                      key={`subGroup-${currentStep.subGroupId}`}
+                      custom={mobileSlideDir}
+                      variants={mobileSlideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+                      className="w-full h-full overflow-y-auto overscroll-contain px-6 pt-6 pb-10"
+                    >
+                      {(() => {
+                        let parentGroup: NavigationLink | undefined;
+                        if (currentStep.categoryId === "solutions") {
+                          parentGroup = SOLUTIONS_LINKS.find((s) => s.name.toLowerCase() === currentStep.subGroupId);
+                        } else if (currentStep.categoryId === "platform") {
+                          parentGroup = PLATFORM_LINKS.find((s) => s.name.toLowerCase() === currentStep.subGroupId);
+                        } else if (currentStep.categoryId === "resources") {
+                          parentGroup = RESOURCES_LINKS.find((s) => s.name.toLowerCase() === currentStep.subGroupId);
+                        }
+
+                        if (!parentGroup) return null;
+
+                        return (
+                          <div>
+                            <h2 className="text-xl font-semibold text-[#1d1d1f] mb-6">
+                              {parentGroup.name}
+                            </h2>
+
+                            {/* Overview link */}
+                            <Link
+                              href={parentGroup.href}
+                              onClick={closeMobile}
+                              className="block py-4 border-b border-black/[0.04]"
+                            >
+                              <span className="text-base text-[#1F7A53]">
+                                {parentGroup.name} Overview →
                               </span>
+                            </Link>
 
-                              <div className="flex flex-col gap-2">
-                                {parentGroup.subItems?.map((sub, sIdx) => (
-                                  <Link
-                                    key={sIdx}
-                                    href={sub.href}
-                                    onClick={closeMobile}
-                                    className="flex items-center justify-between p-3.5 rounded-2xl bg-white hover:bg-[#EBF7F0]/40 border border-gray-100 shadow-sm transition-all active:scale-[0.98]"
-                                  >
-                                    <div className="flex items-center gap-3">
-                                      <div className="w-2 h-2 rounded-full bg-[#1F7A53]" />
-                                      <span className="text-sm font-semibold text-gray-800">{sub.name}</span>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
-                                  </Link>
-                                ))}
-                              </div>
+                            {/* Sub-items */}
+                            <div className="flex flex-col">
+                              {parentGroup.subItems?.map((sub, sIdx) => (
+                                <Link
+                                  key={sIdx}
+                                  href={sub.href}
+                                  onClick={closeMobile}
+                                  className="py-4 border-b border-black/[0.04] last:border-b-0 flex items-center justify-between"
+                                >
+                                  <span className="text-base text-[#1d1d1f]">{sub.name}</span>
+                                  <ChevronRight className="w-4 h-4 text-[#86868b] shrink-0" />
+                                </Link>
+                              ))}
                             </div>
-                          );
-                        })()}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </>
-            )}
+                          </div>
+                        );
+                      })()}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </>
           </motion.div>
         </>
       )}
