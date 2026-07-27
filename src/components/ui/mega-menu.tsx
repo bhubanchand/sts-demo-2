@@ -440,982 +440,391 @@ const ALL_SEARCHABLE_PAGES = [
   { name: "Contact Us", href: "/contact", category: "Company", desc: "Get in touch with our team." },
 ];
 
-/* === Sub-menu renderers for Mega Menu v2.0 === */
-function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
-  const categories = [
-    { name: "Plantation Crops", href: "/CommodityHub", icon: TreeDeciduous },
-    { name: "Cereals & Grains", href: "/CommodityHub", icon: Wheat },
-    { name: "Oilseeds", href: "/CommodityHub", icon: Droplets },
-    { name: "Fruits", href: "/CommodityHub", icon: Apple },
-    { name: "Vegetables", href: "/CommodityHub", icon: Carrot },
-    { name: "Spices & Herbs", href: "/CommodityHub", icon: Sprout },
-    { name: "Forestry", href: "/CommodityHub", icon: Trees },
-    { name: "Aquaculture", href: "/CommodityHub", icon: Fish },
-    { name: "Livestock", href: "/CommodityHub", icon: ShieldCheck },
-    { name: "Beverage Crops", href: "/CommodityHub", icon: Coffee },
-  ];
+/* === UNIFIED NAVIGATION DESIGN SYSTEM (V3.0) === */
 
-  const featuredCommodities = [
-    { name: "Coffee", href: "/CommodityHub/coffee" },
-    { name: "Palm Oil", href: "/CommodityHub/palm-oil" },
-    { name: "Cocoa", href: "/CommodityHub/cocoa" },
-    { name: "Rice", href: "/CommodityHub/rice" },
-    { name: "Cotton", href: "/CommodityHub/cotton" },
-    { name: "Tea", href: "/CommodityHub/tea" },
-    { name: "Cashew", href: "/CommodityHub" },
-    { name: "Rubber", href: "/CommodityHub" },
-  ];
+interface NavGroupItem {
+  name: string;
+  href: string;
+  desc?: string;
+}
 
-  const quickAccessResources = [
-    { name: "Commodity Explorer", href: "/CommodityHub", icon: Compass },
-    { name: "Country Profiles", href: "/company/global-offices", icon: Globe },
-    { name: "Regulations & Policies", href: "/resources/guides", icon: FileText },
-    { name: "Sustainability Standards", href: "/solutions/sustainability", icon: ShieldCheck },
-    { name: "Market Intelligence", href: "/resources/reports", icon: BarChart3 },
-    { name: "Satellite Insights", href: "/platform/intelligence", icon: Activity },
-    { name: "Risk Maps", href: "/intelligence/geospatial-intelligence", icon: MapPin },
-    { name: "Reports & Resources", href: "/resources/whitepapers", icon: BookOpen },
-  ];
+interface NavGroup {
+  title: string;
+  items: NavGroupItem[];
+}
+
+interface MenuSystemData {
+  id: string;
+  label: string;
+  heading: string;
+  description: string;
+  groups: NavGroup[];
+  featured: {
+    title: string;
+    desc: string;
+    linkText: string;
+    link: string;
+  };
+}
+
+const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
+  platform: {
+    id: "platform",
+    label: "Platform",
+    heading: "Unified First-Mile Stack",
+    description: "AI-powered diagnostics, satellite telemetry, field workflows, and enterprise ERP integrations.",
+    featured: {
+      title: "EUDR Deforestation Verifier",
+      desc: "Run automated satellite polygon geo-checks and generate Due Diligence Statements.",
+      linkText: "Explore EUDR Tool",
+      link: "/compliance/eudr",
+    },
+    groups: [
+      {
+        title: "Intelligence & AI",
+        items: [
+          { name: "Platform Overview", href: "/platform", desc: "Unified nature intelligence engine" },
+          { name: "AI Diagnostics Engine", href: "/intelligence/ai-engine", desc: "Predictive crop models & disease alerts" },
+          { name: "Satellite Monitoring", href: "/intelligence/satellite-monitoring", desc: "Orbit canopy health & land use indexing" },
+          { name: "Geospatial Intelligence", href: "/intelligence/geospatial-intelligence", desc: "Polygon boundary & spatial analytics" },
+          { name: "Analytics Dashboard", href: "/intelligence/analytics-dashboard", desc: "Operational telemetry & ESG reports" },
+        ],
+      },
+      {
+        title: "Operations & Workflows",
+        items: [
+          { name: "Workflow Automation", href: "/platform/operations/workflow-automation", desc: "No-code outgrower survey logic" },
+          { name: "Reporting Console", href: "/platform/operations/reporting", desc: "Audit-ready compliance export templates" },
+          { name: "Mobile Field Apps", href: "/platform/operations/mobile-apps", desc: "Offline-first polygon gathering" },
+          { name: "Document Management", href: "/platform/operations/document-management", desc: "Encrypted farmer certificate vault" },
+        ],
+      },
+      {
+        title: "Connectivity & Security",
+        items: [
+          { name: "API Registry", href: "/platform/connectivity/apis", desc: "RESTful high-throughput data streams" },
+          { name: "Developer SDK", href: "/platform/connectivity/sdk", desc: "JavaScript, Python, & Go integration libraries" },
+          { name: "ERP Connectors", href: "/platform/connectivity/erp-connectors", desc: "SAP, Oracle, & NetSuite connectors" },
+          { name: "Enterprise Security", href: "/platform/security/security", desc: "SOC2 Type II & bank-grade encryption" },
+          { name: "Data Privacy Standards", href: "/platform/security/privacy", desc: "GDPR outgrower PII consent management" },
+        ],
+      },
+    ],
+  },
+  solutions: {
+    id: "solutions",
+    label: "Solutions",
+    heading: "Agribusiness Solutions",
+    description: "Digitize outgrower networks, verify carbon neutrality, and automate global ESG compliance.",
+    featured: {
+      title: "Nestlé Cocoa Traceability",
+      desc: "How Nestlé mapped 120k cocoa smallholder farms for EUDR regulatory compliance.",
+      linkText: "Read Success Story",
+      link: "/case-studies",
+    },
+    groups: [
+      {
+        title: "Grow (Agriculture)",
+        items: [
+          { name: "Farm Management", href: "/solutions/agriculture/farm-management", desc: "Digitize crop logs & yield estimations" },
+          { name: "Digital Advisory", href: "/solutions/agriculture/digital-advisory", desc: "Agronomic pest & weather alerts" },
+          { name: "Crop Monitoring", href: "/solutions/agriculture/crop-monitoring", desc: "Phenology & growth stage tracking" },
+        ],
+      },
+      {
+        title: "Track (Traceability)",
+        items: [
+          { name: "Supply Chain Traceability", href: "/solutions/traceability/supply-chain-traceability", desc: "First-mile to retail origin tracing" },
+          { name: "Digital Product Passport", href: "/solutions/traceability/digital-product-passport", desc: "EU-compliant digital product passports" },
+          { name: "QR Consumer Trust", href: "/solutions/traceability/qr-consumer-transparency", desc: "Scannable packaging origin stories" },
+        ],
+      },
+      {
+        title: "Protect & Scale",
+        items: [
+          { name: "EUDR Deforestation", href: "/compliance/eudr", desc: "Satellite polygon screening against alerts" },
+          { name: "Carbon Monitoring", href: "/solutions/sustainability/carbon-monitoring", desc: "Soil carbon & biomass sequestration MRV" },
+          { name: "ESG Disclosures", href: "/solutions/sustainability/esg-reporting", desc: "CSRD & Scope 3 carbon disclosures" },
+          { name: "Sourcing Marketplace", href: "/solutions/supply-chain/marketplace", desc: "Connect verified growers with buyers" },
+          { name: "Farmer Payments", href: "/solutions/finance/farmer-payments", desc: "Direct mobile money payouts & premiums" },
+        ],
+      },
+    ],
+  },
+  industries: {
+    id: "industries",
+    label: "Commodity Hub",
+    heading: "Commodity Intelligence Hub",
+    description: "Explore global agricultural commodities, regulations, sustainability frameworks, and market intelligence.",
+    featured: {
+      title: "2026 Global Coffee Outlook",
+      desc: "In-depth analysis on smallholder supply chain resilience and EUDR compliance rules.",
+      linkText: "Read Report",
+      link: "/resources/reports",
+    },
+    groups: [
+      {
+        title: "Browse by Category",
+        items: [
+          { name: "Plantation Crops", href: "/CommodityHub", desc: "Sugarcane, Rubber, Coconut" },
+          { name: "Cereals & Grains", href: "/CommodityHub", desc: "Wheat, Barley, Rice, Maize" },
+          { name: "Oilseeds", href: "/CommodityHub", desc: "Palm Oil, Soybean, Sunflower" },
+          { name: "Fruits & Vegetables", href: "/CommodityHub", desc: "Banana, Citrus, Tropical Produce" },
+          { name: "Spices & Herbs", href: "/CommodityHub", desc: "Vanilla, Saffron, Black Pepper" },
+          { name: "Beverage Crops", href: "/CommodityHub", desc: "Coffee, Cocoa, Tea" },
+        ],
+      },
+      {
+        title: "Featured Commodities",
+        items: [
+          { name: "Coffee Sourcing", href: "/CommodityHub/coffee", desc: "Trace bean origin from farm to roaster" },
+          { name: "Palm Oil Traceability", href: "/CommodityHub/palm-oil", desc: "NDPE deforestation-free palm oil" },
+          { name: "Cocoa Sourcing", href: "/CommodityHub/cocoa", desc: "Child labor prevention & plot mapping" },
+          { name: "Rice Supply Chain", href: "/CommodityHub/rice", desc: "Paddy cultivation & water monitoring" },
+          { name: "Cotton Traceability", href: "/CommodityHub/cotton", desc: "Organic & sustainable cotton mapping" },
+          { name: "Tea Supply Chain", href: "/CommodityHub/tea", desc: "Fair trade estate & smallholder tracking" },
+        ],
+      },
+      {
+        title: "Quick Access Resources",
+        items: [
+          { name: "Commodity Explorer", href: "/CommodityHub", desc: "Interactive global crop database" },
+          { name: "Country Profiles", href: "/company/global-offices", desc: "Sourcing country risk profiles" },
+          { name: "Regulations & Policies", href: "/resources/guides", desc: "EUDR, CSDDD, & CSRD guides" },
+          { name: "Sustainability Standards", href: "/solutions/sustainability", desc: "Organic & Fair Trade frameworks" },
+          { name: "Market Intelligence", href: "/resources/reports", desc: "Sourcing yield & price analytics" },
+          { name: "Satellite Risk Maps", href: "/intelligence/geospatial-intelligence", desc: "Deforestation & canopy risk overlays" },
+        ],
+      },
+    ],
+  },
+  customers: {
+    id: "customers",
+    label: "Customers",
+    heading: "Trusted Ecosystem",
+    description: "See how cooperatives, agribusinesses, global food brands, and certifiers use SourceTrace.",
+    featured: {
+      title: "Bayer Agri-Finance Case",
+      desc: "Bayer leveraged first-mile credit scoring to deliver micro-loans to 250k smallholders.",
+      linkText: "View Case Study",
+      link: "/case-studies",
+    },
+    groups: [
+      {
+        title: "Commercial Organizations",
+        items: [
+          { name: "Agribusinesses", href: "/customers/agribusiness", desc: "Outgrower management & field tech" },
+          { name: "Food & Beverage Brands", href: "/customers/food-brands", desc: "Scope 3 & EUDR supply chain compliance" },
+          { name: "Commodity Exporters", href: "/customers/agribusiness", desc: "First-mile lot tracking & weighbridge logs" },
+        ],
+      },
+      {
+        title: "Public & Institutional",
+        items: [
+          { name: "Governments & Ministries", href: "/customers/governments", desc: "National farmer registry digital mapping" },
+          { name: "NGOs & Non-Profits", href: "/customers/ngos", desc: "Socio-economic impact & livelihood tracking" },
+          { name: "Financial Institutions", href: "/customers/financial-institutions", desc: "Agri-credit scoring & crop insurance" },
+        ],
+      },
+      {
+        title: "Audits & Standards",
+        items: [
+          { name: "Certification Bodies", href: "/customers/certification-bodies", desc: "Streamline third-party audit evidence" },
+          { name: "Cooperative Associations", href: "/customers/agribusiness", desc: "Member registries & Fair Trade payouts" },
+        ],
+      },
+    ],
+  },
+  partners: {
+    id: "partners",
+    label: "Partners",
+    heading: "Sustainable Alliance Network",
+    description: "Connect, build, and deploy sustainability solutions through our global partner ecosystem.",
+    featured: {
+      title: "Alliance Partner Program",
+      desc: "Co-innovate with top consulting and technology firms globally to accelerate ESG readiness.",
+      linkText: "Become a Partner",
+      link: "/partners/become-a-partner",
+    },
+    groups: [
+      {
+        title: "Partner Categories",
+        items: [
+          { name: "Technology Partners", href: "/partners/technology-partners", desc: "Integrate specialized IoT & GIS software" },
+          { name: "Implementation Partners", href: "/partners/channel-partners", desc: "Deploy SourceTrace in local sourcing hubs" },
+          { name: "Consulting Partners", href: "/partners/consulting-partners", desc: "Advisory services for EUDR & ESG" },
+        ],
+      },
+      {
+        title: "Marketplace & Programs",
+        items: [
+          { name: "Partner Marketplace", href: "/partners/marketplace", desc: "Browse pre-built integrations and add-ons" },
+          { name: "Co-Sell Registry", href: "/partners/partner-portal", desc: "Register deals & joint client proposals" },
+          { name: "Partner Portal", href: "/partners/partner-portal", desc: "Access portal credentials & sandbox APIs" },
+        ],
+      },
+      {
+        title: "Join Ecosystem",
+        items: [
+          { name: "Become a Partner", href: "/partners/become-a-partner", desc: "Apply to join SourceTrace global alliance" },
+          { name: "Developer Network", href: "/platform/connectivity/sdk", desc: "SDK docs, webhooks, & API staging" },
+        ],
+      },
+    ],
+  },
+  resources: {
+    id: "resources",
+    label: "Resources",
+    heading: "Agricultural Intelligence Library",
+    description: "Explore whitepapers, API documents, regulatory policy briefs, and developer tools.",
+    featured: {
+      title: "EUDR Compliance Guide",
+      desc: "Complete technical guide for smallholder polygon compliance and Due Diligence files.",
+      linkText: "Download Guide",
+      link: "/resources/whitepapers",
+    },
+    groups: [
+      {
+        title: "Insights & Analysis",
+        items: [
+          { name: "Resource Library", href: "/resources/blog", desc: "Latest agronomic & sustainability insights" },
+          { name: "Blog Insights", href: "/resources/blog", desc: "Articles on EUDR, AI, & field technology" },
+          { name: "Market Reports", href: "/resources/reports", desc: "Global commodity sourcing analysis" },
+          { name: "Sourcing Webinars", href: "/resources/webinars", desc: "Live & on-demand panel discussions" },
+        ],
+      },
+      {
+        title: "Technical & Regulatory",
+        items: [
+          { name: "Whitepapers Library", href: "/resources/whitepapers", desc: "In-depth technical & compliance papers" },
+          { name: "Regulatory Policy Guides", href: "/resources/guides", desc: "EUDR, CSDDD, & CSRD compliance steps" },
+          { name: "API Documentation", href: "/resources/api-docs", desc: "Developer API endpoints & payload reference" },
+          { name: "Video Tutorials", href: "/resources/videos", desc: "Product walkthroughs and field guides" },
+        ],
+      },
+      {
+        title: "Help & Support",
+        items: [
+          { name: "Platform FAQs", href: "/resources/faqs", desc: "Common questions about SourceTrace platform" },
+          { name: "Developer Support", href: "/platform/connectivity/apis", desc: "Technical API & integration assistance" },
+          { name: "Newsroom", href: "/resources/newsroom", desc: "Press releases and corporate announcements" },
+        ],
+      },
+    ],
+  },
+  company: {
+    id: "company",
+    label: "Company",
+    heading: "Digitizing the First-Mile",
+    description: "Learn about our vision, leadership team, and global footprint across sourcing regions.",
+    featured: {
+      title: "First-Mile Impact Report",
+      desc: "Delivering transparency and commercial value to over 2 million smallholders globally.",
+      linkText: "Contact Our Team",
+      link: "/contact",
+    },
+    groups: [
+      {
+        title: "About SourceTrace",
+        items: [
+          { name: "About SourceTrace", href: "/about", desc: "Our mission to digitize agricultural supply chains" },
+          { name: "Leadership Team", href: "/company/meet-the-team", desc: "Meet executive leaders & agronomic advisors" },
+          { name: "Global Presence", href: "/company/global-offices", desc: "Offices in North America, Asia, & Africa" },
+          { name: "Newsroom & Press", href: "/resources/newsroom", desc: "Corporate announcements & press releases" },
+        ],
+      },
+      {
+        title: "Careers & Impact",
+        items: [
+          { name: "Careers", href: "/careers", desc: "Join our team in driving sustainable agriculture" },
+          { name: "B Corp Audit Status", href: "/about", desc: "Verified social & environmental performance" },
+          { name: "Sustainability Mission", href: "/solutions/sustainability", desc: "Empowering smallholder farm livelihoods" },
+        ],
+      },
+      {
+        title: "Get in Touch",
+        items: [
+          { name: "Contact Us", href: "/contact", desc: "Get in touch with customer support or sales" },
+          { name: "Schedule a Demo", href: "/contact-sales", desc: "Book a personalized platform walkthrough" },
+        ],
+      },
+    ],
+  },
+};
+
+function UnifiedMegaMenuContent({ menuId, closeMenu }: { menuId: string; closeMenu: () => void }) {
+  const data = UNIFIED_NAVIGATION_DATA[menuId] || UNIFIED_NAVIGATION_DATA.platform;
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-5 flex gap-8 text-[#0B3D2E]">
-      {/* Left Panel (Reduced width ~260px) */}
-      <div className="w-[260px] shrink-0 pr-6 border-r border-gray-100/80 flex flex-col justify-between">
+    <div className="max-w-[1360px] mx-auto px-8 py-6 flex gap-10 text-[#0B3D2E]">
+      {/* Left Column (260px Fixed Width) */}
+      <div className="w-[260px] shrink-0 pr-8 border-r border-gray-100 flex flex-col justify-between">
         <div>
-          <h3 className="text-xl font-black text-[#0B3D2E] tracking-tight mb-1.5">
-            Commodity Intelligence Hub
+          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#1F7A53] mb-1.5 block">
+            {data.label}
+          </span>
+          <h3 className="text-xl font-extrabold text-[#0B3D2E] tracking-tight mb-2">
+            {data.heading}
           </h3>
-          <p className="text-xs text-gray-500 font-medium leading-relaxed mb-5">
-            Explore global agricultural commodities, regulations, sustainability frameworks, and market intelligence.
+          <p className="text-xs text-gray-500 font-medium leading-relaxed mb-6">
+            {data.description}
           </p>
         </div>
 
-        {/* Featured Resource Card */}
+        {/* Unified Featured Resource Card */}
         <Link
-          href="/resources/reports"
+          href={data.featured.link}
           onClick={closeMenu}
-          className="group block p-4 rounded-2xl bg-[#EBF7F0]/60 hover:bg-[#EBF7F0] border border-[#8CCB9B]/30 hover:border-[#8CCB9B]/60 transition-all duration-150 shadow-sm"
+          className="group block p-4 rounded-xl bg-gray-50/80 hover:bg-[#EBF7F0] border border-gray-100/80 hover:border-[#8CCB9B]/40 transition-all duration-150 shadow-sm"
         >
           <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-1">
             Featured Resource
           </span>
           <h4 className="text-xs font-bold text-[#0B3D2E] leading-snug mb-1 group-hover:text-[#1F7A53] transition-colors">
-            2026 Global Coffee Outlook
+            {data.featured.title}
           </h4>
-          <div className="inline-flex items-center gap-1 text-[11px] font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform mt-1.5">
-            <span>Read Report</span>
+          <p className="text-[11px] text-gray-500 leading-normal line-clamp-2 mb-2">
+            {data.featured.desc}
+          </p>
+          <div className="inline-flex items-center gap-1 text-[11px] font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform">
+            <span>{data.featured.linkText}</span>
             <ArrowRight className="w-3 h-3" />
           </div>
         </Link>
       </div>
 
-      {/* Right Panel (Flex-1) */}
-      <div className="flex-1 flex flex-col gap-4 justify-between">
-        {/* Section 1: Browse by Category (2-Column Grid) */}
-        <div>
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-2 block">
-            Browse by Category
-          </span>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
-            {categories.map((cat, idx) => {
-              const Icon = cat.icon;
-              return (
+      {/* Right Column (Organized Navigation Groups) */}
+      <div className="flex-1 grid grid-cols-3 gap-8">
+        {data.groups.map((group, gIdx) => (
+          <div key={gIdx} className="flex flex-col">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-3 block border-b border-gray-100 pb-2">
+              {group.title}
+            </span>
+            <div className="flex flex-col gap-1">
+              {group.items.map((item, iIdx) => (
                 <Link
-                  key={idx}
-                  href={cat.href}
+                  key={iIdx}
+                  href={item.href}
                   onClick={closeMenu}
-                  className="flex items-center gap-2.5 p-1.5 rounded-xl text-xs font-bold text-gray-700 hover:text-[#0B3D2E] hover:bg-[#EBF7F0]/60 transition-all duration-150 group"
+                  className="group flex flex-col py-1.5 px-2.5 -mx-2.5 rounded-lg hover:bg-[#EBF7F0]/60 transition-colors"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-gray-100/80 group-hover:bg-[#8CCB9B]/20 flex items-center justify-center text-gray-500 group-hover:text-[#1F7A53] transition-colors shrink-0">
-                    <Icon className="w-3.5 h-3.5 stroke-[2]" />
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-gray-800 group-hover:text-[#0B3D2E] transition-colors">
+                      {item.name}
+                    </span>
+                    <ChevronRight className="w-3 h-3 text-gray-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                   </div>
-                  <span className="truncate">{cat.name}</span>
+                  {item.desc && (
+                    <span className="text-[11px] text-gray-400 font-medium group-hover:text-gray-600 transition-colors mt-0.5 truncate">
+                      {item.desc}
+                    </span>
+                  )}
                 </Link>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-
-        {/* Section 2: Featured Commodities (Compact Pills) */}
-        <div className="pt-3 border-t border-gray-100/80">
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-2 block">
-            Featured Commodities
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {featuredCommodities.map((com, idx) => (
-              <Link
-                key={idx}
-                href={com.href}
-                onClick={closeMenu}
-                className="px-3 py-1 rounded-full bg-gray-100/80 hover:bg-[#EBF7F0] text-gray-700 hover:text-[#0B3D2E] border border-gray-200/50 hover:border-[#8CCB9B]/50 text-xs font-semibold transition-all duration-150 hover:scale-[1.02] active:scale-95"
-              >
-                {com.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Section 3: Quick Access (2-Column Grid aligned with Category grid) */}
-        <div className="pt-3 border-t border-gray-100/80">
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-2 block">
-            Quick Access
-          </span>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
-            {quickAccessResources.map((res, idx) => {
-              const ResIcon = res.icon;
-              return (
-                <Link
-                  key={idx}
-                  href={res.href}
-                  onClick={closeMenu}
-                  className="flex items-center gap-2.5 p-1.5 rounded-xl text-xs font-bold text-gray-700 hover:text-[#0B3D2E] hover:bg-[#EBF7F0]/60 transition-all duration-150 group"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-gray-100/80 group-hover:bg-[#8CCB9B]/20 flex items-center justify-center text-gray-500 group-hover:text-[#1F7A53] transition-colors shrink-0">
-                    <ResIcon className="w-3.5 h-3.5 stroke-[2]" />
-                  </div>
-                  <span className="truncate">{res.name}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
+        ))}
       </div>
-    </div>
-  );
-}
-
-interface LinkPreviewData {
-  title: string;
-  desc: string;
-  bullets: string[];
-  linkText: string;
-  link: string;
-}
-
-const LINK_PREVIEWS: Record<string, LinkPreviewData> = {
-  // PLATFORM -> Intelligence
-  "AI Engine": {
-    title: "AI Engine",
-    desc: "Predictive crop models and disease detection.",
-    bullets: [
-      "Real-time agronomic disease diagnoses",
-      "Predictive yield forecasting models",
-      "Automated growth stage alerts",
-      "Soil moisture telemetry analysis"
-    ],
-    linkText: "Explore AI Engine",
-    link: "/intelligence/ai-engine"
-  },
-  "Satellite Monitoring": {
-    title: "Satellite Monitoring",
-    desc: "Continuous crop health monitoring from orbit.",
-    bullets: [
-      "Daily NDVI crop vigor indexing",
-      "Deforestation polygon screening",
-      "Acreage expansion verification",
-      "Post-hazard damage assessments"
-    ],
-    linkText: "Explore Satellite Intel",
-    link: "/intelligence/satellite-monitoring"
-  },
-  "Geospatial Intelligence": {
-    title: "Geospatial Intelligence",
-    desc: "Interactive parcel mapping and spatial analytics.",
-    bullets: [
-      "Grower parcel boundary mapping",
-      "Spatial risk overlay matrices",
-      "Interactive regional dashboards",
-      "Dynamic field heatmapping"
-    ],
-    linkText: "Explore GIS Intel",
-    link: "/intelligence/geospatial-intelligence"
-  },
-  "Analytics Dashboard": {
-    title: "Analytics Dashboard",
-    desc: "Operational telemetry and executive KPIs.",
-    bullets: [
-      "Custom sourcing analytics panels",
-      "Unified operational dashboards",
-      "Exportable stakeholder reports",
-      "Carbon accounting integrations"
-    ],
-    linkText: "View Analytics",
-    link: "/intelligence/analytics-dashboard"
-  },
-  // PLATFORM -> Operations
-  "Workflow Automation": {
-    title: "Workflow Automation",
-    desc: "Automate outgrower operations and audits.",
-    bullets: [
-      "No-code field survey logic",
-      "Automated digital audit trails",
-      "Supervisor alert queues",
-      "Sourcing weight ticket logging"
-    ],
-    linkText: "Explore Workflows",
-    link: "/platform/operations/workflow-automation"
-  },
-  "Reporting": {
-    title: "Reporting Console",
-    desc: "Instant compliance and exportable logs.",
-    bullets: [
-      "One-click EUDR audit templates",
-      "Custom stakeholder disclosures",
-      "PDF and spreadsheet logging",
-      "Real-time alert summary logs"
-    ],
-    linkText: "View Reporting Tools",
-    link: "/platform/operations/reporting"
-  },
-  "Mobile Apps": {
-    title: "Mobile Field Apps",
-    desc: "Offline-first polygon gathering and outgrower profiling.",
-    bullets: [
-      "100% offline survey operations",
-      "GPS polygon boundary drawing",
-      "Multi-language field interface",
-      "Automatic data syncing protocols"
-    ],
-    linkText: "View Mobile Solutions",
-    link: "/platform/operations/mobile-apps"
-  },
-  "Document Management": {
-    title: "Document Cloud",
-    desc: "Secure compliance certificates and grower receipts.",
-    bullets: [
-      "Encrypted cloud document vault",
-      "Automated farmer receipt matching",
-      "Organic certificates cataloging",
-      "Third-party auditor portal"
-    ],
-    linkText: "Explore Documents",
-    link: "/platform/operations/document-management"
-  },
-  // PLATFORM -> Connectivity
-  "API Registry": {
-    title: "Platform APIs",
-    desc: "Connect sourcing data to any enterprise systems.",
-    bullets: [
-      "RESTful API endpoints",
-      "High-throughput payload streams",
-      "Webhooks for field transactions",
-      "Audited transaction histories"
-    ],
-    linkText: "View Developer Docs",
-    link: "/platform/connectivity/apis"
-  },
-  "Developer SDK": {
-    title: "Developer SDK",
-    desc: "Build custom outgrower integrations.",
-    bullets: [
-      "JavaScript, Python, and Go libraries",
-      "Pre-built GIS mapping widgets",
-      "Sample field survey templates",
-      "Developer staging environments"
-    ],
-    linkText: "Explore SDK Tools",
-    link: "/platform/connectivity/sdk"
-  },
-  "ERP Connectors": {
-    title: "ERP Integrations",
-    desc: "Sync transactions directly to SAP, NetSuite, or Dynamics.",
-    bullets: [
-      "Bi-directional payment syncs",
-      "Sourcing invoice generation",
-      "Automatic inventory updates",
-      "Supplier ledger reconciliations"
-    ],
-    linkText: "Explore ERP Connectors",
-    link: "/platform/connectivity/erp-connectors"
-  },
-  "GIS Integrations": {
-    title: "GIS Connections",
-    desc: "Overlay custom spatial databases.",
-    bullets: [
-      "Esri ArcGIS and QGIS compatibilities",
-      "Custom WMS and WFS map layers",
-      "Dynamic GeoJSON imports",
-      "Cadastral boundary alignments"
-    ],
-    linkText: "View GIS Connectors",
-    link: "/platform/connectivity/gis-integrations"
-  },
-  // PLATFORM -> Security
-  "Enterprise Security": {
-    title: "Enterprise Security",
-    desc: "SOC2 Type II data safeguards.",
-    bullets: [
-      "End-to-end data encryption",
-      "Single Sign-On (SSO) protocols",
-      "Granular role access filters",
-      "Continuous threat monitoring"
-    ],
-    linkText: "View Security Center",
-    link: "/platform/security/security"
-  },
-  "Data Privacy": {
-    title: "Grower Data Privacy",
-    desc: "GDPR outgrower consent management.",
-    bullets: [
-      "Grower profile consent forms",
-      "Encrypted PII data hashing",
-      "Automated profile deletions",
-      "Auditable privacy trails"
-    ],
-    linkText: "Read Privacy Details",
-    link: "/platform/security/privacy"
-  },
-  "Cloud Deployment": {
-    title: "Cloud Deployment",
-    desc: "SaaS or dedicated private cloud setups.",
-    bullets: [
-      "AWS, Azure, and GCP hosting options",
-      "Multi-tenant or single-tenant",
-      "99.99% uptime SLA guarantee",
-      "Geo-redundant DB replication"
-    ],
-    linkText: "Explore Deployments",
-    link: "/platform/security/deployment"
-  },
-  "Compliance Standards": {
-    title: "Compliance Standard Audits",
-    desc: "Traceability audit trails certified globally.",
-    bullets: [
-      "ISO 27001 data protection",
-      "Certified ESG metrics export",
-      "Audit-ready regulatory files",
-      "Global compliance standards check"
-    ],
-    linkText: "Explore Standards",
-    link: "/platform/security/compliance"
-  },
-  // PLATFORM -> Architecture
-  "Platform Overview": {
-    title: "Platform Overview",
-    desc: "Discover the unified agricultural first-mile stack.",
-    bullets: [
-      "GIS and IoT tracking systems",
-      "Interactive global outgrower maps",
-      "First-mile transaction ledger",
-      "Unified compliance portal"
-    ],
-    linkText: "Explore Platform",
-    link: "/platform"
-  },
-  "Infrastructure Map": {
-    title: "Infrastructure Map",
-    desc: "Our high-availability global cloud stack.",
-    bullets: [
-      "Edge caching in sourcing hubs",
-      "Serverless spatial calculation databases",
-      "Automated scaling protocols",
-      "Real-time database replication"
-    ],
-    linkText: "View Infrastructure",
-    link: "/platform/platform-architecture"
-  },
-  "Cloud Scalability": {
-    title: "Cloud Scalability",
-    desc: "Architected to scale to millions of farmers.",
-    bullets: [
-      "Dynamic load balancing",
-      "Distributed outgrower databases",
-      "Optimized offline data queues",
-      "Ultra-low latency edge servers"
-    ],
-    linkText: "Read Architecture Brief",
-    link: "/platform/platform-architecture"
-  },
-  // SOLUTIONS -> Grow
-  "Farm Management": {
-    title: "Farm Management",
-    desc: "Digitize growers and monitor yield.",
-    bullets: [
-      "Individual farmer profile directories",
-      "Geo-spatially mapped parcel grids",
-      "Sowing and harvest tracking",
-      "Dynamic input cost logs"
-    ],
-    linkText: "Explore Farm Mgmt",
-    link: "/solutions/agriculture/farm-management"
-  },
-  "Digital Advisory": {
-    title: "Digital Advisory",
-    desc: "Deliver personalized weather and pest advice.",
-    bullets: [
-      "Automated SMS weather alerts",
-      "Customized pest warning models",
-      "Sustainable fertilizer advice",
-      "Grower training feedback logs"
-    ],
-    linkText: "Explore Advisory",
-    link: "/solutions/agriculture/digital-advisory"
-  },
-  "Crop Monitoring": {
-    title: "Crop Monitoring",
-    desc: "Satellite NDVI crop performance screening.",
-    bullets: [
-      "Weekly satellite vegetation scans",
-      "Automated water stress mapping",
-      "Historical yield indexes",
-      "Extreme weather risk detection"
-    ],
-    linkText: "Explore Monitoring",
-    link: "/solutions/agriculture/crop-monitoring"
-  },
-  // SOLUTIONS -> Track
-  "Supply Chain Traceability": {
-    title: "Supply Chain Traceability",
-    desc: "Trace products from harvest to consumer.",
-    bullets: [
-      "Bag-level barcode scanning",
-      "First-mile scale integration",
-      "Interactive route maps",
-      "Digital custody chains"
-    ],
-    linkText: "Explore Traceability",
-    link: "/solutions/traceability/supply-chain-traceability"
-  },
-  "Digital Product Passport": {
-    title: "Digital Product Passport",
-    desc: "Prepare for upcoming EU transparency regulations.",
-    bullets: [
-      "EU DPP data schema matching",
-      "Traceability ledger hashes",
-      "Deforestation compliance codes",
-      "Carbon footprints disclosure"
-    ],
-    linkText: "Read DPP Passport Details",
-    link: "/solutions/traceability/digital-product-passport"
-  },
-  "QR Consumer Transparency": {
-    title: "QR Transparency",
-    desc: "Engage retail customers with farm origins.",
-    bullets: [
-      "Scannable QR codes on packs",
-      "Farmer storytelling profiles",
-      "Interactive sourcing maps",
-      "Verified compliance statements"
-    ],
-    linkText: "Explore QR Trust",
-    link: "/solutions/traceability/qr-consumer-transparency"
-  },
-  // SOLUTIONS -> Protect
-  "EUDR Deforestation": {
-    title: "EUDR Deforestation",
-    desc: "Automated deforestation checks for EU compliance.",
-    bullets: [
-      "1-click polygon overlay audits",
-      "Interactive country risk flags",
-      "Smallholder polygon imports",
-      "Due Diligence Statement files"
-    ],
-    linkText: "Explore EUDR Tool",
-    link: "/compliance/eudr"
-  },
-  "Carbon Monitoring": {
-    title: "Carbon Monitoring",
-    desc: "Verify carbon offsets and inset parameters.",
-    bullets: [
-      "Regenerative agriculture carbon tracking",
-      "Soil organic carbon data logs",
-      "Satellite carbon sequestration maps",
-      "Scope 3 emissions accounting"
-    ],
-    linkText: "Explore Carbon Monitoring",
-    link: "/solutions/sustainability/carbon-monitoring"
-  },
-  "ESG Reporting": {
-    title: "ESG Reporting",
-    desc: "Unified sustainability metrics dashboard.",
-    bullets: [
-      "GRI and CSRD schema compliance",
-      "Outgrower payment parity audits",
-      "Water footprint logging",
-      "Exportable stakeholder matrices"
-    ],
-    linkText: "View ESG Solutions",
-    link: "/solutions/sustainability/esg-reporting"
-  },
-  "Regenerative Agriculture": {
-    title: "Regenerative Agriculture",
-    desc: "Verify soil health and cover crop compliance.",
-    bullets: [
-      "No-till verification mapping",
-      "Cover crop satellite validation",
-      "Biodiversity index monitoring",
-      "Premium price payout matching"
-    ],
-    linkText: "Explore Regenerative Ag",
-    link: "/solutions/sustainability/regenerative-agriculture"
-  },
-  // SOLUTIONS -> Scale
-  "Sourcing Marketplace": {
-    title: "Sourcing Marketplace",
-    desc: "Procure directly from verified cooperatives.",
-    bullets: [
-      "Verified digital crop catalogs",
-      "Cooperative seller listings",
-      "Direct trading portals",
-      "Sourcing quality verification reports"
-    ],
-    linkText: "Explore Marketplace",
-    link: "/solutions/supply-chain/marketplace"
-  },
-  "Farmer Payments": {
-    title: "Farmer Payments",
-    desc: "Direct digital payout models to growers.",
-    bullets: [
-      "Direct mobile money integrations",
-      "Fair Trade premium logging",
-      "Transaction receipt catalogs",
-      "Instant field scales verification"
-    ],
-    linkText: "Explore Payments",
-    link: "/solutions/finance/farmer-payments"
-  },
-  "Direct Procurement": {
-    title: "Direct Procurement",
-    desc: "Streamline field purchases and contracts.",
-    bullets: [
-      "Field contract digital signing",
-      "Scale weighbridge integrations",
-      "Instant invoice calculations",
-      "Automatic supplier ledgers"
-    ],
-    linkText: "Explore Procurement",
-    link: "/solutions/supply-chain/procurement"
-  },
-  // CUSTOMERS
-  "Agribusiness": {
-    title: "Agribusinesses",
-    desc: "Scale outgrower networks with transparent tools.",
-    bullets: [
-      "Map thousands of smallholder grids",
-      "Automated digital audit logs",
-      "Optimize supply logistics routes",
-      "Track compliance certificates"
-    ],
-    linkText: "View Agribusiness Solutions",
-    link: "/customers/agribusiness"
-  },
-  "Food Brands": {
-    title: "Global Food Brands",
-    desc: "Mitigate supply chain reputational risks.",
-    bullets: [
-      "100% first-mile cargo tracking",
-      "EUDR deforestation screening",
-      "Consumer trust transparency codes",
-      "Global ESG audits support"
-    ],
-    linkText: "View Brand Solutions",
-    link: "/customers/food-brands"
-  },
-  "Governments": {
-    title: "Governments & Agencies",
-    desc: "Build national registry databases for crop assets.",
-    bullets: [
-      "National farmer registry maps",
-      "Agricultural land use surveys",
-      "EUDR compliance support systems",
-      "Outgrower subsidy payouts sync"
-    ],
-    linkText: "View Government Solutions",
-    link: "/customers/governments"
-  },
-  "NGOs": {
-    title: "NGOs & Foundations",
-    desc: "Verify sustainability impact KPIs.",
-    bullets: [
-      "Smallholder farmer income tracking",
-      "Local forest boundary screening",
-      "Educational training program logs",
-      "Impact validation dashboards"
-    ],
-    linkText: "View NGO Solutions",
-    link: "/customers/ngos"
-  },
-  "Financial Institutions": {
-    title: "Financial Institutions",
-    desc: "Deliver credit score options to growers.",
-    bullets: [
-      "Sourcing history credit scores",
-      "Automatic loan payments syncs",
-      "Crop yield risk valuations",
-      "Interactive crop insurance links"
-    ],
-    linkText: "View Financial Solutions",
-    link: "/customers/financial-institutions"
-  },
-  "Certification Bodies": {
-    title: "Certification Bodies",
-    desc: "Audit certification standards faster.",
-    bullets: [
-      "Digital organic receipt trails",
-      "Rainforest Alliance standards overlay",
-      "Secure auditable polygon files",
-      "Direct auditor cloud vaults"
-    ],
-    linkText: "View Certification Solutions",
-    link: "/customers/certification-bodies"
-  },
-  // PARTNERS
-  "Technology Partners": {
-    title: "Technology Partners",
-    desc: "Integrate specialized IoT devices and sensors.",
-    bullets: [
-      "Sensors and weather stations APIs",
-      "GIS spatial analytical layers",
-      "Automated serverless payload streams",
-      "Verified vendor program access"
-    ],
-    linkText: "Learn about Tech Partners",
-    link: "/partners/technology-partners"
-  },
-  "Implementation Partners": {
-    title: "Implementation Partners",
-    desc: "Deploy SourceTrace software in sourcing countries.",
-    bullets: [
-      "Technical integration manuals",
-      "Local setup support resources",
-      "System integration checklists",
-      "Dedicated account team access"
-    ],
-    linkText: "Learn about Implementation",
-    link: "/partners/channel-partners"
-  },
-  "Consulting Partners": {
-    title: "Consulting Partners",
-    desc: "Deliver regulatory compliance audits.",
-    bullets: [
-      "EUDR compliance review formats",
-      "ESG reporting guidelines",
-      "Carbon accounting frameworks",
-      "Auditor tool dashboard reviews"
-    ],
-    linkText: "Learn about Consulting",
-    link: "/partners/consulting-partners"
-  },
-  "Marketplace": {
-    title: "Partner Marketplace",
-    desc: "Browse third-party plugin components.",
-    bullets: [
-      "Weather forecast connectors",
-      "GIS file converting widgets",
-      "Custom payment portal modules",
-      "Certified grow tools catalog"
-    ],
-    linkText: "Visit Marketplace",
-    link: "/partners/marketplace"
-  },
-  "Partner Portal": {
-    title: "Partner Portal",
-    desc: "Secure co-sell registry and portal credentials.",
-    bullets: [
-      "Lead generation registry forms",
-      "Joint client case templates",
-      "Direct communication dashboards",
-      "Commission logs overview"
-    ],
-    linkText: "Access Portal",
-    link: "/partners/partner-portal"
-  },
-  "Become a Partner": {
-    title: "Become a Partner",
-    desc: "Join our global sourcing software alliance.",
-    bullets: [
-      "Priority customer lead share",
-      "Sales tool and demo sandbox access",
-      "Co-marketing webinar schedules",
-      "Technical support certifications"
-    ],
-    linkText: "Register as Partner",
-    link: "/partners/become-a-partner"
-  },
-  // RESOURCES
-  "Blog Insights": {
-    title: "Blog Insights",
-    desc: "Our latest updates on agronomic compliance.",
-    bullets: [
-      "EUDR compliance timeline reviews",
-      "Smallholder farmer tech briefings",
-      "GIS spatial calculation updates",
-      "New carbon farming features"
-    ],
-    linkText: "Read Blog",
-    link: "/resources/blog"
-  },
-  "Whitepapers": {
-    title: "Whitepapers Library",
-    desc: "Deep research papers on first-mile tracking.",
-    bullets: [
-      "Polygon data formatting guides",
-      "CSRD ESG disclosure standards",
-      "Smallholder privacy consent rules",
-      "Blockchain ledger security reviews"
-    ],
-    linkText: "Download Whitepapers",
-    link: "/resources/whitepapers"
-  },
-  "Market Reports": {
-    title: "Market Reports",
-    desc: "Sourcing risk maps for core crops.",
-    bullets: [
-      "West Africa cocoa compliance charts",
-      "Southeast Asia palm oil forest audits",
-      "East Africa coffee weather outlooks",
-      "South America soy parcel mappings"
-    ],
-    linkText: "Explore Reports",
-    link: "/resources/reports"
-  },
-  "Policy Guides": {
-    title: "Regulatory Policy Guides",
-    desc: "Interactive checklists for upcoming laws.",
-    bullets: [
-      "EU Deforestation Regulation rules",
-      "Corporate Sustainability reports checklist",
-      "German Supply Chain Act steps",
-      "US Lacey Act timber checks"
-    ],
-    linkText: "Explore Guides",
-    link: "/resources/guides"
-  },
-  "API Documentation": {
-    title: "API Documentation",
-    desc: "Comprehensive REST API endpoint directories.",
-    bullets: [
-      "Farmer registry payload formats",
-      "Weighbridge webhook specifications",
-      "Spatial GeoJSON payload schemas",
-      "Authentication and token rules"
-    ],
-    linkText: "Read API Docs",
-    link: "/resources/api-docs"
-  },
-  "Webinars": {
-    title: "Sourcing Webinars",
-    desc: "Expert panel discussions on supply chain trust.",
-    bullets: [
-      "Auditor polygon checks step-by-steps",
-      "Agri-lending credit scoring reviews",
-      "Outgrower digital money rollouts",
-      "Customer case study deep-dives"
-    ],
-    linkText: "Watch Webinars",
-    link: "/resources/webinars"
-  },
-  "Video Tutorials": {
-    title: "Video Tutorials",
-    desc: "Step-by-step videos for setup.",
-    bullets: [
-      "Mobile outgrower survey builder walk",
-      "Polygon GIS import setup steps",
-      "Connecting weighbridge API scales",
-      "ESG disclosure sheet exports"
-    ],
-    linkText: "Watch Videos",
-    link: "/resources/videos"
-  },
-  "Frequently Asked FAQs": {
-    title: "Support FAQs",
-    desc: "Frequently asked questions from developers and auditors.",
-    bullets: [
-      "Offline mobile data storage limits",
-      "Polygon coordinate formats accepted",
-      "Data privacy grower deletion rules",
-      "ERP connection timing queries"
-    ],
-    linkText: "View FAQs",
-    link: "/resources/faqs"
-  },
-  // COMPANY
-  "About SourceTrace": {
-    title: "About SourceTrace",
-    desc: "Our mission to bring transparency to the first-mile.",
-    bullets: [
-      "B Corp Impact certified metrics",
-      "Operating across 37 global nations",
-      "Outgrower software market leader",
-      "ESG and carbon audit alignment"
-    ],
-    linkText: "Read Our Story",
-    link: "/about"
-  },
-  "Leadership": {
-    title: "Executive Leadership",
-    desc: "Meet our global executive team.",
-    bullets: [
-      "Agriculture technology specialists",
-      "Outgrower software engineers",
-      "ESG policy consulting advisors",
-      "Global scaling project leaders"
-    ],
-    linkText: "Meet the Team",
-    link: "/company/meet-the-team"
-  },
-  "Global Presence": {
-    title: "Global Presence",
-    desc: "Our offices in core sourcing regions.",
-    bullets: [
-      "Bhubaneswar, India tech center",
-      "Nairobi, Kenya regional center",
-      "New York, USA corporate office",
-      "Abidjan, Ivory Coast field hub"
-    ],
-    linkText: "View Offices",
-    link: "/company/global-offices"
-  },
-  "Careers": {
-    title: "Careers at SourceTrace",
-    desc: "Join us in digitizing agricultural supply chains.",
-    bullets: [
-      "Remote-first global developer teams",
-      "Competitive compensation & health benefits",
-      "Sabbatical carbon offset programs",
-      "Active open-source community support"
-    ],
-    linkText: "View Open Roles",
-    link: "/careers"
-  },
-  "News & Releases": {
-    title: "News & Releases",
-    desc: "Latest corporate announcements.",
-    bullets: [
-      "New satellite compliance features release",
-      "Joint cooperatives software pilots success",
-      "Corporate awards and B Corp ratings",
-      "Press kits and image assets"
-    ],
-    linkText: "Read Press Releases",
-    link: "/resources/newsroom"
-  },
-  "Contact Us": {
-    title: "Contact Us",
-    desc: "Get in touch with local support or sales.",
-    bullets: [
-      "24/7 technical customer support",
-      "Consultant scheduling request forms",
-      "Product demo setup appointments",
-      "Local field office phone numbers"
-    ],
-    linkText: "Contact Us",
-    link: "/contact"
-  }
-};
-
-function StandardDropdownContent({ menu, closeMenu }: { menu: any; closeMenu: () => void }) {
-  const hero = MENU_HEROES[menu.id];
-  const promo = MENU_PROMOS[menu.id];
-  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
-
-  const currentPromo = (hoveredLink && LINK_PREVIEWS[hoveredLink]) || promo;
-
-  return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 flex gap-12 text-[#0B3D2E]">
-      <div className="flex-1">
-        {hero && (
-          <div className="border-b border-gray-100 pb-4 mb-6">
-            <span className="text-[12px] font-bold text-emerald-600 uppercase tracking-widest block mb-1">{hero.label}</span>
-            <h3 className="text-3xl font-black mb-1">{hero.title}</h3>
-            <p className="text-base text-gray-500 max-w-3xl font-medium">
-              {hero.desc}
-            </p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-3 gap-8">
-          {menu.items.map((link: NavigationLink, idx: number) => {
-            const hasSubItems = !!link.subItems;
-            return (
-              <div 
-                key={idx} 
-                onMouseEnter={() => setHoveredLink(link.name)}
-                onMouseLeave={() => setHoveredLink(null)}
-                className="group flex flex-col justify-between p-4 rounded-2xl bg-gray-50/50 hover:bg-gray-50 hover:shadow-sm transition-all min-h-[150px] border border-transparent hover:border-[#0B3D2E]/5"
-              >
-                <div>
-                  <Link
-                    href={link.href}
-                    onClick={closeMenu}
-                    className="font-bold text-base text-gray-900 group-hover:text-emerald-700 transition-colors block mb-1"
-                  >
-                    {link.name}
-                  </Link>
-                  <p className="text-sm text-gray-500 leading-snug line-clamp-2">{link.desc}</p>
-                </div>
-                {hasSubItems ? (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {link.subItems!.slice(0, 3).map((sub, sIdx) => (
-                      <Link
-                        key={sIdx}
-                        href={sub.href}
-                        onClick={closeMenu}
-                        onMouseEnter={() => setHoveredLink(sub.name)}
-                        onMouseLeave={() => setHoveredLink(link.name)}
-                        className="text-xs font-bold text-gray-600 hover:text-[#0B3D2E] bg-white border border-gray-100 hover:border-emerald-600/30 px-3 py-1 rounded-md transition-all"
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="pt-2">
-                    <Link
-                      href={link.href}
-                      onClick={closeMenu}
-                      className="text-xs font-black text-emerald-600 hover:text-emerald-800 flex items-center gap-1 group"
-                    >
-                      Learn More <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                    </Link>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {currentPromo && (
-        <div className="w-[350px] shrink-0 border-l border-gray-100 pl-12 hidden xl:block">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={hoveredLink || "default"}
-              initial={{ opacity: 0, x: 8 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -8 }}
-              transition={{ duration: 0.15 }}
-              className="bg-[#EAF5EE]/40 border border-[#0B3D2E]/5 rounded-3xl p-6 h-full flex flex-col justify-between relative overflow-hidden group"
-            >
-              <div className="absolute inset-0 bg-[#0B3D2E]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              <div className="relative z-10">
-                <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-[0.2em] block mb-2">
-                  {hoveredLink ? "Preview" : "Featured"}
-                </span>
-                <h4 className="text-xl font-black mb-2 text-[#0B3D2E] group-hover:text-emerald-800 transition-colors">{currentPromo.title}</h4>
-                <p className="text-sm text-gray-500 leading-relaxed mb-6 font-medium">
-                  {currentPromo.desc}
-                </p>
-                <ul className="space-y-2 mb-6">
-                  {currentPromo.bullets.map((bullet, bIdx) => (
-                    <li key={bIdx} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                      <span className="w-4 h-4 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-[10px] shrink-0 font-bold">✓</span>
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <Link
-                href={currentPromo.link}
-                onClick={closeMenu}
-                className="relative z-10 w-full py-3 text-center bg-[#0B3D2E] text-white hover:bg-[#1F7A53] font-bold text-sm rounded-xl transition-all shadow-md group-hover:shadow-lg active:scale-98"
-              >
-                {currentPromo.linkText || "Explore"} →
-              </Link>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      )}
     </div>
   );
 }
@@ -1601,15 +1010,7 @@ export function MegaMenu() {
             className="absolute top-full left-0 right-0 bg-white border-b border-gray-100 shadow-2xl overflow-hidden hidden lg:block"
             onMouseEnter={() => handleMouseEnter(activeMenu)}
           >
-            {activeMenu === "industries" ? (
-              <CommodityHubDropdownContent closeMenu={() => setActiveMenu(null)} />
-            ) : (
-              menuItems.map((menu) => (
-                activeMenu === menu.id && (
-                  <StandardDropdownContent key={menu.id} menu={menu} closeMenu={() => setActiveMenu(null)} />
-                )
-              ))
-            )}
+            <UnifiedMegaMenuContent menuId={activeMenu} closeMenu={() => setActiveMenu(null)} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -1799,282 +1200,75 @@ export function MegaMenu() {
                     </div>
                   </div>
 
-                  {/* Right Pane: Selected Section Items & Sub-pages */}
+                  {/* Right Pane: Unified Section Items Viewer */}
                   <div className="flex-1 p-6 overflow-y-auto bg-white">
-                    {/* Solutions View on Tablet */}
-                    {tabletSelectedCategory === "solutions" && (
-                      <div>
-                        <div className="mb-6 border-b border-gray-100 pb-4">
-                          <span className="text-[11px] font-bold text-[#1F7A53] uppercase tracking-wider block mb-1">Agribusiness Solutions</span>
-                          <h3 className="text-xl font-bold text-[#0B3D2E]">Grow, Track, Protect & Scale</h3>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          {SOLUTIONS_LINKS.map((sol, idx) => {
-                            const SolIcon = sol.icon || Leaf;
-                            return (
-                              <div key={idx} className="p-4 rounded-2xl border border-gray-100 bg-gray-50/40 hover:bg-[#EBF7F0]/40 transition-all flex flex-col justify-between">
-                                <div>
-                                  <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-9 h-9 rounded-xl bg-[#8CCB9B]/20 flex items-center justify-center text-[#1F7A53]">
-                                      <SolIcon className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                      <Link href={sol.href} onClick={closeMobile} className="text-base font-bold text-[#0B3D2E] hover:text-[#1F7A53] transition-colors">
-                                        {sol.name}
-                                      </Link>
-                                      <p className="text-xs text-gray-500">{sol.desc}</p>
-                                    </div>
-                                  </div>
-                                  {sol.subItems && (
-                                    <div className="mt-3 pt-3 border-t border-gray-200/50 flex flex-col gap-1.5 pl-1">
-                                      {sol.subItems.map((sub, sIdx) => (
-                                        <Link
-                                          key={sIdx}
-                                          href={sub.href}
-                                          onClick={closeMobile}
-                                          className="text-xs font-semibold text-gray-600 hover:text-[#1F7A53] flex items-center gap-2 py-1"
-                                        >
-                                          <span className="w-1.5 h-1.5 rounded-full bg-[#1F7A53]" />
-                                          <span>{sub.name}</span>
-                                        </Link>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Platform View on Tablet */}
-                    {tabletSelectedCategory === "platform" && (
-                      <div>
-                        <div className="mb-6 border-b border-gray-100 pb-4">
-                          <span className="text-[11px] font-bold text-[#1F7A53] uppercase tracking-wider block mb-1">Enterprise Architecture</span>
-                          <h3 className="text-xl font-bold text-[#0B3D2E]">Unified Intelligence Platform</h3>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          {PLATFORM_LINKS.map((item, idx) => {
-                            const Icon = item.icon || Server;
-                            return (
-                              <div key={idx} className="p-4 rounded-2xl border border-gray-100 bg-gray-50/40 hover:bg-[#EBF7F0]/40 transition-all">
-                                <div className="flex items-center gap-3 mb-2">
-                                  <div className="w-9 h-9 rounded-xl bg-[#8CCB9B]/20 flex items-center justify-center text-[#1F7A53]">
-                                    <Icon className="w-5 h-5" />
-                                  </div>
-                                  <div>
-                                    <Link href={item.href} onClick={closeMobile} className="text-base font-bold text-[#0B3D2E] hover:text-[#1F7A53] transition-colors">
-                                      {item.name}
-                                    </Link>
-                                    <p className="text-xs text-gray-500">{item.desc}</p>
-                                  </div>
-                                </div>
-                                {item.subItems && (
-                                  <div className="mt-3 pt-3 border-t border-gray-200/50 flex flex-col gap-1.5 pl-1">
-                                    {item.subItems.map((sub, sIdx) => (
-                                      <Link
-                                        key={sIdx}
-                                        href={sub.href}
-                                        onClick={closeMobile}
-                                        className="text-xs font-semibold text-gray-600 hover:text-[#1F7A53] flex items-center gap-2 py-1"
-                                      >
-                                        <span className="w-1.5 h-1.5 rounded-full bg-[#1F7A53]" />
-                                        <span>{sub.name}</span>
-                                      </Link>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Commodity Hub View on Tablet (768px - 1023px) */}
-                    {tabletSelectedCategory === "industries" && (
-                      <div className="flex flex-col gap-6">
-                        {/* Header Block */}
-                        <div className="border-b border-gray-100 pb-4">
-                          <span className="text-[11px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-1">
-                            Commodity Intelligence Hub
-                          </span>
-                          <h3 className="text-2xl font-black text-[#0B3D2E]">Global Commodity Explorer</h3>
-                          <p className="text-xs text-gray-500 font-medium mt-1">
-                            Explore global agricultural commodities, regulations, sustainability frameworks and market intelligence.
-                          </p>
-                        </div>
-
-                        {/* Section 1: Browse by Category */}
-                        <div>
-                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-3 block">
-                            Browse by Category
-                          </span>
-                          <div className="grid grid-cols-2 gap-3">
-                            {[
-                              { name: "Plantation Crops", icon: TreeDeciduous },
-                              { name: "Cereals & Grains", icon: Wheat },
-                              { name: "Oilseeds", icon: Droplets },
-                              { name: "Fruits", icon: Apple },
-                              { name: "Vegetables", icon: Carrot },
-                              { name: "Spices & Herbs", icon: Sprout },
-                              { name: "Forestry", icon: Trees },
-                              { name: "Aquaculture", icon: Fish },
-                              { name: "Livestock", icon: ShieldCheck },
-                              { name: "Beverage Crops", icon: Coffee },
-                            ].map((cat, cIdx) => {
-                              const CatIcon = cat.icon;
-                              return (
-                                <Link
-                                  key={cIdx}
-                                  href="/CommodityHub"
-                                  onClick={closeMobile}
-                                  className="flex items-center justify-between p-3.5 rounded-2xl bg-white hover:bg-[#EBF7F0]/60 border border-gray-100 shadow-sm transition-all active:scale-[0.98] group"
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-xl bg-[#8CCB9B]/20 group-hover:bg-[#8CCB9B]/30 flex items-center justify-center text-[#1F7A53] shrink-0 transition-colors">
-                                      <CatIcon className="w-4.5 h-4.5 stroke-[2]" />
-                                    </div>
-                                    <span className="text-xs font-bold text-gray-800 group-hover:text-[#0B3D2E] transition-colors">{cat.name}</span>
-                                  </div>
-                                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#1F7A53] shrink-0 transition-colors" />
-                                </Link>
-                              );
-                            })}
+                    {(() => {
+                      const data = UNIFIED_NAVIGATION_DATA[tabletSelectedCategory] || UNIFIED_NAVIGATION_DATA.platform;
+                      return (
+                        <div className="flex flex-col gap-6">
+                          <div className="border-b border-gray-100 pb-4">
+                            <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-1">
+                              {data.label}
+                            </span>
+                            <h3 className="text-2xl font-black text-[#0B3D2E]">{data.heading}</h3>
+                            <p className="text-xs text-gray-500 font-medium mt-1">{data.description}</p>
                           </div>
-                        </div>
 
-                        {/* Section 2: Featured Commodities */}
-                        <div className="pt-4 border-t border-gray-100">
-                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-2.5 block">
-                            Featured Commodities
-                          </span>
-                          <div className="flex flex-wrap gap-2">
-                            {[
-                              { name: "Coffee", href: "/CommodityHub/coffee" },
-                              { name: "Palm Oil", href: "/CommodityHub/palm-oil" },
-                              { name: "Cocoa", href: "/CommodityHub/cocoa" },
-                              { name: "Rice", href: "/CommodityHub/rice" },
-                              { name: "Cotton", href: "/CommodityHub/cotton" },
-                              { name: "Tea", href: "/CommodityHub/tea" },
-                              { name: "Cashew", href: "/CommodityHub" },
-                              { name: "Rubber", href: "/CommodityHub" },
-                            ].map((com, fIdx) => (
-                              <Link
-                                key={fIdx}
-                                href={com.href}
-                                onClick={closeMobile}
-                                className="px-4 py-2 rounded-full bg-gray-100/80 hover:bg-[#EBF7F0] text-gray-800 hover:text-[#0B3D2E] border border-gray-200/50 hover:border-[#8CCB9B]/50 text-xs font-semibold transition-all active:scale-95"
-                              >
-                                {com.name}
-                              </Link>
+                          <div className="grid grid-cols-2 gap-6">
+                            {data.groups.map((group, gIdx) => (
+                              <div key={gIdx} className="flex flex-col">
+                                <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-3 block border-b border-gray-100 pb-2">
+                                  {group.title}
+                                </span>
+                                <div className="flex flex-col gap-1.5">
+                                  {group.items.map((item, iIdx) => (
+                                    <Link
+                                      key={iIdx}
+                                      href={item.href}
+                                      onClick={closeMobile}
+                                      className="group flex flex-col p-2.5 rounded-xl bg-white hover:bg-[#EBF7F0]/60 border border-gray-100 shadow-sm transition-all active:scale-[0.98]"
+                                    >
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-xs font-bold text-gray-800 group-hover:text-[#0B3D2E]">
+                                          {item.name}
+                                        </span>
+                                        <ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#1F7A53]" />
+                                      </div>
+                                      {item.desc && (
+                                        <span className="text-[11px] text-gray-500 font-medium mt-0.5 truncate">
+                                          {item.desc}
+                                        </span>
+                                      )}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
                             ))}
                           </div>
-                        </div>
 
-                        {/* Section 3: Quick Access */}
-                        <div className="pt-4 border-t border-gray-100">
-                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-2.5 block">
-                            Quick Access
-                          </span>
-                          <div className="grid grid-cols-2 gap-2.5">
-                            {[
-                              { name: "Commodity Explorer", href: "/CommodityHub", icon: Compass },
-                              { name: "Country Profiles", href: "/company/global-offices", icon: Globe },
-                              { name: "Regulations & Policies", href: "/resources/guides", icon: FileText },
-                              { name: "Sustainability Standards", href: "/solutions/sustainability", icon: ShieldCheck },
-                              { name: "Market Intelligence", href: "/resources/reports", icon: BarChart3 },
-                              { name: "Satellite Insights", href: "/platform/intelligence", icon: Activity },
-                              { name: "Risk Maps", href: "/intelligence/geospatial-intelligence", icon: MapPin },
-                              { name: "Reports & Resources", href: "/resources/whitepapers", icon: BookOpen },
-                            ].map((res, qIdx) => {
-                              const ResIcon = res.icon;
-                              return (
-                                <Link
-                                  key={qIdx}
-                                  href={res.href}
-                                  onClick={closeMobile}
-                                  className="flex items-center gap-2.5 p-3 rounded-xl bg-white hover:bg-[#EBF7F0]/40 border border-gray-100 shadow-sm transition-all active:scale-[0.98] group"
-                                >
-                                  <ResIcon className="w-4 h-4 text-[#1F7A53] shrink-0" />
-                                  <span className="text-xs font-bold text-gray-800 group-hover:text-[#0B3D2E] truncate">{res.name}</span>
-                                </Link>
-                              );
-                            })}
+                          <div className="pt-4 border-t border-gray-100">
+                            <Link
+                              href={data.featured.link}
+                              onClick={closeMobile}
+                              className="group flex items-center justify-between p-4 rounded-2xl bg-[#EBF7F0]/60 hover:bg-[#EBF7F0] border border-[#8CCB9B]/30 transition-all shadow-sm active:scale-[0.98]"
+                            >
+                              <div>
+                                <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-0.5">
+                                  Featured Resource
+                                </span>
+                                <h4 className="text-xs font-bold text-[#0B3D2E] group-hover:text-[#1F7A53] transition-colors">
+                                  {data.featured.title}
+                                </h4>
+                              </div>
+                              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform">
+                                <span>{data.featured.linkText}</span>
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </div>
+                            </Link>
                           </div>
                         </div>
-
-                        {/* Section 4: Featured Resource Card */}
-                        <div className="pt-4 border-t border-gray-100">
-                          <Link
-                            href="/resources/reports"
-                            onClick={closeMobile}
-                            className="group flex items-center justify-between p-4.5 rounded-2xl bg-[#EBF7F0]/60 hover:bg-[#EBF7F0] border border-[#8CCB9B]/30 hover:border-[#8CCB9B]/60 transition-all shadow-sm active:scale-[0.98]"
-                          >
-                            <div>
-                              <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-0.5">
-                                Featured Resource
-                              </span>
-                              <h4 className="text-sm font-bold text-[#0B3D2E] group-hover:text-[#1F7A53] transition-colors">
-                                2026 Global Coffee Outlook
-                              </h4>
-                            </div>
-                            <div className="inline-flex items-center gap-1 text-xs font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform">
-                              <span>Read Report</span>
-                              <ArrowRight className="w-3.5 h-3.5" />
-                            </div>
-                          </Link>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Generic List View for Customers, Partners, Resources, Company */}
-                    {["customers", "partners", "resources", "company"].includes(tabletSelectedCategory) && (
-                      <div>
-                        {(() => {
-                          const catObj = menuItems.find((m) => m.id === tabletSelectedCategory);
-                          const links = catObj?.items || [];
-                          return (
-                            <div>
-                              <div className="mb-6 border-b border-gray-100 pb-4">
-                                <span className="text-[11px] font-bold text-[#1F7A53] uppercase tracking-wider block mb-1">{catObj?.label}</span>
-                                <h3 className="text-xl font-bold text-[#0B3D2E]">{MENU_HEROES[tabletSelectedCategory]?.title || catObj?.label}</h3>
-                              </div>
-                              <div className="grid grid-cols-2 gap-4">
-                                {links.map((item: NavigationLink, idx: number) => (
-                                  <div key={idx} className="p-4 rounded-2xl border border-gray-100 bg-gray-50/40 hover:bg-[#EBF7F0]/40 transition-all">
-                                    <Link href={item.href} onClick={closeMobile} className="block">
-                                      <div className="flex items-center justify-between mb-1">
-                                        <span className="text-sm font-bold text-[#0B3D2E]">{item.name}</span>
-                                        <ChevronRight className="w-4 h-4 text-gray-300" />
-                                      </div>
-                                      <p className="text-xs text-gray-500 font-medium">{item.desc}</p>
-                                    </Link>
-                                    {item.subItems && (
-                                      <div className="mt-3 pt-3 border-t border-gray-200/50 flex flex-col gap-1.5">
-                                        {item.subItems.map((sub, sIdx) => (
-                                          <Link
-                                            key={sIdx}
-                                            href={sub.href}
-                                            onClick={closeMobile}
-                                            className="text-xs font-semibold text-gray-600 hover:text-[#1F7A53] flex items-center gap-2 py-1"
-                                          >
-                                            <span className="w-1.5 h-1.5 rounded-full bg-[#1F7A53]" />
-                                            <span>{sub.name}</span>
-                                          </Link>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          );
-                        })()}
-                      </div>
-                    )}
+                      );
+                    })()}
                   </div>
                 </div>
 
