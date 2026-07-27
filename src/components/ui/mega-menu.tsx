@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight, ChevronLeft, Zap, BarChart3, Globe, Lock, Sprout, Search } from "lucide-react";
+import { ChevronDown, Leaf, Target, Map, Shield, Activity, Users, Database, Server, Smartphone, BookOpen, FileText, Briefcase, GraduationCap, ArrowRight, Menu, X, ArrowLeft, ChevronRight, MapPin, Compass, ShieldCheck, Fish, Trees, Carrot, Droplets, Wheat, TreeDeciduous, ChevronLeft, Zap, BarChart3, Globe, Lock, Sprout, Search, Apple, Coffee } from "lucide-react";
 import { Button } from "./button";
 import { GlobalSearch } from "./global-search";
 
@@ -442,169 +442,140 @@ const ALL_SEARCHABLE_PAGES = [
 
 /* === Sub-menu renderers for Mega Menu v2.0 === */
 function CommodityHubDropdownContent({ closeMenu }: { closeMenu: () => void }) {
-  const [hubQuery, setHubQuery] = useState("");
-  const router = useRouter();
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (hubQuery.trim()) {
-      router.push(`/CommodityHub?q=${encodeURIComponent(hubQuery.trim())}`);
-      closeMenu();
-    }
-  };
-
   const categories = [
-    { label: "🌾 Cereals & Grains", href: "/CommodityHub" },
-    { label: "☕ Beverage Crops", href: "/CommodityHub" },
-    { label: "🌴 Oilseeds", href: "/CommodityHub" },
-    { label: "🌶 Spices & Herbs", href: "/CommodityHub" },
-    { label: "🍎 Fruits", href: "/CommodityHub" },
-    { label: "🥕 Vegetables", href: "/CommodityHub" },
-    { label: "🌳 Plantation Crops", href: "/CommodityHub" },
-    { label: "🌲 Forestry", href: "/CommodityHub" },
-    { label: "🐄 Livestock", href: "/CommodityHub" },
-    { label: "🐟 Aquaculture", href: "/CommodityHub" },
-    { label: "🌍 Multi Commodity", href: "/CommodityHub" },
+    { name: "Plantation Crops", href: "/CommodityHub", icon: TreeDeciduous },
+    { name: "Cereals & Grains", href: "/CommodityHub", icon: Wheat },
+    { name: "Oilseeds", href: "/CommodityHub", icon: Droplets },
+    { name: "Fruits", href: "/CommodityHub", icon: Apple },
+    { name: "Vegetables", href: "/CommodityHub", icon: Carrot },
+    { name: "Spices & Herbs", href: "/CommodityHub", icon: Sprout },
+    { name: "Forestry", href: "/CommodityHub", icon: Trees },
+    { name: "Aquaculture", href: "/CommodityHub", icon: Fish },
+    { name: "Livestock", href: "/CommodityHub", icon: ShieldCheck },
+    { name: "Beverage Crops", href: "/CommodityHub", icon: Coffee },
   ];
 
-  const popular = [
+  const featuredCommodities = [
     { name: "Coffee", href: "/CommodityHub/coffee" },
-    { name: "Rice", href: "/CommodityHub/rice" },
     { name: "Palm Oil", href: "/CommodityHub/palm-oil" },
+    { name: "Cocoa", href: "/CommodityHub/cocoa" },
+    { name: "Rice", href: "/CommodityHub/rice" },
     { name: "Cotton", href: "/CommodityHub/cotton" },
     { name: "Tea", href: "/CommodityHub/tea" },
-    { name: "Cocoa", href: "/CommodityHub/cocoa" },
+    { name: "Cashew", href: "/CommodityHub" },
+    { name: "Rubber", href: "/CommodityHub" },
+  ];
+
+  const quickAccessResources = [
+    { name: "Commodity Explorer", href: "/CommodityHub", icon: Compass },
+    { name: "Country Profiles", href: "/company/global-offices", icon: Globe },
+    { name: "Regulations & Policies", href: "/resources/guides", icon: FileText },
+    { name: "Sustainability Standards", href: "/solutions/sustainability", icon: ShieldCheck },
+    { name: "Market Intelligence", href: "/resources/reports", icon: BarChart3 },
+    { name: "Satellite Insights", href: "/platform/intelligence", icon: Activity },
+    { name: "Risk Maps", href: "/intelligence/geospatial-intelligence", icon: MapPin },
+    { name: "Reports & Resources", href: "/resources/whitepapers", icon: BookOpen },
   ];
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 flex gap-12 text-[#0B3D2E]">
-      <div className="flex-1">
-        <div className="border-b border-gray-100 pb-4 mb-6">
-          <span className="text-[12px] font-bold text-emerald-600 uppercase tracking-widest block mb-1">Commodity Intelligence Hub</span>
-          <h3 className="text-3xl font-black mb-1">Global Commodity Explorer</h3>
-          <p className="text-base text-gray-500 max-w-2xl font-medium">
-            Explore more than 500 global commodities using AI-powered search and interactive filters.
+    <div className="max-w-[1400px] mx-auto px-6 py-6 flex gap-10 text-[#0B3D2E]">
+      {/* Left Panel (30%) */}
+      <div className="w-[30%] shrink-0 pr-8 border-r border-gray-100/80 flex flex-col justify-between">
+        <div>
+          <h3 className="text-2xl font-black text-[#0B3D2E] tracking-tight mb-2">
+            Commodity Intelligence Hub
+          </h3>
+          <p className="text-xs text-gray-500 font-medium leading-relaxed mb-6">
+            Explore global agricultural commodities, regulations, sustainability frameworks, and market intelligence.
           </p>
         </div>
 
-        <form onSubmit={handleSearchSubmit} className="relative max-w-xl mb-6">
-          <div className="flex items-center bg-gray-50 border border-[#0B3D2E]/10 focus-within:border-emerald-600 rounded-full px-5 py-3 shadow-sm transition-all">
-            <Search className="w-5 h-5 text-gray-400 mr-2.5" />
-            <input
-              type="text"
-              placeholder="Search 500+ commodities (e.g. Coffee, Rice, Soy)..."
-              value={hubQuery}
-              onChange={(e) => setHubQuery(e.target.value)}
-              className="w-full bg-transparent text-base focus:outline-none placeholder-gray-400 text-gray-800"
-            />
-            <button type="submit" className="text-sm bg-[#0B3D2E] text-white hover:bg-[#1F7A53] font-bold px-5 py-2 rounded-full transition-all">
-              Explore
-            </button>
+        {/* Featured Resource Card */}
+        <Link
+          href="/resources/reports"
+          onClick={closeMenu}
+          className="group block p-4.5 rounded-2xl bg-[#EBF7F0]/60 hover:bg-[#EBF7F0] border border-[#8CCB9B]/30 hover:border-[#8CCB9B]/60 transition-all duration-200 shadow-sm"
+        >
+          <span className="text-[10px] font-extrabold text-[#1F7A53] uppercase tracking-wider block mb-1">
+            Featured Resource
+          </span>
+          <h4 className="text-sm font-bold text-[#0B3D2E] leading-snug mb-1 group-hover:text-[#1F7A53] transition-colors">
+            2026 Global Coffee Outlook
+          </h4>
+          <div className="inline-flex items-center gap-1 text-xs font-bold text-[#1F7A53] group-hover:translate-x-1 transition-transform mt-2">
+            <span>Read Report</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </div>
-          <div className="flex flex-wrap items-center gap-1.5 mt-2 px-1">
-            <span className="text-[12px] font-bold text-gray-400 uppercase mr-1">Examples:</span>
-            {popular.slice(0, 4).map((item) => (
-              <Link 
-                key={item.name}
-                href={item.href}
-                onClick={closeMenu}
-                className="text-[12px] font-bold text-gray-600 hover:text-emerald-700 bg-gray-100 px-3 py-1 rounded-md hover:bg-emerald-50 transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
-        </form>
+        </Link>
+      </div>
 
-        <div className="grid grid-cols-2 gap-8 mb-6 border-t border-gray-100 pt-6">
-          <div>
-            <h4 className="text-sm font-black uppercase text-gray-400 tracking-wider mb-3">Browse by Category</h4>
-            <div className="grid grid-cols-2 gap-y-2 gap-x-4">
-              {categories.map((cat, idx) => (
+      {/* Right Panel (70%) */}
+      <div className="flex-1 pl-2 flex flex-col gap-5 justify-between">
+        {/* Section 1: Browse by Category */}
+        <div>
+          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-3 block">
+            Browse by Category
+          </span>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
+            {categories.map((cat, idx) => {
+              const Icon = cat.icon;
+              return (
                 <Link
                   key={idx}
                   href={cat.href}
                   onClick={closeMenu}
-                  className="text-sm font-bold text-gray-600 hover:text-emerald-700 transition-colors py-0.5 flex items-center gap-1.5 hover:translate-x-0.5 transition-transform"
+                  className="flex items-center gap-2.5 p-2 rounded-xl text-xs font-bold text-gray-700 hover:text-[#0B3D2E] hover:bg-[#EBF7F0]/60 transition-all duration-150 group"
                 >
-                  {cat.label}
+                  <div className="w-7 h-7 rounded-lg bg-gray-100/80 group-hover:bg-[#8CCB9B]/20 flex items-center justify-center text-gray-500 group-hover:text-[#1F7A53] transition-colors shrink-0">
+                    <Icon className="w-3.5 h-3.5 stroke-[2]" />
+                  </div>
+                  <span className="truncate">{cat.name}</span>
                 </Link>
-              ))}
-            </div>
+              );
+            })}
           </div>
+        </div>
 
-          <div>
-            <h4 className="text-sm font-black uppercase text-gray-400 tracking-wider mb-3">Popular Commodities</h4>
-            <div className="grid grid-cols-2 gap-y-2 gap-x-4">
-              {popular.map((item, idx) => (
+        {/* Section 2: Featured Commodities */}
+        <div className="pt-4 border-t border-gray-100/80">
+          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-2.5 block">
+            Featured Commodities
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {featuredCommodities.map((com, idx) => (
+              <Link
+                key={idx}
+                href={com.href}
+                onClick={closeMenu}
+                className="px-3.5 py-1.5 rounded-full bg-gray-100/80 hover:bg-[#EBF7F0] text-gray-700 hover:text-[#0B3D2E] border border-gray-200/50 hover:border-[#8CCB9B]/50 text-xs font-semibold transition-all duration-150 hover:scale-[1.02] active:scale-95"
+              >
+                {com.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Section 3: Quick Access */}
+        <div className="pt-4 border-t border-gray-100/80">
+          <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#0B3D2E]/70 mb-2.5 block">
+            Quick Access
+          </span>
+          <div className="grid grid-cols-4 gap-2">
+            {quickAccessResources.map((res, idx) => {
+              const ResIcon = res.icon;
+              return (
                 <Link
                   key={idx}
-                  href={item.href}
+                  href={res.href}
                   onClick={closeMenu}
-                  className="text-sm font-bold text-gray-600 hover:text-emerald-700 transition-colors py-0.5 flex items-center gap-1.5 hover:translate-x-0.5 transition-transform"
+                  className="flex items-center gap-2 p-2 rounded-xl text-xs font-bold text-gray-700 hover:text-[#0B3D2E] hover:bg-[#EBF7F0]/60 transition-all duration-150 group"
                 >
-                  <Sprout className="w-4 h-4 text-emerald-600 shrink-0" />
-                  {item.name}
+                  <ResIcon className="w-3.5 h-3.5 text-[#1F7A53] shrink-0" />
+                  <span className="truncate">{res.name}</span>
                 </Link>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        </div>
-
-        <div className="border-t border-gray-50 pt-4 flex items-center">
-          <Link
-            href="/CommodityHub"
-            onClick={closeMenu}
-            className="inline-flex items-center gap-1.5 text-base font-extrabold text-[#1F7A53] hover:text-[#0B3D2E] group"
-          >
-            Explore All 500+ Commodities <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-      </div>
-
-      <div className="w-[350px] shrink-0 border-l border-gray-100 pl-12 hidden xl:block">
-        <div className="bg-gradient-to-br from-[#0B3D2E] to-[#1F7A53] p-6 rounded-3xl text-white h-full relative overflow-hidden flex flex-col justify-between shadow-lg group">
-          <div className="absolute inset-0 bg-[#86EFAC]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-          <div className="absolute inset-0 opacity-10 pointer-events-none">
-            <svg className="w-full h-full" viewBox="0 0 200 200" fill="currentColor">
-              <path d="M20,60 L60,40 L100,80 L80,120 L40,100 Z" />
-              <path d="M110,130 L160,110 L180,160 L140,170 Z" />
-              <circle cx="80" cy="80" r="15" stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="2,2" />
-              <circle cx="140" cy="140" r="10" stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="2,2" />
-            </svg>
-          </div>
-
-          <div className="relative z-10">
-            <span className="text-[11px] font-bold text-[#86EFAC] uppercase tracking-[0.2em] block mb-2">Interactive App</span>
-            <h4 className="text-2xl font-black mb-2">Commodity Explorer</h4>
-            <p className="text-sm text-gray-200 leading-relaxed mb-6 font-medium">
-              Explore 500+ commodities with satellite risk layers, regulation checks, and comparison matrices.
-            </p>
-
-            <ul className="space-y-2 mb-8">
-              {[
-                "AI Search",
-                "Country Filters",
-                "Regulation Filters",
-                "Sustainability Filters",
-                "Satellite Layers",
-                "Commodity Comparison"
-              ].map((bullet, bIdx) => (
-                <li key={bIdx} className="flex items-center gap-2 text-sm font-semibold text-gray-100">
-                  <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-[#86EFAC] flex items-center justify-center text-[10px] shrink-0 font-bold">✓</span>
-                  {bullet}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <Link
-            href="/CommodityHub"
-            onClick={closeMenu}
-            className="relative z-10 w-full py-3 text-center bg-white text-[#0B3D2E] hover:bg-[#86EFAC] hover:text-[#0B3D2E] font-bold text-sm rounded-xl transition-all shadow-md active:scale-98"
-          >
-            Launch Explorer →
-          </Link>
         </div>
       </div>
     </div>
