@@ -57,7 +57,6 @@ import { FloatingContact } from "@/components/ui/floating-contact";
 import { PwaProvider } from "@/components/pwa-provider";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { CustomCursor } from "@/components/ui/custom-cursor";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 
 export default function RootLayout({
@@ -106,7 +105,6 @@ export default function RootLayout({
       >
         <Providers>
           <PwaProvider>
-            <CustomCursor />
             <ScrollToTop />
             <MegaMenu />
             <FloatingContact />
