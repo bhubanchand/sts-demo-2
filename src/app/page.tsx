@@ -90,17 +90,6 @@ const CHALLENGE_IMAGES = {
 
 const CHALLENGES = [
   {
-    id: "regulatory",
-    title: "Regulatory Tsunami",
-    text: "Regulations like the EUDR, CSDDD, and FSMA 204 are moving from voluntary guidelines to strict legal mandates. Non-compliance now means blocked market access and massive fines.",
-    icon: ShieldCheck,
-    colorClass: "text-red-600",
-    bgClass: "bg-red-100",
-    quote: `"EUDR and FSMA 204 require precise geocoordinates. The era of self-reported sustainability is over."`,
-    image: "/assets/esg-dashboard.png",
-    badgeText: "EUDR Compliance Active"
-  },
-  {
     id: "fragmented",
     title: "Fragmented Data",
     text: "Commodities pass through millions of unmapped smallholder farms and shadowy middlemen. Aggregating this fragmented data into a unified, auditable database is historically impossible.",
@@ -110,6 +99,17 @@ const CHALLENGES = [
     quote: `"Without node-level visibility, discovering the true origin of your raw materials is impossible."`,
     image: "/assets/traceability-diagram.png",
     badgeText: "Traceability Mapped"
+  },
+  {
+    id: "regulatory",
+    title: "Regulatory Tsunami",
+    text: "Regulations like the EUDR, CSDDD, and FSMA 204 are moving from voluntary guidelines to strict legal mandates. Non-compliance now means blocked market access and massive fines.",
+    icon: ShieldCheck,
+    colorClass: "text-red-600",
+    bgClass: "bg-red-100",
+    quote: `"EUDR and FSMA 204 require precise geocoordinates. The era of self-reported sustainability is over."`,
+    image: "/assets/esg-dashboard.png",
+    badgeText: "EUDR Compliance Active"
   },
   {
     id: "climate",
@@ -185,7 +185,7 @@ const slideVariants = {
 };
 
 export default function Home() {
-  const [activeChallengeBlock, setActiveChallengeBlock] = useState("regulatory");
+  const [activeChallengeBlock, setActiveChallengeBlock] = useState("fragmented");
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [direction, setDirection] = useState(1); // 1: next (R-to-L), -1: prev (L-to-R)
   const [userInteracted, setUserInteracted] = useState(false);
