@@ -584,7 +584,6 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
         title: "Careers & Impact",
         items: [
           { name: "Careers", href: "/careers", desc: "Join our team" },
-          { name: "B Corp Status", href: "/about", desc: "Social & environmental impact" },
           { name: "Sustainability", href: "/solutions/sustainability", desc: "Smallholder empowerment" },
         ],
       },
