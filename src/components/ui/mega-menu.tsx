@@ -670,15 +670,17 @@ function UnifiedMegaMenuContent({ menuId, closeMenu }: { menuId: string; closeMe
       </motion.div>
 
       {/* Right Columns — Fixed 3-column grid with stagger */}
-      <div className="flex-1 grid grid-cols-3 gap-10">
+      <div className="flex-1 grid grid-cols-3 gap-10 items-start">
         {data.groups.map((group, gIdx) => (
           <motion.div
             key={gIdx}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.06 + gIdx * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
+            className="grid"
+            style={{ gridTemplateRows: '32px 1fr' }}
           >
-            <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-4 block">
+            <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] self-end pb-2">
               {group.title}
             </span>
             <div className="flex flex-col gap-0">
