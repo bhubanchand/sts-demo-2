@@ -514,14 +514,6 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
         ],
       },
       {
-        title: "Programs",
-        items: [
-          { name: "Partner Marketplace", href: "/partners/marketplace", desc: "Pre-built integrations" },
-          { name: "Co-Sell Registry", href: "/partners/partner-portal", desc: "Joint client proposals" },
-          { name: "Partner Portal", href: "/partners/partner-portal", desc: "Credentials & sandbox" },
-        ],
-      },
-      {
         title: "Join",
         items: [
           { name: "Become a Partner", href: "/partners/become-a-partner", desc: "Apply to join our alliance" },
