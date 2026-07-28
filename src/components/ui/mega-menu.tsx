@@ -456,17 +456,6 @@ const UNIFIED_NAVIGATION_DATA: Record<string, MenuSystemData> = {
           { name: "Tea", href: "/CommodityHub/tea", desc: "Fair trade tracking" },
         ],
       },
-      {
-        title: "Quick Access",
-        items: [
-          { name: "Commodity Explorer", href: "/CommodityHub", desc: "Interactive crop database" },
-          { name: "Country Profiles", href: "/company/global-offices", desc: "Sourcing risk profiles" },
-          { name: "Regulations", href: "/resources/guides", desc: "EUDR, CSDDD, CSRD" },
-          { name: "Sustainability Standards", href: "/solutions/sustainability", desc: "Organic & Fair Trade" },
-          { name: "Market Intelligence", href: "/resources/reports", desc: "Yield & price analytics" },
-          { name: "Satellite Risk Maps", href: "/intelligence/geospatial-intelligence", desc: "Deforestation overlays" },
-        ],
-      },
     ],
   },
   customers: {
