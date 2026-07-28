@@ -287,7 +287,7 @@ export function GlobalSearch({
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="fixed left-0 right-0 bg-white border-b border-gray-100 shadow-2xl overflow-hidden"
-              style={{ top: 80, zIndex: 49 }}
+              style={{ top: 48, zIndex: 49 }}
               ref={dropdownRef}
             >
               <div className="max-w-[1400px] mx-auto px-8 py-8">
@@ -326,7 +326,7 @@ export function GlobalSearch({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 bg-black/20 backdrop-blur-sm"
-              style={{ top: 80, zIndex: 48 }}
+              style={{ top: 48, zIndex: 48 }}
               onClick={onSearchClose}
             />
           )}
