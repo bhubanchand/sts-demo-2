@@ -681,19 +681,19 @@ function UnifiedMegaMenuContent({ menuId, closeMenu }: { menuId: string; closeMe
             <span className="text-xs font-semibold uppercase tracking-wide text-[#86868b] mb-4 block">
               {group.title}
             </span>
-            <div className="flex flex-col gap-[2px]">
+            <div className="flex flex-col gap-0">
               {group.items.map((item, iIdx) => (
                 <Link
                   key={iIdx}
                   href={item.href}
                   onClick={closeMenu}
-                  className="group block py-1.5"
+                  className="group block py-2"
                 >
-                  <span className="text-sm text-[#1d1d1f] group-hover:text-[#1F7A53] transition-colors duration-150">
+                  <span className="text-sm text-[#1d1d1f] group-hover:text-[#1F7A53] transition-colors duration-150 leading-snug">
                     {item.name}
                   </span>
                   {item.desc && (
-                    <span className="block text-xs text-[#86868b] opacity-0 group-hover:opacity-100 transition-opacity duration-150 mt-0.5">
+                    <span className="block text-[11px] text-[#86868b] leading-snug mt-0.5">
                       {item.desc}
                     </span>
                   )}
