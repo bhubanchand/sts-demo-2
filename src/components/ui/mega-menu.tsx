@@ -836,7 +836,7 @@ export function MegaMenu() {
       style={{ zIndex: 50 }}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="max-w-[980px] mx-auto px-6">
+      <div className={`max-w-[980px] mx-auto px-6 transition-transform duration-200 ease-out origin-center ${!activeMenu ? "lg:scale-[1.03]" : "lg:scale-100"}`}>
         <div className="flex items-center justify-between h-[48px]">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
