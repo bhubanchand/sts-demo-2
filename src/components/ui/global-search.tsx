@@ -112,15 +112,24 @@ export function GlobalSearch({
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
+    return () => {
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    };
   }, []);
 
   // Focus input when search opens
   useEffect(() => {
     if (isSearchOpen) {
+      // Cancel any pending close when re-opening
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
       setTimeout(() => inputRef.current?.focus(), 100);
       // Refresh recent searches on open
       const r = getRecentSearches();
@@ -221,6 +230,20 @@ export function GlobalSearch({
   const showSuggestions = isSearchOpen && !query.trim();
   const showResults = isSearchOpen && query.trim().length > 0;
 
+  /* ── Mouse-leave auto-close (matches mega menu behavior) ── */
+  const handleSearchMouseLeave = useCallback(() => {
+    closeTimeoutRef.current = setTimeout(() => {
+      onSearchClose();
+    }, 300);
+  }, [onSearchClose]);
+
+  const handleSearchMouseEnter = useCallback(() => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  }, []);
+
   /* ── Desktop Render ─────────────────────────────────────── */
   if (variant === "desktop") {
     return (
@@ -245,6 +268,7 @@ export function GlobalSearch({
               exit={{ width: 0, opacity: 0 }}
               transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
               className="relative overflow-hidden"
+              onMouseEnter={handleSearchMouseEnter}
             >
               <form
                 onSubmit={(e) => {
@@ -289,6 +313,8 @@ export function GlobalSearch({
               className="fixed left-0 right-0 bg-white border-b border-gray-100 shadow-2xl overflow-hidden"
               style={{ top: 48, zIndex: 49 }}
               ref={dropdownRef}
+              onMouseLeave={handleSearchMouseLeave}
+              onMouseEnter={handleSearchMouseEnter}
             >
               <div className="max-w-[1400px] mx-auto px-8 py-8">
                 {/* Suggestions (before typing) */}
@@ -324,9 +350,15 @@ export function GlobalSearch({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm"
-              style={{ top: 48, zIndex: 48 }}
+              transition={{ duration: 0.25 }}
+              className="fixed inset-0 hidden lg:block"
+              style={{
+                top: 48,
+                zIndex: 48,
+                backgroundColor: 'rgba(255,255,255,0.4)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+              }}
               onClick={onSearchClose}
             />
           )}

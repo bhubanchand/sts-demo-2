@@ -773,6 +773,10 @@ export function MegaMenu() {
       clearTimeout(timeoutIdRef.current);
       timeoutIdRef.current = null;
     }
+    // Close search if open — opening mega menu should dismiss search
+    if (isSearchOpen) {
+      setIsSearchOpen(false);
+    }
     setActiveMenu(menu);
   };
 
