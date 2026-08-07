@@ -1364,28 +1364,28 @@ export default function ContactSalesPage() {
       </section>
 
       {/* ═════════════════════════════════════════════════
-          SECTION 8 – REDESIGNED BOTTOM CONTACT BANNER
+          SECTION 8 – REDESIGNED BOTTOM CONTACT BANNER (LIGHT GREEN THEME)
           ═════════════════════════════════════════════════ */}
       <section className="bg-white py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <div className="relative rounded-3xl bg-gradient-to-br from-[#0B3D2E] via-[#125c44] to-[#0B3D2E] text-white p-8 sm:p-12 lg:p-14 shadow-2xl overflow-hidden">
+            <div className="relative rounded-3xl bg-gradient-to-br from-[#EAF5EE] via-[#F2FAF4] to-[#EAF5EE] border border-[#1F7A53]/20 p-8 sm:p-12 lg:p-14 shadow-xl overflow-hidden text-[#0B3D2E]">
               {/* Background Glows */}
-              <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-[#53D769]/10 rounded-full blur-[100px] pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-[#53D769]/10 rounded-full blur-[120px] pointer-events-none" />
+              <div className="absolute top-0 right-0 w-[450px] h-[450px] bg-[#53D769]/20 rounded-full blur-[100px] pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-[#1F7A53]/10 rounded-full blur-[120px] pointer-events-none" />
 
               <div className="relative grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                 {/* Text & Contact Info */}
                 <div className="lg:col-span-8">
-                  <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 text-[#53D769] text-xs font-semibold uppercase tracking-wider mb-4 border border-white/10">
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#1F7A53]/10 text-[#1F7A53] text-xs font-semibold uppercase tracking-wider mb-4 border border-[#1F7A53]/20">
                     <Sparkles className="w-3.5 h-3.5" />
                     Get Started Today
                   </span>
 
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight mb-3">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight mb-3 text-[#0B3D2E]">
                     Ready to Discuss Your Project?
                   </h2>
-                  <p className="text-emerald-100 text-sm sm:text-base mb-8 max-w-xl leading-relaxed">
+                  <p className="text-[#1F5946] text-sm sm:text-base mb-8 max-w-xl leading-relaxed">
                     Our specialists are available to understand your requirements
                     and recommend the right solution for your organization.
                   </p>
@@ -1393,46 +1393,46 @@ export default function ContactSalesPage() {
                   {/* 3 Compact Contact Cards */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
                     {/* Call Us */}
-                    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                      <p className="font-bold text-[#53D769] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                    <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-[#1F7A53]/15 shadow-2xs">
+                      <p className="font-bold text-[#1F7A53] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                         <Phone className="w-3.5 h-3.5" />
                         Call Us
                       </p>
-                      <div className="space-y-1 text-emerald-50 font-medium">
-                        <a href="tel:+146945506904" className="block hover:underline">
+                      <div className="space-y-1 text-gray-700 font-semibold">
+                        <a href="tel:+146945506904" className="block hover:text-[#1F7A53] transition-colors">
                           🇺🇸 +1-469-4550-6904
                         </a>
-                        <a href="tel:+919087339911" className="block hover:underline">
+                        <a href="tel:+919087339911" className="block hover:text-[#1F7A53] transition-colors">
                           🇮🇳 +91-9087339911
                         </a>
-                        <a href="tel:+8801713105261" className="block hover:underline">
+                        <a href="tel:+8801713105261" className="block hover:text-[#1F7A53] transition-colors">
                           🇧🇩 +880-1713105261
                         </a>
                       </div>
                     </div>
 
                     {/* Email */}
-                    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                      <p className="font-bold text-[#53D769] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                    <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-[#1F7A53]/15 shadow-2xs">
+                      <p className="font-bold text-[#1F7A53] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                         <Mail className="w-3.5 h-3.5" />
                         Email
                       </p>
                       <a
                         href="mailto:info@sourcetrace.com"
-                        className="text-emerald-50 font-medium hover:underline block truncate"
+                        className="text-gray-700 font-semibold hover:text-[#1F7A53] transition-colors block truncate"
                       >
                         info@sourcetrace.com
                       </a>
                     </div>
 
                     {/* Business Hours */}
-                    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                      <p className="font-bold text-[#53D769] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                    <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-[#1F7A53]/15 shadow-2xs">
+                      <p className="font-bold text-[#1F7A53] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5" />
                         Business Hours
                       </p>
-                      <p className="text-emerald-50 font-medium">Monday–Friday</p>
-                      <p className="text-emerald-200 text-[11px]">
+                      <p className="text-gray-700 font-semibold">Monday–Friday</p>
+                      <p className="text-gray-500 text-[11px]">
                         Regional Office Hours
                       </p>
                     </div>
@@ -1443,10 +1443,10 @@ export default function ContactSalesPage() {
                 <div className="lg:col-span-4 flex justify-center lg:justify-end">
                   <button
                     onClick={scrollToForm}
-                    className="group inline-flex items-center gap-3 px-8 py-5 rounded-full bg-[#53D769] text-[#0B3D2E] text-base font-extrabold hover:bg-emerald-300 transition-all duration-300 hover:shadow-2xl hover:scale-105 active:scale-[0.98] cursor-pointer shadow-lg"
+                    className="group inline-flex items-center gap-3 px-8 py-5 rounded-full bg-[#0B3D2E] text-white text-base font-extrabold hover:bg-[#125c44] transition-all duration-300 hover:shadow-2xl hover:scale-105 active:scale-[0.98] cursor-pointer shadow-lg"
                   >
                     Book a Free Consultation
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform text-[#53D769]" />
                   </button>
                 </div>
               </div>
